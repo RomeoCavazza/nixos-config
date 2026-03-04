@@ -60,7 +60,7 @@ in
     # Editor / Code
     zed-editor neovim git lua lua-language-server luaPackages.lgi lazygit aider-chat desktop-file-utils
     cargo openssl pkg-config rust-analyzer rustc rustfmt
-    black isort
+    black isort (python3.withPackages (ps: with ps; [ pip pyglet ]))
     typescript-language-server vscode-langservers-extracted tailwindcss-language-server
     nodejs_22 pnpm yarn
 

@@ -138,6 +138,12 @@ EOF
     extraGroups = [ "wheel" "networkmanager" "video" "docker" "libvirtd" "dialout" "i2c" ];
   };
 
+  virtualisation.vmVariant = {
+  users.mutableUsers = false;
+  users.users.tco.initialPassword = "REDACTED";
+  users.users.root.initialPassword = "REDACTED";
+  };
+
   # ============================================================================
   # DESKTOP
   # ============================================================================
