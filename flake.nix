@@ -19,14 +19,7 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ 
-          (import rust-overlay)
-          (final: prev: {
-            guile-zlib = prev.guile-zlib.overrideAttrs (oldAttrs: {
-              doCheck = false;
-            });
-          })
-        ];
+        overlays = [ (import rust-overlay) ];
       };
     in
     {
@@ -37,6 +30,14 @@
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
+            nixpkgs.overlays = [
+              (import rust-overlay)
+              (final: prev: {
+                guile-zlib = prev.guile-zlib.overrideAttrs (oldAttrs: {
+                  doCheck = false;
+                });
+              })
+            ];
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
