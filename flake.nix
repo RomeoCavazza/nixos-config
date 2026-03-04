@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -13,13 +14,17 @@
     hyprchroma.url = "github:alexhulbert/hyprchroma";    
   };
 
-  outputs = { self, nixpkgs, home-manager, rust-overlay, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, rust-overlay, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = [ (import rust-overlay) ];
+      };
+      pkgs-stable = import nixpkgs-stable {
+        inherit system;
+        config.allowUnfree = true;
       };
     in
     {
@@ -33,9 +38,7 @@
             nixpkgs.overlays = [
               (import rust-overlay)
               (final: prev: {
-                guile-zlib = prev.guile-zlib.overrideAttrs (oldAttrs: {
-                  doCheck = false;
-                });
+                guix = pkgs-stable.guix;
               })
             ];
             home-manager.useGlobalPkgs = true;
