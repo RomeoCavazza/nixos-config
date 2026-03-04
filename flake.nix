@@ -19,7 +19,14 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ (import rust-overlay) ];
+        overlays = [ 
+          (import rust-overlay)
+          (final: prev: {
+            guile-zlib = prev.guile-zlib.overrideAttrs (oldAttrs: {
+              doCheck = false;
+            });
+          })
+        ];
       };
     in
     {
