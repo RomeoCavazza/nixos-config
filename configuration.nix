@@ -1,5 +1,4 @@
 { config, lib, pkgs, inputs, ... }:
-
 {
   imports = [
     ./hardware-configuration.nix
@@ -15,14 +14,8 @@
     ./modules/observability.nix
   ];
 
-  # ============================================================================
-  # GUIX
-  # ============================================================================
   services.guix.enable = true;
 
-  # ============================================================================
-  # BOOTLOADER & KERNEL
-  # ============================================================================
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.editor = false;
   boot.loader.systemd-boot.configurationLimit = 1;
@@ -47,7 +40,6 @@ EOF
   '';
 
   boot.kernelModules = [ "i2c-dev" "i2c-i801" ];
-
   boot.kernelParams = [
     "nvidia-drm.modeset=1"
     "pcie_aspm=off"
@@ -58,20 +50,13 @@ EOF
     "iTCO_vendor_support"
   ];
 
-  # ============================================================================
-  # NIX SETTINGS
-  # ============================================================================
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     warn-dirty = false;
-
-    # éviter le warning "download buffer is full"
-    download-buffer-size = 268435456; # 256 MiB
-
-    # important: build sandbox dans /build
+    download-buffer-size = 268435456;
     sandbox = true;
     sandbox-build-dir = "/build";
   };
@@ -82,19 +67,14 @@ EOF
     options = "--delete-older-than 7d";
   };
 
-  # ============================================================================
-  # BUILD DIR: /build bind -> /home/nix-build (FIX BOOT STAGE1)
-  # ============================================================================
-  # On veut /build sur la partition /home (grande), mais PAS monté en stage1.
-  # /build doit se monter après /home, sinon initrd plante.
+
   systemd.tmpfiles.rules = [
-    # wal (évite erreurs)
     "d /home/tco/.cache/wal 0755 tco users -"
     "f /home/tco/.cache/wal/colors-hyprland.conf 0644 tco users -"
     "f /home/tco/.cache/wal/colors-foot.ini 0644 tco users -"
-
-    # backend du sandbox build-dir (écriture autorisée aux nixbld*)
     "d /home/nix-build 2775 root nixbld - -"
+    "d /nix/var/nix/profiles/per-user/tco 0755 tco users -"
+    "d /nix/var/nix/gcroots/per-user/tco 0755 tco users -"
   ];
 
   fileSystems."/build" = {
@@ -108,27 +88,44 @@ EOF
     neededForBoot = false;
   };
 
-  # ⚠️ IMPORTANT:
-  # On NE bind PAS /nix vers /home/.nix :
-  # /home n'est pas disponible en stage1, et /nix est requis pour booter.
-  # Donc pas de fileSystems."/nix" ici.
-
-  # ============================================================================
-  # NIX-LD
-  # ============================================================================
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    stdenv.cc.cc.lib zlib openssl curl
-    glib gtk3 pango cairo atk at-spi2-atk at-spi2-core gdk-pixbuf
-    dbus expat udev alsa-lib cups nspr nss
-    libxshmfence libx11 libxcb libxcomposite libxdamage libxext
-    libxfixes libxrandr libxtst libxkbfile libxkbcommon
-    mesa libgbm libglvnd libdrm
+    stdenv.cc.cc.lib
+    zlib
+    openssl
+    curl
+    glib
+    gtk3
+    pango
+    cairo
+    atk
+    at-spi2-atk
+    at-spi2-core
+    gdk-pixbuf
+    dbus
+    expat
+    udev
+    alsa-lib
+    cups
+    nspr
+    nss
+    libxshmfence
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxrandr
+    libxtst
+    libxkbfile
+    libxkbcommon
+    mesa
+    libgbm
+    libglvnd
+    libdrm
   ];
 
-  # ============================================================================
-  # NETWORKING & L10N
-  # ============================================================================
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
@@ -143,15 +140,6 @@ EOF
     extraGroups = [ "wheel" "networkmanager" "video" "docker" "libvirtd" "dialout" "i2c" ];
   };
 
-  virtualisation.vmVariant = {
-  users.mutableUsers = false;
-  users.users.tco.initialPassword = "REDACTED";
-  users.users.root.initialPassword = "REDACTED";
-  };
-
-  # ============================================================================
-  # DESKTOP
-  # ============================================================================
   services.xserver = {
     enable = true;
     xkb.layout = "fr";
@@ -176,9 +164,6 @@ EOF
     ];
   };
 
-  # ============================================================================
-  # HARDWARE
-  # ============================================================================
   hardware.enableRedistributableFirmware = true;
 
   services.pipewire = {
@@ -198,9 +183,6 @@ EOF
 
   services.hardware.openrgb.enable = true;
 
-  # ============================================================================
-  # SECURITY / POLKIT
-  # ============================================================================
   security.polkit.enable = true;
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
@@ -214,60 +196,63 @@ EOF
     };
   };
 
-  # ============================================================================
-  # QoL
-  # ============================================================================
   services.logind.settings.Login.KillUserProcesses = true;
   systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
 
   programs.zoxide.enable = true;
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
+
   services.logrotate.enable = true;
 
-  # ============================================================================
-  # PACKAGES & ENV
-  # ============================================================================
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     bibata-cursors
     brightnessctl
-
     appimage-run
     fuse2
+    fuse3
     libxshmfence
-
-    bash vim neovim
-    git wget curl
-    iw ethtool pciutils usbutils
-    tree ripgrep fd fzf
-    fastfetch btop htop
-    kitty foot
-    firefox google-chrome
+    bash
+    vim
+    neovim
+    git
+    wget
+    curl
+    jq
+    lsof
+    iw
+    ethtool
+    pciutils
+    usbutils
+    tree
+    ripgrep
+    fd
+    fzf
+    fastfetch
+    btop
+    htop
+    kitty
+    foot
+    firefox
+    google-chrome
     wl-clipboard
     pavucontrol
     networkmanager
     polkit_gnome
-
     nix-ld
     mesa
     libglvnd
     libdrm
-
-    (writeShellScriptBin "edex-ui" ''
-      set -euo pipefail
-      export LD_LIBRARY_PATH="${pkgs.libxshmfence}/lib:''${LD_LIBRARY_PATH:-}"
-      exec ${pkgs.appimage-run}/bin/appimage-run /opt/edex-ui/edex-ui.AppImage \
-        --no-sandbox --disable-gpu-sandbox --ozone-platform=x11 --disable-features=UseOzonePlatform "$@"
-    '')
-
-    inputs.hyprchroma.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
+
+  services.flatpak.enable = true;
+  services.snap.enable = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     EDITOR = "vim";
   };
 
-  system.stateVersion = "24.05";
+  system.stateVersion = "26.05";
 }

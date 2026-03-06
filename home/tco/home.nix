@@ -1,5 +1,4 @@
 { config, pkgs, lib, inputs, ... }:
-
 let
   mkOut = config.lib.file.mkOutOfStoreSymlink;
 in
@@ -8,25 +7,29 @@ in
   home.homeDirectory = "/home/tco";
   home.stateVersion = "25.05";
 
-  home.sessionPath = [ "$HOME/.local/bin" ];
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.lmstudio/bin"
+    "${config.home.homeDirectory}/.npm-global/bin"
+    "${config.home.homeDirectory}/.local/bin"
+  ];
 
   home.sessionVariables = {
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_STYLE_OVERRIDE = "kvantum";
     XDG_DATA_DIRS = "$HOME/.local/share:$XDG_DATA_DIRS";
+    ELECTRON_OZONE_PLATFORM_HINT = "x11";
   };
 
   xdg.enable = true;
-
   xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
   xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
   xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
 
-  home.file.".config/hypr".source          = ../../config/hypr;
-  home.file.".config/waybar".source        = ../../config/hypr/waybar;
-  home.file.".config/rofi".source          = ../../config/rofi;
-  home.file.".config/foot".source          = ../../config/foot;
+  home.file.".config/hypr".source = ../../config/hypr;
+  home.file.".config/waybar".source = ../../config/hypr/waybar;
+  home.file.".config/rofi".source = ../../config/rofi;
+  home.file.".config/foot".source = ../../config/foot;
   home.file.".config/swappy/config".source = ../../config/swappy/config;
 
   home.file.".local/bin/cursor".source = mkOut "/etc/nixos/config/bin/cursor";
@@ -41,82 +44,134 @@ in
     '';
   };
 
-  home.file.".local/bin/dw-apply" = { source = ../../config/bin/dw-apply; executable = true; };
-  home.file.".local/bin/dw-toggle-global" = { source = ../../config/bin/dw-toggle-global; executable = true; };
-  home.file.".local/bin/dw-toggle" = { source = ../../config/bin/dw-toggle; executable = true; };
-  home.file.".local/bin/dw-daemon" = { source = ../../config/bin/dw-daemon; executable = true; };
-  home.file.".local/bin/hypr-plugins-init" = { source = ../../config/bin/hypr-plugins-init; executable = true; };
+  home.file.".local/bin/dw-apply" = {
+    source = ../../config/bin/dw-apply;
+    executable = true;
+  };
+
+  home.file.".local/bin/dw-toggle-global" = {
+    source = ../../config/bin/dw-toggle-global;
+    executable = true;
+  };
+
+  home.file.".local/bin/dw-toggle" = {
+    source = ../../config/bin/dw-toggle;
+    executable = true;
+  };
+
+  home.file.".local/bin/dw-daemon" = {
+    source = ../../config/bin/dw-daemon;
+    executable = true;
+  };
+
+  home.file.".local/bin/hypr-plugins-init" = {
+    source = ../../config/bin/hypr-plugins-init;
+    executable = true;
+  };
 
   home.file.".local/lib/libhypr-darkwindow.so".source =
     "${pkgs.hyprlandPlugins.hypr-darkwindow}/lib/libhypr-darkwindow.so";
 
   home.packages = with pkgs; [
-    # Core CLI / Productivity
-    bat eza fd fzf jq ripgrep yazi home-manager superfile grim slurp wf-recorder sway-contrib.grimshot libnotify
-
-    # Nix tooling
-    dockfmt nixfmt shellcheck shfmt obs-studio
-
-    # Editor / Code
-    zed-editor neovim git lua lua-language-server luaPackages.lgi lazygit aider-chat desktop-file-utils
-    cargo openssl pkg-config rust-analyzer rustc rustfmt
-    black isort (python3.withPackages (ps: with ps; [ pip pyglet ]))
-    typescript-language-server vscode-langservers-extracted tailwindcss-language-server
-    nodejs_22 pnpm yarn
-
-    # Spelling / Dictionaries
-    aspell aspellDicts.en aspellDicts.en-computers aspellDicts.fr
-
-    # UI
+    bat
+    eza
+    fd
+    fzf
+    jq
+    ripgrep
+    yazi
+    home-manager
+    superfile
+    grim
+    slurp
+    wf-recorder
+    sway-contrib.grimshot
+    libnotify
+    dockfmt
+    nixfmt
+    shellcheck
+    shfmt
+    obs-studio
+    zed-editor
+    neovim
+    git
+    lua
+    lua-language-server
+    luaPackages.lgi
+    lazygit
+    aider-chat
+    desktop-file-utils
+    cargo
+    openssl
+    pkg-config
+    rust-analyzer
+    rustc
+    rustfmt
+    black
+    isort
+    (python3.withPackages (ps: with ps; [ pip pyglet ]))
+    typescript-language-server
+    vscode-langservers-extracted
+    tailwindcss-language-server
+    nodejs_22
+    pnpm
+    yarn
+    aspell
+    aspellDicts.en
+    aspellDicts.en-computers
+    aspellDicts.fr
     papirus-icon-theme
     swaynotificationcenter
-    cava cool-retro-term
+    cava
+    cool-retro-term
     nerd-fonts.symbols-only
     hyprcursor
     rose-pine-hyprcursor
     nerd-fonts.jetbrains-mono
     bibata-cursors
     conky
-
-    # GTK theming
     adw-gtk3
     gnome-themes-extra
-
-    # Pywal stack (optional)
     pywal
     wpgtk
-
-    # Qt theming + tools
     qt6Packages.qtbase
     qt6Packages.qt6ct
     qt6Packages.qttools
     kdePackages.qtstyleplugin-kvantum
     libsForQt5.qtstyleplugin-kvantum
-
-    # Hyprland plugin
     hyprlandPlugins.hypr-darkwindow
-
-    # Needed by dw-daemon
     socat
-
-    # Monitoring
-    atop bottom btop glances htop nvitop
-
-    # Apps / Desktop
-    appimage-run discord pkgs.spotify
-
-    # KiCad
+    atop
+    bottom
+    btop
+    glances
+    htop
+    nvitop
+    appimage-run
+    discord
+    spotify
     kicad
-
-    # Terminal toys
-    cbonsai cmatrix hollywood pipes sl
+    cbonsai
+    cmatrix
+    hollywood
+    pipes
+    sl
   ];
 
   gtk = {
     enable = true;
-    theme = { name = "Adwaita-dark"; package = pkgs.gnome-themes-extra; };
-    iconTheme = { name = "Papirus-Dark"; package = pkgs.papirus-icon-theme; };
-    cursorTheme = { name = "Bibata-Modern-Ice"; package = pkgs.bibata-cursors; };
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
+    };
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+    };
   };
 
   programs.starship = {
@@ -150,7 +205,10 @@ in
   programs.git = {
     enable = true;
     settings = {
-      user = { name = "Romeo Cavazza"; email = "romeo.cavazza@gmail.com"; };
+      user = {
+        name = "Romeo Cavazza";
+        email = "romeo.cavazza@gmail.com";
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
     };
@@ -159,14 +217,12 @@ in
   programs.bash = {
     enable = true;
     enableCompletion = true;
-
     initExtra = ''
       if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
         . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
-      export PATH="$HOME/.local/bin:$PATH"
+      export PATH="$HOME/.lmstudio/bin:$HOME/.local/bin:$PATH"
     '';
-
     shellAliases = {
       g = "git";
       ll = "eza -l --icons";
@@ -174,6 +230,7 @@ in
       devai = "nix develop /etc/nixos#ai";
       devemb = "nix develop /etc/nixos#embedded";
       rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+      hm = "home-manager switch --flake /etc/nixos#tco";
     };
   };
 
@@ -181,16 +238,13 @@ in
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       mkdir -p "$HOME/.cache/wal"
       mkdir -p "$HOME/.config/wal/templates"
-
       : > "$HOME/.cache/wal/colors-foot.ini"
       : > "$HOME/.cache/wal/colors-hyprland.conf"
-
       if [ ! -f "$HOME/.config/wal/templates/colors-foot.ini" ]; then
         cat > "$HOME/.config/wal/templates/colors-foot.ini" <<'EOF'
 [colors]
 background={background.strip}
 foreground={foreground.strip}
-
 regular0={color0.strip}
 regular1={color1.strip}
 regular2={color2.strip}
@@ -199,7 +253,6 @@ regular4={color4.strip}
 regular5={color5.strip}
 regular6={color6.strip}
 regular7={color7.strip}
-
 bright0={color8.strip}
 bright1={color9.strip}
 bright2={color10.strip}
@@ -210,10 +263,9 @@ bright6={color14.strip}
 bright7={color15.strip}
 EOF
       fi
-
       if [ ! -f "$HOME/.config/wal/templates/colors-hyprland.conf" ]; then
         cat > "$HOME/.config/wal/templates/colors-hyprland.conf" <<'EOF'
-# Generated by pywal
+
 general {
   col.active_border = rgba({color6.strip}ff)
   col.inactive_border = rgba({color0.strip}aa)
@@ -247,17 +299,17 @@ EOF
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
     };
-
     Service = {
       ExecStart = "%h/.local/bin/dw-daemon";
       Restart = "on-failure";
       RestartSec = 1;
       Environment = [
-        "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin:%h/.local/bin"
+        "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin:%h/.local/bin:%h/.lmstudio/bin"
         "XDG_CACHE_HOME=%h/.cache"
       ];
     };
-
-    Install = { WantedBy = [ "graphical-session.target" ]; };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
   };
 }

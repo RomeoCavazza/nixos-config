@@ -11,17 +11,22 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    hyprchroma.url = "github:alexhulbert/hyprchroma";    
+    hyprchroma.url = "github:alexhulbert/hyprchroma";
+
+    nix-snapd.url = "github:nix-community/nix-snapd";
+    nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, rust-overlay, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, rust-overlay, nix-snapd, ... }@inputs:
     let
       system = "x86_64-linux";
+
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = [ (import rust-overlay) ];
       };
+
       pkgs-stable = import nixpkgs-stable {
         inherit system;
         config.allowUnfree = true;
@@ -33,6 +38,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
+          nix-snapd.nixosModules.default
           home-manager.nixosModules.home-manager
           {
             nixpkgs.overlays = [
@@ -41,6 +47,7 @@
                 guix = pkgs-stable.guix;
               })
             ];
+
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
@@ -49,12 +56,23 @@
         ];
       };
 
+      homeConfigurations.tco = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        extraSpecialArgs = { inherit inputs; };
+        modules = [
+          ./home/tco/home.nix
+        ];
+      };
+
       devShells.${system} = {
         ai = pkgs.mkShell {
           name = "ai-lab";
           buildInputs = with pkgs; [
-            python311 git
-            stdenv.cc.cc.lib zlib glib
+            python311
+            git
+            stdenv.cc.cc.lib
+            zlib
+            glib
             linuxPackages.nvidia_x11
             python311Packages.pip
           ];
@@ -66,10 +84,20 @@
         embedded = pkgs.mkShell {
           name = "embedded-lab";
           buildInputs = with pkgs; [
-            (rust-bin.stable.latest.default.override { extensions = [ "rust-src" "rust-analyzer" ]; })
+            (rust-bin.stable.latest.default.override {
+              extensions = [ "rust-src" "rust-analyzer" ];
+            })
             cargo-watch
-            gcc clang cmake gnumake gdb
-            arduino-ide arduino-cli esptool openocd minicom
+            gcc
+            clang
+            cmake
+            gnumake
+            gdb
+            arduino-ide
+            arduino-cli
+            esptool
+            openocd
+            minicom
             mosquitto
           ];
         };
