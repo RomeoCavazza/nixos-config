@@ -86,7 +86,8 @@
   };
 
   systemd.services.promtail.serviceConfig = {
-    SupplementaryGroups = [ "systemd-journal" ];
+    StateDirectory = "promtail";
+    CacheDirectory = "promtail";
     ReadWritePaths = [ "/var/lib/promtail" ];
   };
 
