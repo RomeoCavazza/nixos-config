@@ -76,11 +76,18 @@ nixos/
 
 <br>
 
-| Hardware & Modeling | Code Environment |
-|:---:|:---:|
-| <img src="./assets/screen-cad.png" alt="CAD Screen" width="100%"> | <img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%"> |
-| **System Metrics** | **Graphics Engine** |
-| <img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%"> | <img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%"> |
+| Visual Showcase |
+|:---:|
+| **Code Environment** |
+| <img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%"> |
+| **Virtualization** |
+| <img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%"> |
+| **Hardware & Modeling** |
+| <img src="./assets/screen-cad.png" alt="CAD Screen" width="100%"> |
+| **System Metrics** |
+| <img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%"> |
+| **Graphics Engine** |
+| <img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%"> |
 
 ---
 
