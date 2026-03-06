@@ -46,33 +46,25 @@ nixos/
 
 ## • Screenshots •
 
-<div align="center">
-  <img src="./assets/hero-video.gif" alt="Desktop demo" width="100%">
-</div>
+![Desktop demo](./assets/hero-video.gif)
 
 <br>
 
-<div align="center">
-  <img src="./assets/screen-waybar.png" alt="Waybar showcase" width="100%">
-  <p><em>Desktop Interface — <a href="./config/hypr/waybar">Waybar Configuration</a></em></p>
-</div>
+![Waybar showcase](./assets/screen-waybar.png)
+*Desktop Interface — [Waybar Configuration](./config/hypr/waybar)*
 
 <br>
 
 > [!TIP]
 > This setup ships with **two desktop environments** accessible via GDM — switch seamlessly between **Hyprland** and **GNOME** at login.
 
-<div align="center">
-  <h4>GNOME</h4>
-  <img src="./assets/gnome-desktop.png" alt="GNOME Desktop" width="100%">
-</div>
+### GNOME
+![GNOME Desktop](./assets/gnome-desktop.png)
 
 <br>
 
-<div align="center">
-  <h4>Hyprland</h4>
-  <img src="./assets/screen-fastfetch.png" alt="Hyprland Desktop" width="100%">
-</div>
+### Hyprland
+![Hyprland Desktop](./assets/screen-fastfetch.png)
 
 <br>
 
