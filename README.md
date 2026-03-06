@@ -15,7 +15,7 @@
 
 ---
 
-## • Overview •
+## Overview
 
 > [!IMPORTANT]
 > **Warning**: This configuration is tailored for my hardware. Don't blindly use these settings unless you know what they entail. Use at your own risk!
@@ -44,7 +44,7 @@ nixos/
 
 ---
 
-## • Screenshots •
+## Screenshots
 
 ![Desktop demo](./assets/hero-video.gif)
 
@@ -70,35 +70,40 @@ nixos/
 
 ### Code Environment
 <img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%">
+
 *Fully featured Neovim setup for efficient coding and development.*
 
 <br>
 
 ### Virtualization
 <img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
+
 *Seamless virtualization support for running isolated environments and testing.*
 
 <br>
 
 ### Hardware & Modeling
 <img src="./assets/screen-cad.png" alt="CAD Screen" width="100%">
+
 *Optimized performance for demanding CAD and 3D modeling workloads.*
 
 <br>
 
 ### System Metrics
 <img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%">
+
 *Real-time system monitoring and resource management.*
 
 <br>
 
 ### Graphics Engine
 <img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
+
 *Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
 
 ---
 
-## • Installation •
+## Installation
 
 ### Prerequisites
 - [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso)
