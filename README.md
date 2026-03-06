@@ -76,18 +76,43 @@ nixos/
 
 <br>
 
-| Visual Showcase |
-|:---:|
-| **Code Environment** |
-| <img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%"> |
-| **Virtualization** |
-| <img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%"> |
-| **Hardware & Modeling** |
-| <img src="./assets/screen-cad.png" alt="CAD Screen" width="100%"> |
-| **System Metrics** |
-| <img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%"> |
-| **Graphics Engine** |
-| <img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%"> |
+<div align="center">
+  <h4>Code Environment</h4>
+  <img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%">
+  <p><em>Fully featured Neovim setup for efficient coding and development.</em></p>
+</div>
+
+<br>
+
+<div align="center">
+  <h4>Virtualization</h4>
+  <img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
+  <p><em>Seamless virtualization support for running isolated environments and testing.</em></p>
+</div>
+
+<br>
+
+<div align="center">
+  <h4>Hardware & Modeling</h4>
+  <img src="./assets/screen-cad.png" alt="CAD Screen" width="100%">
+  <p><em>Optimized performance for demanding CAD and 3D modeling workloads.</em></p>
+</div>
+
+<br>
+
+<div align="center">
+  <h4>System Metrics</h4>
+  <img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%">
+  <p><em>Real-time system monitoring and resource management.</em></p>
+</div>
+
+<br>
+
+<div align="center">
+  <h4>Graphics Engine</h4>
+  <img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
+  <p><em>Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.</em></p>
+</div>
 
 ---
 
