@@ -23,6 +23,105 @@
 > [!NOTE]
 > This repository uses a modular structure, allowing you to easily toggle specific services (databases, AI, monitoring) by importing the corresponding files in `configuration.nix`.
 
+```
+nixos/
+├── config/
+│   ├── bin/          # Custom scripts
+│   ├── doom/         # Doom Emacs
+│   ├── foot/         # Terminal
+│   └── hypr/         # Hyprland + Waybar
+├── home/tco/         # Home Manager
+├── modules/          # Toggleable system modules
+│   ├── databases.nix
+│   ├── nvidia-prime.nix
+│   ├── ollama.nix
+│   ├── observability.nix
+│   └── ...
+├── configuration.nix
+├── flake.nix
+└── flake.lock
+```
+
+---
+
+## Screenshots
+
+![Desktop demo](./assets/hero-video.gif)
+
+<br>
+
+![Waybar showcase](./assets/screen-waybar.png)
+*Desktop Interface — [Waybar Configuration](./config/hypr/waybar)*
+
+<br>
+
+> [!TIP]
+> This setup ships with **two desktop environments** accessible via GDM — switch seamlessly between **Hyprland** and **GNOME** at login.
+
+#### Session at login
+
+```mermaid
+flowchart TB
+  Boot["Boot"]
+  GDM["GDM"]
+  H["Hyprland"]
+  G["GNOME"]
+
+  Boot --> GDM
+  GDM --> H
+  GDM --> G
+
+  style H fill:#58E1FF33
+  style G fill:#4A86CF33
+```
+
+### GNOME
+![GNOME Desktop](./assets/gnome-desktop.png)
+
+<br>
+
+### Hyprland
+![Hyprland Desktop](./assets/screen-fastfetch.png)
+
+<br>
+
+### Code Environment
+<img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%">
+
+*Fully featured Neovim setup for efficient coding and development.*
+
+<br>
+
+### Virtualization
+<img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
+
+*Seamless virtualization support for running isolated environments and testing.*
+
+<br>
+
+### Hardware & Modeling
+<img src="./assets/screen-cad.png" alt="CAD Screen" width="100%">
+
+*Optimized performance for demanding CAD and 3D modeling workloads.*
+
+<br>
+
+### System Metrics
+<img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%">
+
+*Real-time system monitoring and resource management.*
+
+<br>
+
+### Graphics Engine
+<img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
+
+*Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
+
+---
+
+## Diagrams
+
 #### Configuration flow
 
 ```mermaid
@@ -85,102 +184,19 @@ flowchart LR
   home -.-> cfg
 ```
 
-#### Session at login
+#### Installation steps
 
 ```mermaid
-flowchart TB
-  Boot["Boot"]
-  GDM["GDM"]
-  H["Hyprland"]
-  G["GNOME"]
+flowchart LR
+  A["1. Backup\n/etc/nixos"]
+  B["2. Clone & copy\ninto /etc/nixos"]
+  C["3. Apply\nnixos-rebuild switch"]
 
-  Boot --> GDM
-  GDM --> H
-  GDM --> G
-
-  style H fill:#58E1FF33
-  style G fill:#4A86CF33
+  A --> B --> C
+  style A fill:#e0e0e0
+  style B fill:#e0e0e0
+  style C fill:#e0e0e0
 ```
-
-#### Directory tree
-
-```
-nixos/
-├── config/
-│   ├── bin/          # Custom scripts
-│   ├── doom/         # Doom Emacs
-│   ├── foot/         # Terminal
-│   └── hypr/         # Hyprland + Waybar
-├── home/tco/         # Home Manager
-├── modules/          # Toggleable system modules
-│   ├── databases.nix
-│   ├── nvidia-prime.nix
-│   ├── ollama.nix
-│   ├── observability.nix
-│   └── ...
-├── configuration.nix
-├── flake.nix
-└── flake.lock
-```
-
----
-
-## Screenshots
-
-![Desktop demo](./assets/hero-video.gif)
-
-<br>
-
-![Waybar showcase](./assets/screen-waybar.png)
-*Desktop Interface — [Waybar Configuration](./config/hypr/waybar)*
-
-<br>
-
-> [!TIP]
-> This setup ships with **two desktop environments** accessible via GDM — switch seamlessly between **Hyprland** and **GNOME** at login.
-
-### GNOME
-![GNOME Desktop](./assets/gnome-desktop.png)
-
-<br>
-
-### Hyprland
-![Hyprland Desktop](./assets/screen-fastfetch.png)
-
-<br>
-
-### Code Environment
-<img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%">
-
-*Fully featured Neovim setup for efficient coding and development.*
-
-<br>
-
-### Virtualization
-<img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
-
-*Seamless virtualization support for running isolated environments and testing.*
-
-<br>
-
-### Hardware & Modeling
-<img src="./assets/screen-cad.png" alt="CAD Screen" width="100%">
-
-*Optimized performance for demanding CAD and 3D modeling workloads.*
-
-<br>
-
-### System Metrics
-<img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%">
-
-*Real-time system monitoring and resource management.*
-
-<br>
-
-### Graphics Engine
-<img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
-
-*Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
 
 ---
 
@@ -194,18 +210,6 @@ nixos/
 
 > [!TIP]
 > You can test individual development environments without installing them globally by using `nix develop .#ai` or `nix develop .#embedded`.
-
-```mermaid
-flowchart LR
-  A["1. Backup\n/etc/nixos"]
-  B["2. Clone & copy\ninto /etc/nixos"]
-  C["3. Apply\nnixos-rebuild switch"]
-
-  A --> B --> C
-  style A fill:#f9f9f9
-  style B fill:#f9f9f9
-  style C fill:#e8f5e9
-```
 
 1. **Backup your current config**:
    ```bash
