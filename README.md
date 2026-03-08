@@ -46,16 +46,12 @@ nixos/
 
 ## Preview
 
-<img src="./assets/background.png" alt="Wallpaper" width="65%">
-
-<br>
-
 ![Desktop demo](./assets/hero-video.gif)
 
 <br>
 
 ![Waybar showcase](./assets/screen-waybar.png)
-*Desktop Interface — [Waybar Configuration](./config/hypr/waybar)*
+*Desktop Interface — [Waybar Configuration](./config/hypr/waybar) · [Wallpaper](./assets/background.png)*
 
 <br>
 
