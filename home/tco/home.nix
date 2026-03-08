@@ -221,7 +221,7 @@ in
       if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
         . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
-      export PATH="$HOME/.lmstudio/bin:$HOME/.local/bin:$PATH"
+      export PATH="$HOME/.lmstudio/bin:$HOME/.npm-global/bin:$HOME/.local/bin:$PATH"
     '';
     shellAliases = {
       g = "git";
@@ -304,7 +304,7 @@ EOF
       Restart = "on-failure";
       RestartSec = 1;
       Environment = [
-        "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin:%h/.local/bin:%h/.lmstudio/bin"
+        "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin:%h/.local/bin:%h/.npm-global/bin:%h/.lmstudio/bin"
         "XDG_CACHE_HOME=%h/.cache"
       ];
     };
