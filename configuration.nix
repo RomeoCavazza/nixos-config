@@ -206,6 +206,10 @@ EOF
   services.logrotate.enable = true;
 
   environment.systemPackages = with pkgs; [
+    (python313.withPackages (ps: with ps; [
+      pydantic
+      anyio
+    ]))
     adwaita-icon-theme
     bibata-cursors
     brightnessctl
