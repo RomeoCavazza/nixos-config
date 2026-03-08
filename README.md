@@ -23,6 +23,87 @@
 > [!NOTE]
 > This repository uses a modular structure, allowing you to easily toggle specific services (databases, AI, monitoring) by importing the corresponding files in `configuration.nix`.
 
+#### Configuration flow
+
+```mermaid
+flowchart TB
+  subgraph flake["flake.nix"]
+    inputs["nixpkgs · home-manager · rust-overlay · hyprchroma · nix-snapd"]
+    outputs["nixosConfigurations.nixos"]
+    shells["devShells: ai · embedded"]
+  end
+
+  subgraph system["System"]
+    config["configuration.nix"]
+    hardware["hardware-configuration.nix"]
+    mods["modules/*.nix"]
+  end
+
+  subgraph user["User"]
+    home["home/tco/home.nix"]
+  end
+
+  inputs --> outputs
+  outputs --> config
+  config --> hardware
+  config --> mods
+  outputs --> home
+  inputs --> shells
+```
+
+#### Repository structure
+
+```mermaid
+flowchart LR
+  subgraph root["Repository root"]
+    F["flake.nix"]
+    C["configuration.nix"]
+    H["hardware-configuration.nix"]
+  end
+
+  subgraph cfg["config/"]
+    bin["bin/"]
+    doom["doom/"]
+    foot["foot/"]
+    hypr["hypr/"]
+    rofi["rofi/"]
+  end
+
+  subgraph mod["modules/"]
+    db["databases.nix"]
+    nv["nvidia-prime.nix"]
+    ollama["ollama.nix"]
+    obs["observability.nix"]
+    virt["virtualisation.nix"]
+    more["..."]
+  end
+
+  F --> C
+  C --> H
+  C --> mod
+  C --> home["home/tco/home.nix"]
+  home -.-> cfg
+```
+
+#### Session at login
+
+```mermaid
+flowchart TB
+  Boot["Boot"]
+  GDM["GDM"]
+  H["Hyprland"]
+  G["GNOME"]
+
+  Boot --> GDM
+  GDM --> H
+  GDM --> G
+
+  style H fill:#58E1FF33
+  style G fill:#4A86CF33
+```
+
+#### Directory tree
+
 ```
 nixos/
 ├── config/
@@ -113,6 +194,18 @@ nixos/
 
 > [!TIP]
 > You can test individual development environments without installing them globally by using `nix develop .#ai` or `nix develop .#embedded`.
+
+```mermaid
+flowchart LR
+  A["1. Backup\n/etc/nixos"]
+  B["2. Clone & copy\ninto /etc/nixos"]
+  C["3. Apply\nnixos-rebuild switch"]
+
+  A --> B --> C
+  style A fill:#f9f9f9
+  style B fill:#f9f9f9
+  style C fill:#e8f5e9
+```
 
 1. **Backup your current config**:
    ```bash
