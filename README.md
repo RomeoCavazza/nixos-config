@@ -150,54 +150,6 @@ flowchart TB
   inputs --> shells
 ```
 
-#### Repository structure
-
-```mermaid
-flowchart LR
-  subgraph root["Repository root"]
-    F["flake.nix"]
-    C["configuration.nix"]
-    H["hardware-configuration.nix"]
-  end
-
-  subgraph cfg["config/"]
-    bin["bin/"]
-    doom["doom/"]
-    foot["foot/"]
-    hypr["hypr/"]
-    rofi["rofi/"]
-  end
-
-  subgraph mod["modules/"]
-    db["databases.nix"]
-    nv["nvidia-prime.nix"]
-    ollama["ollama.nix"]
-    obs["observability.nix"]
-    virt["virtualisation.nix"]
-    more["..."]
-  end
-
-  F --> C
-  C --> H
-  C --> mod
-  C --> home["home/tco/home.nix"]
-  home -.-> cfg
-```
-
-#### Installation steps
-
-```mermaid
-flowchart LR
-  A["1. Backup\n/etc/nixos"]
-  B["2. Clone & copy\ninto /etc/nixos"]
-  C["3. Apply\nnixos-rebuild switch"]
-
-  A --> B --> C
-  style A fill:#e0e0e0
-  style B fill:#e0e0e0
-  style C fill:#e0e0e0
-```
-
 ---
 
 ## Installation
