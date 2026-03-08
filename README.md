@@ -44,7 +44,11 @@ nixos/
 
 ---
 
-## Screenshots
+## Preview
+
+<img src="./assets/background.png" alt="Wallpaper" width="65%">
+
+<br>
 
 ![Desktop demo](./assets/hero-video.gif)
 
