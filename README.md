@@ -122,18 +122,6 @@ flowchart TB
 
 ## Diagrams
 
-#### PlantUML (generated)
-
-| Overview | Theme flow | Boot & session |
-| -------- | ---------- | -------------- |
-| ![System overview](./docs/diagrams/png/system-overview.png) | ![Theme flow](./docs/diagrams/png/theme-flow.png) | ![Boot session](./docs/diagrams/png/boot-session.png) |
-
-| Module imports | Flake outputs |
-| -------------- | ------------- |
-| ![Module deps](./docs/diagrams/png/module-deps.png) | ![Flake outputs](./docs/diagrams/png/flake-outputs.png) |
-
-*Regenerate PNGs from repo root: `nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml`*
-
 #### Configuration flow (Mermaid)
 
 ```mermaid
@@ -176,21 +164,9 @@ flowchart TB
 
 The root `README.md` is the main source of truth for this repository. Extra files in `docs/` are only lightweight annexes:
 
-- [`docs/cloc-report.md`](./docs/cloc-report.md) for the [cloc](https://github.com/AlDanial/cloc) report
-- [`docs/specification.txt`](./docs/specification.txt) for a dense glossary of the configuration
-- [`docs/diagrams/`](./docs/diagrams/) — PlantUML sources (`.puml`) and generated images in [`docs/diagrams/png/`](./docs/diagrams/png/). Regenerate: `nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml`
-
----
-
-## Code Metrics
-
-Metrics are produced by [cloc](https://github.com/AlDanial/cloc). To regenerate the report from the repo root:
-
-```bash
-nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
-```
-
-See [`docs/cloc-report.md`](./docs/cloc-report.md) for the full report.
+- [`docs/cloc-report.md`](./docs/cloc-report.md) — rapport cloc (brut)
+- [`docs/specification.txt`](./docs/specification.txt) — glossaire dense de la configuration
+- [`docs/README.md`](./docs/README.md) — annexes, diagrammes PlantUML et commandes de régénération
 
 ---
 
