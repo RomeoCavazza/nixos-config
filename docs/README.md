@@ -1,6 +1,6 @@
-# Documentation (annex)
+# Documentation
 
-The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and PlantUML diagrams.
+The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and diagrams (Mermaid in this file; PNG exports in `diagrams/png/`).
 
 ---
 
@@ -18,7 +18,7 @@ docs/
 
 ---
 
-## 1. Glossary (spec)
+## 1. Glossary
 
 [**specification.txt**](./specification.txt) — Dense dictionary of the configuration: Nix options, paths, environment variables, commands, modules, diagrams. Alphabetical or thematic entries for quick lookup.
 
@@ -26,7 +26,21 @@ docs/
 
 ## 2. Raw cloc results
 
-The [cloc](https://github.com/AlDanial/cloc) report is stored as produced. To regenerate from the repository root:
+| Language | files | blank | comment | code |
+| -------- | ----: | ----: | ------: | ---: |
+| Bourne Again Shell | 40 | 310 | 250 | 1677 |
+| Nix | 18 | 166 | 93 | 1174 |
+| Bourne Shell | 12 | 85 | 103 | 247 |
+| Text | 1 | 100 | 0 | 218 |
+| Markdown | 2 | 67 | 0 | 174 |
+| JSON | 1 | 13 | 0 | 137 |
+| CSS | 2 | 30 | 20 | 125 |
+| PlantUML | 5 | 19 | 0 | 86 |
+| Lisp | 3 | 22 | 23 | 77 |
+| INI | 1 | 7 | 0 | 33 |
+| **SUM** | **85** | **819** | **489** | **3948** |
+
+To regenerate from the repository root:
 
 ```bash
 nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
@@ -36,9 +50,9 @@ Full file: [**cloc-report.md**](./cloc-report.md).
 
 ---
 
-## 3. PlantUML diagrams
+## 3. Diagrams
 
-Sources: `diagrams/*.puml`. Images: [**diagrams/png/**](./diagrams/png/). To regenerate PNGs from the repository root:
+Sources: `diagrams/*.puml`. PNG exports: [**diagrams/png/**](./diagrams/png/). To regenerate PNGs from the repository root:
 
 ```bash
 nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml
@@ -48,7 +62,21 @@ nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*
 
 ### System overview
 
-<img src="./diagrams/png/system-overview.png" width="100%" alt="System overview" />
+```mermaid
+flowchart LR
+  inputs[Flake inputs]
+  flake[flake.nix]
+  system[System layer]
+  user[User layer]
+  shells[Dev shells]
+  config[config/]
+
+  inputs --> flake
+  flake --> system
+  flake --> user
+  flake --> shells
+  user --> config
+```
 
 The flake is the single entry point: it consumes inputs (nixpkgs, home-manager, rust-overlay, hyprchroma, nix-snapd) and produces the system configuration (configuration.nix, hardware-configuration.nix, modules), the user configuration (home/tco/home.nix), and dev shells (ai, embedded).
 
@@ -56,7 +84,23 @@ The flake is the single entry point: it consumes inputs (nixpkgs, home-manager, 
 
 ### Seaglass theme propagation
 
-<img src="./diagrams/png/theme-flow.png" width="100%" alt="Theme flow" />
+```mermaid
+flowchart TB
+  theme[Seaglass theme #94E2D5]
+  hypr[Hyprland<br/>seaglass.conf, tokens.conf]
+  waybar[Waybar<br/>mocha.css, style.css]
+  rofi[Rofi<br/>column-tco.rasi]
+  foot[Foot<br/>foot.ini]
+  hyprchroma[Hyprchroma tint]
+  gtk[GTK / Icons<br/>Adwaita-dark, Papirus-Dark]
+
+  theme --> hypr
+  theme --> waybar
+  theme --> rofi
+  hypr --> foot
+  waybar --> hyprchroma
+  rofi --> gtk
+```
 
 The Seaglass visual theme (accent #94E2D5) is applied in the config layer (Hyprland, Waybar, Rofi) and then in rendering (Foot, Hyprchroma, GTK/icons Adwaita-dark and Papirus-Dark).
 
@@ -64,7 +108,18 @@ The Seaglass visual theme (accent #94E2D5) is applied in the config layer (Hyprl
 
 ### Boot and session choice
 
-<img src="./diagrams/png/boot-session.png" width="100%" alt="Boot and session" />
+```mermaid
+flowchart TB
+  Boot[Boot]
+  sb[systemd-boot]
+  GDM[GDM]
+  H[Hyprland + XWayland<br/>Waybar, Rofi, Foot]
+  G[GNOME Desktop<br/>Adwaita, Papirus]
+
+  Boot --> sb --> GDM
+  GDM --> H
+  GDM --> G
+```
 
 At boot, systemd-boot then GDM allow choosing Hyprland (XWayland, Waybar, Rofi, Foot) or GNOME (Adwaita, Papirus).
 
@@ -72,7 +127,27 @@ At boot, systemd-boot then GDM allow choosing Hyprland (XWayland, Waybar, Rofi, 
 
 ### Module imports (configuration.nix)
 
-<img src="./diagrams/png/module-deps.png" width="100%" alt="Module dependencies" />
+```mermaid
+flowchart TB
+  subgraph config["configuration.nix"]
+    hw[hardware-configuration.nix]
+    nv[nvidia-prime.nix]
+    virt[virtualisation.nix]
+    emacs[emacs.nix]
+    sci[science-data.nix]
+    launcher[launcher.nix]
+    starship[starship.nix]
+    db[databases.nix]
+    ollama[ollama.nix]
+    nginx[nginx.nix]
+    obs[observability.nix]
+  end
+
+  hw --> nv
+  hw --> virt
+  emacs --> sci --> launcher --> starship
+  db --> ollama --> nginx --> obs
+```
 
 configuration.nix imports hardware-configuration.nix and optional modules (nvidia-prime, virtualisation, emacs, science-data, launcher, starship, databases, ollama, nginx, observability). Optional links mainly concern hardware (nvidia-prime, virtualisation).
 
@@ -80,18 +155,23 @@ configuration.nix imports hardware-configuration.nix and optional modules (nvidi
 
 ### Flake outputs
 
-<img src="./diagrams/png/flake-outputs.png" width="100%" alt="Flake outputs" />
+```mermaid
+flowchart LR
+  subgraph flake["flake.nix"]
+    nixos[nixosConfigurations.nixos]
+    home[homeConfigurations.tco]
+    shells[devShells.x86_64-linux]
+  end
+
+  sys[configuration.nix + modules]
+  hm[home/tco/home.nix]
+  ai[ai: python311, pip, nvidia]
+  emb[embedded: rust, gdb, openocd, arduino]
+
+  nixos --> sys
+  home --> hm
+  shells --> ai
+  shells --> emb
+```
 
 The flake exposes nixosConfigurations.nixos (full system config), homeConfigurations.tco (Home Manager), and devShells (ai: Python/pip/NVIDIA; embedded: Rust, gdb, openocd, Arduino, etc.).
-
----
-
-## Files in `diagrams/`
-
-| File | Purpose |
-| ---- | ------- |
-| **system-overview.puml** | Flake → System / User / Dev shells layers |
-| **theme-flow.puml** | Seaglass theme propagation |
-| **boot-session.puml** | Boot → GDM → Hyprland or GNOME |
-| **module-deps.puml** | Module imports in configuration.nix |
-| **flake-outputs.puml** | nixosConfigurations, homeConfigurations, devShells |

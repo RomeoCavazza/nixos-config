@@ -122,11 +122,31 @@ flowchart TB
 
 ## Documentation
 
-The root `README.md` is the main source of truth for this repository. Extra files in `docs/` are only lightweight annexes:
+The root `README.md` is the main source of truth for this repository. Annexes live in `docs/`:
+
+- **[`docs/README.md`](./docs/README.md)** — annexes, PlantUML diagrams, and regeneration commands
+
+```
+docs/
+├── cloc-report.md
+├── diagrams/
+│   ├── boot-session.puml
+│   ├── flake-outputs.puml
+│   ├── module-deps.puml
+│   ├── png/
+│   │   ├── boot-session.png
+│   │   ├── flake-outputs.png
+│   │   ├── module-deps.png
+│   │   ├── system-overview.png
+│   │   └── theme-flow.png
+│   ├── system-overview.puml
+│   └── theme-flow.puml
+├── README.md
+└── specification.txt
+```
 
 - [`docs/cloc-report.md`](./docs/cloc-report.md) — raw cloc report
 - [`docs/specification.txt`](./docs/specification.txt) — dense configuration glossary
-- [`docs/README.md`](./docs/README.md) — annexes, PlantUML diagrams, and regeneration commands
 
 ---
 
