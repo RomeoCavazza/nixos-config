@@ -120,53 +120,13 @@ flowchart TB
 
 ---
 
-## Diagrams
-
-#### Configuration flow (Mermaid)
-
-```mermaid
-flowchart LR
-  inputs["Inputs<br/>nixpkgs, home-manager,<br/>rust-overlay, hyprchroma, nix-snapd"]
-  flake["flake.nix"]
-  system["System config<br/>configuration.nix + hardware-configuration.nix + modules/*.nix"]
-  home["User config<br/>home/tco/home.nix"]
-  shells["Dev shells<br/>ai, embedded"]
-
-  inputs --> flake
-  flake --> system
-  flake --> home
-  flake --> shells
-```
-
-#### Theme architecture (Hyprland)
-
-```mermaid
-flowchart TB
-  theme["Seaglass theme<br/>accent #94E2D5"]
-  hypr["Hyprland<br/>seaglass.conf + tokens.conf"]
-  waybar["Waybar<br/>mocha.css + style.css"]
-  rofi["Rofi<br/>column-tco.rasi"]
-  foot["Foot<br/>foot.ini"]
-  hyprchroma["Hyprchroma<br/>visual tint"]
-  gtk["GTK / Icons<br/>Adwaita-dark + Papirus-Dark"]
-
-  theme --> hypr
-  theme --> waybar
-  theme --> rofi
-  hypr --> foot
-  waybar --> hyprchroma
-  rofi --> gtk
-```
-
----
-
 ## Documentation
 
 The root `README.md` is the main source of truth for this repository. Extra files in `docs/` are only lightweight annexes:
 
-- [`docs/cloc-report.md`](./docs/cloc-report.md) — rapport cloc (brut)
-- [`docs/specification.txt`](./docs/specification.txt) — glossaire dense de la configuration
-- [`docs/README.md`](./docs/README.md) — annexes, diagrammes PlantUML et commandes de régénération
+- [`docs/cloc-report.md`](./docs/cloc-report.md) — raw cloc report
+- [`docs/specification.txt`](./docs/specification.txt) — dense configuration glossary
+- [`docs/README.md`](./docs/README.md) — annexes, PlantUML diagrams, and regeneration commands
 
 ---
 

@@ -1,28 +1,44 @@
-# Documentation annexe
+# Documentation (annex)
 
-La source de vérité du dépôt est le [README à la racine](../README.md). Ce dossier contient les annexes : rapport cloc en brut, glossaire et diagrammes PlantUML.
+The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and PlantUML diagrams.
 
 ---
 
-## Rapport cloc (brut)
+## Tree of `docs/`
 
-Le rapport [cloc](https://github.com/AlDanial/cloc) est enregistré tel quel dans [**cloc-report.md**](./cloc-report.md). Pour le régénérer depuis la racine du dépôt :
+```
+docs/
+├── README.md           # this file
+├── cloc-report.md      # raw cloc output
+├── specification.txt   # dense configuration glossary
+└── diagrams/
+    ├── *.puml          # PlantUML sources (5 files)
+    └── png/            # generated images (*.png)
+```
+
+---
+
+## 1. Glossary (spec)
+
+[**specification.txt**](./specification.txt) — Dense dictionary of the configuration: Nix options, paths, environment variables, commands, modules, diagrams. Alphabetical or thematic entries for quick lookup.
+
+---
+
+## 2. Raw cloc results
+
+The [cloc](https://github.com/AlDanial/cloc) report is stored as produced. To regenerate from the repository root:
 
 ```bash
 nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
 ```
 
----
-
-## Glossaire
-
-[**specification.txt**](./specification.txt) — Dictionnaire dense de la configuration (options Nix, chemins, variables, commandes, diagrammes).
+Full file: [**cloc-report.md**](./cloc-report.md).
 
 ---
 
-## Diagrammes PlantUML
+## 3. PlantUML diagrams
 
-Sources des diagrammes : `diagrams/*.puml`. Images générées : [`diagrams/png/`](./diagrams/png/). Pour régénérer les PNG depuis la racine :
+Sources: `diagrams/*.puml`. Images: [**diagrams/png/**](./diagrams/png/). To regenerate PNGs from the repository root:
 
 ```bash
 nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml
@@ -30,52 +46,52 @@ nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*
 
 ---
 
-### Vue d’ensemble du système
+### System overview
 
 <img src="./diagrams/png/system-overview.png" width="100%" alt="System overview" />
 
-Le flake est le point d’entrée : il consomme les inputs (nixpkgs, home-manager, rust-overlay, hyprchroma, nix-snapd) et produit la configuration système (configuration.nix, hardware-configuration.nix, modules), la configuration utilisateur (home/tco/home.nix) et les dev shells (ai, embedded).
+The flake is the single entry point: it consumes inputs (nixpkgs, home-manager, rust-overlay, hyprchroma, nix-snapd) and produces the system configuration (configuration.nix, hardware-configuration.nix, modules), the user configuration (home/tco/home.nix), and dev shells (ai, embedded).
 
 ---
 
-### Propagation du thème Seaglass
+### Seaglass theme propagation
 
 <img src="./diagrams/png/theme-flow.png" width="100%" alt="Theme flow" />
 
-Le thème visuel Seaglass (accent #94E2D5) est décliné dans la couche config (Hyprland, Waybar, Rofi) puis dans le rendu (Foot, Hyprchroma, GTK/icônes Adwaita-dark et Papirus-Dark).
+The Seaglass visual theme (accent #94E2D5) is applied in the config layer (Hyprland, Waybar, Rofi) and then in rendering (Foot, Hyprchroma, GTK/icons Adwaita-dark and Papirus-Dark).
 
 ---
 
-### Boot et choix de session
+### Boot and session choice
 
 <img src="./diagrams/png/boot-session.png" width="100%" alt="Boot and session" />
 
-Au démarrage, systemd-boot puis GDM permettent de choisir Hyprland (XWayland, Waybar, Rofi, Foot) ou GNOME (Adwaita, Papirus).
+At boot, systemd-boot then GDM allow choosing Hyprland (XWayland, Waybar, Rofi, Foot) or GNOME (Adwaita, Papirus).
 
 ---
 
-### Imports des modules (configuration.nix)
+### Module imports (configuration.nix)
 
 <img src="./diagrams/png/module-deps.png" width="100%" alt="Module dependencies" />
 
-configuration.nix importe hardware-configuration.nix et les modules optionnels (nvidia-prime, virtualisation, emacs, science-data, launcher, starship, databases, ollama, nginx, observability). Les liens optionnels concernent surtout le matériel (nvidia-prime, virtualisation).
+configuration.nix imports hardware-configuration.nix and optional modules (nvidia-prime, virtualisation, emacs, science-data, launcher, starship, databases, ollama, nginx, observability). Optional links mainly concern hardware (nvidia-prime, virtualisation).
 
 ---
 
-### Outputs du flake
+### Flake outputs
 
 <img src="./diagrams/png/flake-outputs.png" width="100%" alt="Flake outputs" />
 
-Le flake expose nixosConfigurations.nixos (configuration complète système), homeConfigurations.tco (Home Manager) et devShells (ai : Python/pip/NVIDIA ; embedded : Rust, gdb, openocd, Arduino, etc.).
+The flake exposes nixosConfigurations.nixos (full system config), homeConfigurations.tco (Home Manager), and devShells (ai: Python/pip/NVIDIA; embedded: Rust, gdb, openocd, Arduino, etc.).
 
 ---
 
-## Fichiers dans `diagrams/`
+## Files in `diagrams/`
 
-| Fichier | Rôle |
-| ------- | ---- |
-| **system-overview.puml** | Flake → couches System / User / Dev shells |
-| **theme-flow.puml** | Propagation du thème Seaglass |
-| **boot-session.puml** | Boot → GDM → Hyprland ou GNOME |
-| **module-deps.puml** | Imports des modules dans configuration.nix |
+| File | Purpose |
+| ---- | ------- |
+| **system-overview.puml** | Flake → System / User / Dev shells layers |
+| **theme-flow.puml** | Seaglass theme propagation |
+| **boot-session.puml** | Boot → GDM → Hyprland or GNOME |
+| **module-deps.puml** | Module imports in configuration.nix |
 | **flake-outputs.puml** | nixosConfigurations, homeConfigurations, devShells |
