@@ -150,9 +150,37 @@ flowchart TB
   inputs --> shells
 ```
 
----
+#### Theme architecture (Hyprland)
 
-## Installation
+```mermaid
+flowchart TB
+  subgraph theme["THÈME SEAGLASS"]
+    direction TB
+    t1["Bleu Cyan #94E2D5"]
+  end
+
+  theme --> hypr
+  theme --> waybar
+  theme --> rofi
+
+  subgraph layer1["Couche 1 — Config"]
+    hypr["HYPRLAND<br/>seaglass.conf · tokens.conf"]
+    waybar["WAYBAR<br/>mocha.css · style.css"]
+    rofi["ROFI<br/>column-tco.rasi"]
+  end
+
+  hypr --> foot
+  waybar --> hyprchroma
+  rofi --> gtk
+
+  subgraph layer2["Couche 2 — Rendu"]
+    foot["FOOT<br/>foot.ini (cyan #6)"]
+    hyprchroma["HYPRCHROMA<br/>plugin (tint bleu)"]
+    gtk["GTK<br/>Adwaita-dark · Papirus-Dark"]
+  end
+```
+
+---
 
 ### Prerequisites
 - [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso)
