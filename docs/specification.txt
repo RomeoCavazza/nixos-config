@@ -1,0 +1,316 @@
+================================================================================
+setup-os — Configuration dictionary (dense glossary)
+================================================================================
+
+A
+---
+allowUnfree (nixpkgs.config)
+  Allows non-free (proprietary) packages. Required for NVIDIA, Chrome, etc.
+
+antigravity (home.file.".local/bin/antigravity")
+  Wrapper script that runs /etc/nixos/config/bin/antigravity. Lets you invoke the system binary from the user profile.
+
+appimage-run (environment.systemPackages)
+  Run AppImage binaries without system-wide installation.
+
+assets/
+  Root folder: media for the README (logo, screenshots, wallpaper, hero-video).
+
+auto-optimise-store (nix.settings)
+  Enables automatic Nix store optimisation (hard links to save space).
+
+
+B
+---
+boot.blacklistedKernelModules
+  Kernel modules disabled. Here: iTCO_wdt, iTCO_vendor_support (avoid watchdog conflicts).
+
+boot.kernelModules
+  Modules loaded at boot: i2c-dev, i2c-i801 (I²C bus for sensors etc.).
+
+boot.kernelParams
+  Kernel parameters: nvidia-drm.modeset=1, pcie_aspm=off.
+
+boot.loader.systemd-boot
+  Bootloader. configurationLimit = 1, editor = false, timeout = null. Windows 11 entry via extraEntries."windows.conf".
+
+build (fileSystems."/build")
+  Bind mount to /home/nix-build for the Nix build directory (sandbox).
+
+
+C
+---
+config/
+  Source configuration tree (hypr, waybar, rofi, foot, doom, bin, swappy).
+
+config/bin/
+  Custom scripts: antigravity, cursor, dw-apply, dw-daemon, dw-toggle, dw-toggle-global, edex-conky-toggle, edex-toggle, hypr-plugins-init, legion-pulse, legion-toggle.
+
+configuration.nix
+  NixOS system entry point. Imports hardware-configuration.nix and the modules listed in imports.
+
+cursor (home.file.".local/bin/cursor")
+  Symlink outside store to /etc/nixos/config/bin/cursor (Cursor editor).
+
+
+D
+---
+databases.nix (modules/)
+  Optional module: local database tools and services.
+
+devShells (flake outputs)
+  Development shells. .#ai: Python 3.11, pip, NVIDIA libs. .#embedded: Rust (rust-src, rust-analyzer), gcc, clang, cmake, gdb, arduino-ide/cli, esptool, openocd, minicom, mosquitto.
+
+direnv (programs.direnv)
+  Automatic per-directory environment loading. nix-direnv enabled.
+
+download-buffer-size (nix.settings)
+  Nix download buffer size (268435256 bytes).
+
+dw-apply, dw-toggle, dw-toggle-global, dw-daemon (config/bin + home.file)
+  Scripts and user service for Hyprland DarkWindow (tint/dark windows). dw-daemon: systemd user service, wantedBy graphical-session.target.
+
+
+E
+---
+edex.nix (modules/)
+  Optional module (not imported in current configuration.nix): edex configuration.
+
+ELECTRON_OZONE_PLATFORM_HINT (home.sessionVariables)
+  "x11" — forces Electron to use X11 for Wayland compatibility.
+
+emacs.nix (modules/)
+  Emacs / Doom configuration (referenced in config/doom).
+
+environment.sessionVariables
+  NIXOS_OZONE_WL = "1", EDITOR = "vim".
+
+environment.systemPackages
+  System-wide package list (python313+pydantic+anyio, adwaita-icon-theme, bibata-cursors, brightnessctl, appimage-run, fuse, bash, vim, neovim, git, wget, curl, jq, lsof, iw, ethtool, pciutils, usbutils, tree, ripgrep, fd, fzf, fastfetch, btop, htop, kitty, foot, firefox, google-chrome, wl-clipboard, pavucontrol, networkmanager, polkit_gnome, nix-ld, mesa, libglvnd, libdrm).
+
+experimental-features (nix.settings)
+  "nix-command" and "flakes".
+
+
+F
+---
+fileSystems."/build"
+  Bind mount /home/nix-build -> /build for the Nix sandbox.
+
+flake.lock
+  Lockfile for flake inputs (exact revisions). Keep for reproducibility.
+
+flake.nix
+  Declares inputs (nixpkgs, nixpkgs-stable, home-manager, rust-overlay, hyprchroma, nix-snapd) and outputs (nixosConfigurations.nixos, homeConfigurations.tco, devShells).
+
+foot (config/foot/, home.file.".config/foot")
+  Foot terminal configuration (foot.ini). Theme and colour palette.
+
+Flake inputs
+  nixpkgs (nixos-unstable), nixpkgs-stable (24.11), home-manager, rust-overlay, hyprchroma, nix-snapd. home-manager and rust-overlay follow nixpkgs.
+
+flatpak (services.flatpak)
+  Flatpak support enabled.
+
+
+G
+---
+GDM (services.displayManager.gdm)
+  Display manager. Allows choosing Hyprland or GNOME session.
+
+gnome (services.desktopManager.gnome)
+  GNOME desktop enabled.
+
+guix (services.guix)
+  Guix service enabled. Flake overlay: guix provided by pkgs-stable.guix.
+
+GTK (home: gtk)
+  theme name = "Adwaita-dark", iconTheme = "Papirus-Dark", cursorTheme = "Bibata-Modern-Ice".
+
+
+H
+---
+hardware-configuration.nix
+  Generated hardware configuration (nixos-generate-config). Imported by configuration.nix.
+
+home-manager (flake input + nixos module)
+  User environment management. useGlobalPkgs = true, useUserPackages = true. users.tco = ./home/tco/home.nix.
+
+home.sessionPath
+  .lmstudio/bin, .npm-global/bin, .local/bin.
+
+home.sessionVariables
+  QT_QPA_PLATFORM = "wayland", QT_QPA_PLATFORMTHEME = "qt6ct", QT_STYLE_OVERRIDE = "kvantum", XDG_DATA_DIRS, ELECTRON_OZONE_PLATFORM_HINT = "x11".
+
+home/tco/home.nix
+  Home Manager entry point: user tco, homeDirectory = /home/tco, stateVersion = "25.05", sessionPath, sessionVariables, xdg, home.file, home.packages, gtk, programs (starship, vscode, git, bash), activations, desktop entries, systemd user services.
+
+hostName (networking)
+  "nixos".
+
+hyprchroma (flake input)
+  Hyprland overlay/theme (github:alexhulbert/hyprchroma). Used for visual consistency.
+
+Hyprland (programs.hyprland)
+  enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, tokens.conf, waybar).
+
+
+I
+---
+i18n.defaultLocale
+  "fr_FR.UTF-8". console.keyMap = "fr".
+
+imports (configuration.nix)
+  ./hardware-configuration.nix, ./modules/nvidia-prime.nix, virtualisation, emacs, science-data, launcher, starship, databases, ollama, nginx, observability.
+
+
+L
+---
+launcher.nix (modules/)
+  Launcher integration (Rofi etc.).
+
+
+M
+---
+modules/
+  Optional NixOS modules directory: databases.nix, edex.nix, emacs.nix, lamp.nix, launcher.nix, nginx.nix, nvidia-prime.nix, observability.nix, ollama.nix, science-data.nix, starship.nix, streamlit.nix, tmpfiles.nix, virtualisation.nix.
+
+
+N
+---
+networking.networkmanager
+  enable = true. wifi.powersave = false.
+
+nix.gc
+  automatic = true, dates = "weekly", options = "--delete-older-than 7d".
+
+nix-ld (programs.nix-ld)
+  Libraries for non-Nix executables (glib, gtk3, mesa, libx11, etc.).
+
+nix-snapd (flake input + nixosModules.default)
+  Snap support on NixOS.
+
+nginx.nix (modules/)
+  Nginx module (e.g. serving apps or reverse proxy).
+
+nvidia-prime.nix (modules/)
+  NVIDIA and PRIME configuration (hybrid GPU).
+
+
+O
+---
+observability.nix (modules/)
+  Monitoring and observability tools.
+
+ollama.nix (modules/)
+  Ollama integration (local LLM).
+
+openrgb (services.hardware.openrgb)
+  Hardware RGB control.
+
+
+P
+---
+pipewire (services.pipewire)
+  Audio: enable, alsa.enable, alsa.support32Bit, pulse.enable.
+
+polkit (security.polkit)
+  enable = true. User service polkit-gnome-authentication-agent-1 for GUI.
+
+programs.hyprland, programs.zoxide, programs.direnv
+  Hyprland, zoxide (smart cd), direnv + nix-direnv.
+
+
+R
+---
+rofi (config/rofi, home.file.".config/rofi")
+  Launcher and applets (config.rasi, custom/column-tco.rasi, powermenu, launchers). Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
+
+rust-overlay (flake input)
+  Rust overlay (oxalica/rust-overlay). Used in pkgs and in embedded devShell (rust-bin.stable.latest).
+
+
+S
+---
+sandbox (nix.settings)
+  true. sandbox-build-dir = "/build".
+
+science-data.nix (modules/)
+  Science/data packages.
+
+seaglass
+  Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf, hyprchroma.conf, rules.conf.
+
+snap (services.snap)
+  enable = true.
+
+starship.nix (modules/)
+  Starship prompt configuration.
+
+system.stateVersion
+  "26.05".
+
+systemd.tmpfiles.rules
+  Create dirs: .cache/wal, nix-build, profiles and user gcroots for tco.
+
+systemd.user.services
+  polkit-gnome-authentication-agent-1, dw-daemon (DarkWindow).
+
+
+T
+---
+time.timeZone
+  "Europe/Paris".
+
+
+U
+---
+users.users.tco
+  isNormalUser = true, shell = pkgs.bash, extraGroups = [ "wheel", "networkmanager", "video", "docker", "libvirtd", "dialout", "i2c" ].
+
+V
+---
+virtualisation.nix (modules/)
+  Libvirt and virtualisation tools.
+
+
+W
+---
+Waybar (config/hypr/waybar)
+  Status bar (config.jsonc, style.css, mocha.css, scripts).
+
+
+X
+---
+xdg.portal
+  enable, xdgOpenUsePortal, extraPortals: xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk.
+
+xserver (services.xserver)
+  enable = true, xkb.layout = "fr".
+
+
+Z
+---
+zoxide (programs.zoxide)
+  Smart cd replacement.
+
+================================================================================
+Commands
+================================================================================
+  Apply system config   sudo nixos-rebuild switch --flake .#nixos
+  Home Manager         home-manager switch --flake .#tco   (or alias: hm)
+  Rebuild (alias)      rebuild (bash)
+  AI dev shell         nix develop .#ai   (or devai)
+  Embedded dev shell   nix develop .#embedded   (or devemb)
+  Refresh cloc report  nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
+
+================================================================================
+PlantUML diagrams (docs/diagrams/ — sources .puml; images in docs/diagrams/png/)
+================================================================================
+  system-overview.puml   Flake → System / User / Dev shells
+  theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
+  boot-session.puml     Boot → GDM → Hyprland | GNOME
+  module-deps.puml      configuration.nix module imports
+  flake-outputs.puml    nixosConfigurations, homeConfigurations, devShells
+
+  Regenerate PNGs: nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml

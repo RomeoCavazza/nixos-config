@@ -71,10 +71,10 @@ flowchart TB
   GDM --> H
   GDM --> G
 
-  style Boot fill:#06B6D4
-  style GDM fill:#06B6D4
-  style H fill:#06B6D4
-  style G fill:#06B6D4
+  style Boot fill:#0E7490
+  style GDM fill:#0E7490
+  style H fill:#0E7490
+  style G fill:#0E7490
 ```
 
 ### GNOME
