@@ -28,8 +28,8 @@ docs/
 
 | Language | files | blank | comment | code |
 | -------- | ----: | ----: | ------: | ---: |
-| Bourne Again Shell | 40 | 310 | 250 | 1677 |
-| Nix | 18 | 166 | 93 | 1174 |
+| Bourne Again Shell | 40 | 303 | 248 | 1651 |
+| Nix | 18 | 171 | 93 | 1191 |
 | Markdown | 3 | 92 | 0 | 271 |
 | Bourne Shell | 12 | 85 | 103 | 247 |
 | Text | 1 | 79 | 0 | 208 |
@@ -38,7 +38,7 @@ docs/
 | PlantUML | 5 | 23 | 0 | 94 |
 | Lisp | 3 | 22 | 23 | 77 |
 | INI | 1 | 7 | 0 | 33 |
-| **SUM** | **86** | **827** | **489** | **4043** |
+| **SUM** | **86** | **825** | **487** | **4034** |
 
 To regenerate from the repository root:
 
