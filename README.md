@@ -122,7 +122,19 @@ flowchart TB
 
 ## Diagrams
 
-#### Configuration flow
+#### PlantUML (generated)
+
+| Overview | Theme flow | Boot & session |
+| -------- | ---------- | -------------- |
+| ![System overview](./docs/diagrams/png/system-overview.png) | ![Theme flow](./docs/diagrams/png/theme-flow.png) | ![Boot session](./docs/diagrams/png/boot-session.png) |
+
+| Module imports | Flake outputs |
+| -------------- | ------------- |
+| ![Module deps](./docs/diagrams/png/module-deps.png) | ![Flake outputs](./docs/diagrams/png/flake-outputs.png) |
+
+*Regenerate PNGs from repo root: `nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml`*
+
+#### Configuration flow (Mermaid)
 
 ```mermaid
 flowchart LR
@@ -164,45 +176,21 @@ flowchart TB
 
 The root `README.md` is the main source of truth for this repository. Extra files in `docs/` are only lightweight annexes:
 
-- [`docs/cloc-report.md`](./docs/cloc-report.md) for the generated `cloc` snapshot
-- [`docs/specification.txt`](./docs/specification.txt) for a glossary of the configuration
-- [`docs/system-overview.puml`](./docs/system-overview.puml) for the PlantUML source
+- [`docs/cloc-report.md`](./docs/cloc-report.md) for the [cloc](https://github.com/AlDanial/cloc) report
+- [`docs/specification.txt`](./docs/specification.txt) for a dense glossary of the configuration
+- [`docs/diagrams/`](./docs/diagrams/) — PlantUML sources (`.puml`) and generated images in [`docs/diagrams/png/`](./docs/diagrams/png/). Regenerate: `nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml`
 
 ---
 
 ## Code Metrics
 
-Generated at: `2026-03-11 15:05:47Z`
-
-### Repository counters
-
-- Nix modules in `modules/`: 14
-- Helper scripts in `config/bin/`: 11
-- Markdown documents in `docs/`: 1
-
-### cloc report
-
-| Language | files | blank | comment | code |
-| -------- | ----: | ----: | ------: | ---: |
-| Bourne Again Shell | 40 | 310 | 250 | 1677 |
-| Nix | 18 | 166 | 93 | 1174 |
-| Bourne Shell | 13 | 100 | 106 | 285 |
-| Markdown | 2 | 72 | 0 | 189 |
-| JSON | 1 | 13 | 0 | 137 |
-| CSS | 2 | 30 | 20 | 125 |
-| Text | 1 | 40 | 0 | 98 |
-| Lisp | 3 | 22 | 23 | 77 |
-| INI | 1 | 7 | 0 | 33 |
-| PlantUML | 1 | 4 | 0 | 16 |
-| **SUM** | **82** | **764** | **492** | **3811** |
-
-Refresh metrics with:
+Metrics are produced by [cloc](https://github.com/AlDanial/cloc). To regenerate the report from the repo root:
 
 ```bash
-nix shell nixpkgs#cloc -c ./scripts/update-metrics.sh
+nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
 ```
 
-The full generated report lives in [`docs/cloc-report.md`](./docs/cloc-report.md).
+See [`docs/cloc-report.md`](./docs/cloc-report.md) for the full report.
 
 ---
 
