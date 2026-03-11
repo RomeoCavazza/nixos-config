@@ -57,6 +57,10 @@ This script:
 - generates `docs/cloc-report.md`
 - adds a few repository counters alongside the `cloc` output
 
+The latest generated snapshot is committed in:
+
+- `docs/cloc-report.md`
+
 ## Important caveat
 
 Line counts are descriptive, not proof of quality. They are useful for scale, not for correctness, maintainability, or architecture quality.

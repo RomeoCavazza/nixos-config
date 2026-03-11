@@ -180,6 +180,41 @@ flowchart TB
   end
 ```
 
+#### PlantUML source
+
+The rendered diagrams in this README use Mermaid for GitHub compatibility. The equivalent PlantUML source is also versioned here:
+
+- [`docs/diagrams/system-overview.puml`](./docs/diagrams/system-overview.puml)
+
+```plantuml
+@startuml
+title setup-os system overview
+
+package "Flake" {
+  [flake.nix] as Flake
+  [devShells] as Shells
+}
+
+package "System" {
+  [configuration.nix] as Config
+  [hardware-configuration.nix] as Hardware
+  [modules/*.nix] as Modules
+}
+
+package "User" {
+  [home/tco/home.nix] as Home
+  [config/] as Dotfiles
+}
+
+Flake --> Config
+Flake --> Home
+Flake --> Shells
+Config --> Hardware
+Config --> Modules
+Home --> Dotfiles
+@enduml
+```
+
 ---
 
 ## Documentation
@@ -191,8 +226,34 @@ For maintainable technical documentation beyond the showcase README, see:
 - [`docs/architecture.md`](./docs/architecture.md) for repository structure and configuration flow
 - [`docs/deployment.md`](./docs/deployment.md) for rebuild, validation, and rollback guidance
 - [`docs/metrics.md`](./docs/metrics.md) for suggested metrics and `cloc` usage
-- [`docs/adr/0001-repo-structure.md`](./docs/adr/0001-repo-structure.md) for the first architecture decision record
+- [`docs/cloc-report.md`](./docs/cloc-report.md) for the latest generated metrics snapshot
 - [`docs/diagrams/system-overview.puml`](./docs/diagrams/system-overview.puml) for a PlantUML source diagram
+
+---
+
+## Metrics
+
+Latest generated snapshot:
+
+- 14 Nix modules in `modules/`
+- 11 helper scripts in `config/bin/`
+- 86 source files counted by `cloc`
+- 4008 lines of code total
+
+Top languages in the current snapshot:
+
+- Bourne Again Shell: 1677 code lines
+- Nix: 1174 code lines
+- Markdown: 478 code lines
+- Bourne Shell: 285 code lines
+
+Refresh metrics with:
+
+```bash
+nix shell nixpkgs#cloc -c ./scripts/update-metrics.sh
+```
+
+The full generated report lives in [`docs/cloc-report.md`](./docs/cloc-report.md).
 
 ---
 

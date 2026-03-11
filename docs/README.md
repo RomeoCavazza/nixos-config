@@ -8,7 +8,7 @@ This `docs/` directory complements the main `README.md` with maintainable techni
 2. `architecture.md` for the repository structure and configuration flow.
 3. `deployment.md` for install, rebuild, validation, and rollback procedures.
 4. `metrics.md` for optional project metrics and reporting commands.
-5. `adr/0001-repo-structure.md` for the repository structure decision record.
+5. `cloc-report.md` for the latest generated metrics snapshot.
 
 ## Documentation philosophy
 
@@ -26,8 +26,7 @@ docs/
 ├── architecture.md
 ├── deployment.md
 ├── metrics.md
-├── adr/
-│   └── 0001-repo-structure.md
+├── cloc-report.md
 └── diagrams/
     └── system-overview.puml
 ```
