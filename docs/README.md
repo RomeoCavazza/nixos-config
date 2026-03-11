@@ -63,7 +63,7 @@ nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*
 ### System overview
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f5f5f5', 'secondaryColor': '#f5f5f5', 'tertiaryColor': '#f5f5f5', 'primaryBorderColor': '#999', 'lineColor': '#666' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4a4a4a', 'secondaryColor': '#4a4a4a', 'tertiaryColor': '#4a4a4a', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
 flowchart LR
   inputs[Flake inputs]
   flake[flake.nix]
@@ -86,7 +86,7 @@ The flake is the single entry point: it consumes inputs (nixpkgs, home-manager, 
 ### Seaglass theme propagation
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f5f5f5', 'secondaryColor': '#f5f5f5', 'tertiaryColor': '#f5f5f5', 'primaryBorderColor': '#999', 'lineColor': '#666' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4a4a4a', 'secondaryColor': '#4a4a4a', 'tertiaryColor': '#4a4a4a', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
 flowchart TB
   theme[Seaglass theme #94E2D5]
   hypr[Hyprland<br/>seaglass.conf, tokens.conf]
@@ -111,7 +111,7 @@ The Seaglass visual theme (accent #94E2D5) is applied in the config layer (Hyprl
 ### Boot and session choice
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f5f5f5', 'secondaryColor': '#f5f5f5', 'tertiaryColor': '#f5f5f5', 'primaryBorderColor': '#999', 'lineColor': '#666' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4a4a4a', 'secondaryColor': '#4a4a4a', 'tertiaryColor': '#4a4a4a', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
 flowchart TB
   Boot[Boot]
   sb[systemd-boot]
@@ -131,7 +131,7 @@ At boot, systemd-boot then GDM allow choosing Hyprland (XWayland, Waybar, Rofi, 
 ### Module imports (configuration.nix)
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f5f5f5', 'secondaryColor': '#f5f5f5', 'tertiaryColor': '#f5f5f5', 'primaryBorderColor': '#999', 'lineColor': '#666' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4a4a4a', 'secondaryColor': '#4a4a4a', 'tertiaryColor': '#4a4a4a', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
 flowchart TB
   subgraph config["configuration.nix"]
     hw[hardware-configuration.nix]
@@ -160,7 +160,7 @@ configuration.nix imports hardware-configuration.nix and optional modules (nvidi
 ### Flake outputs
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#f5f5f5', 'secondaryColor': '#f5f5f5', 'tertiaryColor': '#f5f5f5', 'primaryBorderColor': '#999', 'lineColor': '#666' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4a4a4a', 'secondaryColor': '#4a4a4a', 'tertiaryColor': '#4a4a4a', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
 flowchart LR
   subgraph flake["flake.nix"]
     nixos[nixosConfigurations.nixos]
