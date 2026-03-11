@@ -125,127 +125,76 @@ flowchart TB
 #### Configuration flow
 
 ```mermaid
-flowchart TB
-  subgraph flake["flake.nix"]
-    inputs["nixpkgs · home-manager · rust-overlay · hyprchroma · nix-snapd"]
-    outputs["nixosConfigurations.nixos"]
-    shells["devShells: ai · embedded"]
-  end
+flowchart LR
+  inputs["Inputs<br/>nixpkgs, home-manager,<br/>rust-overlay, hyprchroma, nix-snapd"]
+  flake["flake.nix"]
+  system["System config<br/>configuration.nix + hardware-configuration.nix + modules/*.nix"]
+  home["User config<br/>home/tco/home.nix"]
+  shells["Dev shells<br/>ai, embedded"]
 
-  subgraph system["System"]
-    config["configuration.nix"]
-    hardware["hardware-configuration.nix"]
-    mods["modules/*.nix"]
-  end
-
-  subgraph user["User"]
-    home["home/tco/home.nix"]
-  end
-
-  inputs --> outputs
-  outputs --> config
-  config --> hardware
-  config --> mods
-  outputs --> home
-  inputs --> shells
+  inputs --> flake
+  flake --> system
+  flake --> home
+  flake --> shells
 ```
 
 #### Theme architecture (Hyprland)
 
 ```mermaid
 flowchart TB
-  subgraph theme["THÈME SEAGLASS"]
-    direction TB
-    t1["Bleu Cyan #94E2D5"]
-  end
+  theme["Seaglass theme<br/>accent #94E2D5"]
+  hypr["Hyprland<br/>seaglass.conf + tokens.conf"]
+  waybar["Waybar<br/>mocha.css + style.css"]
+  rofi["Rofi<br/>column-tco.rasi"]
+  foot["Foot<br/>foot.ini"]
+  hyprchroma["Hyprchroma<br/>visual tint"]
+  gtk["GTK / Icons<br/>Adwaita-dark + Papirus-Dark"]
 
   theme --> hypr
   theme --> waybar
   theme --> rofi
-
-  subgraph layer1["Couche 1 — Config"]
-    hypr["HYPRLAND<br/>seaglass.conf · tokens.conf"]
-    waybar["WAYBAR<br/>mocha.css · style.css"]
-    rofi["ROFI<br/>column-tco.rasi"]
-  end
-
   hypr --> foot
   waybar --> hyprchroma
   rofi --> gtk
-
-  subgraph layer2["Couche 2 — Rendu"]
-    foot["FOOT<br/>foot.ini (cyan #6)"]
-    hyprchroma["HYPRCHROMA<br/>plugin (tint bleu)"]
-    gtk["GTK<br/>Adwaita-dark · Papirus-Dark"]
-  end
-```
-
-#### PlantUML source
-
-The rendered diagrams in this README use Mermaid for GitHub compatibility. The equivalent PlantUML source is also versioned here:
-
-- [`docs/diagrams/system-overview.puml`](./docs/diagrams/system-overview.puml)
-
-```plantuml
-@startuml
-title setup-os system overview
-
-package "Flake" {
-  [flake.nix] as Flake
-  [devShells] as Shells
-}
-
-package "System" {
-  [configuration.nix] as Config
-  [hardware-configuration.nix] as Hardware
-  [modules/*.nix] as Modules
-}
-
-package "User" {
-  [home/tco/home.nix] as Home
-  [config/] as Dotfiles
-}
-
-Flake --> Config
-Flake --> Home
-Flake --> Shells
-Config --> Hardware
-Config --> Modules
-Home --> Dotfiles
-@enduml
 ```
 
 ---
 
 ## Documentation
 
-For maintainable technical documentation beyond the showcase README, see:
+The root `README.md` is the main source of truth for this repository. Extra files in `docs/` are only lightweight annexes:
 
-- [`docs/README.md`](./docs/README.md) for the documentation index
-- [`docs/specification.md`](./docs/specification.md) for scope and functional requirements
-- [`docs/architecture.md`](./docs/architecture.md) for repository structure and configuration flow
-- [`docs/deployment.md`](./docs/deployment.md) for rebuild, validation, and rollback guidance
-- [`docs/metrics.md`](./docs/metrics.md) for suggested metrics and `cloc` usage
-- [`docs/cloc-report.md`](./docs/cloc-report.md) for the latest generated metrics snapshot
-- [`docs/diagrams/system-overview.puml`](./docs/diagrams/system-overview.puml) for a PlantUML source diagram
+- [`docs/cloc-report.md`](./docs/cloc-report.md) for the generated `cloc` snapshot
+- [`docs/specification.txt`](./docs/specification.txt) for a glossary of the configuration
+- [`docs/system-overview.puml`](./docs/system-overview.puml) for the PlantUML source
 
 ---
 
-## Metrics
+## Code Metrics
 
-Latest generated snapshot:
+Generated at: `2026-03-11 15:05:47Z`
 
-- 14 Nix modules in `modules/`
-- 11 helper scripts in `config/bin/`
-- 86 source files counted by `cloc`
-- 4008 lines of code total
+### Repository counters
 
-Top languages in the current snapshot:
+- Nix modules in `modules/`: 14
+- Helper scripts in `config/bin/`: 11
+- Markdown documents in `docs/`: 1
 
-- Bourne Again Shell: 1677 code lines
-- Nix: 1174 code lines
-- Markdown: 478 code lines
-- Bourne Shell: 285 code lines
+### cloc report
+
+| Language | files | blank | comment | code |
+| -------- | ----: | ----: | ------: | ---: |
+| Bourne Again Shell | 40 | 310 | 250 | 1677 |
+| Nix | 18 | 166 | 93 | 1174 |
+| Bourne Shell | 13 | 100 | 106 | 285 |
+| Markdown | 2 | 72 | 0 | 189 |
+| JSON | 1 | 13 | 0 | 137 |
+| CSS | 2 | 30 | 20 | 125 |
+| Text | 1 | 40 | 0 | 98 |
+| Lisp | 3 | 22 | 23 | 77 |
+| INI | 1 | 7 | 0 | 33 |
+| PlantUML | 1 | 4 | 0 | 16 |
+| **SUM** | **82** | **764** | **492** | **3811** |
 
 Refresh metrics with:
 

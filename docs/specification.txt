@@ -1,0 +1,138 @@
+setup-os configuration glossary
+================================
+
+Purpose
+-------
+Personal NixOS workstation configuration built around a flake, modular system imports,
+Home Manager, desktop theming, and developer tooling.
+
+Main entry points
+-----------------
+flake.nix
+  Defines upstream inputs, outputs, and dev shells.
+
+configuration.nix
+  Main system assembly file. Imports hardware and optional modules.
+
+hardware-configuration.nix
+  Hardware-specific NixOS configuration generated for the machine.
+
+home/tco/home.nix
+  Home Manager entry point for the user environment, packages, and dotfiles.
+
+Directory glossary
+------------------
+assets/
+  Screenshots, logo, wallpaper, and preview media used by the README.
+
+config/
+  Source configuration files copied or linked into the runtime environment.
+
+config/bin/
+  Helper scripts exposed through the system or Home Manager.
+
+config/doom/
+  Doom Emacs configuration.
+
+config/foot/
+  Foot terminal configuration.
+
+config/hypr/
+  Hyprland configuration, Waybar files, and theme assets.
+
+config/rofi/
+  Rofi launchers, menus, powermenus, and custom themes.
+
+config/swappy/
+  Swappy screenshot annotation configuration.
+
+modules/
+  Focused NixOS modules for optional system capabilities.
+
+home/
+  Home Manager user definitions.
+
+docs/
+  Lightweight annexes: generated metrics, config glossary, and PlantUML source.
+
+Key modules
+-----------
+modules/nvidia-prime.nix
+  NVIDIA and PRIME related graphics setup.
+
+modules/virtualisation.nix
+  Virtualization-related services and packages.
+
+modules/databases.nix
+  Local database tooling and services.
+
+modules/ollama.nix
+  Local AI model runtime integration.
+
+modules/observability.nix
+  Monitoring and observability tooling.
+
+modules/science-data.nix
+  Science and data-oriented packages or services.
+
+modules/launcher.nix
+  Launcher integration and related desktop behavior.
+
+modules/starship.nix
+  Shell prompt configuration.
+
+modules/emacs.nix
+  Emacs-related configuration.
+
+Runtime concepts
+----------------
+Flake inputs
+  External pinned dependencies such as nixpkgs, home-manager, rust-overlay,
+  hyprchroma, and nix-snapd.
+
+System layer
+  Host-wide configuration: boot, graphics, networking, desktop sessions,
+  global packages, services, and imports.
+
+User layer
+  Per-user packages, shell settings, editor preferences, themes, and symlinked dotfiles.
+
+Dev shells
+  Reproducible tool environments exposed by the flake, currently including ai and embedded.
+
+Theme stack
+-----------
+Seaglass
+  Main visual identity currently used across Hyprland-related UI surfaces.
+
+Hyprland
+  Wayland compositor and top-level desktop behavior.
+
+Waybar
+  Top panel / status bar styling and modules.
+
+Rofi
+  Application launcher, applets, and power menu UI.
+
+Foot
+  Terminal emulator theme and palette.
+
+Hyprchroma
+  Visual tinting / plugin-driven styling layer around the Hyprland environment.
+
+GTK
+  GTK theme and icon theme used for application consistency.
+
+Commands
+--------
+Apply system config
+  sudo nixos-rebuild switch --flake .#nixos
+
+Open AI dev shell
+  nix develop .#ai
+
+Open embedded dev shell
+  nix develop .#embedded
+
+Refresh code metrics
+  nix shell nixpkgs#cloc -c ./scripts/update-metrics.sh

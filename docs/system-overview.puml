@@ -1,0 +1,20 @@
+@startuml
+title setup-os overview
+
+[Flake inputs] --> [flake.nix]
+[flake.nix] --> [System layer]
+[flake.nix] --> [User layer]
+[flake.nix] --> [Dev shells]
+[User layer] --> [config/]
+
+note right of [System layer]
+configuration.nix
+hardware-configuration.nix
+modules/*.nix
+end note
+
+note right of [User layer]
+home/tco/home.nix
+end note
+
+@enduml
