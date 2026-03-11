@@ -182,6 +182,22 @@ flowchart TB
 
 ---
 
+## Documentation
+
+For maintainable technical documentation beyond the showcase README, see:
+
+- [`docs/README.md`](./docs/README.md) for the documentation index
+- [`docs/specification.md`](./docs/specification.md) for scope and functional requirements
+- [`docs/architecture.md`](./docs/architecture.md) for repository structure and configuration flow
+- [`docs/deployment.md`](./docs/deployment.md) for rebuild, validation, and rollback guidance
+- [`docs/metrics.md`](./docs/metrics.md) for suggested metrics and `cloc` usage
+- [`docs/adr/0001-repo-structure.md`](./docs/adr/0001-repo-structure.md) for the first architecture decision record
+- [`docs/diagrams/system-overview.puml`](./docs/diagrams/system-overview.puml) for a PlantUML source diagram
+
+---
+
+## Installation
+
 ### Prerequisites
 - [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso)
 - [Ventoy](https://www.ventoy.net/en/download.html) or [Rufus](https://rufus.ie/en/) to create a bootable USB drive.
