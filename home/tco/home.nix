@@ -228,7 +228,7 @@ in
     enable = true;
     settings = {
       user = {
-        name = "Romeo Cavazza";
+        name = "RomeoCavazza";
         email = "romeo.cavazza@gmail.com";
       };
       init.defaultBranch = "main";
