@@ -1,10 +1,10 @@
-# Documentation
+# Technical Documentation Portal
 
-The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and diagrams (Mermaid in this file; PNG exports in `diagrams/png/`).
+The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and diagrams.
 
 ---
 
-## Tree of `docs/`
+## Structure de `docs/`
 
 ```
 docs/
