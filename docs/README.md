@@ -4,7 +4,7 @@ The single source of truth for this repository is the [root README](../README.md
 
 ---
 
-## Structure de `docs/`
+## `docs/` Structure
 
 ```
 docs/
