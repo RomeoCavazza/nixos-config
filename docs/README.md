@@ -10,6 +10,7 @@ Technical documentation annexes for the `setup-os` NixOS configuration — cover
 The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and development shells.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TD
   subgraph in["Flake Inputs"]
     np[nixpkgs unstable]
@@ -49,6 +50,7 @@ The `nixosConfigurations.nixos` output is the main system builder. It includes `
 `configuration.nix` is the NixOS entry point. All optional system behaviors are extracted into discrete modules under `modules/` and explicitly listed in the `imports` list.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   hw[hardware-configuration.nix]
 
@@ -166,6 +168,7 @@ The audio stack uses Pipewire with the full compatibility layer: ALSA (with 32-b
 Home Manager runs inline within the system build. The user configuration manages dotfiles, packages, services, and shell environment.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   subgraph hm["home.nix"]
     dotfiles["home.file\nmkOutOfStoreSymlink"]
@@ -250,6 +253,7 @@ devemb   # nix develop /etc/nixos#embedded
 Hyprland is a tiling Wayland compositor with XWayland enabled for compatibility with X11 applications. Its configuration lives in `config/hypr/`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TB
   src["Seaglass — seaglass.conf + tokens.conf"]
 
@@ -295,6 +299,7 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 Waybar is the Wayland status bar. Its config is in `config/hypr/waybar/` and symlinked to `~/.config/waybar/`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 graph LR
   subgraph src["Config source"]
     cfg[config.jsonc]
@@ -339,6 +344,7 @@ Queries `hyprctl activewindow` for the focused window's class and title. Maps cl
 Rofi handles application launch and system controls via a suite of themed applets in `config/rofi/`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 graph LR
   subgraph launchers["config/rofi/launchers/"]
     colorful[colorful/launcher.sh\nrandom accent + random theme]
@@ -374,6 +380,7 @@ Each launcher script randomizes a color accent by selecting a random entry from 
 The flake exposes two development environments accessible via `nix develop`.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   subgraph ai["devShells.ai  — alias: devai"]
     py[python311 + pip]
