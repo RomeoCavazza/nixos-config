@@ -46,7 +46,9 @@ nixos/
 
 ## Preview
 
-![Desktop demo](./assets/hero-video.gif)
+<div align="center">
+  <img src="./assets/hero-video.gif" alt="Desktop demo" width="100%">
+</div>
 
 <br>
 
