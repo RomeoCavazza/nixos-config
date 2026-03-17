@@ -36,11 +36,11 @@ flowchart TD
   flake --> emb
 ```
 
+> [Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
+
 The flake pins six inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprchroma` is a Hyprland plugin that applies a GPU shader tint to inactive windows. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS.
 
 The `nixosConfigurations.nixos` output is the main system builder. It includes `configuration.nix`, all optional modules from `modules/`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies both system and user config atomically.
-
-[Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
 
 ---
 
@@ -70,6 +70,8 @@ flowchart LR
   hw --> core
   core --> mods
 ```
+
+> [Source: system-architecture.puml](./diagrams/system-architecture.puml) | [Export: system-architecture.png](./diagrams/png/system-architecture.png)
 
 Currently active modules:
 
@@ -108,13 +110,12 @@ Hybrid graphics setup: Intel iGPU for display output, NVIDIA dGPU for compute of
 - **KVM/libvirt**: `virt-manager` as GUI, `quickemu` for rapid VM creation (Windows, macOS, Linux).
 - **ARM binfmt emulation**: `boot.binfmt.emulatedSystems = [ "aarch64-linux" ]` allows running AArch64 binaries natively, enabling SD card image building for Raspberry Pi and Jetson targets directly from this x86_64 host.
 
-[Source: system-architecture.puml](./diagrams/system-architecture.puml) | [Export: system-architecture.png](./diagrams/png/system-architecture.png)
-
 ---
 
 ## 3. Display, Audio & Connectivity
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TD
   gdm[GDM Display Manager]
 
@@ -144,6 +145,8 @@ flowchart TD
   pw --> cava
 ```
 
+> [Source: display-audio.puml](./diagrams/display-audio.puml) | [Export: display-audio.png](./diagrams/png/display-audio.png)
+
 ### Display Stack
 
 The system runs a hybrid DM setup: GDM manages session selection, offering both a **Hyprland** (Wayland) and a **GNOME** (X11/Wayland) session. XDG portals are configured for both backends, ensuring screen sharing, file pickers, and other portal-based features work correctly in both sessions.
@@ -155,8 +158,6 @@ The audio stack uses Pipewire with the full compatibility layer: ALSA (with 32-b
 ### nix-ld: Running Foreign Binaries
 
 `programs.nix-ld` provides a compatibility shim for non-Nix ELF binaries (AppImages, pre-built tools, proprietary SDKs). A curated library set is injected: `glib`, `gtk3`, `mesa`, `libx11`, `libxcb`, `libdrm`, `nss`, and more. This allows tools like the Cursor editor AppImage to run without manual patching.
-
-[Source: display-audio.puml](./diagrams/display-audio.puml) | [Export: display-audio.png](./diagrams/png/display-audio.png)
 
 ---
 
@@ -187,6 +188,8 @@ flowchart LR
   svc --> bin
   act --> foot
 ```
+
+> [Source: user-layer.puml](./diagrams/user-layer.puml) | [Export: user-layer.png](./diagrams/png/user-layer.png)
 
 ### Dotfile Strategy
 
@@ -240,8 +243,6 @@ devai    # nix develop /etc/nixos#ai
 devemb   # nix develop /etc/nixos#embedded
 ```
 
-[Source: user-layer.puml](./diagrams/user-layer.puml) | [Export: user-layer.png](./diagrams/png/user-layer.png)
-
 ---
 
 ## 5. Desktop Environment — Hyprland + Seaglass Theme
@@ -275,6 +276,8 @@ flowchart TB
   src --> gtk
 ```
 
+> [Source: theme-flow.puml](./diagrams/theme-flow.puml) | [Export: theme-flow.png](./diagrams/png/theme-flow.png)
+
 The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the config layer — not injected at runtime — so the visual identity is stable across every component:
 
 - **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), and active/inactive states. `tokens.conf` defines shared base values.
@@ -284,8 +287,6 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 - **Rofi**: `colors.rasi` is overwritten by launcher scripts with a randomly selected accent per invocation.
 - **Foot terminal**: Themed via the `pywal` `colors-foot.ini` template, tied to the wallpaper palette.
 - **GTK**: Adwaita-dark theme, Papirus-Dark icon set, Bibata-Modern-Ice cursor.
-
-[Source: theme-flow.puml](./diagrams/theme-flow.puml) | [Export: theme-flow.png](./diagrams/png/theme-flow.png)
 
 ---
 
@@ -317,6 +318,8 @@ graph LR
   css --> sys
 ```
 
+> [Source: integration-logic.puml](./diagrams/integration-logic.puml) | [Export: integration-logic.png](./diagrams/png/integration-logic.png)
+
 ### Dynamic Audio Visualization — `WaybarCava.sh`
 
 The script generates a temporary Cava config on each launch (`/tmp/bar_cava_config`) with 14 bars at 60fps over PulseAudio. It pipes Cava's raw ASCII output through `sed` (character substitution) and `awk` (silence masking), outputting unicode bar characters consumed by Waybar's `custom/cava` module.
@@ -328,8 +331,6 @@ Queries `hyprctl activewindow` for the focused window's class and title. Maps cl
 ### Thematic Styling
 
 `mocha.css` defines the full Catppuccin Mocha palette as CSS custom properties. `style.css` imports it and overrides the accent to `#94e2d5`. Key styles: transparent bar background, `border-radius: 999px` on modules, and hover states using `rgba(148, 226, 213, 0.12)` for a subtle teal glow.
-
-[Source: integration-logic.puml](./diagrams/integration-logic.puml) | [Export: integration-logic.png](./diagrams/png/integration-logic.png)
 
 ---
 
@@ -362,9 +363,9 @@ graph LR
   applets --> mgmt
 ```
 
-Each launcher script randomizes a color accent by selecting a random entry from a `colors/` subdirectory and overwriting `colors.rasi` before invoking Rofi. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
+> [Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml) | [Export: rofi-launcher-flow.png](./diagrams/png/rofi-launcher-flow.png)
 
-[Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml) | [Export: rofi-launcher-flow.png](./diagrams/png/rofi-launcher-flow.png)
+Each launcher script randomizes a color accent by selecting a random entry from a `colors/` subdirectory and overwriting `colors.rasi` before invoking Rofi. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
 
 ---
 
@@ -388,11 +389,11 @@ flowchart LR
   end
 ```
 
+> [Source: dev-shells.puml](./diagrams/dev-shells.puml) | [Export: dev-shells.png](./diagrams/png/dev-shells.png)
+
 | Shell | Alias | Contents |
 |-------|-------|---------|
 | `#ai` | `devai` | Python 3.11, pip, NVIDIA libs, `LD_LIBRARY_PATH` patched for CUDA |
 | `#embedded` | `devemb` | Rust (stable + `rust-src` + `rust-analyzer`), GCC, Clang, CMake, GDB, Arduino IDE/CLI, esptool, openocd, minicom, mosquitto |
 
 The `#ai` shell explicitly sets `LD_LIBRARY_PATH` to expose `stdenv.cc.cc.lib` and `nvidia_x11` for Python packages that load native CUDA extensions (e.g., PyTorch). The `#embedded` shell uses `rust-overlay` to pin a precise Rust stable release, ensuring reproducibility. The `arduino-ide`, `esptool`, and `openocd` combination covers the full embedded lifecycle: IDE → compilation → flashing → JTAG debugging.
-
-[Source: dev-shells.puml](./diagrams/dev-shells.puml) | [Export: dev-shells.png](./diagrams/png/dev-shells.png)
