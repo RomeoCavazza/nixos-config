@@ -10,7 +10,6 @@ Technical documentation annexes for the `setup-os` NixOS configuration — cover
 The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and development shells.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TD
   subgraph in["Flake Inputs"]
     np[nixpkgs unstable]
@@ -27,7 +26,7 @@ flowchart TD
     sys["nixosConfigurations.nixos\nconfiguration.nix + modules\n+ home-manager inline"]
     usr["homeConfigurations.tco\nhome/tco/home.nix"]
     ai["devShells.ai\npython311, nvidia libs"]
-    emb["devShells.embedded\nRust, GCC, GDB, Arduino,\nesptool, openocd"]
+    emb["devShells.embedded\nRust, GCC, GDB, Arduino"]
   end
 
   in --> flake
@@ -50,23 +49,22 @@ The `nixosConfigurations.nixos` output is the main system builder. It includes `
 `configuration.nix` is the NixOS entry point. All optional system behaviors are extracted into discrete modules under `modules/` and explicitly listed in the `imports` list.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   hw[hardware-configuration.nix]
 
-  subgraph core["configuration.nix core"]
-    boot["Boot\nsystemd-boot + Windows entry"]
-    nixrt["Nix Runtime\nauto-optimise, sandbox, GC"]
+  subgraph core["configuration.nix"]
+    boot["Boot\nsystemd-boot + Windows dual-boot"]
+    nixrt["Nix Runtime\nauto-optimise, sandbox, GC weekly"]
     net["Network\nNetworkManager + blueman"]
     svc["Services\nGDM, Pipewire, polkit, flatpak, snap, guix"]
     nld["nix-ld\nForeign binary support"]
   end
 
   subgraph mods["modules/"]
-    nv["nvidia-prime.nix\nPRIME offload Intel+NVIDIA"]
+    nv["nvidia-prime.nix\nPRIME offload Intel + NVIDIA"]
     vm["virtualisation.nix\nDocker, KVM, ARM binfmt"]
-    em["emacs.nix + science-data.nix\nstarship.nix + launcher.nix"]
-    db["databases.nix + ollama.nix\nnginx.nix + observability.nix"]
+    em["emacs + science-data\nstarship + launcher"]
+    db["databases + ollama\nnginx + observability"]
   end
 
   hw --> core
@@ -117,7 +115,6 @@ Hybrid graphics setup: Intel iGPU for display output, NVIDIA dGPU for compute of
 ## 3. Display, Audio & Connectivity
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TD
   gdm[GDM Display Manager]
 
@@ -168,12 +165,11 @@ The audio stack uses Pipewire with the full compatibility layer: ALSA (with 32-b
 Home Manager runs inline within the system build. The user configuration manages dotfiles, packages, services, and shell environment.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   subgraph hm["home.nix"]
     dotfiles["home.file\nmkOutOfStoreSymlink"]
     pkgs["home.packages\nbat, eza, zed, obs, discord..."]
-    progs["programs.*\nVSCode, git, bash, starship"]
+    progs["programs\nVSCode, git, bash, starship"]
     gtk["gtk\nAdwaita-dark\nPapirus-Dark / Bibata-Ice"]
     svc["systemd.user\ndw-daemon"]
     act["home.activation\npywal templates"]
@@ -253,23 +249,22 @@ devemb   # nix develop /etc/nixos#embedded
 Hyprland is a tiling Wayland compositor with XWayland enabled for compatibility with X11 applications. Its configuration lives in `config/hypr/`.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TB
-  src["Seaglass Source\nseaglass.conf + tokens.conf\naccent: #94E2D5"]
+  src["Seaglass — seaglass.conf + tokens.conf"]
 
   subgraph compositor["Hyprland Compositor"]
-    borders["Active border: #94E2D5\n12px rounding, dual-border"]
+    borders["Active border: 94E2D5\n12px rounding, dual-border"]
     dw["hypr-darkwindow\nInactive window tint"]
     hc["hyprchroma\nGPU shader overlay"]
   end
 
   subgraph bar["Waybar"]
-    mocha["mocha.css\nCatppuccin palette"]
-    style["style.css\naccent: #94e2d5"]
+    mocha["mocha.css — Catppuccin palette"]
+    css["style.css — teal accent 94e2d5"]
   end
 
   rofi["Rofi\ncolumn-tco.rasi\naccent injected via colors.rasi"]
-  foot["Foot terminal\ncolors-foot.ini from pywal template"]
+  foot["Foot terminal\ncolors-foot.ini — pywal template"]
   gtk["GTK: Adwaita-dark\nIcons: Papirus-Dark\nCursor: Bibata-Modern-Ice"]
 
   src --> compositor
@@ -285,7 +280,7 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 - **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), and active/inactive states. `tokens.conf` defines shared base values.
 - **hyprchroma**: A GPU shader applied on top of all windows for an additional color tint layer.
 - **hypr-darkwindow**: A plugin that darkens inactive windows, improving focus contrast.
-- **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines `accent: #94e2d5`, applying teal to borders, hover states, and active module backgrounds.
+- **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
 - **Rofi**: `colors.rasi` is overwritten by launcher scripts with a randomly selected accent per invocation.
 - **Foot terminal**: Themed via the `pywal` `colors-foot.ini` template, tied to the wallpaper palette.
 - **GTK**: Adwaita-dark theme, Papirus-Dark icon set, Bibata-Modern-Ice cursor.
@@ -299,7 +294,6 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 Waybar is the Wayland status bar. Its config is in `config/hypr/waybar/` and symlinked to `~/.config/waybar/`.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 graph LR
   subgraph src["Config source"]
     cfg[config.jsonc]
@@ -313,7 +307,7 @@ graph LR
 
   subgraph out["Bar outputs"]
     vis[Audio visualizer]
-    win[Active window icon]
+    win[Active window + icon]
     sys[Clock / CPU / battery]
   end
 
@@ -344,7 +338,6 @@ Queries `hyprctl activewindow` for the focused window's class and title. Maps cl
 Rofi handles application launch and system controls via a suite of themed applets in `config/rofi/`.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 graph LR
   subgraph launchers["config/rofi/launchers/"]
     colorful[colorful/launcher.sh\nrandom accent + random theme]
@@ -352,16 +345,16 @@ graph LR
   end
 
   subgraph applets["config/rofi/applets/"]
-    vol[volume.sh\namixer]
-    bl[backlight.sh\nbrightnessctl]
-    mpd[mpd.sh\nmpc]
-    pwr[powermenu.sh\nsystemctl]
-    ss[screenshot.sh\ngrim + slurp]
-    net[network.sh\nnmcli]
+    vol[volume.sh — amixer]
+    bl[backlight.sh — brightnessctl]
+    mpd[mpd.sh — mpc]
+    pwr[powermenu.sh — systemctl]
+    ss[screenshot.sh — grim + slurp]
+    net[network.sh — nmcli]
   end
 
   subgraph mgmt["Display management"]
-    grid[rofi-grid.sh\nblur up + waybar kill/restart]
+    grid[rofi-grid.sh\nblur + waybar kill/restart]
     push[rofi-push.sh\ngaps_out shift for sidebar]
   end
 
@@ -380,18 +373,17 @@ Each launcher script randomizes a color accent by selecting a random entry from 
 The flake exposes two development environments accessible via `nix develop`.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
-  subgraph ai["devShells.ai  (alias: devai)"]
+  subgraph ai["devShells.ai  — alias: devai"]
     py[python311 + pip]
-    gpu["nvidia_x11\nLD_LIBRARY_PATH patched"]
-    libs[stdenv.cc.cc.lib + zlib + glib]
+    gpu[nvidia_x11\nLD_LIBRARY_PATH patched]
+    libs[stdenv.cc + zlib + glib]
   end
 
-  subgraph emb["devShells.embedded  (alias: devemb)"]
-    rust["Rust stable\nrust-src + rust-analyzer"]
+  subgraph emb["devShells.embedded  — alias: devemb"]
+    rust[Rust stable\nrust-src + rust-analyzer]
     cc[GCC + Clang + CMake + GDB]
-    mcu["Arduino IDE/CLI\nesptool + openocd + minicom"]
+    mcu[Arduino IDE/CLI\nesptool + openocd + minicom]
     mqtt[mosquitto MQTT broker]
   end
 ```
