@@ -1,5 +1,4 @@
 # Technical Deep Dive
-Powered by Gemini
 
 Technical documentation annexes for the `setup-os` NixOS configuration — covering every layer of the system in dependency order, each section illustrated with a diagram.
 
