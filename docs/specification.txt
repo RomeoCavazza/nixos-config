@@ -115,3 +115,197 @@ Components:
   - Hyprland: Rounded 12px borders, dual-border active state.
   - Waybar: Mocha-inspired top bar with workspace/media/clock modules.
   - Pywal: Automatic color palette generation from wallpapers.
+
+config/
+  Source configuration tree (hypr, waybar, rofi, foot, doom, bin, swappy).
+
+config/bin/
+  Custom scripts: antigravity, cursor, dw-apply, dw-daemon, dw-toggle, dw-toggle-global, edex-conky-toggle, edex-toggle, hypr-plugins-init, legion-pulse, legion-toggle.
+
+antigravity (home.file.".local/bin/antigravity")
+  Wrapper script that runs /etc/nixos/config/bin/antigravity. Lets you invoke the system binary from the user profile.
+
+cursor (home.file.".local/bin/cursor")
+  Symlink outside store to /etc/nixos/config/bin/cursor (Cursor editor).
+
+dw-apply, dw-toggle, dw-toggle-global, dw-daemon (config/bin + home.file)
+  Scripts and user service for Hyprland DarkWindow (tint/dark windows). dw-daemon: systemd user service, wantedBy graphical-session.target.
+
+assets/
+  Root folder: media for the README (logo, screenshots, wallpaper, hero-video).
+
+--------------------------------------------------------------------------------
+7. Display, desktop and theme
+--------------------------------------------------------------------------------
+GDM (services.displayManager.gdm)
+  Display manager. Allows choosing Hyprland or GNOME session.
+
+gnome (services.desktopManager.gnome)
+  GNOME desktop enabled.
+
+xserver (services.xserver)
+  enable = true, xkb.layout = "fr".
+
+xdg.portal
+  enable, xdgOpenUsePortal, extraPortals: xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk.
+
+Hyprland (programs.hyprland)
+  enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, tokens.conf, waybar).
+
+hyprchroma (flake input)
+  Hyprland overlay/theme (github:alexhulbert/hyprchroma). Used for visual consistency.
+
+seaglass
+  Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf, hyprchroma.conf, rules.conf.
+
+Waybar (config/hypr/waybar)
+  Status bar (config.jsonc, style.css, mocha.css, scripts).
+
+WaybarCava.sh (config/hypr/waybar/WaybarCava.sh)
+  Cava integration script. Generates temporary config in /tmp/bar_cava_config. Processes raw ASCII output from Cava into bar characters for Waybar. Handles silence masking.
+
+activeapp.sh (config/hypr/waybar/activeapp.sh)
+  Active window tracker. Uses `hyprctl activewindow` and `jq` to extract class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.). Outputs JSON for Waybar.
+
+rofi (config/rofi, home.file.".config/rofi")
+  Launcher and applets (config.rasi, custom/column-tco.rasi, powermenu, launchers). Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
+
+rofi-push.sh (config/rofi/scripts/rofi-push.sh)
+  Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400. Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi without overlapping windows. Restores original gaps on exit.
+
+rofi-grid.sh (config/rofi/bin/rofi-grid.sh)
+  Display management. Temporarily increases Hyprland blur size when Rofi is active. Kills Waybar on launch and relaunches it on exit to ensure visual consistency.
+
+foot (config/foot/, home.file.".config/foot")
+  Foot terminal configuration (foot.ini). Theme and colour palette.
+
+GTK (home: gtk)
+  theme name = "Adwaita-dark", iconTheme = "Papirus-Dark", cursorTheme = "Bibata-Modern-Ice".
+
+launcher.nix (modules/)
+  Launcher integration (Rofi etc.).
+
+--------------------------------------------------------------------------------
+8. System packages and environment
+--------------------------------------------------------------------------------
+environment.systemPackages
+  System-wide package list (python313+pydantic+anyio, adwaita-icon-theme, bibata-cursors, brightnessctl, appimage-run, fuse, bash, vim, neovim, git, wget, curl, jq, lsof, iw, ethtool, pciutils, usbutils, tree, ripgrep, fd, fzf, fastfetch, btop, htop, kitty, foot, firefox, google-chrome, wl-clipboard, pavucontrol, networkmanager, polkit_gnome, nix-ld, mesa, libglvnd, libdrm).
+
+environment.sessionVariables
+  NIXOS_OZONE_WL = "1", EDITOR = "vim".
+
+appimage-run (environment.systemPackages)
+  Run AppImage binaries without system-wide installation.
+
+nix-ld (programs.nix-ld)
+  Libraries for non-Nix executables (glib, gtk3, mesa, libx11, etc.).
+
+programs.hyprland, programs.zoxide, programs.direnv
+  Hyprland, zoxide (smart cd), direnv + nix-direnv.
+
+zoxide (programs.zoxide)
+  Smart cd replacement.
+
+direnv (programs.direnv)
+  Automatic per-directory environment loading. nix-direnv enabled.
+
+--------------------------------------------------------------------------------
+9. Services
+--------------------------------------------------------------------------------
+pipewire (services.pipewire)
+  Audio: enable, alsa.enable, alsa.support32Bit, pulse.enable.
+
+flatpak (services.flatpak)
+  Flatpak support enabled.
+
+snap (services.snap) / nix-snapd (flake input + nixosModules.default)
+  Snap support on NixOS.
+
+guix (services.guix)
+  Guix service enabled. Flake overlay: guix provided by pkgs-stable.guix.
+
+polkit (security.polkit)
+  enable = true. User service polkit-gnome-authentication-agent-1 for GUI.
+
+openrgb (services.hardware.openrgb)
+  Hardware RGB control.
+
+systemd.user.services
+  polkit-gnome-authentication-agent-1, dw-daemon (DarkWindow).
+
+systemd.tmpfiles.rules
+  Create dirs: .cache/wal, nix-build, profiles and user gcroots for tco.
+
+--------------------------------------------------------------------------------
+10. Networking
+--------------------------------------------------------------------------------
+networking.networkmanager
+  enable = true. wifi.powersave = false.
+
+--------------------------------------------------------------------------------
+11. NixOS modules (optional)
+--------------------------------------------------------------------------------
+modules/
+  Optional NixOS modules directory. Imported from configuration.nix as listed in imports.
+
+nvidia-prime.nix (modules/)
+  NVIDIA and PRIME configuration (hybrid GPU).
+
+virtualisation.nix (modules/)
+  Libvirt and virtualisation tools.
+
+emacs.nix (modules/)
+  Emacs / Doom configuration (referenced in config/doom).
+
+science-data.nix (modules/)
+  Science/data packages.
+
+launcher.nix (modules/)
+  Launcher integration (Rofi etc.).
+
+starship.nix (modules/)
+  Starship prompt configuration.
+
+databases.nix (modules/)
+  Optional module: local database tools and services.
+
+ollama.nix (modules/)
+  Ollama integration (local LLM).
+
+nginx.nix (modules/)
+  Nginx module (e.g. serving apps or reverse proxy).
+
+observability.nix (modules/)
+  Monitoring and observability tools.
+
+edex.nix (modules/)
+  Optional module (not imported in current configuration.nix): edex configuration.
+
+  Also in modules/ but not imported: lamp.nix, streamlit.nix, tmpfiles.nix.
+
+--------------------------------------------------------------------------------
+12. Dev shells (flake outputs)
+--------------------------------------------------------------------------------
+devShells (flake outputs)
+  Development shells. .#ai: Python 3.11, pip, NVIDIA libs. .#embedded: Rust (rust-src, rust-analyzer), gcc, clang, cmake, gdb, arduino-ide/cli, esptool, openocd, minicom, mosquitto.
+
+rust-overlay (flake input)
+  Rust overlay (oxalica/rust-overlay). Used in pkgs and in embedded devShell (rust-bin.stable.latest).
+
+--------------------------------------------------------------------------------
+Commands
+--------------------------------------------------------------------------------
+  Apply system config   sudo nixos-rebuild switch --flake .#nixos
+  Home Manager         home-manager switch --flake .#tco   (or alias: hm)
+  Rebuild (alias)      rebuild (bash)
+  AI dev shell         nix develop .#ai   (or devai)
+  Embedded dev shell   nix develop .#embedded   (or devemb)
+  Refresh cloc report  nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
+
+  system-architecture.puml High-level component interactions
+  theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
+  integration-logic.puml   Logical dependencies between Nix, Rofi, and Waybar
+  rofi-launcher-flow.puml  Launcher randomization and grid coordination logic
+  flake-outputs.puml    nixosConfigurations, homeConfigurations, devShells
+
+  Regenerate PNGs: nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml

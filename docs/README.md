@@ -1,89 +1,50 @@
-# Technical Documentation Portal
+# Technical Deep Dive
+Powered by Gemini
 
-The single source of truth for this repository is the [root README](../README.md). This folder holds annexes only: glossary, raw cloc report, and diagrams.
-
----
-
-## `docs/` Structure
-
-```
-docs/
-├── README.md           # this file
-├── cloc-report.md      # raw cloc output
-├── specification.txt   # dense configuration glossary
-└── diagrams/
-    ├── *.puml          # PlantUML sources (5 files)
-    └── png/            # generated images (*.png)
-```
+This folder contains the technical documentation annexes for the `setup-os` configuration. It focuses on the internal logic, architectural dependencies, and automated workflows that power the user interface.
 
 ---
 
-## 1. Glossary
-
-[**specification.txt**](./specification.txt) — Dense dictionary of the configuration by logical/technical grouping: Nix options, paths, environment variables, commands, modules, diagrams.
-
----
-
-## 2. Raw cloc results
-
-| Language | files | blank | comment | code |
-| -------- | ----: | ----: | ------: | ---: |
-| Bourne Again Shell | 40 | 303 | 248 | 1651 |
-| Nix | 18 | 171 | 93 | 1191 |
-| Markdown | 3 | 92 | 0 | 271 |
-| Bourne Shell | 12 | 85 | 103 | 247 |
-| Text | 1 | 79 | 0 | 208 |
-| JSON | 1 | 13 | 0 | 137 |
-| CSS | 2 | 30 | 20 | 125 |
-| PlantUML | 5 | 23 | 0 | 94 |
-| Lisp | 3 | 22 | 23 | 77 |
-| INI | 1 | 7 | 0 | 33 |
-| **SUM** | **86** | **825** | **487** | **4034** |
-
-To regenerate from the repository root:
-
-```bash
-nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
-```
-
-Full file: [**cloc-report.md**](./cloc-report.md).
-
----
-
-## 3. Diagrams
-
-Sources: `diagrams/*.puml`. PNG exports: [**diagrams/png/**](./diagrams/png/). To regenerate PNGs from the repository root:
-
-```bash
-nix shell nixpkgs#plantuml -c plantuml -tpng -odocs/diagrams/png docs/diagrams/*.puml
-```
-
----
-
-### System overview
+## 1. System Architecture
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
-flowchart LR
-  inputs[Flake inputs]
-  flake[flake.nix]
-  system[System layer]
-  user[User layer]
-  shells[Dev shells]
-  config[config/]
+graph TD
+  User((User))
+  Config[NixOS Configuration]
+  Rofi[Rofi Launcher & Applets]
+  RofiTheme[Rofi Theming & Display Mgmt]
+  Waybar[Waybar Status Bar]
+  Scripts[Dynamic Shell Scripts]
+  Utils[Core System Utilities]
+  Styling[Styling & Theming Assets]
+  Hyprland[Hyprland Compositor]
 
-  inputs --> flake
-  flake --> system
-  flake --> user
-  flake --> shells
-  user --> config
+  User --> Config
+  User --> Rofi
+  Config --> Rofi
+  Config --> Waybar
+  Config --> Scripts
+  Config --> Hyprland
+  Rofi --> RofiTheme
+  Rofi --> Scripts
+  RofiTheme --> Waybar
+  RofiTheme --> Hyprland
+  RofiTheme --> Styling
+  Waybar --> Styling
+  Scripts --> Styling
+  Scripts --> Utils
+  Utils --> Styling
+  Utils --> Hyprland
+  Hyprland <--> Scripts
 ```
 
-The flake is the single entry point: it consumes inputs (nixpkgs, home-manager, rust-overlay, hyprchroma, nix-snapd) and produces the system configuration (configuration.nix, hardware-configuration.nix, modules), the user configuration (home/tco/home.nix), and dev shells (ai, embedded).
+This diagram illustrates the high-level relationship between the NixOS declarative layer and the dynamic runtime components (scripts, UI, and styling).
+
+[Source: system-architecture.puml](./diagrams/system-architecture.puml) | [Export: system-architecture.png](./diagrams/png/system-architecture.png)
 
 ---
 
-### Seaglass theme propagation
+## 2. Seaglass Theme Propagation
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
@@ -104,60 +65,75 @@ flowchart TB
   rofi --> gtk
 ```
 
-The Seaglass visual theme (accent #94E2D5) is applied in the config layer (Hyprland, Waybar, Rofi) and then in rendering (Foot, Hyprchroma, GTK/icons Adwaita-dark and Papirus-Dark).
+The Seaglass visual theme (accent #94E2D5) is propagated from the config layer down to the rendering engines and GTK elements, ensuring a unified aesthetic.
+
+[Source: theme-flow.puml](./diagrams/theme-flow.puml) | [Export: theme-flow.png](./diagrams/png/theme-flow.png)
 
 ---
 
-### Boot and session choice
+## 3. Integration Logic
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
-flowchart TB
-  Boot[Boot]
-  sb[systemd-boot]
-  GDM[GDM]
-  H[Hyprland + XWayland<br/>Waybar, Rofi, Foot]
-  G[GNOME Desktop<br/>Adwaita, Papirus]
-
-  Boot --> sb --> GDM
-  GDM --> H
-  GDM --> G
-```
-
-At boot, systemd-boot then GDM allow choosing Hyprland (XWayland, Waybar, Rofi, Foot) or GNOME (Adwaita, Papirus).
-
----
-
-### Module imports (configuration.nix)
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
-flowchart TB
-  subgraph config["configuration.nix"]
-    hw[hardware-configuration.nix]
-    nv[nvidia-prime.nix]
-    virt[virtualisation.nix]
-    emacs[emacs.nix]
-    sci[science-data.nix]
-    launcher[launcher.nix]
-    starship[starship.nix]
-    db[databases.nix]
-    ollama[ollama.nix]
-    nginx[nginx.nix]
-    obs[observability.nix]
+graph LR
+  subgraph NixOS
+    root[configuration.nix]
+  end
+  subgraph UI
+    rofi[Rofi]
+    waybar[Waybar]
+    applets[Rofi Applets]
+  end
+  subgraph Backend
+    scripts[Shell Scripts]
+    styles[Styling CSS/Rasi]
   end
 
-  hw --> nv
-  hw --> virt
-  emacs --> sci --> launcher --> starship
-  db --> ollama --> nginx --> obs
+  root --> rofi
+  root --> waybar
+  rofi --> applets
+  rofi --> styles
+  applets --> styles
+  applets --> scripts
+  waybar --> styles
+  waybar --> scripts
 ```
 
-configuration.nix imports hardware-configuration.nix and optional modules (nvidia-prime, virtualisation, emacs, science-data, launcher, starship, databases, ollama, nginx, observability). Optional links mainly concern hardware (nvidia-prime, virtualisation).
+This visualization shows how `configuration.nix` acts as the orchestrator, integrating various UI components that in turn rely on shared shell scripts and styling assets.
+
+[Source: integration-logic.puml](./diagrams/integration-logic.puml) | [Export: integration-logic.png](./diagrams/png/integration-logic.png)
 
 ---
 
-### Flake outputs
+## 4. Execution Flow: Launcher & Grid
+
+```mermaid
+sequenceDiagram
+  participant L as launcher.sh
+  participant C as colors.rasi
+  participant R as Rofi
+  participant G as rofi-grid.sh
+  participant H as Hyprland
+  participant W as Waybar
+
+  L->>C: Randomize Accent
+  L->>R: Launch Theme
+  rect rgb(30, 41, 59)
+    R->>G: Launch Grid Context
+    G->>H: Blur Adjustment
+    G->>W: Kill waybar
+  end
+  R->>G: Exit Context
+  G->>H: Restore Blur
+  G->>W: Relaunch waybar
+```
+
+This sequence documents the complex coordination required when launching the Rofi grid, including dynamic blur adjustment in Hyprland and process management for Waybar.
+
+[Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml) | [Export: rofi-launcher-flow.png](./diagrams/png/rofi-launcher-flow.png)
+
+---
+
+## 5. Flake Outputs
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#1e293b', 'tertiaryColor': '#1e293b', 'primaryBorderColor': '#888', 'lineColor': '#888', 'primaryTextColor': '#eee' }}}%%
@@ -170,7 +146,7 @@ flowchart LR
 
   sys[configuration.nix + modules]
   hm[home/tco/home.nix]
-  ai[ai: python311, pip, nvidia]
+  ai[ai: python3, pydantic, nvidia]
   emb[embedded: rust, gdb, openocd, arduino]
 
   nixos --> sys
@@ -179,4 +155,6 @@ flowchart LR
   shells --> emb
 ```
 
-The flake exposes nixosConfigurations.nixos (full system config), homeConfigurations.tco (Home Manager), and devShells (ai: Python/pip/NVIDIA; embedded: Rust, gdb, openocd, Arduino, etc.).
+The flake exposes the full system configuration, user-level Home Manager settings, and specialized development shells for AI and embedded work.
+
+[Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
