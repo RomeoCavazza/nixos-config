@@ -18,8 +18,7 @@ Inputs:
   - nix-snapd: Canonical Snap daemon implementation for NixOS.
 
 Outputs:
-  - nixosConfigurations.nixos: Main system builder. Inherits hardware profile.
-  - homeConfigurations.tco: Standalone Home-Manager builder.
+  - nixosConfigurations.nixos: Sole entry point. System + Home Manager applied atomically.
   - devShells:
     * .#ai: Python 3.11 lab with NVIDIA/CUDA library paths.
     * .#embedded: Full C++/Rust toolchain (gcc, cmake) + MCU tools (esptool).
@@ -330,8 +329,7 @@ rust-overlay (flake input)
 --------------------------------------------------------------------------------
 Commands
 --------------------------------------------------------------------------------
-  Apply system config   sudo nixos-rebuild switch --flake .#nixos
-  Home Manager         home-manager switch --flake .#tco   (or alias: hm)
+  Apply system config   sudo nixos-rebuild switch --flake .#nixos   (or alias: rebuild)
   Rebuild (alias)      rebuild (bash)
   AI dev shell         nix develop .#ai   (or devai)
   Embedded dev shell   nix develop .#embedded   (or devemb)

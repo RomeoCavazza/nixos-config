@@ -24,14 +24,12 @@ flowchart TD
 
   subgraph out["Flake Outputs"]
     sys["nixosConfigurations.nixos\nconfiguration.nix + modules\n+ home-manager inline"]
-    usr["homeConfigurations.tco\nhome/tco/home.nix"]
     ai["devShells.ai\npython311, nvidia libs"]
     emb["devShells.embedded\nRust, GCC, GDB, Arduino"]
   end
 
   in --> flake
   flake --> sys
-  flake --> usr
   flake --> ai
   flake --> emb
 ```
@@ -40,7 +38,7 @@ flowchart TD
 
 The flake pins six inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprchroma` is a Hyprland plugin that applies a GPU shader tint to inactive windows. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS.
 
-The `nixosConfigurations.nixos` output is the main system builder. It includes `configuration.nix`, all optional modules from `modules/`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies both system and user config atomically.
+The `nixosConfigurations.nixos` output is the sole entry point. It includes `configuration.nix`, all optional modules from `modules/`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies both system and user config atomically.
 
 ---
 
