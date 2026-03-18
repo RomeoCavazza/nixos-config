@@ -61,6 +61,9 @@ Package Ecosystem:
   - Standard Tools: Bat, Eza, Fzf, Zoxide, Direnv.
   - Creative Tools: OBS Studio, Discord, Spotify.
   - Development: Zed, NeoVim, VSCode (with Nix/Python/Rust extensions).
+  - CAD/EDA: Obsidian, KiCad, FreeCAD (→ home/tco/modules/apps/cad.nix).
+  - Embedded: Arduino IDE/CLI, esptool, minicom (→ home/tco/modules/apps/embedded.nix).
+  - Data: DBeaver, Grafana, InfluxDB2 (→ home/tco/modules/apps/data.nix).
 
 Dotfile Management:
   - Seaglass Theme: Symlinks for Hyprland/Waybar/Rofi configs.
@@ -83,6 +86,27 @@ ollama.nix:
 
 observability.nix:
   - Performance monitoring and system metrics tools.
+
+--------------------------------------------------------------------------------
+4b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
+--------------------------------------------------------------------------------
+Thematic user modules imported by home/tco/home.nix.
+Separation principle: system modules = services/drivers, user modules = apps.
+
+cad.nix:
+  - obsidian (note-taking / second brain)
+  - kicad (PCB & schematic design)
+  - freecad (parametric 3D CAD)
+
+embedded.nix:
+  - arduino-ide, arduino-cli
+  - esptool (ESP8266/ESP32 flasher)
+  - minicom (serial monitor)
+
+data.nix:
+  - dbeaver-bin (universal database tool)
+  - grafana
+  - influxdb2
 
 --------------------------------------------------------------------------------
 5. BINARY SCRIPTS (config/bin/)
@@ -257,9 +281,6 @@ virtualisation.nix (modules/)
 emacs.nix (modules/)
   Emacs / Doom configuration (referenced in config/doom).
 
-science-data.nix (modules/)
-  Science/data packages.
-
 launcher.nix (modules/)
   Launcher integration (Rofi etc.).
 
@@ -282,6 +303,20 @@ edex.nix (modules/)
   Optional module (not imported in current configuration.nix): edex configuration.
 
   Also in modules/ but not imported: lamp.nix, streamlit.nix, tmpfiles.nix.
+
+--------------------------------------------------------------------------------
+11b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
+--------------------------------------------------------------------------------
+Imported by home/tco/home.nix. Evaluated by Home Manager module system (user scope).
+
+cad.nix (home/tco/modules/apps/)
+  CAD/EDA stack: obsidian, kicad, freecad.
+
+embedded.nix (home/tco/modules/apps/)
+  Embedded/IoT tools: arduino-ide, arduino-cli, esptool, minicom.
+
+data.nix (home/tco/modules/apps/)
+  Data/observability: dbeaver-bin, grafana, influxdb2.
 
 --------------------------------------------------------------------------------
 12. Dev shells (flake outputs)

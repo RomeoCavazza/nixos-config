@@ -30,10 +30,17 @@ nixos/
 │   ├── doom/         # Doom Emacs
 │   ├── foot/         # Terminal
 │   └── hypr/         # Hyprland + Waybar
-├── home/tco/         # Home Manager
-├── modules/          # Toggleable system modules
-│   ├── databases.nix
+├── home/tco/
+│   ├── home.nix      # Home Manager entry point
+│   └── modules/
+│       └── apps/
+│           ├── cad.nix       # obsidian, kicad, freecad
+│           ├── embedded.nix  # arduino, esptool, minicom
+│           └── data.nix      # dbeaver, grafana, influxdb2
+├── modules/          # System-only modules (services, drivers)
 │   ├── nvidia-prime.nix
+│   ├── virtualisation.nix
+│   ├── databases.nix
 │   ├── ollama.nix
 │   ├── observability.nix
 │   └── ...

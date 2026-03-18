@@ -5,7 +5,6 @@
     ./modules/nvidia-prime.nix
     ./modules/virtualisation.nix
     ./modules/emacs.nix
-    ./modules/science-data.nix
     ./modules/launcher.nix
     ./modules/starship.nix
     ./modules/databases.nix

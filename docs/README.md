@@ -61,11 +61,17 @@ flowchart LR
     nld["nix-ld\nForeign binary support"]
   end
 
-  subgraph mods["modules/"]
+  subgraph mods["modules/ — system only"]
     nv["nvidia-prime.nix\nPRIME offload Intel + NVIDIA"]
     vm["virtualisation.nix\nDocker, KVM, ARM binfmt"]
-    em["emacs + science-data\nstarship + launcher"]
+    em["emacs.nix + launcher.nix\nstarship.nix"]
     db["databases + ollama\nnginx + observability"]
+  end
+
+  subgraph hmmods["home/tco/modules/apps/ — user"]
+    cad["cad.nix\nobsidian · kicad · freecad"]
+    emb["embedded.nix\narduino · esptool · minicom"]
+    dat["data.nix\ndbeaver · grafana · influxdb2"]
   end
 
   hw --> core
@@ -76,18 +82,27 @@ flowchart LR
 
 Currently active modules:
 
+**System modules (`modules/`):**
+
 | Module | Purpose |
 |--------|---------|
 | `nvidia-prime.nix` | NVIDIA PRIME offload (hybrid Intel/NVIDIA) |
 | `virtualisation.nix` | Docker, libvirt/KVM, QEMU, ARM binfmt emulation |
 | `emacs.nix` | Doom Emacs + dependencies |
-| `science-data.nix` | Scientific computing packages |
 | `launcher.nix` | Rofi launchers system integration |
 | `starship.nix` | Starship prompt configuration |
 | `databases.nix` | Local database services |
 | `ollama.nix` | Ollama local LLM daemon |
 | `nginx.nix` | Nginx reverse proxy |
 | `observability.nix` | System monitoring and metrics |
+
+**User modules (`home/tco/modules/apps/`):**
+
+| Module | Packages |
+|--------|----------|
+| `cad.nix` | `obsidian`, `kicad`, `freecad` |
+| `embedded.nix` | `arduino-ide`, `arduino-cli`, `esptool`, `minicom` |
+| `data.nix` | `dbeaver-bin`, `grafana`, `influxdb2` |
 
 ### Boot: systemd-boot
 
@@ -221,7 +236,10 @@ ELECTRON_OZONE_PLATFORM_HINT = "x11" # Electron fallback for stability
 | Editors | `zed-editor`, `neovim`, VSCode (Nix/Python/Rust/C++ extensions) |
 | AI coding | `aider-chat`, Cursor (AppImage via `cursor` wrapper), `antigravity` |
 | Development | `rustc`, `cargo`, `nodejs_22`, `pnpm`, `typescript-language-server` |
-| Creative | `obs-studio`, `discord`, `spotify`, `kicad` |
+| Creative | `obs-studio`, `discord`, `spotify` |
+| CAD / EDA | `obsidian`, `kicad`, `freecad` *(→ `modules/apps/cad.nix`)* |
+| Embedded | `arduino-ide`, `arduino-cli`, `esptool`, `minicom` *(→ `modules/apps/embedded.nix`)* |
+| Data | `dbeaver-bin`, `grafana`, `influxdb2` *(→ `modules/apps/data.nix`)* |
 | Terminal fun | `cmatrix`, `cbonsai`, `pipes`, `hollywood`, `terminal-rain-lightning` |
 | Theming | `pywal`, `wpgtk`, `cava`, `hyprcursor`, `rose-pine-hyprcursor` |
 

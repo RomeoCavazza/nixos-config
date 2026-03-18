@@ -24,6 +24,12 @@ let
   };
 in
 {
+  imports = [
+    ./modules/apps/cad.nix
+    ./modules/apps/embedded.nix
+    ./modules/apps/data.nix
+  ];
+
   home.username = "tco";
   home.homeDirectory = "/home/tco";
   home.stateVersion = "25.05";
@@ -171,7 +177,6 @@ in
     appimage-run
     discord
     spotify
-    kicad
     cbonsai
     cmatrix
     hollywood
