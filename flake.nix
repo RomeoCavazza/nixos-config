@@ -56,14 +56,6 @@
         ];
       };
 
-      homeConfigurations.tco = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = { inherit inputs; };
-        modules = [
-          ./home/tco/home.nix
-        ];
-      };
-
       devShells.${system} = {
         ai = pkgs.mkShell {
           name = "ai-lab";

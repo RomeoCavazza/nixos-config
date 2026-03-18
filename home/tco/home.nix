@@ -257,7 +257,6 @@ in
       devai = "nix develop /etc/nixos#ai";
       devemb = "nix develop /etc/nixos#embedded";
       rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
-      hm = "home-manager switch --flake /etc/nixos#tco";
     };
   };
 
