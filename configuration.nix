@@ -27,15 +27,14 @@
     efi /EFI/Microsoft/Boot/bootmgfw.efi
   '';
 
+  # Force systemd-boot menu to always show and wait indefinitely (menu-force).
+  # NixOS doesn't support "menu-force" natively (timeout only accepts null|int),
+  # so we patch loader.conf after the installer writes it.
   boot.loader.systemd-boot.extraInstallCommands = ''
-    ${pkgs.coreutils}/bin/mkdir -p /boot/loader
-    ${pkgs.coreutils}/bin/cat > /boot/loader/loader.conf <<'EOF'
-timeout menu-force
-editor no
-auto-entries no
-auto-firmware yes
-EOF
-    ${pkgs.coreutils}/bin/chmod 0644 /boot/loader/loader.conf || true
+    conf=/boot/loader/loader.conf
+    ${pkgs.gnused}/bin/sed -i '/^timeout /d; /^auto-entries /d' "$conf"
+    echo "timeout menu-force" >> "$conf"
+    echo "auto-entries no" >> "$conf"
   '';
 
   boot.kernelModules = [ "i2c-dev" "i2c-i801" ];
