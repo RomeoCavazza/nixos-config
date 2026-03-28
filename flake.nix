@@ -11,7 +11,20 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    hyprchroma.url = "github:alexhulbert/hyprchroma";
+    hyprland.url = "github:hyprwm/Hyprland/v0.54.2";
+
+    # FIXME: hyprchroma incompatible with Hyprland v0.54.2 — re-enable when updated
+    # hyprchroma.url = "github:alexhulbert/hyprchroma";
+    # hyprchroma.inputs.hyprland.follows = "hyprland";
+
+    hyprspace.url = "github:KZDKM/Hyprspace";
+    hyprspace.inputs.hyprland.follows = "hyprland";
+
+    hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
+    hyprland-plugins.inputs.hyprland.follows = "hyprland";
+
+    hyprtasking.url = "github:raybbian/hyprtasking";
+    hyprtasking.inputs.hyprland.follows = "hyprland";
 
     nix-snapd.url = "github:nix-community/nix-snapd";
     nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
@@ -43,6 +56,7 @@
           {
             nixpkgs.overlays = [
               (import rust-overlay)
+              inputs.hyprland.overlays.default
               (final: prev: {
                 guix = pkgs-stable.guix;
               })

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# HYPR-CLOSE-ALL
+# ==============================================================================
+# Closes all windows on the current active workspace.
+# ==============================================================================
+
+WS=$(hyprctl activeworkspace -j | jq '.id')
+WINDOWS=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS) | .address")
+
+if [ -n "$WINDOWS" ]; then
+  cmds=""
+  for addr in $WINDOWS; do
+    cmds+="dispatch closewindow address:$addr; "
+  done
+  hyprctl --batch "$cmds"
+fi
