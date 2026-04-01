@@ -4,6 +4,9 @@
 # HYPR-LAYOUT-TOGGLE (Simple, decouplé de tout plugin)
 # ==============================================================================
 
+TARGET_W=939
+TARGET_H=1136
+
 WS=$(hyprctl activeworkspace -j | jq '.id')
 WINDOWS=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS) | .address")
 
@@ -17,11 +20,11 @@ if hyprctl clients -j | jq -e ".[] | select(.workspace.id == $WS and .floating =
   done
   hyprctl --batch "$cmds"
 else
-  # 3. CANVAS (FLOAT ALL + RESIZE 80x24 approx)
+  # 3. CANVAS (FLOAT ALL + APPLY REFERENCE SIZE)
   cmds=""
   for addr in $WINDOWS; do
     cmds+="dispatch setfloating address:$addr; "
-    cmds+="dispatch resizewindowpixel exact 900 500,address:$addr; "
+    cmds+="dispatch resizewindowpixel exact $TARGET_W $TARGET_H,address:$addr; "
   done
   hyprctl --batch "$cmds"
 fi

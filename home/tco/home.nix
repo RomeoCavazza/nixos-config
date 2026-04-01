@@ -39,7 +39,7 @@ let
     buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
 
     buildPhase =
-      let srcDir = lib.cleanSource /home/tco/Projects/hypr-canvas;
+      let srcDir = lib.cleanSource ./pkgs/hypr-canvas-fork;
       in ''
         g++ -shared -fPIC -std=c++2b -O2 \
           $(pkg-config --cflags hyprland pixman-1 libdrm) \
@@ -279,6 +279,33 @@ in
     executable = true;
   };
 
+  home.file.".local/bin/hypr-float-active" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      TARGET_W=939
+      TARGET_H=1136
+
+      ACTIVE_JSON="$(hyprctl activewindow -j)"
+      ADDR="$(printf '%s\n' "$ACTIVE_JSON" | jq -r '.address')"
+      FLOATING="$(printf '%s\n' "$ACTIVE_JSON" | jq -r '.floating')"
+
+      if [[ -z "$ADDR" || "$ADDR" == "0x" ]]; then
+        exit 0
+      fi
+
+      if [[ "$FLOATING" == "true" ]]; then
+        hyprctl dispatch settiled "address:$ADDR" >/dev/null
+      else
+        hyprctl --batch \
+          "dispatch setfloating address:$ADDR; \
+           dispatch resizewindowpixel exact $TARGET_W $TARGET_H,address:$ADDR"
+      fi
+    '';
+  };
+
   home.file.".local/bin/hypr-close-all" = {
     source = ../../config/bin/hypr-close-all;
     executable = true;
@@ -289,14 +316,39 @@ in
     executable = true;
   };
 
+  home.file.".local/bin/hypr-measure-active" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      hyprctl activewindow -j | jq -r '
+        if .address == "0x" or .address == "" then
+          "No active window"
+        else
+          [
+            "title      : \(.title)",
+            "class      : \(.class)",
+            "floating   : \(.floating)",
+            "workspace  : \(.workspace.name) (#\(.workspace.id))",
+            "at         : x=\(.at[0]) y=\(.at[1])",
+            "size       : w=\(.size[0]) h=\(.size[1])",
+            "box        : \(.size[0])x\(.size[1])+\(.at[0])+\(.at[1])"
+          ] | join("\n")
+        end
+      '
+    '';
+  };
+
   home.file.".local/lib/libhypr-darkwindow.so" = {
     source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
     executable = true;
   };
 
-  # plugin = $HOME/.local/lib/hypr-canvas.so
-  # home.file.".local/lib/hypr-canvas.so".source =
-  #   "${hypr-canvas}/lib/hypr-canvas.so";
+  home.file.".local/lib/hypr-canvas.so" = {
+    source = "${hypr-canvas}/lib/hypr-canvas.so";
+    executable = true;
+  };
 
   home.file.".local/lib/hyprspace.so" = {
     source = "${hyprspacePkg}/lib/libHyprspace.so";
@@ -322,6 +374,7 @@ in
     superfile
     grim
     slurp
+    wev
     wf-recorder
     sway-contrib.grimshot
     libnotify
@@ -333,6 +386,7 @@ in
     zed-editor
     neovim
     git
+    gh
     lua
     lua-language-server
     luaPackages.lgi
