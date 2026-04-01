@@ -177,8 +177,11 @@ xdg.portal
 Hyprland (programs.hyprland)
   enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, tokens.conf, waybar).
 
-hyprchroma (flake input)
-  Hyprland overlay/theme (github:alexhulbert/hyprchroma). Used for visual consistency.
+Hyprchroma fork / hypr-darkwindow
+  Local Hyprchroma fork compiled inline from home/tco/pkgs/Hyprchroma-fork/src/main.cpp into libhypr-darkwindow.so. Used for inactive-window tint and workspace-transition smoothing.
+
+hyprspace (flake input)
+  Local Hyprspace fork sourced from home/tco/pkgs/hyprspace-fork. Used for the overview plugin on Hyprland v0.54.2.
 
 seaglass
   Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf, hyprchroma.conf, rules.conf.

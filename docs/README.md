@@ -16,7 +16,10 @@ flowchart TD
     nps[nixpkgs-stable 24.11]
     hm[home-manager]
     ro[rust-overlay]
-    hc[hyprchroma]
+    hl[hyprland v0.54.2]
+    hs[hyprspace local fork]
+    hp[hyprland-plugins]
+    ht[hyprtasking]
     sn[nix-snapd]
   end
 
@@ -36,7 +39,7 @@ flowchart TD
 
 > [Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
 
-The flake pins six inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprchroma` is a Hyprland plugin that applies a GPU shader tint to inactive windows. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS.
+The flake currently pins nine inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprland` is pinned to `v0.54.2`. `hyprspace` is sourced from a local fork tracked in this repository. `hyprland-plugins` and `hyprtasking` are kept available for optional integrations. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS.
 
 The `nixosConfigurations.nixos` output is the sole entry point. It includes `configuration.nix`, all optional modules from `modules/`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies both system and user config atomically.
 
@@ -87,7 +90,7 @@ Currently active modules:
 | `nvidia-prime.nix` | NVIDIA PRIME offload (hybrid Intel/NVIDIA) |
 | `virtualisation.nix` | Docker, libvirt/KVM, QEMU, ARM binfmt emulation |
 | `emacs.nix` | Doom Emacs + dependencies |
-| `launcher.nix` | Rofi launchers system integration |
+| `launcher.nix` | Launcher-related system integration |
 | `starship.nix` | Starship prompt configuration |
 | `databases.nix` | Local database services |
 | `ollama.nix` | Ollama local LLM daemon |
@@ -183,7 +186,7 @@ Home Manager runs inline within the system build. The user configuration manages
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart LR
   subgraph hm["home.nix"]
-    dotfiles["home.file\nmkOutOfStoreSymlink"]
+    dotfiles["home.file\n(repo-tracked sources)"]
     pkgs["home.packages\nbat, eza, zed, obs, discord..."]
     progs["programs\nVSCode, git, bash, starship"]
     gtk["gtk\nAdwaita-dark\nPapirus-Dark / Bibata-Ice"]
@@ -206,7 +209,7 @@ act --> foot
 
 ### Dotfile Strategy
 
-All configuration files are managed via `home.file` entries pointing to `mkOutOfStoreSymlink`, which creates **mutable symlinks outside the Nix store**. This means config files in `config/` can be edited live without a `nixos-rebuild`:
+The main desktop configuration files are exposed through `home.file` entries backed by tracked repository paths. In practice, the active files under `config/` are editable in-place from `/etc/nixos`, while Home Manager keeps them wired into the user environment:
 
 ```
 ~/.config/hypr       → /etc/nixos/config/hypr/
@@ -261,7 +264,6 @@ Legacy helper scripts (`dw-*`) and the previously documented user daemon are no 
 Bash with Starship prompt. Key aliases:
 ```bash
 rebuild  # sudo nixos-rebuild switch --flake /etc/nixos#nixos
-hm       # home-manager switch --flake /etc/nixos#tco
 devai    # nix develop /etc/nixos#ai
 devemb   # nix develop /etc/nixos#embedded
 ```
@@ -279,8 +281,8 @@ flowchart TB
 
   subgraph compositor["Hyprland Compositor"]
     borders["Active border: 94E2D5\n12px rounding, dual-border"]
-    dw["hypr-darkwindow\nInactive window tint"]
-    hc["hyprchroma\nGPU shader overlay"]
+    dw["Hyprchroma fork\ncompiled as hypr-darkwindow"]
+    hs["Hyprspace\nworkspace overview"]
   end
 
   subgraph bar["Waybar"]
@@ -296,7 +298,7 @@ flowchart TB
   src --> bar
   src --> rofi
   compositor --> foot
-  bar --> hc
+  compositor --> hs
   src --> gtk
 ```
 
@@ -305,8 +307,8 @@ flowchart TB
 The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the config layer — not injected at runtime — so the visual identity is stable across every component:
 
 - **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), and active/inactive states. `tokens.conf` defines shared base values.
-- **hyprchroma**: A GPU shader applied on top of all windows for an additional color tint layer.
-- **hypr-darkwindow**: A plugin that darkens inactive windows, improving focus contrast.
+- **Hyprchroma fork / `hypr-darkwindow`**: the local Hyprchroma fork is compiled inline as `libhypr-darkwindow.so`, providing the inactive-window tint and workspace-transition smoothing used by the current desktop.
+- **Hyprspace**: the local fork provides the workspace overview compatible with Hyprland `v0.54.2`.
 - **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
 - **Rofi**: the active setup uses a fixed Seaglass sidebar/grid configuration centered on `column-tco.rasi` and `apps-grid.rasi`.
 - **Foot terminal**: Themed via the `pywal` `colors-foot.ini` template, tied to the wallpaper palette.
