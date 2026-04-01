@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# WAYBAR-TOGGLE (Robust detection for NixOS)
+# ==============================================================================
+
+# pgrep without -x to catch .waybar-wrapped or similar
+if pgrep waybar > /dev/null; then
+    pkill waybar
+else
+    # Start waybar in background, detached from terminal
+    waybar </dev/null >/dev/null 2>&1 & disown
+fi

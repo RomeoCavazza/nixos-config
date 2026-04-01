@@ -11,6 +11,7 @@
     ./modules/ollama.nix
     ./modules/nginx.nix
     ./modules/observability.nix
+    ./modules/gdm-wallpaper.nix
   ];
 
   services.guix.enable = true;
@@ -144,6 +145,10 @@
   };
 
   services.displayManager.gdm.enable = true;
+  services.displayManager.gdm.customWallpaper = {
+    enable = true;
+    path = ./assets/gdm-background.png;
+  };
   services.desktopManager.gnome.enable = true;
 
   programs.hyprland = {
@@ -161,6 +166,8 @@
       xdg-desktop-portal-gtk
     ];
   };
+
+  home-manager.backupFileExtension = "backup";
 
   hardware.enableRedistributableFirmware = true;
 

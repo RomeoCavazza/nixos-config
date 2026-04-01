@@ -5,25 +5,24 @@
     "tooltip": true,
     "tooltip-format": "NixOS"
   },
-
   "wlr/taskbar": {
     "format": "{icon}",
     "icon-size": 18,
     "tooltip": true,
     "on-click": "activate",
     "on-click-middle": "close",
-    "ignore-list": ["waybar"],
+    "ignore-list": [
+      "waybar"
+    ],
     "app_ids-mapping": {
       "firefox": "firefox",
       "org.gnome.Nautilus": "org.gnome.Nautilus"
     }
   },
-
   "custom/cava_mviz": {
     "exec": "$HOME/.config/waybar/WaybarCava.sh",
     "format": "{}"
   },
-
   "hyprland/workspaces": {
     "disable-scroll": true,
     "all-outputs": true,
@@ -48,18 +47,15 @@
       "5": []
     }
   },
-
   "cpu": {
     "format": "  {usage}%",
     "tooltip": true,
     "on-click": "kitty htop &"
   },
-
   "memory": {
     "format": "  {}%",
     "tooltip": true
   },
-
   "temperature": {
     "interval": 10,
     "hwmon-path": "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
@@ -67,7 +63,6 @@
     "format-critical": " {temperatureC}",
     "format": " {temperatureC}°C"
   },
-
   "battery": {
     "states": {
       "warning": 30,
@@ -77,9 +72,14 @@
     "format-full": "{icon}  {capacity}%",
     "format-charging": "  {capacity}%",
     "format-plugged": "  {capacity}%",
-    "format-icons": ["", "", "", "", ""]
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
   },
-
   "pulseaudio": {
     "format": "{icon}  {volume}%",
     "format-muted": "",
@@ -90,11 +90,14 @@
       "phone": "",
       "portable": "",
       "car": "",
-      "default": ["", "", ""]
+      "default": [
+        "",
+        "",
+        ""
+      ]
     },
     "on-click": "pavucontrol"
   },
-
   "network#speed": {
     "interval": 1,
     "format-wifi": "󰤨   {bandwidthUpBytes}  {bandwidthDownBytes}",
@@ -104,25 +107,21 @@
     "min-length": 24,
     "max-length": 24
   },
-
   "bluetooth": {
     "format": "",
     "format-disabled": "󰂳",
     "format-connected": "󰂱 {num_connections}",
     "tooltip": true
   },
-
   "tray": {
     "icon-size": 20,
     "spacing": 6
   },
-
   "clock": {
     "format": "{:%H:%M}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "format-alt": "{:%d-%m-%Y}"
   },
-
   "mpris": {
     "interval": 10,
     "format": "{player_icon}",

@@ -1,0 +1,29 @@
+name: Build Hyprchroma
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  nix-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+
+      - name: Hyprland Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: hyprland
+
+      - name: Build
+        run: nix build -L
+
+      - name: Verify output
+        run: |
+          ls -la result/lib/
+          file result/lib/libhyprchroma.so

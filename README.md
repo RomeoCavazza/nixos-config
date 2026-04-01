@@ -29,14 +29,19 @@ nixos/
 │   ├── bin/          # Custom scripts
 │   ├── doom/         # Doom Emacs
 │   ├── foot/         # Terminal
-│   └── hypr/         # Hyprland + Waybar
+│   ├── hypr/         # Hyprland + Waybar
+│   ├── rofi/         # Active Rofi runtime
+│   └── swappy/       # Screenshot editor config
 ├── home/tco/
 │   ├── home.nix      # Home Manager entry point
-│   └── modules/
+│   ├── modules/
 │       └── apps/
 │           ├── cad.nix       # obsidian, kicad, freecad
 │           ├── embedded.nix  # arduino, esptool, minicom
 │           └── data.nix      # dbeaver, grafana, influxdb2
+│   └── pkgs/
+│       ├── Hyprchroma-fork
+│       └── hyprspace-fork
 ├── modules/          # System-only modules (services, drivers)
 │   ├── nvidia-prime.nix
 │   ├── virtualisation.nix
@@ -166,4 +171,3 @@ The root `README.md` is the main source of truth for this repository. Annexes li
    cd /etc/nixos
    sudo nixos-rebuild switch --flake .#nixos
    ```
-
