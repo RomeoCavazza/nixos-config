@@ -112,9 +112,9 @@ data.nix:
 --------------------------------------------------------------------------------
 Custom logic to fill gaps in the Nix/Wayland ecosystem.
 
-dw-daemon & dw-apply:
-  - Hyprland DarkWindow integration.
-  - Logic: Actively monitors window focused state and applies tint shaders.
+DarkWindow / Hyprchroma:
+  - Hyprland visual effect provided directly by the plugin layer.
+  - Logic: Runtime behavior is driven by plugin load + sourced theme config.
 
 hypr-plugins-init:
   - Plugin loader for Hyprland. Handles dynamically linked object (.so) loading.
@@ -143,7 +143,7 @@ config/
   Source configuration tree (hypr, waybar, rofi, foot, doom, bin, swappy).
 
 config/bin/
-  Custom scripts: antigravity, cursor, dw-apply, dw-daemon, dw-toggle, dw-toggle-global, edex-conky-toggle, edex-toggle, hypr-plugins-init, legion-pulse, legion-toggle.
+  Custom scripts: antigravity, cursor, edex-conky-toggle, edex-toggle, hypr-plugins-init, legion-pulse, legion-toggle.
 
 antigravity (home.file.".local/bin/antigravity")
   Wrapper script that runs /etc/nixos/config/bin/antigravity. Lets you invoke the system binary from the user profile.
@@ -151,11 +151,13 @@ antigravity (home.file.".local/bin/antigravity")
 cursor (home.file.".local/bin/cursor")
   Symlink outside store to /etc/nixos/config/bin/cursor (Cursor editor).
 
-dw-apply, dw-toggle, dw-toggle-global, dw-daemon (config/bin + home.file)
-  Scripts and user service for Hyprland DarkWindow (tint/dark windows). dw-daemon: systemd user service, wantedBy graphical-session.target.
+DarkWindow / Hyprchroma
+  Active runtime is provided directly by the Hyprland plugin and its sourced config.
+  No user-level dw-daemon service is currently defined in the active Nix configuration.
+  Legacy dw-* helper scripts were removed from the default runtime path.
 
 assets/
-  Root folder: media for the README (logo, screenshots, wallpaper, hero-video).
+  Root folder: media referenced by the shipped README (logo, screenshots, wallpaper, hero-video).
 
 --------------------------------------------------------------------------------
 7. Display, desktop and theme
@@ -191,7 +193,7 @@ activeapp.sh (config/hypr/waybar/activeapp.sh)
   Active window tracker. Uses `hyprctl activewindow` and `jq` to extract class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.). Outputs JSON for Waybar.
 
 rofi (config/rofi, home.file.".config/rofi")
-  Launcher and applets (config.rasi, custom/column-tco.rasi, powermenu, launchers). Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
+  Active runtime: config.rasi, theme.rasi, custom/column-tco.rasi, scripts/rofi-push.sh, bin/rofi-grid.sh, themes/apps-grid.rasi. Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
 
 rofi-push.sh (config/rofi/scripts/rofi-push.sh)
   Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400. Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi without overlapping windows. Restores original gaps on exit.
@@ -254,7 +256,7 @@ openrgb (services.hardware.openrgb)
   Hardware RGB control.
 
 systemd.user.services
-  polkit-gnome-authentication-agent-1, dw-daemon (DarkWindow).
+  polkit-gnome-authentication-agent-1.
 
 systemd.tmpfiles.rules
   Create dirs: .cache/wal, nix-build, profiles and user gcroots for tco.

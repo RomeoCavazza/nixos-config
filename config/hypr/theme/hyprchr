@@ -1,9 +1,0 @@
-# Hyprchroma (chromakey)
-# Couleur "à rendre transparente" (RGB)
-chromakey_background = 32,36,44
-
-# Désactiver l'effet sur les fenêtres fullscreen
-chromakey_enable = fullscreen:0
-
-# Toggle sur la fenêtre active
-bind = SUPER, P, togglechromakey

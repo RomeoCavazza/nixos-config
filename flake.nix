@@ -17,7 +17,7 @@
     # hyprchroma.url = "github:alexhulbert/hyprchroma";
     # hyprchroma.inputs.hyprland.follows = "hyprland";
 
-    hyprspace.url = "github:KZDKM/Hyprspace";
+    hyprspace.url = "path:./home/tco/pkgs/hyprspace-fork";
     hyprspace.inputs.hyprland.follows = "hyprland";
 
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";

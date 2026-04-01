@@ -187,7 +187,6 @@ flowchart LR
     pkgs["home.packages\nbat, eza, zed, obs, discord..."]
     progs["programs\nVSCode, git, bash, starship"]
     gtk["gtk\nAdwaita-dark\nPapirus-Dark / Bibata-Ice"]
-    svc["systemd.user\ndw-daemon"]
     act["home.activation\npywal templates"]
   end
 
@@ -197,11 +196,10 @@ flowchart LR
   bin["config/bin\n→ ~/.local/bin/"]
 
   dotfiles --> hypr
-  dotfiles --> rofi
-  dotfiles --> foot
-  dotfiles --> bin
-  svc --> bin
-  act --> foot
+dotfiles --> rofi
+dotfiles --> foot
+dotfiles --> bin
+act --> foot
 ```
 
 > [Source: user-layer.puml](./diagrams/user-layer.puml) | [Export: user-layer.png](./diagrams/png/user-layer.png)
@@ -241,9 +239,16 @@ ELECTRON_OZONE_PLATFORM_HINT = "x11" # Electron fallback for stability
 | Terminal fun | `cmatrix`, `cbonsai`, `pipes`, `hollywood`, `terminal-rain-lightning` |
 | Theming | `pywal`, `wpgtk`, `cava`, `hyprcursor`, `rose-pine-hyprcursor` |
 
-### DarkWindow Plugin (`dw-daemon`)
+### DarkWindow / Hyprchroma
 
-`hypr-darkwindow` is a Hyprland plugin (`.so`) that shades inactive windows. The daemon runs as a `systemd.user.service` attached to `graphical-session.target`. Scripts `dw-toggle`, `dw-toggle-global`, and `dw-apply` allow toggling from the command line or via Hyprland keybinds.
+The DarkWindow visual effect is currently provided directly by the Hyprland plugin layer.
+
+Active pieces:
+- plugin load in `config/hypr/hyprland.conf`
+- sourced settings in `config/hypr/theme/hyprchroma.conf`
+- dispatcher usage via `togglechromakey`
+
+Legacy helper scripts (`dw-*`) and the previously documented user daemon are no longer part of the shipped runtime path.
 
 ### Pywal / Wpgtk Integration
 
@@ -283,7 +288,7 @@ flowchart TB
     css["style.css — teal accent 94e2d5"]
   end
 
-  rofi["Rofi\ncolumn-tco.rasi\naccent injected via colors.rasi"]
+  rofi["Rofi\ncolumn-tco.rasi\nfixed Seaglass accent"]
   foot["Foot terminal\ncolors-foot.ini — pywal template"]
   gtk["GTK: Adwaita-dark\nIcons: Papirus-Dark\nCursor: Bibata-Modern-Ice"]
 
@@ -303,7 +308,7 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 - **hyprchroma**: A GPU shader applied on top of all windows for an additional color tint layer.
 - **hypr-darkwindow**: A plugin that darkens inactive windows, improving focus contrast.
 - **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
-- **Rofi**: `colors.rasi` is overwritten by launcher scripts with a randomly selected accent per invocation.
+- **Rofi**: the active setup uses a fixed Seaglass sidebar/grid configuration centered on `column-tco.rasi` and `apps-grid.rasi`.
 - **Foot terminal**: Themed via the `pywal` `colors-foot.ini` template, tied to the wallpaper palette.
 - **GTK**: Adwaita-dark theme, Papirus-Dark icon set, Bibata-Modern-Ice cursor.
 
@@ -354,25 +359,18 @@ Queries `hyprctl activewindow` for the focused window's class and title. Maps cl
 
 ---
 
-## 7. Rofi — Launchers & Applets
+## 7. Rofi — Active Runtime
 
-Rofi handles application launch and system controls via a suite of themed applets in `config/rofi/`.
+Rofi is currently used through a slim active runtime in `config/rofi/`, centered on the sidebar launcher and the grid launcher.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 graph LR
-  subgraph launchers["config/rofi/launchers/"]
-    colorful[colorful/launcher.sh\nrandom accent + random theme]
-    ribbon[ribbon/launcher.sh\nrandom color scheme]
-  end
-
-  subgraph applets["config/rofi/applets/"]
-    vol[volume.sh — amixer]
-    bl[backlight.sh — brightnessctl]
-    mpd[mpd.sh — mpc]
-    pwr[powermenu.sh — systemctl]
-    ss[screenshot.sh — grim + slurp]
-    net[network.sh — nmcli]
+  subgraph active["config/rofi/ active set"]
+    cfg[config.rasi]
+    theme[theme.rasi]
+    column[column-tco.rasi\nsidebar theme]
+    gridtheme[apps-grid.rasi\ngrid theme]
   end
 
   subgraph mgmt["Display management"]
@@ -380,13 +378,17 @@ graph LR
     push[rofi-push.sh\ngaps_out shift for sidebar]
   end
 
-  launchers --> mgmt
-  applets --> mgmt
+  cfg --> theme
+  theme --> column
+  gridtheme --> grid
+  column --> push
 ```
 
 > [Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml) | [Export: rofi-launcher-flow.png](./diagrams/png/rofi-launcher-flow.png)
 
-Each launcher script randomizes a color accent by selecting a random entry from a `colors/` subdirectory and overwriting `colors.rasi` before invoking Rofi. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
+The active Rofi path is intentionally small: `rofi-push.sh` launches the sidebar layout using `column-tco.rasi`, while `rofi-grid.sh` launches the app grid using `apps-grid.rasi`. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
+
+Legacy applets, launcher packs, and powermenu variants were removed from the shipped runtime tree to keep the active configuration leaner.
 
 ---
 

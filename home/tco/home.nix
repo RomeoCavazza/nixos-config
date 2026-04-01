@@ -3,177 +3,31 @@ let
   mkOut = config.lib.file.mkOutOfStoreSymlink;
 
   hyprland-pkg = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  # Deterministic patched Render.cpp for v0.54.2
-  patchedRenderCpp = pkgs.writeText "Render.cpp" (builtins.readFile ./pkgs/hyprspace/Render.cpp);
+  hyprspacePkg = inputs.hyprspace.packages.${pkgs.system}.Hyprspace;
 
-  # Hyprspace Patched Build (v0.54.2 Deterministic Edition)
-  patchedHyprspace = inputs.hyprspace.packages.${pkgs.system}.Hyprspace.overrideAttrs (old: {
-    nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.perl ];
-    postPatch = (old.postPatch or "") + ''
-      # 1. Update Globals.hpp with Edition v33 shim
-      sed -i '/typedef void (\*tRenderWindow)/d' src/Globals.hpp
-      sed -i '/typedef void (\*tRenderLayer)/d' src/Globals.hpp
-      sed -i '/void\* pRenderWindow/d' src/Globals.hpp
-      sed -i '/void\* pRenderLayer/d' src/Globals.hpp
-      sed -i '/plugins\/PluginAPI.hpp/a #include <hyprland/src/event/EventBus.hpp>\n#include <hyprland/src/layout/LayoutManager.hpp>\n#include <hyprland/src/managers/input/InputManager.hpp>\n#include <hyprland/src/helpers/time/Time.hpp>\n#include <hyprland/src/render/Renderer.hpp>\ntypedef void (*tRenderWindow)(void*, PHLWINDOW, PHLMONITOR, const Time::steady_tp&, bool, eRenderPassMode, bool, bool);\ntypedef void (*tRenderLayer)(void*, PHLLS, PHLMONITOR, const Time::steady_tp&, bool, bool);\ntypedef void (*tRenderWorkspace)(void*, PHLMONITOR, PHLWORKSPACE, const Time::steady_tp&, const Hyprutils::Math::CBox&);\ninline void* pRenderWindow = nullptr;\ninline void* pRenderLayer = nullptr;\ninline void* pRenderWorkspace = nullptr;\ninline PHLWINDOWREF g_ovCurrentlyDraggedWindow;\ninline eMouseBindMode g_ovDragMode;\n#define MOUSE_BIND_DRAG MBIND_MOVE\n#define RENDER_STAGE_POST_WINDOW RENDER_POST_WINDOWS' src/Globals.hpp
-      sed -i 's/managers\/LayoutManager.hpp/layout\/LayoutManager.hpp/' src/Globals.hpp
-
-      # 2. Deterministic replacement of Render.cpp
-      cp ${patchedRenderCpp} src/Render.cpp
-
-      # 3. Update Function Signatures in main.cpp
-      sed -i 's/void onRender(void\* thisptr, SCallbackInfo\& info, std::any args)/void onRender(eRenderStage renderStage)/' src/main.cpp
-      sed -i 's/void onWorkspaceChange(void\* thisptr, SCallbackInfo\& info, std::any args)/void onWorkspaceChange(PHLWORKSPACE pWorkspace)/' src/main.cpp
-      sed -i 's/void onMouseButton(void\* thisptr, SCallbackInfo\& info, std::any args)/void onMouseButton(IPointer::SButtonEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onMouseAxis(void\* thisptr, SCallbackInfo\& info, std::any args)/void onMouseAxis(IPointer::SAxisEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onSwipeBegin(void\* thisptr, SCallbackInfo\& info, std::any args)/void onSwipeBegin(IPointer::SSwipeBeginEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onSwipeUpdate(void\* thisptr, SCallbackInfo\& info, std::any args)/void onSwipeUpdate(IPointer::SSwipeUpdateEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onSwipeEnd(void\* thisptr, SCallbackInfo\& info, std::any args)/void onSwipeEnd(IPointer::SSwipeEndEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onKeyPress(void\* thisptr, SCallbackInfo\& info, std::any args)/void onKeyPress(IKeyboard::SKeyEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onTouchDown(void\* thisptr, SCallbackInfo\& info, std::any args)/void onTouchDown(ITouch::SDownEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onTouchMove(void\* thisptr, SCallbackInfo\& info, std::any args)/void onTouchMove(ITouch::SMotionEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i 's/void onTouchUp(void\* thisptr, SCallbackInfo\& info, std::any args)/void onTouchUp(ITouch::SUpEvent e, Event::SCallbackInfo\& info)/' src/main.cpp
-
-      # 4. Clean up any_casts and Fix onRender Logic
-      sed -i '/void\* pRenderWindow/d' src/main.cpp
-      sed -i '/void\* pRenderLayer/d' src/main.cpp
-      
-      # Correct the stage check in onRender (v0.54.2)
-      # RENDER_POST_WINDOWS (value 4) = once per frame after all windows, pre-overlay
-      # RENDER_POST_WINDOW  (value 9) = fires for EVERY individual window render (WRONG)
-      sed -i '/void onRender(eRenderStage renderStage) {/a \    if (renderStage != RENDER_POST_WINDOWS \&\& g_ovDragMode != MOUSE_BIND_DRAG) return;' src/main.cpp
-      # Delete the old broken any_cast checks
-      sed -i '/std::any_cast<eRenderStage>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<PHLWORKSPACE>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<IPointer::SButtonEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<IPointer::SSwipeBeginEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<IPointer::SSwipeUpdateEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<IPointer::SSwipeEndEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<ITouch::SDownEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<ITouch::SMotionEvent>(args)/d' src/main.cpp
-      sed -i '/std::any_cast<ITouch::SUpEvent>(args)/d' src/main.cpp
-
-      # Fix onRender call with steady_tp
-      sed -i '/pRenderWindow/s/&time/std::chrono::steady_clock::now()/' src/main.cpp
-      sed -i 's/getWidgetForMonitor(g_pHyprOpenGL->m_renderData.pMonitor)/getWidgetForMonitor(g_pHyprOpenGL->m_renderData.pMonitor.lock())/' src/main.cpp
-      
-      # Input Event Argument Mapping
-      sed -i '/std::any_cast<IPointer::SAxisEvent>/c\    const auto e = e_arg;' src/main.cpp
-      sed -i 's/void onMouseAxis(IPointer::SAxisEvent e, Event::SCallbackInfo\& info)/void onMouseAxis(IPointer::SAxisEvent e_arg, Event::SCallbackInfo\& info)/' src/main.cpp
-      sed -i '/std::any_cast<IKeyboard::SKeyEvent>/c\    const auto e = e_arg;' src/main.cpp
-      sed -i '/std::any_cast<SP<IKeyboard>>/c\    const auto k = g_pSeatManager->m_keyboard.lock();' src/main.cpp
-      sed -i 's/void onKeyPress(IKeyboard::SKeyEvent e, Event::SCallbackInfo\& info)/void onKeyPress(IKeyboard::SKeyEvent e_arg, Event::SCallbackInfo\& info)/' src/main.cpp
-
-      # Replace g_pInputManager trickery with our ov shim (Global across all src)
-      sed -i 's/g_pInputManager->m_currentlyDraggedWindow/g_ovCurrentlyDraggedWindow/g' src/*.cpp
-      sed -i 's/g_pInputManager->m_dragMode/g_ovDragMode/g' src/*.cpp
-      
-      # Fix Input.cpp drag state (PR 223)
-      sed -i 's/g_ovCurrentlyDraggedWindow = g_layoutManager->dragController()->target()->window()/g_ovCurrentlyDraggedWindow = g_layoutManager->dragController()->target() ? g_layoutManager->dragController()->target()->window() : PHLWINDOWREF{}/g' src/Input.cpp
-      
-      # Fix g_pLayoutManager and recalculateMonitor (v0.54.2 API)
-      sed -i 's/g_pLayoutManager->getCurrentLayout()->recalculateMonitor(ownerID)/g_layoutManager->recalculateMonitor(g_pCompositor->getMonitorFromID(ownerID))/g' src/Layout.cpp
-      sed -i 's/g_pLayoutManager->getCurrentLayout()->onEndDragWindow()/g_layoutManager->endDragTarget()/g' src/Input.cpp
-      # Catch any remaining g_pLayoutManager
-      sed -i 's/g_pLayoutManager/g_layoutManager/g' src/*.cpp
-
-      # [NEW FIXES]
-      # 5. Reset reservedArea manually before arrangeLayersForMonitor
-      sed -i '/g_pHyprRenderer->arrangeLayersForMonitor(ownerID);/i \    pMonitor->m_reservedArea = Desktop::CReservedArea();' src/Layout.cpp
-      
-      # 5. Fix Globals naming (v0.54.2 convention)
-      # 6. Migrate Registration to Event::bus()
-      sed -i 's/g_pConfigReloadHook = HyprlandAPI::registerCallbackDynamic(pHandle, "configReloaded", \[&\] (void\* thisptr, SCallbackInfo\& info, std::any data) { reloadConfig(); });/static auto p1 = Event::bus()->m_events.config.reloaded.listen([]() { reloadConfig(); });/' src/main.cpp
-      sed -i 's/g_pRenderHook = HyprlandAPI::registerCallbackDynamic(pHandle, "render", onRender);/static auto p2 = Event::bus()->m_events.render.stage.listen(onRender);/' src/main.cpp
-      sed -i 's/g_pOpenLayerHook = HyprlandAPI::registerCallbackDynamic(pHandle, "openLayer", \[&\] (void\* thisptr, SCallbackInfo\& info, std::any data) { g_layoutNeedsRefresh = true; });/static auto p3 = Event::bus()->m_events.layer.opened.listen([](PHLLS ls) { g_layoutNeedsRefresh = true; });/' src/main.cpp
-      sed -i 's/g_pCloseLayerHook = HyprlandAPI::registerCallbackDynamic(pHandle, "closeLayer", \[&\] (void\* thisptr, SCallbackInfo\& info, std::any data) { g_layoutNeedsRefresh = true; });/static auto p4 = Event::bus()->m_events.layer.closed.listen([](PHLLS ls) { g_layoutNeedsRefresh = true; });/' src/main.cpp
-      sed -i 's/g_pMouseButtonHook = HyprlandAPI::registerCallbackDynamic(pHandle, "mouseButton", onMouseButton);/static auto p5 = Event::bus()->m_events.input.mouse.button.listen(onMouseButton);/' src/main.cpp
-      sed -i 's/g_pMouseAxisHook = HyprlandAPI::registerCallbackDynamic(pHandle, "mouseAxis", onMouseAxis);/static auto p6 = Event::bus()->m_events.input.mouse.axis.listen(onMouseAxis);/' src/main.cpp
-      sed -i 's/g_pTouchDownHook = HyprlandAPI::registerCallbackDynamic(pHandle, "touchDown", onTouchDown);/static auto p7 = Event::bus()->m_events.input.touch.down.listen(onTouchDown);/' src/main.cpp
-      sed -i 's/g_pTouchMoveHook = HyprlandAPI::registerCallbackDynamic(pHandle, "touchMove", onTouchMove);/static auto p8 = Event::bus()->m_events.input.touch.motion.listen(onTouchMove);/' src/main.cpp
-      sed -i 's/g_pTouchUpHook = HyprlandAPI::registerCallbackDynamic(pHandle, "touchUp", onTouchUp);/static auto p9 = Event::bus()->m_events.input.touch.up.listen(onTouchUp);/' src/main.cpp
-      sed -i 's/g_pSwipeBeginHook = HyprlandAPI::registerCallbackDynamic(pHandle, "swipeBegin", onSwipeBegin);/static auto p10 = Event::bus()->m_events.gesture.swipe.begin.listen(onSwipeBegin);/' src/main.cpp
-      sed -i 's/g_pSwipeUpdateHook = HyprlandAPI::registerCallbackDynamic(pHandle, "swipeUpdate", onSwipeUpdate);/static auto p11 = Event::bus()->m_events.gesture.swipe.update.listen(onSwipeUpdate);/' src/main.cpp
-      sed -i 's/g_pSwipeEndHook = HyprlandAPI::registerCallbackDynamic(pHandle, "swipeEnd", onSwipeEnd);/static auto p12 = Event::bus()->m_events.gesture.swipe.end.listen(onSwipeEnd);/' src/main.cpp
-      sed -i 's/g_pKeyPressHook = HyprlandAPI::registerCallbackDynamic(pHandle, "keyPress", onKeyPress);/static auto p13 = Event::bus()->m_events.input.keyboard.key.listen(onKeyPress);/' src/main.cpp
-      sed -i 's/g_pSwitchWorkspaceHook = HyprlandAPI::registerCallbackDynamic(pHandle, "workspace", onWorkspaceChange);/static auto p14 = Event::bus()->m_events.workspace.active.listen(onWorkspaceChange);/' src/main.cpp
-      sed -i 's/g_pAddMonitorHook = HyprlandAPI::registerCallbackDynamic(pHandle, "monitorAdded", \[&\] (void\* thisptr, SCallbackInfo\& info, std::any data) { registerMonitors(); });/static auto p15 = Event::bus()->m_events.monitor.added.listen([](PHLMONITOR m) { registerMonitors(); });/' src/main.cpp
-      
-      # 7. Granular Renderer Discovery (renderWindow) - v0.54.2 Final Sync
-      sed -i '/void\* hyprspaceFindFunc/d' src/main.cpp
-      sed -i '/tRenderWindow/d' src/main.cpp
-      cat >> src/main.cpp <<EOF
-#include <dlfcn.h>
-#include <hyprland/src/render/Renderer.hpp>
-void* hyprspaceFindFunc(HANDLE inHandle, const std::string func, const std::string sym, const std::string mangled) {
-    // 1. Try finding by name using the plugin's handle (as in PR 223)
-    auto funcSearch = HyprlandAPI::findFunctionsByName(inHandle, func);
-    for (auto& f : funcSearch) {
-        if (f.demangled.find(sym) != std::string::npos) {
-            HyprlandAPI::addNotification(inHandle, "[API] Found: " + func, CHyprColor(0, 1, 0, 1), 2000);
-            return f.address;
-        }
-    }
-
-    // 2. Try dlsym on the process itself
-    void* handle = dlopen(NULL, RTLD_LAZY);
-    void* addr = dlsym(handle, mangled.c_str());
-    if (addr) {
-        HyprlandAPI::addNotification(inHandle, "[DLSYM] Found: " + func, CHyprColor(0, 1, 0, 1), 2000);
-        dlclose(handle);
-        return addr;
-    }
-    if (handle) dlclose(handle);
-
-    // 3. Exhaustive search in ALL functions
-    auto allFuncs = HyprlandAPI::findFunctionsByName(inHandle, "");
-    for (auto& f : allFuncs) {
-        if (f.demangled.find(sym) != std::string::npos) {
-            HyprlandAPI::addNotification(inHandle, "[ALL] Found: " + func, CHyprColor(0.5, 1, 0.5, 1), 2000);
-            return f.address;
-        }
-    }
-
-    HyprlandAPI::addNotification(inHandle, "FATAL: " + func + " NOT FOUND", CHyprColor(1, 0, 0, 1), 10000);
-    return nullptr;
-}
-EOF
-      sed -i '/plugins\/PluginAPI.hpp/a #include <hyprutils/utils/ScopeGuard.hpp>\n#include <hyprland/src/render/Renderer.hpp>\nvoid* hyprspaceFindFunc(HANDLE inHandle, const std::string func, const std::string sym, const std::string mangled);' src/main.cpp
-      sed -i '/PLUGIN_INIT(HANDLE inHandle) {/a \    pHandle = inHandle;\n    pRenderWindow = hyprspaceFindFunc(inHandle, "renderWindow", "CHyprRenderer::renderWindow", "_ZN13CHyprRenderer12renderWindowEN9Hyprutils6Memory14CSharedPointerIN7Desktop4View7CWindowEEENS2_I8CMonitorEERKNSt6chrono10time_pointINS9_3_V212steady_clockENS9_8durationIlSt5ratioILl1ELl1000000000EEEEEEb15eRenderPassModebb");\n    pRenderLayer = hyprspaceFindFunc(inHandle, "renderLayer", "CHyprRenderer::renderLayer", "_ZN13CHyprRenderer11renderLayerEN9Hyprutils6Memory14CSharedPointerIN7Desktop4View13CLayerSurfaceEEENS2_I8CMonitorEERKNSt6chrono10time_pointINS7_3_V212steady_clockENS7_8durationIlSt5ratioILl1ELl1000000000EEEEEEbb");\n    pRenderWorkspace = hyprspaceFindFunc(inHandle, "renderWorkspace", "CHyprRenderer::renderWorkspace", "_ZN13CHyprRenderer15renderWorkspaceEN9Hyprutils6Memory14CSharedPointerI8CMonitorEENS2_I10CWorkspaceEERKNSt6chrono10time_pointINS8_3_V212steady_clockENS8_8durationIlSt5ratioILl1ELl1000000000EEEEEERKN9Hyprutils4Math4CBoxE");\n    if (pRenderWindow && pRenderWorkspace) { HyprlandAPI::addNotification(inHandle, "[Hyprspace] Desktop Context Active (0.54.2)", CHyprColor(0, 1.0, 0, 1.0), 10000); }\n    else { HyprlandAPI::addNotification(inHandle, "[Hyprspace] ENGINE PARTIAL (FAILSAFE)", CHyprColor(1.0, 0, 0, 1.0), 30000); }' src/main.cpp
-      
-      # 8. Recursion Guard for onRender (Stable)
-      sed -i '/void onRender(eRenderStage renderStage) {/a \    static bool inRender = false;\n    if (inRender) return;\n    inRender = true;\n    Hyprutils::Utils::CScopeGuard x([\&] { inRender = false; });' src/main.cpp
-
-      # 5. Fix Globals naming (v0.54.2 convention)
-      sed -i 's/g_pLayoutManager/g_layoutManager/g' src/*.cpp src/*.hpp
-      
-      # 5.1 Project Exact Reservation Logic (PR 223)
-      sed -i '/g_pHyprRenderer->arrangeLayersForMonitor(ownerID);/i \    if (active) { if (!Config::onBottom) pMonitor->m_reservedArea = Desktop::CReservedArea(currentHeight, 0, 0, 0); else pMonitor->m_reservedArea = Desktop::CReservedArea(0, 0, currentHeight, 0); } else { pMonitor->m_reservedArea = Desktop::CReservedArea(); }' src/Layout.cpp
-
-      # 5.2 Fix Config names (KZDKM alignment)
-      sed -i 's/panelBaseColor/panelColor/g' src/main.cpp src/*.cpp
-      sed -i 's/panelBaseColor/panelColor/g' src/*.hpp
-
-      # 8. Update Overview.hpp with interaction members (PR 223)
-      sed -i '/std::vector<std::tuple<int, CBox>> workspaceBoxes;/a \    std::vector<std::tuple<PHLWINDOWREF, Hyprutils::Math::CBox>> windowBoxes;\n    PHLWINDOWREF draggedWindowRef;' src/Overview.hpp
-
-      # 9. Damage individual windows on hide (PR 223 / Commit a88dbaf)
-      sed -i '/void CHyprspaceWidget::hide() {/a \    for (auto\& ws : g_pCompositor->getWorkspaces()) { if (!ws || ws->m_monitor->m_id != ownerID) continue; for (auto\& w : g_pCompositor->m_windows) { if (!w || w->m_workspace != ws || !w->m_isMapped) continue; g_pHyprRenderer->damageWindow(w); } }' src/Overview.cpp
-
-      # 10. Fix "coupé en deux" animation bug: hide() set curYOffset in physical px
-      #     but draw() uses it as logical px → panel invisible for half the animation.
-      #     Remove the incorrect * owner->m_scale multiplier.
-      sed -i 's/\*curYOffset = (Config::panelHeight + Config::reservedArea) \* owner->m_scale;/*curYOffset = Config::panelHeight + Config::reservedArea;/' src/Overview.cpp
-
-      # 11. Add damageMonitor callback at animation end (PR #223 commit 586b095)
-      #     Without this, windows stay glitched/shrunken after the panel closes.
-      sed -i 's/curYOffset->setValueAndWarp(Config::panelHeight);/curYOffset->setValueAndWarp(Config::panelHeight + Config::reservedArea);\n    curYOffset->setCallbackOnEnd([this](Hyprutils::Memory::CWeakPointer<Hyprutils::Animation::CBaseAnimatedVariable>) {\n        if (!active) {\n            auto owner = getOwner();\n            if (owner) {\n                g_pHyprRenderer->damageMonitor(owner);\n                g_pCompositor->scheduleFrameForMonitor(owner);\n            }\n        }\n    }, false);/' src/Overview.cpp
-
-      # 12. Fix existing setCallbackOnEnd lambda signatures (v0.11.0+)
-      sed -i 's/setCallbackOnEnd(\[this\]()/setCallbackOnEnd([this](Hyprutils::Memory::CWeakPointer<Hyprutils::Animation::CBaseAnimatedVariable>)/g' src/*.cpp src/*.hpp
+  # Hyprchroma v3.3 — grouped adaptive chromakey tint
+  # Point to the fork source
+  hyprchroma-src = pkgs.writeText "hyprchroma-main.cpp" (builtins.readFile ./pkgs/Hyprchroma-fork/src/main.cpp);
+  hypr-darkwindow = pkgs.stdenv.mkDerivation {
+    pname   = "hypr-darkwindow";
+    version = "3.3.1-v054";
+    srcs        = [];
+    dontUnpack  = true;
+    nativeBuildInputs = [ pkgs.pkg-config ];
+    buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
+    buildPhase = ''
+      g++ -shared -fPIC -std=c++2b -O2 \
+        $(pkg-config --cflags hyprland pixman-1 libdrm) \
+        -DWLR_USE_UNSTABLE \
+        ${hyprchroma-src} \
+        -o libhypr-darkwindow.so
     '';
-  });
-
+    installPhase = ''
+      mkdir -p $out/lib
+      cp libhypr-darkwindow.so $out/lib/
+    '';
+    meta.description = "Hyprchroma v3.3 — grouped adaptive chromakey tint";
+  };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
     version = "0.2.0-patched";
@@ -265,41 +119,130 @@ in
   xdg.configFile."fastfetch/config.jsonc".text = ''
     {
         "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
         "logo": {
-            "source": "nixos",
+            "source": "\u001b[38;2;42;81;158m    \u259c\u2588\u2588\u259b    \u259c\u2588\u2588\u2588\u2599 \u259c\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u259b\n     \u259c\u259b     \u259f\u2588\u2588\u2588\u2588\u2599 \u259c\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u259b \n           \u259f\u2588\u2588\u2588\u2588\u2588\u2588\u2599         \u259c\u2588\u2588\u2588\u2599     \n          \u259f\u2588\u2588\u2588\u259b\u259c\u2588\u2588\u2588\u2599         \u259c\u2588\u2588\u2588\u2599    \n         \u259f\u2588\u2588\u2588\u259b  \u259c\u2588\u2588\u2588\u2599         \u259c\u2588\u2588\u2588\u2599   \n         \u259d\u2580\u2580\u2580    \u2580\u2580\u2580\u2598         \u2580\u2580\u2580\u2598   \u001b[0m",
+            "type": "auto",
             "padding": {
-                "top": 1
-            },
-            "color": {
-                "1": "38;2;148;226;213",
-                "2": "38;2;148;226;213"
+                "right": 2
             }
         },
+
         "display": {
-            "separator": " ❯ ",
+            "separator": " ",
+            "key": { "type": "none" },
             "color": {
-                "keys": "cyan",
-                "title": "cyan"
+                "keys": "38;2;172;230;243",
+                "title": "38;2;172;230;243"
+            },
+            "bar": {
+                "char": {
+                    "elapsed": "\u2588",
+                    "total": "-"
+                },
+                "width": 10
             }
         },
+
         "modules": [
-            "title",
-            "separator",
-            "os",
-            "host",
-            "kernel",
-            "uptime",
-            "packages",
-            "shell",
-            "display",
-            "de",
-            "wm",
-            "terminal",
-            "cpu",
-            "gpu",
-            "memory",
-            "break",
-            "colors"
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u256d\u2500\u2500\u2500 System Core \u256e\u001b[0m"
+            },
+            {
+                "type": "kernel",
+                "format": "\u001b[38;2;172;230;243m\u2502  \uf17c Kernel      \u2502\u001b[0m   {2}"
+            },
+            {
+                "type": "os",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰣇 Distro      \u2502\u001b[0m   {3} {10}"
+            },
+            {
+                "type": "cpu",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰓅 CPU Freq    \u2502\u001b[0m   {7} GHz"
+            },
+            {
+                "type": "display",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰹑 Display     \u2502\u001b[0m   {1}x{2} @ {3}Hz"
+            },
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\u001b[0m"
+            },
+
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u256d\u2500\u2500\u2500 Software \u2500\u2500\u2500\u256e\u001b[0m"
+            },
+            {
+                "type": "shell",
+                "format": "\u001b[38;2;172;230;243m\u2502  󱆃 Shell       \u2502\u001b[0m   {1} {4}"
+            },
+            {
+                "type": "terminal",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰆍 Terminal    \u2502\u001b[0m   {1} {6}"
+            },
+            {
+                "type": "packages",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰏖 Packages    \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "wm",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰨇 WM          \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\u001b[0m"
+            },
+
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u256d\u2500\u2500\u2500 Hardware \u2500\u2500\u2500\u256e\u001b[0m"
+            },
+            {
+                "type": "cpu",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰍛 CPU         \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "gpu",
+                "hideType": "integrated",
+                "format": "\u001b[38;2;172;230;243m\u2502  󰢮 GPU         \u2502\u001b[0m   {2}"
+            },
+            {
+                "type": "command",
+                "shell": "sh",
+                "text": "free -m | awk '/Mem:/ {u=$3; t=$2; p=int(u/t*100); b=int(p/10); split(\"0;95;255 0;95;255 17;108;253 34;122;252 51;135;250 68;149;249 85;163;247 102;176;246 137;203;244 172;230;243\", colors, \" \"); printf \"[ \"; for(i=1;i<=b;i++) printf \"\\033[38;2;\" colors[i] \"m█\\033[0m\"; for(i=b+1;i<=10;i++) printf \"-\"; printf \" ] %0.2f / %0.2f GiB\", u/1024, t/1024}'",
+                "format": "\u001b[38;2;172;230;243m\u2502  \uf2db RAM         \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "command",
+                "shell": "sh",
+                "text": "df -h / | tail -1 | awk '{p=int($5); b=int(p/10); split(\"0;95;255 0;95;255 17;108;253 34;122;252 51;135;250 68;149;249 85;163;247 102;176;246 137;203;244 172;230;243\", colors, \" \"); printf \"[ \"; for(i=1;i<=b;i++) printf \"\\033[38;2;\" colors[i] \"m█\\033[0m\"; for(i=b+1;i<=10;i++) printf \"-\"; printf \" ] %s / %s\", $3, $2}'",
+                "format": "\u001b[38;2;172;230;243m\u2502  \uf0a0 SSD         \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "command",
+                "shell": "sh",
+                "text": "cat /sys/class/power_supply/BAT0/capacity | awk '{p=int($1); b=int(p/10); split(\"0;95;255 0;95;255 17;108;253 34;122;252 51;135;250 68;149;249 85;163;247 102;176;246 137;203;244 172;230;243\", colors, \" \"); printf \"[ \"; for(i=1;i<=b;i++) printf \"\\033[38;2;\" colors[i] \"m█\\033[0m\"; for(i=b+1;i<=10;i++) printf \"-\"; printf \" ] %d%%\", p}'",
+                "format": "\u001b[38;2;172;230;243m\u2502  \uf240 Battery     \u2502\u001b[0m   {1}"
+            },
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\u001b[0m"
+            },
+
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u256d\u2500\u2500\u2500 Colors \u2500\u2500\u2500\u2500\u2500\u256e\u001b[0m"
+            },
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u2502  󱓉 Colors      \u2502\u001b[0m   \u001b[38;2;42;81;158m\u25cf \u001b[38;2;88;94;160m\u25cf \u001b[38;2;58;107;206m\u25cf \u001b[38;2;166;109;136m\u25cf \u001b[38;2;42;159;232m\u25cf \u001b[38;2;94;155;225m\u25cf \u001b[38;2;172;230;243m\u25cf \u001b[38;2;120;161;170m\u25cf\u001b[0m"
+            },
+            {
+                "type": "custom",
+                "format": "\u001b[38;2;172;230;243m\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\u001b[0m"
+            }
         ]
     }
   '';
@@ -327,26 +270,6 @@ in
     '';
   };
 
-  home.file.".local/bin/dw-apply" = {
-    source = ../../config/bin/dw-apply;
-    executable = true;
-  };
-
-  home.file.".local/bin/dw-toggle-global" = {
-    source = ../../config/bin/dw-toggle-global;
-    executable = true;
-  };
-
-  home.file.".local/bin/dw-toggle" = {
-    source = ../../config/bin/dw-toggle;
-    executable = true;
-  };
-
-  home.file.".local/bin/dw-daemon" = {
-    source = ../../config/bin/dw-daemon;
-    executable = true;
-  };
-
   home.file.".local/bin/hypr-plugins-init" = {
     source = ../../config/bin/hypr-plugins-init;
     executable = true;
@@ -362,16 +285,22 @@ in
     executable = true;
   };
 
-  # FIXME: hyprchroma incompatible with Hyprland v0.54.2 — re-enable when updated
-  # home.file.".local/lib/libhypr-darkwindow.so".source =
-  #   "${inputs.hyprchroma.packages.${pkgs.system}.default}/lib/libHypr-DarkWindow.so";
+  home.file.".local/bin/waybar-toggle" = {
+    source = ../../config/bin/waybar-toggle;
+    executable = true;
+  };
+
+  home.file.".local/lib/libhypr-darkwindow.so" = {
+    source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
+    executable = true;
+  };
 
   # plugin = $HOME/.local/lib/hypr-canvas.so
   # home.file.".local/lib/hypr-canvas.so".source =
   #   "${hypr-canvas}/lib/hypr-canvas.so";
 
   home.file.".local/lib/hyprspace.so" = {
-    source = "${patchedHyprspace}/lib/libHyprspace.so";
+    source = "${hyprspacePkg}/lib/libHyprspace.so";
     executable = true;
   };
 
@@ -382,6 +311,7 @@ in
   #   "${inputs.hyprtasking.packages.${pkgs.system}.default}/lib/libhyprtasking.so";
 
   home.packages = with pkgs; [
+    chafa
     bat
     eza
     fd
@@ -544,6 +474,40 @@ in
         . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
       export PATH="$HOME/.lmstudio/bin:$HOME/.npm-global/bin:$HOME/.local/bin:$PATH"
+
+      # Smart Tab: ls + exec on empty line
+      _tab_smart_ls_exec() {
+        if [[ -z "$READLINE_LINE" ]]; then
+          local selected
+          selected=$(fzf --height 40% --reverse --preview '[[ -d {} ]] && eza --icons --tree --level=1 {} || (bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {})' 2>/dev/null)
+          if [[ -n "$selected" ]]; then
+            if [[ -d "$selected" ]]; then
+              cd "$selected"
+              READLINE_LINE=""
+              READLINE_POINT=0
+              printf "\r\n"
+              ls --icons
+            else
+              if [[ -x "$selected" ]]; then
+                READLINE_LINE="./$selected"
+              else
+                READLINE_LINE="xdg-open \"$selected\""
+              fi
+              printf "\r\n"
+              eval "$READLINE_LINE"
+              READLINE_LINE=""
+              READLINE_POINT=0
+            fi
+          fi
+          # Force prompt refresh
+          printf "\r"
+        else
+          # Fallback to standard completion (Insert a literal tab and trigger)
+          # Note: bind -x is limited, but this works for simple cases
+          printf "\t"
+        fi
+      }
+      bind -x '"\t": _tab_smart_ls_exec'
     '';
     shellAliases = {
       g = "git";
@@ -614,23 +578,4 @@ EOF
     categories = [ "Development" "IDE" ];
   };
 
-  systemd.user.services.dw-daemon = {
-    Unit = {
-      Description = "Hypr DarkWindow auto-shade daemon";
-      After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = "%h/.local/bin/dw-daemon";
-      Restart = "on-failure";
-      RestartSec = 1;
-      Environment = [
-        "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin:%h/.local/bin:%h/.npm-global/bin:%h/.lmstudio/bin"
-        "XDG_CACHE_HOME=%h/.cache"
-      ];
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-  };
 }

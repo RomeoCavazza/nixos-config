@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Recharge Hyprland (reparse la config) et ré-applique les règles shader ciblées
-hyprctl reload >/dev/null 2>&1 || true
-"$HOME/.local/bin/dw-apply" >/dev/null 2>&1 || true
+# Reserved for future Hyprland plugin bootstrap hooks.
+# DarkWindow / Hyprchroma is loaded directly through Hyprland config.
+
+exit 0
