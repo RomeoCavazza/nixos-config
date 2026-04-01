@@ -250,7 +250,6 @@ in
   xdg.enable = true;
   xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
   xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
-  xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
 
   home.file.".config/hypr".source = ../../config/hypr;
   home.file.".config/waybar".source = ../../config/hypr/waybar;

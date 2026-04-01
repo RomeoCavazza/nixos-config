@@ -184,7 +184,7 @@ hyprspace (flake input)
   Local Hyprspace fork sourced from home/tco/pkgs/hyprspace-fork. Used for the overview plugin on Hyprland v0.54.2.
 
 seaglass
-  Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf, hyprchroma.conf, rules.conf.
+  Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf and hyprchroma.conf.
 
 Waybar (config/hypr/waybar)
   Status bar (config.jsonc, style.css, mocha.css, scripts).
