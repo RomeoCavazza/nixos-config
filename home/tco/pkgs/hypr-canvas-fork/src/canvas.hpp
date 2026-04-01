@@ -3,6 +3,7 @@
 #include <hyprland/src/plugins/PluginAPI.hpp>
 #include <hyprland/src/plugins/HookSystem.hpp>
 #include <hyprland/src/helpers/math/Math.hpp>
+#include <hyprland/src/SharedDefs.hpp>
 #include <hyprland/src/devices/IPointer.hpp>
 #include <hyprutils/memory/SharedPtr.hpp>
 
@@ -26,6 +27,7 @@ class CCanvas {
     double   zoom   = 1.0;
     Vector2D offset = {0, 0};   // canvas-space offset of viewport origin
     bool     active = false;     // canvas mode on/off
+    WORKSPACEID m_canvasWorkspace = WORKSPACE_INVALID;
 
     // Saved window states (keyed by window address)
     std::map<uint64_t, SWindowState> m_savedStates;
@@ -42,6 +44,9 @@ class CCanvas {
 
     // Reposition all windows based on current zoom+offset
     void repositionWindows();
+    bool workspaceChanged() const;
+    void resetForWorkspaceChange();
+    bool windowOnCanvasWorkspace(const SP<Desktop::View::CWindow>& window) const;
 
     // Constants
     static constexpr double ZOOM_MIN  = 0.1;

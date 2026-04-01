@@ -7,6 +7,7 @@
 #include <hyprland/src/managers/PointerManager.hpp>
 #include <hyprland/src/render/Renderer.hpp>
 #include <hyprland/src/layout/LayoutManager.hpp>
+#include <hyprland/src/helpers/Monitor.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -42,6 +43,9 @@ typedef Vector2D (*positionFn)(CPointerManager*);
 
 static void hkOnMouseWheel(CInputManager* self, IPointer::SAxisEvent e, SP<IPointer> pointer) {
     const uint32_t mods = g_pInputManager->getModsFromAllKBs();
+
+    if (g_pCanvas && g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
 
     if ((mods & HL_MODIFIER_META) && g_pCanvas && e.axis == WL_POINTER_AXIS_VERTICAL_SCROLL) {
         const double scrollDelta = (e.deltaDiscrete != 0) ? (double)e.deltaDiscrete : e.delta;
@@ -83,6 +87,9 @@ static void hkOnMouseWheel(CInputManager* self, IPointer::SAxisEvent e, SP<IPoin
 typedef void (*onMouseButtonFn)(CInputManager*, IPointer::SButtonEvent);
 
 static void hkOnMouseButton(CInputManager* self, IPointer::SButtonEvent e) {
+    if (g_pCanvas && g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
+
     if (g_pCanvas && (e.button == BTN_LEFT || e.button == BTN_RIGHT)) {
         const uint32_t mods = g_pInputManager->getModsFromAllKBs();
         if ((mods & HL_MODIFIER_META) && e.state == WL_POINTER_BUTTON_STATE_PRESSED) {
@@ -171,6 +178,9 @@ typedef void (*onMouseMovedFn)(CInputManager*, IPointer::SMotionEvent);
 static void hkOnMouseMoved(CInputManager* self, IPointer::SMotionEvent e) {
     const uint32_t mods = g_pInputManager->getModsFromAllKBs();
 
+    if (g_pCanvas && g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
+
     // If we ever miss a button-release event, do not stay stuck in a drag mode.
     if (g_pCanvas && !(mods & HL_MODIFIER_META) &&
         (g_pCanvas->m_panning || g_pCanvas->m_movingWindow || g_pCanvas->m_resizingWindow)) {
@@ -219,6 +229,9 @@ static void hkOnMouseMoved(CInputManager* self, IPointer::SMotionEvent e) {
 // --- Dispatchers ---
 
 SDispatchResult dispatchReset(std::string args) {
+    if (g_pCanvas && g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
+
     if (g_pCanvas && g_pCanvas->active) {
         g_pCanvas->exit();
         logf("[hypr-canvas] exit canvas mode\n");
@@ -230,6 +243,9 @@ SDispatchResult dispatchReset(std::string args) {
 SDispatchResult dispatchPan(std::string args) {
     if (!g_pCanvas)
         return {};
+
+    if (g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
 
     Vector2D delta = {0, 0};
     if (args == "left")       delta.x = CCanvas::PAN_STEP;
@@ -254,6 +270,9 @@ SDispatchResult dispatchPan(std::string args) {
 SDispatchResult dispatchZoom(std::string args) {
     if (!g_pCanvas)
         return {};
+
+    if (g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
 
     auto mon = Desktop::focusState()->monitor();
     if (!mon) return {};
@@ -281,6 +300,9 @@ SDispatchResult dispatchZoom(std::string args) {
 
 SDispatchResult dispatchToggle(std::string args) {
     if (!g_pCanvas) return {};
+
+    if (g_pCanvas->workspaceChanged())
+        g_pCanvas->resetForWorkspaceChange();
 
     if (g_pCanvas->active) {
         g_pCanvas->exit();
@@ -330,9 +352,14 @@ CCanvas::~CCanvas() {
 // --- Canvas mode enter/exit ---
 
 void CCanvas::enter() {
+    auto mon = Desktop::focusState()->monitor();
+    if (!mon)
+        return;
+
     active = true;
     zoom = 1.0;
     offset = {0, 0};
+    m_canvasWorkspace = mon->activeWorkspaceID();
     m_savedStates.clear();
     m_panning = false;
     m_movingWindow = false;
@@ -341,7 +368,7 @@ void CCanvas::enter() {
 
     // Save all window positions and float them
     for (auto& w : g_pCompositor->m_windows) {
-        if (!w || w->isHidden() || !w->m_isMapped)
+        if (!w || w->isHidden() || !w->m_isMapped || !windowOnCanvasWorkspace(w))
             continue;
 
         uint64_t id = (uint64_t)w.get();
@@ -386,13 +413,14 @@ void CCanvas::enter() {
         g_pHyprRenderer->damageWindow(w);
     }
 
-    logf("[hypr-canvas] entered canvas mode, saved %zu windows\n", m_savedStates.size());
+    logf("[hypr-canvas] entered canvas mode on workspace %ld, saved %zu windows\n",
+         (long)m_canvasWorkspace, m_savedStates.size());
 }
 
 void CCanvas::exit() {
     // Restore all saved window positions and float state
     for (auto& w : g_pCompositor->m_windows) {
-        if (!w || w->isHidden() || !w->m_isMapped)
+        if (!w || w->isHidden() || !w->m_isMapped || !windowOnCanvasWorkspace(w))
             continue;
 
         uint64_t id = (uint64_t)w.get();
@@ -417,6 +445,7 @@ void CCanvas::exit() {
     active = false;
     zoom = 1.0;
     offset = {0, 0};
+    m_canvasWorkspace = WORKSPACE_INVALID;
     m_panning = false;
     m_movingWindow = false;
     m_resizingWindow = false;
@@ -434,7 +463,7 @@ void CCanvas::exit() {
 
 void CCanvas::repositionWindows() {
     for (auto& w : g_pCompositor->m_windows) {
-        if (!w || w->isHidden() || !w->m_isMapped)
+        if (!w || w->isHidden() || !w->m_isMapped || !windowOnCanvasWorkspace(w))
             continue;
 
         uint64_t id = (uint64_t)w.get();
@@ -462,6 +491,35 @@ void CCanvas::repositionWindows() {
         w->m_size = newSize;
         g_pHyprRenderer->damageWindow(w);
     }
+}
+
+bool CCanvas::workspaceChanged() const {
+    if (!active)
+        return false;
+
+    auto mon = Desktop::focusState()->monitor();
+    if (!mon)
+        return false;
+
+    return mon->activeWorkspaceID() != m_canvasWorkspace;
+}
+
+void CCanvas::resetForWorkspaceChange() {
+    if (!active)
+        return;
+
+    auto mon = Desktop::focusState()->monitor();
+    const auto currentWorkspace = mon ? mon->activeWorkspaceID() : WORKSPACE_INVALID;
+    logf("[hypr-canvas] workspace change detected (%ld -> %ld), resetting canvas session\n",
+         (long)m_canvasWorkspace, (long)currentWorkspace);
+    exit();
+}
+
+bool CCanvas::windowOnCanvasWorkspace(const SP<Desktop::View::CWindow>& window) const {
+    if (!window || !window->m_workspace)
+        return false;
+
+    return window->workspaceID() == m_canvasWorkspace;
 }
 
 // --- Zoom with cursor anchoring ---
