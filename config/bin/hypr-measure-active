@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hyprctl activewindow -j | jq -r '
+  if .address == "0x" or .address == "" then
+    "No active window"
+  else
+    [
+      "title      : \(.title)",
+      "class      : \(.class)",
+      "floating   : \(.floating)",
+      "workspace  : \(.workspace.name) (#\(.workspace.id))",
+      "at         : x=\(.at[0]) y=\(.at[1])",
+      "size       : w=\(.size[0]) h=\(.size[1])",
+      "box        : \(.size[0])x\(.size[1])+\(.at[0])+\(.at[1])"
+    ] | join("\n")
+  end
+'

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Antigravity
+GenericName=IDE
+Comment=Antigravity IDE
+Exec=/home/tco/.local/bin/antigravity %U
+TryExec=/home/tco/.local/bin/antigravity
+Terminal=false
+Categories=Development;IDE;
+StartupNotify=true
+Icon=/home/tco/.local/share/icons/antigravity-icon.png

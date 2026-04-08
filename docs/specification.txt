@@ -288,9 +288,6 @@ emacs.nix (modules/)
 launcher.nix (modules/)
   Launcher integration (Rofi etc.).
 
-starship.nix (modules/)
-  Starship prompt configuration.
-
 databases.nix (modules/)
   Optional module: local database tools and services.
 

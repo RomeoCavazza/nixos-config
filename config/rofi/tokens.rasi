@@ -1,0 +1,8 @@
+* {
+  fg0:         rgba(201, 209, 225, 100%);
+  accent:      rgba(0, 234, 255, 100%);
+  glow:        rgba(0, 234, 255, 60%);
+  glowSoft:    rgba(0, 234, 255, 15%);
+  borderLight: rgba(255, 255, 255, 8%);
+  edge:        rgba(255, 255, 255, 8%);
+}

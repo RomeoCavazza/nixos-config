@@ -2,7 +2,7 @@
  * Neutral Glass + subtle cyan glow
  */
 
-@import "~/.config/theme/tokens.rasi"
+@import "~/.config/rofi/tokens.rasi"
 
 configuration {
   font: "SpaceMono Nerd Font 13";

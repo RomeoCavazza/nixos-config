@@ -6,7 +6,6 @@
     ./modules/virtualisation.nix
     ./modules/emacs.nix
     ./modules/launcher.nix
-    ./modules/starship.nix
     ./modules/databases.nix
     ./modules/ollama.nix
     ./modules/nginx.nix
@@ -70,8 +69,6 @@
 
   systemd.tmpfiles.rules = [
     "d /home/tco/.cache/wal 0755 tco users -"
-    "f /home/tco/.cache/wal/colors-hyprland.conf 0644 tco users -"
-    "f /home/tco/.cache/wal/colors-foot.ini 0644 tco users -"
     "d /home/nix-build 2775 root nixbld - -"
     "d /nix/var/nix/profiles/per-user/tco 0755 tco users -"
     "d /nix/var/nix/gcroots/per-user/tco 0755 tco users -"

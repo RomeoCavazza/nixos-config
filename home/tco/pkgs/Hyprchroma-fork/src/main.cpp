@@ -1100,9 +1100,6 @@ static SDispatchResult shadeDispatcher(std::string args) {
     else
       g_perWindowShaded.insert((void *)target.get());
 
-    HyprlandAPI::addNotification(pHandle,
-                                 "[DarkWindow] Per-window shade toggled",
-                                 CHyprColor(0.f, 1.f, 1.f, 1.f), 1000);
   } else {
     const auto clearedOverrides = g_perWindowShaded.size();
     g_perWindowShaded.clear();
@@ -1114,15 +1111,6 @@ static SDispatchResult shadeDispatcher(std::string args) {
     else
       g_globalShaded = !g_globalShaded;
 
-    HyprlandAPI::addNotification(
-        pHandle,
-        std::format("[DarkWindow] Global shade {}{}",
-                    g_globalShaded ? "ON" : "OFF",
-                    clearedOverrides
-                        ? std::format(" (cleared {} window override(s))",
-                                      clearedOverrides)
-                        : ""),
-        CHyprColor(0.f, 1.f, 1.f, 1.f), 1500);
   }
 
   redrawAll();
@@ -1196,11 +1184,6 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO pluginInit(HANDLE handle) {
                                [](std::string args) -> SDispatchResult {
                                  return shadeDispatcher(args);
                                });
-
-  HyprlandAPI::addNotification(handle,
-                               "[DarkWindow] Registered v3.3.1 "
-                               "(Grouped adaptive chromakey tint)",
-                               CHyprColor(0.f, 1.f, 0.f, 1.f), 3000);
 
   return {"DarkWindow", "Grouped adaptive per-pixel chromakey tint", "tco",
           "3.3.1"};

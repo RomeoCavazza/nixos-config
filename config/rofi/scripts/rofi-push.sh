@@ -41,7 +41,6 @@ LEFT_GAP=$((BASE_GAP + WIDTH))
 
 # IMPORTANT: si pas supporté -> on n'applique rien (sinon ça shrink partout)
 if ! apply_left_only_gap "$LEFT_GAP" "$BASE_GAP"; then
-  echo "ERROR: Hyprland ne supporte pas gaps_out par-côté sur cette build. (Sinon ça shrink partout.)" >&2
   exit 1
 fi
 

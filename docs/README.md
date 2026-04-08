@@ -65,7 +65,7 @@ flowchart LR
   subgraph mods["modules/ — system only"]
     nv["nvidia-prime.nix\nPRIME offload Intel + NVIDIA"]
     vm["virtualisation.nix\nDocker, KVM, ARM binfmt"]
-    em["emacs.nix + launcher.nix\nstarship.nix"]
+    em["emacs.nix + launcher.nix"]
     db["databases + ollama\nnginx + observability"]
   end
 
@@ -91,7 +91,6 @@ Currently active modules:
 | `virtualisation.nix` | Docker, libvirt/KVM, QEMU, ARM binfmt emulation |
 | `emacs.nix` | Doom Emacs + dependencies |
 | `launcher.nix` | Launcher-related system integration |
-| `starship.nix` | Starship prompt configuration |
 | `databases.nix` | Local database services |
 | `ollama.nix` | Ollama local LLM daemon |
 | `nginx.nix` | Nginx reverse proxy |
@@ -190,7 +189,7 @@ flowchart LR
     pkgs["home.packages\nbat, eza, zed, obs, discord..."]
     progs["programs\nVSCode, git, bash, starship"]
     gtk["gtk\nAdwaita-dark\nPapirus-Dark / Bibata-Ice"]
-    act["home.activation\npywal templates"]
+    wal["xdg.configFile\npywal templates"]
   end
 
   hypr["config/hypr\n→ ~/.config/hypr/"]
@@ -202,7 +201,7 @@ flowchart LR
 dotfiles --> rofi
 dotfiles --> foot
 dotfiles --> bin
-act --> foot
+wal --> dotfiles
 ```
 
 > [Source: user-layer.puml](./diagrams/user-layer.puml) | [Export: user-layer.png](./diagrams/png/user-layer.png)
@@ -255,9 +254,11 @@ Legacy helper scripts (`dw-*`) and the previously documented user daemon are no 
 
 ### Pywal / Wpgtk Integration
 
-`pywal` generates a color palette from wallpapers and writes templates to `~/.cache/wal/`. Two templates are provisioned at activation time via `home.activation`:
-- `colors-hyprland.conf` — sets `col.active_border` and `col.inactive_border` dynamically from wallpaper palette
-- `colors-foot.ini` — injects the generated palette into the Foot terminal color scheme
+`pywal` is available in the user environment, and its custom templates are tracked in-repo then deployed with `xdg.configFile` to `~/.config/wal/templates/`.
+- `colors-hyprland.conf` — optional template for wallpaper-derived Hyprland border colors
+- `colors-foot.ini` — optional template for wallpaper-derived Foot colors
+
+The live desktop theme remains repo-defined by default: Hyprland sources `config/hypr/theme/*.conf`, and Foot uses the tracked palette in `config/foot/foot.ini`.
 
 ### Shell & Prompt
 
@@ -291,7 +292,7 @@ flowchart TB
   end
 
   rofi["Rofi\ncolumn-tco.rasi\nfixed Seaglass accent"]
-  foot["Foot terminal\ncolors-foot.ini — pywal template"]
+  foot["Foot terminal\nrepo-tracked palette"]
   gtk["GTK: Adwaita-dark\nIcons: Papirus-Dark\nCursor: Bibata-Modern-Ice"]
 
   src --> compositor
@@ -311,7 +312,7 @@ The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the confi
 - **Hyprspace**: the local fork provides the workspace overview compatible with Hyprland `v0.54.2`.
 - **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
 - **Rofi**: the active setup uses a fixed Seaglass sidebar/grid configuration centered on `column-tco.rasi` and `apps-grid.rasi`.
-- **Foot terminal**: Themed via the `pywal` `colors-foot.ini` template, tied to the wallpaper palette.
+- **Foot terminal**: The active theme is the repo-tracked palette in `config/foot/foot.ini`. `pywal` templates are available separately for optional wallpaper-driven generation.
 - **GTK**: Adwaita-dark theme, Papirus-Dark icon set, Bibata-Modern-Ice cursor.
 
 ---

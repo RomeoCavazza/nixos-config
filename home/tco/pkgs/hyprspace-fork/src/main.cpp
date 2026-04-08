@@ -558,9 +558,6 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE inHandle) {
     pRenderBackground = findFunctionBySymbol(pHandle, "renderBackground", "CHyprRenderer::renderBackground");
     g_renderHooksReady = pRenderWindow && pRenderLayer;
 
-    if (!g_renderHooksReady)
-        HyprlandAPI::addNotification(pHandle, "[Hyprspace] render hooks unavailable, overview thumbnails disabled", CHyprColor(1.0, 0.2, 0.2, 1.0), 8000);
-
     registerMonitors();
     g_pAddMonitorHook = Event::bus()->m_events.monitor.added.listen([](const PHLMONITOR&) { registerMonitors(); });
 
