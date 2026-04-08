@@ -10,7 +10,7 @@
     ./modules/databases.nix
     ./modules/ollama.nix
     ./modules/nginx.nix
-    ./modules/observability.nix
+    # ./modules/observability.nix
     ./modules/gdm-wallpaper.nix
   ];
 
@@ -52,6 +52,7 @@
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
+    allowed-users = [ "@wheel" "tco" ];
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     warn-dirty = false;
@@ -216,6 +217,7 @@
       anyio
     ]))
     adwaita-icon-theme
+    papirus-icon-theme
     bibata-cursors
     brightnessctl
     appimage-run

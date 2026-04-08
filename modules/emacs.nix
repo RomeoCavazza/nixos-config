@@ -26,7 +26,7 @@
 
     # LSP & Language Servers (Minimal set, others via devShells)
     nil # Nix LSP
-    nodePackages.bash-language-server
+    bash-language-server
 
     # Publishing & Org-Mode Tools
     pandoc
