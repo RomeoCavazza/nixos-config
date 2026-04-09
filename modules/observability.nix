@@ -11,7 +11,7 @@ let
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
-    runtimeInputs = [ pkgs.curl pkgs.git pkgs.imagemagick pkgs.coreutils pkgs.gawk pkgs.google-chrome ];
+    runtimeInputs = [ pkgs.curl pkgs.git pkgs.openssh pkgs.imagemagick pkgs.coreutils pkgs.gawk pkgs.google-chrome ];
     text = builtins.readFile ../config/bin/grafana-snapshot-sync;
   };
 
