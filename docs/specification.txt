@@ -363,14 +363,12 @@ Commands
 --------------------------------------------------------------------------------
   Apply system config   sudo nixos-rebuild switch --flake .#nixos   (or alias: rebuild)
   Rebuild (alias)      rebuild (bash)
-  AI dev shell         nix develop .#ai   (or devai)
-  Embedded dev shell   nix develop .#embedded   (or devemb)
   Refresh cloc report  nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
 
   system-architecture.puml High-level component interactions
   theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
   integration-logic.puml   Logical dependencies between Nix, Rofi, and Waybar
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
-  flake-outputs.puml    nixosConfigurations, devShells
+  flake-outputs.puml    nixosConfigurations — 10 inputs, system + HM + sops output
 
-  Optional local PNG export (not tracked): nix shell nixpkgs#plantuml -c plantuml -tpng -o/tmp/setup-os-diagrams docs/diagrams/*.puml
+  Regenerate PNGs      nix shell nixpkgs#plantuml --command plantuml -tpng -o docs/diagrams/png docs/diagrams/*.puml

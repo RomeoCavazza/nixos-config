@@ -173,7 +173,7 @@ Secrets are stored in-repo in encrypted form under [`secrets/`](./secrets/), whi
 ### Setup Instructions
 
 > [!TIP]
-> You can test individual development environments without installing them globally by using `nix develop .#ai` or `nix develop .#embedded`.
+> Development toolchains (Rust, Python, embedded, data) are installed globally via Home Manager. Per-project environments use a local `flake.nix` with `direnv` — `cd` into the project directory and the environment loads automatically.
 
 1. **Backup your current config**:
    ```bash
