@@ -145,7 +145,7 @@
   services.displayManager.gdm.enable = true;
   services.displayManager.gdm.customWallpaper = {
     enable = true;
-    path = ./assets/gdm-background.png;
+    path = ./docs/assets/gdm-background.png;
   };
   services.desktopManager.gnome.enable = true;
 

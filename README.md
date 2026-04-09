@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/nixos.png" alt="NixOS Logo" width="120">
+  <img src="./docs/assets/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
   <p><strong>Declarative, modular, and optimized workstation configuration</strong></p>
 
@@ -61,13 +61,13 @@ nixos/
 ## Preview
 
 <div align="center">
-  <img src="./assets/hero-video.gif" alt="Desktop demo" width="100%">
+  <img src="./docs/assets/hero-video.gif" alt="Desktop demo" width="100%">
 </div>
 
 <br>
 
-![Waybar showcase](./assets/screen-waybar.png)
-*Desktop Interface — [Waybar Configuration](./config/hypr/waybar) · [Wallpaper](./assets/background.png)*
+![Waybar showcase](./docs/assets/screen-waybar.png)
+*Desktop Interface — [Waybar Configuration](./config/hypr/waybar) · [Wallpaper](./docs/assets/background.png)*
 
 <br>
 
@@ -90,45 +90,45 @@ flowchart TB
 ```
 
 ### GNOME
-![GNOME Desktop](./assets/gnome-desktop.png)
+![GNOME Desktop](./docs/assets/gnome-desktop.png)
 
 <br>
 
 ### Hyprland
-![Hyprland Desktop](./assets/screen-fastfetch.png)
+![Hyprland Desktop](./docs/assets/screen-fastfetch.png)
 
 <br>
 
 ### Code Environment
-<img src="./assets/screen-nvim.png" alt="Neovim Screen" width="100%">
+<img src="./docs/assets/screen-nvim.png" alt="Neovim Screen" width="100%">
 
 *Fully featured Neovim setup for efficient coding and development.*
 
 <br>
 
 ### Virtualization
-<img src="./assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
+<img src="./docs/assets/virual-machine.png" alt="Virtual Machine Screen" width="100%">
 
 *Seamless virtualization support for running isolated environments and testing.*
 
 <br>
 
 ### Hardware & Modeling
-<img src="./assets/screen-cad.png" alt="CAD Screen" width="100%">
+<img src="./docs/assets/screen-cad.png" alt="CAD Screen" width="100%">
 
 *Optimized performance for demanding CAD and 3D modeling workloads.*
 
 <br>
 
 ### System Metrics
-<img src="./assets/screen-htop.png" alt="HTOP Screen" width="100%">
+<img src="./docs/assets/screen-htop.png" alt="HTOP Screen" width="100%">
 
 *Real-time system monitoring and resource management.*
 
 <br>
 
 ### Graphics Engine
-<img src="./assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
+<img src="./docs/assets/screen-nvidia.png" alt="NVIDIA Screen" width="100%">
 
 *Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
 
