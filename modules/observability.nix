@@ -63,6 +63,8 @@ let
   '';
 in
 {
+  environment.etc."grafana-secret-key".text = "SW2YcwTIb9zpOOhoPsMm";
+
   systemd.tmpfiles.rules = [
     "d ${textfileDir} 0755 root root -"
     "d /var/lib/promtail 0755 root root -"
@@ -172,7 +174,10 @@ in
         http_addr = "127.0.0.1";
         http_port = 3000;
       };
-      auth.anonymous = {
+      security = {
+        secret_key = "$__file{/etc/grafana-secret-key}";
+      };
+      "auth.anonymous" = {
         enabled = true;
         org_role = "Viewer";
       };

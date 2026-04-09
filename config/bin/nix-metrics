@@ -11,7 +11,7 @@ TMPFILE="${OUTFILE}.tmp"
 store_bytes=$(df --output=used -B1 /nix/store 2>/dev/null | tail -1 | tr -d ' ' || echo 0)
 
 # --- Total paths in store (fast: directory entry count) ----------------------
-store_paths=$(ls -1 /nix/store 2>/dev/null | wc -l || echo 0)
+store_paths=$(find /nix/store -mindepth 1 -maxdepth 1 -printf '.' 2>/dev/null | wc -c || echo 0)
 
 # --- Current system closure --------------------------------------------------
 closure_paths=$(nix-store -q --requisites /run/current-system 2>/dev/null | wc -l || echo 0)
