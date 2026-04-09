@@ -1,0 +1,114 @@
+conky.config = {
+    alignment = 'top_left',
+    background = true,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    default_bar_height = 10,
+    default_bar_width = 264,
+    default_color = '94e2d5',
+    default_graph_height = 48,
+    default_graph_width = 264,
+    default_outline_color = '6c7086',
+    default_shade_color = '6c7086',
+    double_buffer = false,
+    draw_borders = false,
+    draw_graph_borders = true,
+    draw_outline = false,
+    draw_shades = false,
+    gap_x = 16,
+    gap_y = 42,
+    if_up_strictness = 'address',
+    maximum_width = 276,
+    max_port_monitor_connections = 32,
+    max_user_text = 16384,
+    minimum_width = 276,
+    minimum_height = 1480,
+    net_avg_samples = 2,
+    no_buffers = true,
+    out_to_console = false,
+    out_to_wayland = true,
+    out_to_x = false,
+    override_utf8_locale = true,
+    own_window = true,
+    own_window_argb_visual = true,
+    own_window_argb_value = 0,
+    own_window_class = 'ConkyRail',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_title = 'ConkyRail',
+    own_window_transparent = true,
+    own_window_type = 'normal',
+    short_units = true,
+    stippled_borders = 0,
+    text_buffer_size = 2048,
+    top_name_width = 28,
+    update_interval = 1,
+    uppercase = false,
+    use_spacer = 'left',
+    use_xft = true,
+    xftalpha = 0.96,
+    font = 'SpaceMono Nerd Font:size=9',
+}
+
+conky.text = [[
+${color #ffffff}${font SpaceMono Nerd Font:bold:size=12}Desktop Info${font}${alignr}${color #94e2d5}${time %H:%M}
+${color #6c7086}${hr 1}
+
+${color #94e2d5}Time${alignr}${color #cdd6f4}${time %Y-%m-%d %H:%M %z}
+${color #94e2d5}Time Zone${alignr}${color #cdd6f4}${time %Z}
+${color #94e2d5}Battery${alignr}${color #cdd6f4}${if_existing /sys/class/power_supply/BAT0}${battery_percent BAT0}%${else}n/a${endif}
+${if_existing /sys/class/power_supply/BAT0}${color #94e2d5}${battery_bar 8,264 BAT0}${endif}
+${color #94e2d5}Host${alignr}${color #cdd6f4}$nodename
+${color #94e2d5}User${alignr}${color #cdd6f4}$user_names
+${color #94e2d5}Kernel${alignr}${color #cdd6f4}${kernel}
+${color #94e2d5}Uptime${alignr}${color #cdd6f4}${uptime_short}
+${color #94e2d5}External IP${alignr}${color #cdd6f4}${execi 300 sh -lc 'timeout 2s curl -fsS https://ifconfig.me 2>/dev/null || echo n/a'}
+
+${voffset 12}${color #94e2d5}Network
+${color #94e2d5}Interface${alignr}${color #cdd6f4}${execi 60 net_iface.sh}
+${color #94e2d5}Packets${alignr}${color #cdd6f4}${execi 5 net_packets.sh}
+${color #94e2d5}Down${alignr}${color #cdd6f4}${execi 1 net_rx_kib.sh} KiB/s
+${color #89dceb}${execgraph net_rx_graph.sh 48,264 14313d 89dceb 100}
+${color #89dceb}Up${alignr}${color #cdd6f4}${execi 1 net_tx_kib.sh} KiB/s
+${color #89dceb}${execgraph net_tx_graph.sh 34,264 14313d 89dceb 100}
+
+${voffset 12}${color #94e2d5}CPU
+${color #94e2d5}Total${alignr}${color #cdd6f4}${cpu}%  Load:${loadavg}
+${color #89dceb}${cpugraph 58,264 14313d 89dceb}
+${color #94e2d5}cpu 0${goto 72}${color #cdd6f4}${cpu cpu1}%${goto 132}${color #94e2d5}${cpubar cpu1 8,132}
+${color #94e2d5}cpu 1${goto 72}${color #cdd6f4}${cpu cpu2}%${goto 132}${color #94e2d5}${cpubar cpu2 8,132}
+${color #94e2d5}cpu 2${goto 72}${color #cdd6f4}${cpu cpu3}%${goto 132}${color #94e2d5}${cpubar cpu3 8,132}
+${color #94e2d5}cpu 3${goto 72}${color #cdd6f4}${cpu cpu4}%${goto 132}${color #94e2d5}${cpubar cpu4 8,132}
+${color #94e2d5}cpu 4${goto 72}${color #cdd6f4}${cpu cpu5}%${goto 132}${color #94e2d5}${cpubar cpu5 8,132}
+${color #94e2d5}cpu 5${goto 72}${color #cdd6f4}${cpu cpu6}%${goto 132}${color #94e2d5}${cpubar cpu6 8,132}
+${color #94e2d5}cpu 6${goto 72}${color #cdd6f4}${cpu cpu7}%${goto 132}${color #94e2d5}${cpubar cpu7 8,132}
+${color #94e2d5}cpu 7${goto 72}${color #cdd6f4}${cpu cpu8}%${goto 132}${color #94e2d5}${cpubar cpu8 8,132}
+${color #94e2d5}Process Count${alignr}${color #cdd6f4}${processes} processes, ${threads} threads
+${color #94e2d5}Top CPU
+${color #cdd6f4}${top name 1} (${top pid 1}) ${top cpu 1}%
+${color #cdd6f4}${top name 2} (${top pid 2}) ${top cpu 2}%
+${color #cdd6f4}${top name 3} (${top pid 3}) ${top cpu 3}%
+
+${voffset 12}${color #94e2d5}RAM
+${color #cdd6f4}$mem / $memmax (${memperc}% used)
+${color #89dceb}${memgraph 52,264 14313d 89dceb}
+${color #94e2d5}${membar 8,264}
+${color #94e2d5}Cache${alignr}${color #cdd6f4}$cached
+${color #94e2d5}Swap${alignr}${color #cdd6f4}$swap / $swapmax
+${color #94e2d5}${swapbar 8,264}
+${color #94e2d5}Top Memory
+${color #cdd6f4}${top_mem name 1} (${top_mem pid 1}) ${top_mem mem_res 1}
+${color #cdd6f4}${top_mem name 2} (${top_mem pid 2}) ${top_mem mem_res 2}
+${color #cdd6f4}${top_mem name 3} (${top_mem pid 3}) ${top_mem mem_res 3}
+
+${voffset 8}${color #94e2d5}Storage
+${color #cdd6f4}/${alignr}${fs_used /} / ${fs_size /} (${fs_used_perc /}% used)
+${color #94e2d5}${fs_bar 8,264 /}
+${color #cdd6f4}/home${alignr}${if_existing /home}${fs_used /home} / ${fs_size /home}${else}n/a${endif}
+${color #94e2d5}${if_existing /home}${fs_bar 8,264 /home}${else}${hr 2}${endif}
+${color #94e2d5}Disk I/O${alignr}${color #cdd6f4}${execi 1 disk_io_kib.sh} KiB/s
+${color #89dceb}${execgraph disk_io_graph.sh 30,264 14313d 89dceb 100}
+
+${voffset 4}${color #94e2d5}System
+${color #94e2d5}Arch${alignr}${color #cdd6f4}${machine}
+${color #94e2d5}CPU Model${alignr}${color #cdd6f4}${execi 3600 grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | sed 's/^ *//'}
+]]

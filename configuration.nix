@@ -68,7 +68,7 @@
 
 
   systemd.tmpfiles.rules = [
-    "d /home/tco/.cache/wal 0755 tco users -"
+    "d ${config.users.users.tco.home}/.cache/wal 0755 tco users -"
     "d /home/nix-build 2775 root nixbld - -"
     "d /nix/var/nix/profiles/per-user/tco 0755 tco users -"
     "d /nix/var/nix/gcroots/per-user/tco 0755 tco users -"

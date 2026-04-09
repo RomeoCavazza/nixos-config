@@ -10,8 +10,9 @@ in
 {
   # The source file is committed encrypted with SOPS.
   sops.defaultSopsFile = ../secrets/backup.yaml;
-  # Current bootstrap uses the user's SSH key as an Age identity.
-  sops.age.sshKeyPaths = [ "${homeDir}/.ssh/id_ed25519" ];
+  # Decrypt with a dedicated machine Age identity kept outside the repo.
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops.age.sshKeyPaths = [ ];
 
   sops.secrets.restic_password = {};
   sops.secrets.b2_key_id = {};

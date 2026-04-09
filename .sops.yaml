@@ -1,11 +1,14 @@
 # SOPS policy for this repo.
 # Secrets under secrets/*.yaml are encrypted and safe to commit.
-# Only the local/private Age identity can decrypt them.
+# They stay editable with the local Age key and decryptable on this machine with
+# a dedicated runtime Age key.
 keys:
-  - &tco age1z3hs5u2u7m2nnnz92e6k3yt6txj5emejatgd2gd2l5lpekw3xvqqkd5arz
+  - &editor_tco age1z3hs5u2u7m2nnnz92e6k3yt6txj5emejatgd2gd2l5lpekw3xvqqkd5arz
+  - &machine_nixos age1fy3myqdnhww42tamc323qlmp2zuhh67qmvga3ncv44jdputw0vpqw80twd
 
 creation_rules:
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
-          - *tco
+          - *editor_tco
+          - *machine_nixos

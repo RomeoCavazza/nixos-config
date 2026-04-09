@@ -1,7 +1,5 @@
 { config, pkgs, lib, inputs, ... }:
 let
-  mkOut = config.lib.file.mkOutOfStoreSymlink;
-
   hyprland-pkg = inputs.hyprland.packages.${pkgs.system}.hyprland;
   hyprspacePkg = inputs.hyprspace.packages.${pkgs.system}.Hyprspace;
 
@@ -90,6 +88,11 @@ let
       cp -r * $out/share/icons/Hyprland-Logo/
     '';
   };
+
+  edexUiAppImage = pkgs.fetchurl {
+    url = "https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-x86_64.AppImage";
+    sha256 = "c8f28cd721ca032ca0c1960b756ca3e64dc441a643c32eafbb79c673b402d681";
+  };
 in
 {
   imports = [
@@ -119,24 +122,56 @@ in
   home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
 
   xdg.enable = true;
+  xdg.desktopEntries = {
+    cursor = {
+      name = "Cursor";
+      genericName = "AI Code Editor";
+      comment = "Built for AI coding";
+      exec = "cursor %U";
+      icon = "cursor-icon";
+      terminal = false;
+      startupNotify = true;
+      categories = [
+        "Development"
+        "TextEditor"
+        "IDE"
+      ];
+    };
+
+    antigravity = {
+      name = "Antigravity";
+      genericName = "IDE";
+      comment = "Antigravity IDE";
+      exec = "antigravity %U";
+      icon = "antigravity-icon";
+      terminal = false;
+      startupNotify = true;
+      categories = [
+        "Development"
+        "IDE"
+      ];
+    };
+  };
+
   xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
   xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
+  xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
   home.file.".config/hypr".source = ../../config/hypr;
   home.file.".config/waybar".source = ../../config/hypr/waybar;
   home.file.".config/rofi".source = ../../config/rofi;
   home.file.".config/foot".source = ../../config/foot;
   home.file.".config/swappy/config".source = ../../config/swappy/config;
+  home.file.".config/conky".source = ../../config/conky;
+  xdg.configFile."eDEX-UI/settings.json".source = ../../config/edex/settings.json;
 
-  home.file.".local/bin/cursor".source = mkOut "/etc/nixos/config/bin/cursor";
+  home.file.".local/bin/cursor" = {
+    source = ../../config/bin/cursor;
+    executable = true;
+  };
 
   home.file.".local/bin/antigravity" = {
-    force = true;
+    source = ../../config/bin/antigravity;
     executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      exec /etc/nixos/config/bin/antigravity "$@"
-    '';
   };
 
   home.file.".local/bin/hypr-plugins-init" = {
@@ -149,23 +184,44 @@ in
     executable = true;
   };
 
-  home.file.".local/bin/hypr-float-active" = {
-    source = ../../config/bin/hypr-float-active;
-    executable = true;
-  };
-
   home.file.".local/bin/hypr-close-all" = {
     source = ../../config/bin/hypr-close-all;
     executable = true;
   };
 
-  home.file.".local/bin/waybar-toggle" = {
-    source = ../../config/bin/waybar-toggle;
+  home.file.".local/bin/edex-conky-toggle" = {
+    source = ../../config/bin/edex-conky-toggle;
     executable = true;
   };
 
-  home.file.".local/bin/hypr-measure-active" = {
-    source = ../../config/bin/hypr-measure-active;
+  home.file.".local/bin/edex-toggle" = {
+    source = ../../config/bin/edex-toggle;
+    executable = true;
+  };
+
+  home.file.".local/bin/edex-ui-toggle" = {
+    source = ../../config/bin/edex-toggle;
+    executable = true;
+  };
+
+  home.file.".local/bin/edex-ui-run" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export SHELL="''${SHELL:-${pkgs.bashInteractive}/bin/bash}"
+      export TERM="''${TERM:-xterm-256color}"
+      export COLORTERM="''${COLORTERM:-truecolor}"
+      export PATH="''${PATH:-${config.home.profileDirectory}/bin:/run/current-system/sw/bin}"
+      export LD_LIBRARY_PATH="${pkgs.libxshmfence}/lib:''${LD_LIBRARY_PATH:-}"
+      exec ${pkgs.appimage-run}/bin/appimage-run ${edexUiAppImage} \
+        --no-sandbox --disable-gpu-sandbox \
+        --ozone-platform=x11 --disable-features=UseOzonePlatform "$@"
+    '';
+  };
+
+  home.file.".local/bin/waybar-toggle" = {
+    source = ../../config/bin/waybar-toggle;
     executable = true;
   };
 
@@ -181,6 +237,16 @@ in
 
   home.file.".local/lib/hyprspace.so" = {
     source = "${hyprspacePkg}/lib/libHyprspace.so";
+    executable = true;
+  };
+
+  home.file.".local/bin/legion-pulse" = {
+    source = ../../config/bin/legion-pulse;
+    executable = true;
+  };
+
+  home.file.".local/bin/legion-toggle" = {
+    source = ../../config/bin/legion-toggle;
     executable = true;
   };
 
@@ -261,6 +327,11 @@ in
     glances
     htop
     nvitop
+    nvtopPackages.full
+    hyprlock
+    hypridle
+    brightnessctl
+    playerctl
     appimage-run
     discord
     spotify
@@ -397,7 +468,4 @@ in
 
   xdg.configFile."wal/templates/colors-foot.ini".source = ../../config/wal/templates/colors-foot.ini;
   xdg.configFile."wal/templates/colors-hyprland.conf".source = ../../config/wal/templates/colors-hyprland.conf;
-  xdg.dataFile."applications/cursor.desktop".source = ../../config/applications/cursor.desktop;
-  xdg.dataFile."applications/antigravity.desktop".source = ../../config/applications/antigravity.desktop;
-
 }

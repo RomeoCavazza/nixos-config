@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Persistent toggle: stay hidden until explicit detoggle.
+STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-cursor-hidden.state"
+
+HIDDEN="0"
+if [[ -f "$STATE_FILE" ]]; then
+  HIDDEN="$(cat "$STATE_FILE" 2>/dev/null || echo 0)"
+fi
+
+if [[ "$HIDDEN" == "1" ]]; then
+  hyprctl keyword cursor:invisible false >/dev/null 2>&1 || true
+  hyprctl keyword cursor:no_hardware_cursors 2 >/dev/null 2>&1 || true
+  echo "0" > "$STATE_FILE"
+else
+  hyprctl keyword cursor:no_hardware_cursors true >/dev/null 2>&1 || true
+  hyprctl keyword cursor:invisible true >/dev/null 2>&1 || true
+  echo "1" > "$STATE_FILE"
+fi

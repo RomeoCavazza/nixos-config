@@ -6,6 +6,6 @@ then
     pkill -f "legion-pulse"
     brightnessctl -d "platform::kbd_backlight" set 2
 else
-    # On lance en précisant le chemin complet pour éviter les soucis de PATH
-    bash /etc/nixos/config/bin/legion-pulse &
+    # Use the Home Manager-installed entrypoint instead of the repo path.
+    bash "$HOME/.local/bin/legion-pulse" &
 fi

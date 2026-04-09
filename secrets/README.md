@@ -9,10 +9,10 @@ authenticate to Backblaze B2.
 
 [`backup.yaml`](./backup.yaml) contains the Backblaze B2 and Restic secrets.
 Its values are encrypted with `sops`, the encrypted data key is wrapped for the
-configured `age` recipient, and decryption happens locally during activation.
-So seeing [`backup.yaml`](./backup.yaml) in the repo is expected: the file is
-encrypted, not plaintext, and the matching private key stays outside this
-repository.
+local editor key and the machine runtime key, and decryption happens locally
+during activation. So seeing [`backup.yaml`](./backup.yaml) in the repo is
+expected: the file is encrypted, not plaintext, and the matching private keys
+stay outside this repository.
 
 What is safe to commit:
 
