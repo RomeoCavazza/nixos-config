@@ -161,6 +161,8 @@ The active design is split in two backup jobs:
 
 Secrets are stored in-repo in encrypted form under [`secrets/backup.yaml`](./secrets/backup.yaml), while the local Age private key stays outside the repository.
 
+For reviewers and future you: [`secrets/README.md`](./secrets/README.md) explains why encrypted secrets are committed and what must remain local.
+
 ---
 
 ## Installation
