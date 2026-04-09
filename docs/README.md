@@ -1,12 +1,12 @@
 # Technical Deep Dive
 
-Technical documentation annexes for the `setup-os` NixOS configuration — covering every layer of the system in dependency order, each section illustrated with a diagram.
+Technical documentation annexes for the `setup-os` NixOS configuration — covering every layer of the system in dependency order.
 
 ---
 
 ## 1. Nix Flake Structure
 
-The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and development shells.
+The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and overlay composition.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
@@ -26,394 +26,140 @@ flowchart TD
 
   flake[flake.nix]
 
-  subgraph out["Flake Outputs"]
+  subgraph out["Flake Output"]
     sys["nixosConfigurations.nixos\nconfiguration.nix + modules\n+ sops-nix + home-manager inline"]
-    ai["devShells.ai\npython311, nvidia libs"]
-    emb["devShells.embedded\nRust, GCC, GDB, Arduino"]
   end
 
   in --> flake
   flake --> sys
-  flake --> ai
-  flake --> emb
 ```
 
-> [Source: flake-outputs.puml](./diagrams/flake-outputs.puml)
+The flake pins ten inputs. `nixpkgs` (unstable) is the primary package set. `nixpkgs-stable` is used for two specific packages — Guix, which requires a stable release, and Promtail, which has a module-level conflict with the current Loki version on unstable. `rust-overlay` injects Rust nightly and stable toolchains via an overlay. Hyprland is pinned to `v0.54.2`, and all three plugins (`hyprspace`, `hyprland-plugins`, `hyprtasking`) follow that exact version via `inputs.hyprland.follows` — this prevents ABI mismatches between the compositor and its plugins.
 
-The flake currently pins ten inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprland` is pinned to `v0.54.2`. `hyprspace` is sourced from a local fork tracked in this repository. `hyprland-plugins` and `hyprtasking` are kept available for optional integrations. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS. `sops-nix` injects declarative secret management used by the backup stack.
-
-The `nixosConfigurations.nixos` output is the sole entry point. It includes `configuration.nix`, flake-level modules such as `sops-nix` and `modules/backup.nix`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies system config, secrets wiring, backup units, and user config atomically.
+The sole output is `nixosConfigurations.nixos`. Home Manager is embedded inline, so `sudo nixos-rebuild switch` applies system configuration, secret wiring, backup units, and user environment atomically in a single transaction.
 
 ---
 
 ## 2. System Layer — `configuration.nix` and Modules
 
-`configuration.nix` is the NixOS entry point. All optional system behaviors are extracted into discrete modules under `modules/` and explicitly listed in the `imports` list.
+`configuration.nix` is the NixOS entry point. It stays readable because all optional system behaviors are extracted into discrete modules under `modules/` and explicitly listed in `imports`. Adding or removing a module is a single line change with no side effects on the rest of the file.
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-flowchart LR
-  hw[hardware-configuration.nix]
-
-  subgraph core["configuration.nix"]
-    boot["Boot\nsystemd-boot + Windows dual-boot"]
-    nixrt["Nix Runtime\nauto-optimise, sandbox, GC weekly"]
-    net["Network\nNetworkManager + blueman"]
-    svc["Services\nGDM, Pipewire, polkit, flatpak, snap, guix"]
-    nld["nix-ld\nForeign binary support"]
-  end
-
-  subgraph mods["modules/ — system only"]
-    nv["nvidia-prime.nix\nPRIME offload Intel + NVIDIA"]
-    vm["virtualisation.nix\nDocker, KVM, ARM binfmt"]
-    em["emacs.nix + launcher.nix"]
-    db["databases + ollama\nnginx + observability"]
-  end
-
-  subgraph hmmods["home/tco/modules/apps/ — user"]
-    cad["cad.nix\nobsidian · kicad · freecad"]
-    emb["embedded.nix\narduino · esptool · minicom"]
-    dat["data.nix\ndbeaver · grafana · influxdb2"]
-  end
-
-  hw --> core
-  core --> mods
-```
-
-> [Source: system-architecture.puml](./diagrams/system-architecture.puml)
-
-Currently active modules:
-
-**System modules (`modules/`):**
+**Active system modules:**
 
 | Module | Purpose |
 |--------|---------|
-| `nvidia-prime.nix` | NVIDIA PRIME offload (hybrid Intel/NVIDIA) |
+| `nvidia-prime.nix` | NVIDIA PRIME offload — Intel iGPU primary, NVIDIA on-demand |
 | `virtualisation.nix` | Docker, libvirt/KVM, QEMU, ARM binfmt emulation |
-| `emacs.nix` | Doom Emacs + dependencies |
-| `launcher.nix` | Launcher-related system integration |
-| `databases.nix` | Local database services |
-| `ollama.nix` | Ollama local LLM daemon |
-| `nginx.nix` | Nginx reverse proxy |
-| `observability.nix` | System monitoring and metrics |
-| `backup.nix` | Encrypted `restic` backups to Backblaze B2 via `sops-nix` |
+| `emacs.nix` | Emacs daemon (pgtk, Wayland-native) + LSP tools + LaTeX |
+| `launcher.nix` | gvfs, udisks2, Rofi, Waybar, Nemo |
+| `databases.nix` | PostgreSQL 17 + PostGIS, Redis, Qdrant |
+| `ollama.nix` | Ollama CUDA daemon — 32K context, 24h keep-alive |
+| `nginx.nix` | Localhost reverse proxy (ports 8081–8083) |
+| `observability.nix` | Prometheus, Loki, Promtail, Grafana |
+| `backup.nix` | Restic encrypted snapshots to Backblaze B2 via sops-nix |
+| `gdm-wallpaper.nix` | Custom NixOS module — patches gnome-shell-theme.gresource |
 
-**User modules (`home/tco/modules/apps/`):**
+The boot configuration uses `systemd-boot` with `configurationLimit = 1`, which keeps exactly one NixOS entry in the boot menu. This limits disk usage from accumulated boot entries; rollback is done via `sudo nixos-rebuild switch --rollback` from a running session rather than the boot menu. A custom `windows.conf` entry is injected into the EFI loader for Windows 11 dual-boot.
 
-| Module | Packages |
-|--------|----------|
-| `cad.nix` | `obsidian`, `kicad`, `freecad` |
-| `embedded.nix` | `arduino-ide`, `arduino-cli`, `esptool`, `minicom` |
-| `data.nix` | `dbeaver-bin`, `grafana`, `influxdb2` |
+The Nix runtime is configured with `auto-optimise-store = true` (hard-link deduplication across the store), a weekly GC that removes generations older than 7 days, and a custom build directory at `/build` — a bind mount of `/home/nix-build` — to keep large build artifacts off the root partition during sandbox evaluation.
 
-### Boot: systemd-boot
+**NVIDIA PRIME** (`nvidia-prime.nix`): Intel iGPU handles display output at all times. The NVIDIA GPU is powered off by default and wakes on demand when a process uses the `nvidia-offload` wrapper. `powerManagement.finegrained = true` enables full D3cold power-gating, bringing idle GPU draw from ~15W down to ~0.5W. Bus IDs: Intel at `PCI:0:2:0`, NVIDIA at `PCI:2:0:0`.
 
-The bootloader is `systemd-boot` with strict hardening: `configurationLimit = 1` restricts the menu to one NixOS entry (no rollback accumulation), and a custom `windows.conf` entry is injected into the EFI loader to dual-boot Windows 11. Kernel modules `i2c-dev` and `i2c-i801` are explicitly loaded for hardware sensor support. Kernel parameters include `nvidia-drm.modeset=1` (required for Wayland) and `pcie_aspm=off` (disables PCIe power saving for stability).
-
-### Nix Runtime
-
-```
-auto-optimise-store = true   # hard-link deduplication across store
-sandbox-build-dir = "/build" # bind-mounted from /home/nix-build to avoid /tmp bloat
-gc.dates = "weekly"          # auto-prune entries older than 7 days
-```
-
-### Hardware — NVIDIA PRIME (`nvidia-prime.nix`)
-
-Hybrid graphics setup: Intel iGPU for display output, NVIDIA dGPU for compute offloading. `prime.offload = true` keeps the GPU idle by default; `nvidia-offload <cmd>` routes a specific process to the dGPU. `powerManagement.finegrained = true` allows the NVIDIA GPU to power-gate when idle. Bus IDs: Intel at `PCI:0:2:0`, NVIDIA at `PCI:2:0:0`.
-
-### Virtualisation (`virtualisation.nix`)
-
-- **Docker**: enabled with weekly autoPrune (`--all --volumes`). Managed with `lazydocker` and `docker-compose`.
-- **KVM/libvirt**: `virt-manager` as GUI, `quickemu` for rapid VM creation (Windows, macOS, Linux).
-- **ARM binfmt emulation**: `boot.binfmt.emulatedSystems = [ "aarch64-linux" ]` allows running AArch64 binaries natively, enabling SD card image building for Raspberry Pi and Jetson targets directly from this x86_64 host.
+**Virtualisation** (`virtualisation.nix`): Docker runs with weekly autoPrune. `virt-manager` and `quickemu` cover KVM/QEMU needs. `boot.binfmt.emulatedSystems = [ "aarch64-linux" ]` registers ARM64 ELF binaries with QEMU user-mode as the interpreter, enabling transparent ARM binary execution and direct Raspberry Pi image builds on x86_64.
 
 ---
 
 ## 3. Display, Audio & Connectivity
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-flowchart TD
-  gdm[GDM Display Manager]
+GDM manages session selection at login, offering both a Hyprland (Wayland) session and a GNOME session. The two environments coexist cleanly: XDG portals are configured for both backends (`xdg-desktop-portal-hyprland` and `xdg-desktop-portal-gtk`), ensuring screen sharing, file pickers, and portal-dependent applications work correctly in whichever session is active.
 
-  subgraph sessions["Desktop Sessions"]
-    hypr[Hyprland - Wayland]
-    gnome[GNOME - X11 or Wayland]
-  end
+Audio runs through Pipewire with the full compatibility layer enabled: ALSA with 32-bit support for Steam and legacy applications, and the PulseAudio compatibility API for tools that predate native Pipewire support. `cava` hooks into Pipewire and is used both as a standalone visualizer and as the data source for the Waybar audio visualization module.
 
-  subgraph portals["XDG Portals"]
-    ph[xdg-desktop-portal-hyprland]
-    pg[xdg-desktop-portal-gtk]
-  end
+`programs.nix-ld` provides a compatibility shim for non-Nix ELF binaries — AppImages, pre-built proprietary tools, vendor SDKs — by injecting a curated set of libraries (`glib`, `gtk3`, `mesa`, `libx11`, `libdrm`, `nss`, and others) into the dynamic linker search path. This is what allows tools like the Cursor editor AppImage to run without manual `patchelf` invocations.
 
-  subgraph audio["Audio Stack"]
-    pw[Pipewire]
-    alsa[ALSA + 32-bit compat]
-    pulse[PulseAudio compat API]
-    cava[Cava visualizer]
-  end
-
-  gdm --> hypr
-  gdm --> gnome
-  hypr --> ph
-  gnome --> pg
-  pw --> alsa
-  pw --> pulse
-  pw --> cava
-```
-
-> [Source: display-audio.puml](./diagrams/display-audio.puml)
-
-### Display Stack
-
-The system runs a hybrid DM setup: GDM manages session selection, offering both a **Hyprland** (Wayland) and a **GNOME** (X11/Wayland) session. XDG portals are configured for both backends, ensuring screen sharing, file pickers, and other portal-based features work correctly in both sessions.
-
-### Audio: Pipewire
-
-The audio stack uses Pipewire with the full compatibility layer: ALSA (with 32-bit support for Steam and legacy apps) and the PulseAudio compatibility API for apps that don't natively support Pipewire. `cava` is available as a standalone visualizer and is also used by the Waybar module.
-
-### nix-ld: Running Foreign Binaries
-
-`programs.nix-ld` provides a compatibility shim for non-Nix ELF binaries (AppImages, pre-built tools, proprietary SDKs). A curated library set is injected: `glib`, `gtk3`, `mesa`, `libx11`, `libxcb`, `libdrm`, `nss`, and more. This allows tools like the Cursor editor AppImage to run without manual patching.
-
-### Encrypted Cloud Backups
-
-The system now includes an encrypted cloud-backup path built directly into the flake:
-
-- `sops-nix` decrypts the Backblaze and Restic secrets at activation time
-- `modules/backup.nix` defines the backup jobs
-- `restic` writes encrypted snapshots to a Backblaze B2 bucket via the S3-compatible endpoint
-
-The current backup layout is intentionally split:
-
-- `b2-critical`: `/etc/nixos`, `~/.ssh`, `~/.gnupg`, `~/.config`
-- `b2-data`: `~/Desktop`, `~/Documents`, `~/Images`
-
-This keeps critical configuration and user data logically separate while still sharing the same remote repository and deduplication layer.
+**Encrypted backups** are built directly into the flake via `modules/backup.nix`. `sops-nix` decrypts Backblaze and Restic credentials at activation time into an ephemeral `/run/secrets/` tmpfs. `restic` writes AES-256 encrypted snapshots to a Backblaze B2 bucket over the S3-compatible endpoint. Two independent jobs run nightly: `b2-critical` backs up `/etc/nixos`, `~/.ssh`, `~/.gnupg`, and `~/.config`; `b2-data` backs up `~/Desktop`, `~/Documents`, and `~/Images`. Separating them allows independent retention policies and prevents a large user data backup from blocking the critical config backup.
 
 ---
 
 ## 4. User Layer — `home/tco/home.nix`
 
-Home Manager runs inline within the system build. The user configuration manages dotfiles, packages, services, and shell environment.
+Home Manager runs inline within the system build, applied atomically on every `nixos-rebuild switch`. The user configuration covers package installation, dotfile symlinking, shell environment, program configuration, and GTK theming — all expressed as declarative Nix code in `home/tco/home.nix` and its imported modules.
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-flowchart LR
-  subgraph hm["home.nix"]
-    dotfiles["home.file\n(repo-tracked sources)"]
-    pkgs["home.packages\nbat, eza, zed, obs, discord..."]
-    progs["programs\nVSCode, git, bash, starship"]
-    gtk["gtk\nAdwaita-dark\nPapirus-Dark / Bibata-Ice"]
-    wal["xdg.configFile\npywal templates"]
-  end
-
-  hypr["config/hypr\n→ ~/.config/hypr/"]
-  rofi["config/rofi\n→ ~/.config/rofi/"]
-  foot["config/foot\n→ ~/.config/foot/"]
-  bin["config/bin\n→ ~/.local/bin/"]
-
-  dotfiles --> hypr
-dotfiles --> rofi
-dotfiles --> foot
-dotfiles --> bin
-wal --> dotfiles
-```
-
-> [Source: user-layer.puml](./diagrams/user-layer.puml)
-
-### Dotfile Strategy
-
-The main desktop configuration files are exposed through `home.file` entries backed by tracked repository paths. In practice, the active files under `config/` are editable in-place from `/etc/nixos`, while Home Manager keeps them wired into the user environment:
+**Dotfile strategy.** Application configs live under `config/` in the repository and are symlinked into place by Home Manager via `home.file` entries. Editing files directly at `/etc/nixos/config/hypr/hyprland.conf` takes effect immediately for Hyprland (which reads from the symlink target), and the change is tracked in git. The active symlink map:
 
 ```
-~/.config/hypr       → /etc/nixos/config/hypr/
-~/.config/waybar     → /etc/nixos/config/hypr/waybar/
-~/.config/rofi       → /etc/nixos/config/rofi/
-~/.config/foot       → /etc/nixos/config/foot/
+~/.config/hypr     → /etc/nixos/config/hypr/
+~/.config/waybar   → /etc/nixos/config/hypr/waybar/
+~/.config/rofi     → /etc/nixos/config/rofi/
+~/.config/foot     → /etc/nixos/config/foot/
+~/.local/bin/      → scripts from /etc/nixos/config/bin/
 ```
 
-### Session Environment
+**Session environment.** Qt applications are forced to Wayland (`QT_QPA_PLATFORM=wayland`) with Kvantum as the style engine. Electron apps use an X11 hint for stability. `~/.lmstudio/bin`, `~/.npm-global/bin`, and `~/.local/bin` are prepended to `$PATH`.
 
-```
-QT_QPA_PLATFORM = "wayland"          # Force Qt apps to Wayland
-QT_STYLE_OVERRIDE = "kvantum"        # Use Kvantum for Qt theming
-ELECTRON_OZONE_PLATFORM_HINT = "x11" # Electron fallback for stability
-~/.lmstudio/bin, ~/.npm-global/bin, ~/.local/bin  # added to $PATH
-```
+**User packages** cover shell utilities (bat, eza, fzf, yazi, zoxide), editors (Zed, Neovim, VSCode with Nix/Python/Rust extensions), AI coding tools (aider-chat, Cursor AppImage via wrapper), Rust and Node.js 22 toolchains, creative tools (OBS, Discord, Spotify), and system monitoring (btop, nvitop, glances). Domain-specific toolchains are grouped in optional app modules: `cad.nix` (Obsidian, KiCad, FreeCAD), `embedded.nix` (Arduino IDE/CLI, esptool, minicom), `data.nix` (DBeaver, Grafana, InfluxDB2).
 
-### Key User Packages
+**Hyprchroma / hypr-darkwindow.** The local Hyprchroma fork is compiled inline from `home/tco/pkgs/Hyprchroma-fork/src/main.cpp` during Home Manager activation, producing `~/.local/lib/libhypr-darkwindow.so`. The plugin provides inactive-window tinting and workspace-transition smoothing. Configuration lives in `config/hypr/theme/hyprchroma.conf`; the dispatcher `togglechromakey` enables runtime toggling.
 
-| Category | Packages |
-|----------|----------|
-| Shell tools | `bat`, `eza`, `fzf`, `zoxide`, `yazi`, `superfile` |
-| Editors | `zed-editor`, `neovim`, VSCode (Nix/Python/Rust/C++ extensions) |
-| AI coding | `aider-chat`, Cursor (AppImage via `cursor` wrapper), `antigravity` |
-| Development | `rustc`, `cargo`, `nodejs_22`, `pnpm`, `typescript-language-server` |
-| Creative | `obs-studio`, `discord`, `spotify` |
-| CAD / EDA | `obsidian`, `kicad`, `freecad` *(→ `modules/apps/cad.nix`)* |
-| Embedded | `arduino-ide`, `arduino-cli`, `esptool`, `minicom` *(→ `modules/apps/embedded.nix`)* |
-| Data | `dbeaver-bin`, `grafana`, `influxdb2` *(→ `modules/apps/data.nix`)* |
-| Terminal fun | `cmatrix`, `cbonsai`, `pipes`, `hollywood`, `terminal-rain-lightning` |
-| Theming | `pywal`, `wpgtk`, `cava`, `hyprcursor`, `rose-pine-hyprcursor` |
+**Pywal** is available in the user environment with custom templates tracked at `config/wal/templates/` and deployed to `~/.config/wal/templates/`. `colors-hyprland.conf` and `colors-foot.ini` allow wallpaper-derived palette generation when desired. The live desktop theme is repo-defined by default; pywal is opt-in per session.
 
-### DarkWindow / Hyprchroma
-
-The DarkWindow visual effect is currently provided directly by the Hyprland plugin layer.
-
-Active pieces:
-- plugin load in `config/hypr/hyprland.conf`
-- sourced settings in `config/hypr/theme/hyprchroma.conf`
-- dispatcher usage via `togglechromakey`
-
-Legacy helper scripts (`dw-*`) and the previously documented user daemon are no longer part of the shipped runtime path.
-
-### Pywal / Wpgtk Integration
-
-`pywal` is available in the user environment, and its custom templates are tracked in-repo then deployed with `xdg.configFile` to `~/.config/wal/templates/`.
-- `colors-hyprland.conf` — optional template for wallpaper-derived Hyprland border colors
-- `colors-foot.ini` — optional template for wallpaper-derived Foot colors
-
-The live desktop theme remains repo-defined by default: Hyprland sources `config/hypr/theme/*.conf`, and Foot uses the tracked palette in `config/foot/foot.ini`.
-
-### Shell & Prompt
-
-Bash with Starship prompt. Key aliases:
-```bash
-rebuild  # sudo nixos-rebuild switch --flake /etc/nixos#nixos
-devai    # nix develop /etc/nixos#ai
-devemb   # nix develop /etc/nixos#embedded
-```
+**Shell:** Bash with Starship prompt (Catppuccin-style teal gradient). Key alias: `rebuild` → `sudo nixos-rebuild switch --flake /etc/nixos#nixos`.
 
 ---
 
 ## 5. Desktop Environment — Hyprland + Seaglass Theme
 
-Hyprland is a tiling Wayland compositor with XWayland enabled for compatibility with X11 applications. Its configuration lives in `config/hypr/`.
+Hyprland is a tiling Wayland compositor with XWayland enabled for X11 application compatibility. Its configuration lives in `config/hypr/`. Three plugins extend the compositor: Hyprspace (workspace overview, Exposé-style), hypr-canvas (infinite canvas for workspace grouping), and Hyprchroma/hypr-darkwindow (adaptive tint shader). All three are compiled from locally vendored forks pinned to Hyprland v0.54.2.
+
+The Seaglass visual theme uses teal (`#94E2D5`) as its accent and is propagated at the config layer — not injected at runtime — so the identity stays consistent across every component without coordination logic.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-flowchart TB
-  src["Seaglass — seaglass.conf"]
+flowchart LR
+  src["seaglass.conf\n#94E2D5 accent"]
 
-  subgraph compositor["Hyprland Compositor"]
-    borders["Active border: 94E2D5\n12px rounding, dual-border"]
-    dw["Hyprchroma fork\ncompiled as hypr-darkwindow"]
-    hs["Hyprspace\nworkspace overview"]
+  subgraph compositor["Hyprland"]
+    borders["12px rounding, dual-border"]
+    dw["hypr-darkwindow\ninactive tint"]
+    hs["Hyprspace\noverview"]
   end
 
   subgraph bar["Waybar"]
-    mocha["mocha.css — Catppuccin palette"]
-    css["style.css — teal accent 94e2d5"]
+    mocha["Catppuccin Mocha palette"]
+    css["teal accent override"]
   end
 
-  rofi["Rofi\ncolumn-tco.rasi\nfixed Seaglass accent"]
-  foot["Foot terminal\nrepo-tracked palette"]
-  gtk["GTK: Adwaita-dark\nIcons: Papirus-Dark\nCursor: Bibata-Modern-Ice"]
+  rofi["Rofi\ncolumn-tco.rasi"]
+  foot["Foot terminal\nrepo palette"]
+  gtk["Adwaita-dark\nPapirus-Dark\nBibata-Ice cursor"]
 
   src --> compositor
   src --> bar
   src --> rofi
-  compositor --> foot
-  compositor --> hs
   src --> gtk
+  compositor --> foot
 ```
 
-> [Source: theme-flow.puml](./diagrams/theme-flow.puml)
-
-The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the config layer — not injected at runtime — so the visual identity is stable across every component:
-
-- **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), blur, and active/inactive states.
-- **Hyprchroma fork / `hypr-darkwindow`**: the local Hyprchroma fork is compiled inline as `libhypr-darkwindow.so`, providing the inactive-window tint and workspace-transition smoothing used by the current desktop.
-- **Hyprspace**: the local fork provides the workspace overview compatible with Hyprland `v0.54.2`.
-- **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
-- **Rofi**: the active setup uses a fixed Seaglass sidebar/grid configuration centered on `column-tco.rasi` and `apps-grid.rasi`.
-- **Foot terminal**: The active theme is the repo-tracked palette in `config/foot/foot.ini`. `pywal` templates are available separately for optional wallpaper-driven generation.
-- **GTK**: Adwaita-dark theme, Papirus-Dark icon set, Bibata-Modern-Ice cursor.
+`seaglass.conf` sets border colors, 12px rounding, blur parameters, and active/inactive window states. Waybar uses `mocha.css` for the full Catppuccin Mocha palette as CSS variables, with `style.css` overriding the accent to `#94e2d5`. Modules have transparent backgrounds with `border-radius: 999px` and a subtle teal hover glow. Rofi uses `column-tco.rasi` for the sidebar layout and `apps-grid.rasi` for the application grid. The foot terminal palette is tracked directly in `config/foot/foot.ini`. GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor at size 24.
 
 ---
 
-## 6. Waybar — Status Bar
+## 6. Waybar
 
-Waybar is the Wayland status bar. Its config is in `config/hypr/waybar/` and symlinked to `~/.config/waybar/`.
+Waybar is the Wayland status bar, configured in `config/hypr/waybar/` and symlinked to `~/.config/waybar/`. The layout is defined in `config.jsonc`, the palette in `mocha.css`, and per-component styles in `style.css`.
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-graph LR
-  subgraph src["Config source"]
-    cfg[config.jsonc]
-    css[style.css + mocha.css]
-  end
-
-  subgraph scripts["Runtime scripts"]
-    cava[WaybarCava.sh\nPipewire → ASCII bars]
-    app[activeapp.sh\nhyprctl → icon + title]
-  end
-
-  subgraph out["Bar outputs"]
-    vis[Audio visualizer]
-    win[Active window + icon]
-    sys[Clock / CPU / battery]
-  end
-
-  cfg --> out
-  cava --> vis
-  app --> win
-  css --> sys
-```
-
-> [Source: integration-logic.puml](./diagrams/integration-logic.puml)
-
-### Dynamic Audio Visualization — `WaybarCava.sh`
-
-The script generates a temporary Cava config on each launch (`/tmp/bar_cava_config`) with 14 bars at 60fps over PulseAudio. It pipes Cava's raw ASCII output through `sed` (character substitution) and `awk` (silence masking), outputting unicode bar characters consumed by Waybar's `custom/cava` module.
-
-### Active Window — `activeapp.sh`
-
-Queries `hyprctl activewindow` for the focused window's class and title. Maps classes to Nerd Font icons via a `case` statement (e.g., `firefox` → , `code` → 󰨞, `foot` → ). Outputs `{"text":"icon","tooltip":"Full Window Title"}` JSON for Waybar.
-
-### Thematic Styling
-
-`mocha.css` defines the full Catppuccin Mocha palette as CSS custom properties. `style.css` imports it and overrides the accent to `#94e2d5`. Key styles: transparent bar background, `border-radius: 999px` on modules, and hover states using `rgba(148, 226, 213, 0.12)` for a subtle teal glow.
+Two runtime scripts drive the dynamic modules. `WaybarCava.sh` generates a temporary Cava config on launch with 14 bars at 60fps over PulseAudio, pipes the raw ASCII output through character substitution and silence masking, and outputs unicode bar characters for the `custom/cava` module. `activeapp.sh` queries `hyprctl activewindow` for the focused window's class, maps it to a Nerd Font icon via a case statement (`firefox` → , `code` → 󰨞, `foot` → ), and outputs JSON for the active window module.
 
 ---
 
-## 7. Rofi — Active Runtime
+## 7. Rofi
 
-Rofi is currently used through a slim active runtime in `config/rofi/`, centered on the sidebar launcher and the grid launcher.
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-graph LR
-  subgraph active["config/rofi/ active set"]
-    cfg[config.rasi]
-    theme[theme.rasi]
-    column[column-tco.rasi\nsidebar theme]
-    gridtheme[apps-grid.rasi\ngrid theme]
-  end
-
-  subgraph mgmt["Display management"]
-    grid[rofi-grid.sh\nblur + waybar kill/restart]
-    push[rofi-push.sh\ngaps_out shift for sidebar]
-  end
-
-  cfg --> theme
-  theme --> column
-  gridtheme --> grid
-  column --> push
-```
-
-> [Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml)
-
-The active Rofi path is intentionally small: `rofi-push.sh` launches the sidebar layout using `column-tco.rasi`, while `rofi-grid.sh` launches the app grid using `apps-grid.rasi`. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
-
-Legacy applets, launcher packs, and powermenu variants were removed from the shipped runtime tree to keep the active configuration leaner.
+Rofi is configured in `config/rofi/` with two active launch paths. The sidebar launcher runs via `rofi-push.sh`, which shifts Hyprland's `gaps_out` to create space for the panel without overlapping windows, then restores original gaps on close. The application grid runs via `rofi-grid.sh`, which temporarily increases blur size and kills Waybar on open, restoring both on exit. The sidebar uses `column-tco.rasi` and the grid uses `apps-grid.rasi`. Both are referenced from `hyprland.conf` via the `$menu` and `$powermenu` variables.
 
 ---
 
 ## 8. Development Tooling
 
-Development environments are no longer exposed as flake `devShells`. The embedded and AI toolchains are now installed directly through Home Manager (`home/tco/home.nix`) and the user app modules (`home/tco/modules/apps/embedded.nix`, `data.nix`), making them available in every shell without an explicit `nix develop` invocation. Per-project environments use project-local `flake.nix` files with `direnv` integration (`programs.direnv.enable = true` with `nix-direnv`).
+Development environments are no longer exposed as flake `devShells`. The embedded and AI toolchains are installed directly through Home Manager and the user app modules, making them available in every shell without an explicit `nix develop` invocation. Per-project environments use project-local `flake.nix` files with `direnv` integration (`programs.direnv.enable = true` with `nix-direnv`).
 
 The `rust-overlay` flake input remains active and injects Rust nightly and stable toolchains into `nixpkgs`, available both system-wide and in `home.nix`.
