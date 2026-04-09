@@ -351,6 +351,6 @@ Commands
   theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
   integration-logic.puml   Logical dependencies between Nix, Rofi, and Waybar
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
-  flake-outputs.puml    nixosConfigurations, homeConfigurations, devShells
+  flake-outputs.puml    nixosConfigurations, devShells
 
   Optional local PNG export (not tracked): nix shell nixpkgs#plantuml -c plantuml -tpng -o/tmp/setup-os-diagrams docs/diagrams/*.puml
