@@ -13,6 +13,7 @@ Inputs:
   - nixpkgs: Unstable branch for bleeding-edge desktop features.
   - nixpkgs-stable: Frozen 24.11 for specific utilities (e.g. Guix).
   - home-manager: User environment sync.
+  - sops-nix: Declarative secret management for encrypted, committable secrets.
   - rust-overlay: Nightly/Stable Rust toolchains.
   - hyprchroma: Shader-based theme extension for Hyprland.
   - nix-snapd: Canonical Snap daemon implementation for NixOS.
@@ -46,6 +47,7 @@ System Services:
   - Guix: Native Guix daemon integration via pkgs-stable.
   - Pipewire: High-performance audio with ALSA and Pulse layers.
   - Polkit: GNOME auth-agent integrated into systemd user session.
+  - Restic backups: Encrypted cloud snapshots to Backblaze B2 via sops-nix.
 
 --------------------------------------------------------------------------------
 3. USER ENVIRONMENT (home/tco/home.nix)
@@ -67,6 +69,7 @@ Package Ecosystem:
 Dotfile Management:
   - Seaglass Theme: Symlinks for Hyprland/Waybar/Rofi configs.
   - Antigravity: Multi-binary integration (system-wide vs local shim).
+  - SOPS secrets: Encrypted YAML stored in-repo; decrypted locally via Age/SSH.
 
 --------------------------------------------------------------------------------
 4. OPTIONAL MODULES (modules/)
@@ -175,7 +178,7 @@ xdg.portal
   enable, xdgOpenUsePortal, extraPortals: xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk.
 
 Hyprland (programs.hyprland)
-  enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, tokens.conf, waybar).
+  enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, theme/hyprchroma.conf, waybar).
 
 Hyprchroma fork / hypr-darkwindow
   Local Hyprchroma fork compiled inline from home/tco/pkgs/Hyprchroma-fork/src/main.cpp into libhypr-darkwindow.so. Used for inactive-window tint and workspace-transition smoothing.
@@ -261,6 +264,13 @@ openrgb (services.hardware.openrgb)
 systemd.user.services
   polkit-gnome-authentication-agent-1.
 
+restic-backups-b2-critical / restic-backups-b2-data
+  Encrypted snapshot jobs defined in modules/backup.nix. Shared Backblaze B2 repository,
+  split by purpose:
+    - critical: /etc/nixos, ~/.ssh, ~/.gnupg, ~/.config
+    - data: ~/Desktop, ~/Documents, ~/Images
+  Secrets are sourced from secrets/backup.yaml via sops-nix templates.
+
 systemd.tmpfiles.rules
   Create dirs: .cache/wal, nix-build, profiles and user gcroots for tco.
 
@@ -303,7 +313,7 @@ observability.nix (modules/)
 edex.nix (modules/)
   Optional module (not imported in current configuration.nix): edex configuration.
 
-  Also in modules/ but not imported: lamp.nix, streamlit.nix, tmpfiles.nix.
+  Also in modules/ but not imported: lamp.nix, streamlit.nix.
 
 --------------------------------------------------------------------------------
 11b. HOME MANAGER USER MODULES (home/tco/modules/apps/)

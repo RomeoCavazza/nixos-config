@@ -43,12 +43,14 @@ nixos/
 │       ├── Hyprchroma-fork
 │       └── hyprspace-fork
 ├── modules/          # System-only modules (services, drivers)
+│   ├── backup.nix
 │   ├── nvidia-prime.nix
 │   ├── virtualisation.nix
 │   ├── databases.nix
 │   ├── ollama.nix
 │   ├── observability.nix
 │   └── ...
+├── secrets/          # SOPS-encrypted secrets committed safely
 ├── configuration.nix
 ├── flake.nix
 └── flake.lock
@@ -141,6 +143,23 @@ The root `README.md` is the main source of truth for this repository. Annexes li
 - [**docs/specification.txt**](./docs/specification.txt) — dense configuration glossary
 - [**docs/diagrams/**](./docs/diagrams/) — PlantUML sources (`.puml`)
 - [**docs/diagrams/png/**](./docs/diagrams/png/) — generated diagram images (`.png`)
+
+---
+
+## Backup & Secrets
+
+This setup now ships with encrypted cloud backups built around:
+
+- `sops-nix` for encrypted, committable secrets
+- `restic` for deduplicated snapshots
+- Backblaze B2 as the remote object storage backend
+
+The active design is split in two backup jobs:
+
+- `b2-critical` — `/etc/nixos`, `~/.ssh`, `~/.gnupg`, `~/.config`
+- `b2-data` — `~/Desktop`, `~/Documents`, `~/Images`
+
+Secrets are stored in-repo in encrypted form under [`secrets/backup.yaml`](./secrets/backup.yaml), while the local Age private key stays outside the repository.
 
 ---
 

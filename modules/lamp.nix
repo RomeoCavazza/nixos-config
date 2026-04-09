@@ -98,8 +98,8 @@ in
 
   # NOTE :
   # - La création de /var/www et autres règles de tmpfiles
-  #   doit être gérée dans modules/tmpfiles.nix pour éviter
-  #   les collisions entre modules.
+  #   doit être gérée centralement dans la configuration système
+  #   pour éviter les collisions entre modules.
   # - Si tu veux Adminer automatiquement, on pourra l’ajouter
   #   via tmpfiles (copie/symlink) vers /var/www/adminer.php.
 }

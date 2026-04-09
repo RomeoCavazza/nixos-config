@@ -15,6 +15,7 @@ flowchart TD
     np[nixpkgs unstable]
     nps[nixpkgs-stable 24.11]
     hm[home-manager]
+    snx[sops-nix]
     ro[rust-overlay]
     hl[hyprland v0.54.2]
     hs[hyprspace local fork]
@@ -26,7 +27,7 @@ flowchart TD
   flake[flake.nix]
 
   subgraph out["Flake Outputs"]
-    sys["nixosConfigurations.nixos\nconfiguration.nix + modules\n+ home-manager inline"]
+    sys["nixosConfigurations.nixos\nconfiguration.nix + modules\n+ sops-nix + home-manager inline"]
     ai["devShells.ai\npython311, nvidia libs"]
     emb["devShells.embedded\nRust, GCC, GDB, Arduino"]
   end
@@ -39,9 +40,9 @@ flowchart TD
 
 > [Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
 
-The flake currently pins nine inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprland` is pinned to `v0.54.2`. `hyprspace` is sourced from a local fork tracked in this repository. `hyprland-plugins` and `hyprtasking` are kept available for optional integrations. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS.
+The flake currently pins ten inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprland` is pinned to `v0.54.2`. `hyprspace` is sourced from a local fork tracked in this repository. `hyprland-plugins` and `hyprtasking` are kept available for optional integrations. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS. `sops-nix` injects declarative secret management used by the backup stack.
 
-The `nixosConfigurations.nixos` output is the sole entry point. It includes `configuration.nix`, all optional modules from `modules/`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies both system and user config atomically.
+The `nixosConfigurations.nixos` output is the sole entry point. It includes `configuration.nix`, flake-level modules such as `sops-nix` and `modules/backup.nix`, and Home Manager is embedded inline (`home-manager.nixosModules.home-manager`), so a single `sudo nixos-rebuild switch` applies system config, secrets wiring, backup units, and user config atomically.
 
 ---
 
@@ -95,6 +96,7 @@ Currently active modules:
 | `ollama.nix` | Ollama local LLM daemon |
 | `nginx.nix` | Nginx reverse proxy |
 | `observability.nix` | System monitoring and metrics |
+| `backup.nix` | Encrypted `restic` backups to Backblaze B2 via `sops-nix` |
 
 **User modules (`home/tco/modules/apps/`):**
 
@@ -174,6 +176,21 @@ The audio stack uses Pipewire with the full compatibility layer: ALSA (with 32-b
 ### nix-ld: Running Foreign Binaries
 
 `programs.nix-ld` provides a compatibility shim for non-Nix ELF binaries (AppImages, pre-built tools, proprietary SDKs). A curated library set is injected: `glib`, `gtk3`, `mesa`, `libx11`, `libxcb`, `libdrm`, `nss`, and more. This allows tools like the Cursor editor AppImage to run without manual patching.
+
+### Encrypted Cloud Backups
+
+The system now includes an encrypted cloud-backup path built directly into the flake:
+
+- `sops-nix` decrypts the Backblaze and Restic secrets at activation time
+- `modules/backup.nix` defines the backup jobs
+- `restic` writes encrypted snapshots to a Backblaze B2 bucket via the S3-compatible endpoint
+
+The current backup layout is intentionally split:
+
+- `b2-critical`: `/etc/nixos`, `~/.ssh`, `~/.gnupg`, `~/.config`
+- `b2-data`: `~/Desktop`, `~/Documents`, `~/Images`
+
+This keeps critical configuration and user data logically separate while still sharing the same remote repository and deduplication layer.
 
 ---
 
@@ -278,7 +295,7 @@ Hyprland is a tiling Wayland compositor with XWayland enabled for compatibility 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
 flowchart TB
-  src["Seaglass — seaglass.conf + tokens.conf"]
+  src["Seaglass — seaglass.conf"]
 
   subgraph compositor["Hyprland Compositor"]
     borders["Active border: 94E2D5\n12px rounding, dual-border"]
@@ -307,7 +324,7 @@ flowchart TB
 
 The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the config layer — not injected at runtime — so the visual identity is stable across every component:
 
-- **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), and active/inactive states. `tokens.conf` defines shared base values.
+- **Hyprland**: `seaglass.conf` sets border colors, rounding (12px), blur, and active/inactive states.
 - **Hyprchroma fork / `hypr-darkwindow`**: the local Hyprchroma fork is compiled inline as `libhypr-darkwindow.so`, providing the inactive-window tint and workspace-transition smoothing used by the current desktop.
 - **Hyprspace**: the local fork provides the workspace overview compatible with Hyprland `v0.54.2`.
 - **Waybar**: `mocha.css` imports the full Catppuccin Mocha palette as CSS variables. `style.css` imports it and defines the teal accent (`#94e2d5`), applying it to borders, hover states, and active module backgrounds.
