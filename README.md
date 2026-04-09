@@ -142,7 +142,6 @@ The root `README.md` is the main source of truth for this repository. Annexes li
 - [**docs/cloc-report.md**](./docs/cloc-report.md) — raw cloc report
 - [**docs/specification.txt**](./docs/specification.txt) — dense configuration glossary
 - [**docs/diagrams/**](./docs/diagrams/) — PlantUML sources (`.puml`)
-- [**docs/diagrams/png/**](./docs/diagrams/png/) — generated diagram images (`.png`)
 
 ---
 

@@ -38,7 +38,7 @@ flowchart TD
   flake --> emb
 ```
 
-> [Source: flake-outputs.puml](./diagrams/flake-outputs.puml) | [Export: flake-outputs.png](./diagrams/png/flake-outputs.png)
+> [Source: flake-outputs.puml](./diagrams/flake-outputs.puml)
 
 The flake currently pins ten inputs. `nixpkgs` (unstable) is the primary package set; `nixpkgs-stable` is used exclusively for Guix, which requires a stable release. `rust-overlay` injects Nightly/Stable Rust toolchains into the package set via an overlay. `hyprland` is pinned to `v0.54.2`. `hyprspace` is sourced from a local fork tracked in this repository. `hyprland-plugins` and `hyprtasking` are kept available for optional integrations. `nix-snapd` provides a NixOS module enabling Canonical Snap on NixOS. `sops-nix` injects declarative secret management used by the backup stack.
 
@@ -80,7 +80,7 @@ flowchart LR
   core --> mods
 ```
 
-> [Source: system-architecture.puml](./diagrams/system-architecture.puml) | [Export: system-architecture.png](./diagrams/png/system-architecture.png)
+> [Source: system-architecture.puml](./diagrams/system-architecture.puml)
 
 Currently active modules:
 
@@ -163,7 +163,7 @@ flowchart TD
   pw --> cava
 ```
 
-> [Source: display-audio.puml](./diagrams/display-audio.puml) | [Export: display-audio.png](./diagrams/png/display-audio.png)
+> [Source: display-audio.puml](./diagrams/display-audio.puml)
 
 ### Display Stack
 
@@ -221,7 +221,7 @@ dotfiles --> bin
 wal --> dotfiles
 ```
 
-> [Source: user-layer.puml](./diagrams/user-layer.puml) | [Export: user-layer.png](./diagrams/png/user-layer.png)
+> [Source: user-layer.puml](./diagrams/user-layer.puml)
 
 ### Dotfile Strategy
 
@@ -320,7 +320,7 @@ flowchart TB
   src --> gtk
 ```
 
-> [Source: theme-flow.puml](./diagrams/theme-flow.puml) | [Export: theme-flow.png](./diagrams/png/theme-flow.png)
+> [Source: theme-flow.puml](./diagrams/theme-flow.puml)
 
 The Seaglass theme uses a teal accent (`#94E2D5`). It is propagated at the config layer — not injected at runtime — so the visual identity is stable across every component:
 
@@ -363,7 +363,7 @@ graph LR
   css --> sys
 ```
 
-> [Source: integration-logic.puml](./diagrams/integration-logic.puml) | [Export: integration-logic.png](./diagrams/png/integration-logic.png)
+> [Source: integration-logic.puml](./diagrams/integration-logic.puml)
 
 ### Dynamic Audio Visualization — `WaybarCava.sh`
 
@@ -404,7 +404,7 @@ graph LR
   column --> push
 ```
 
-> [Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml) | [Export: rofi-launcher-flow.png](./diagrams/png/rofi-launcher-flow.png)
+> [Source: rofi-launcher-flow.puml](./diagrams/rofi-launcher-flow.puml)
 
 The active Rofi path is intentionally small: `rofi-push.sh` launches the sidebar layout using `column-tco.rasi`, while `rofi-grid.sh` launches the app grid using `apps-grid.rasi`. `rofi-grid.sh` temporarily increases `blur_size` and kills Waybar on open, restoring both on close. `rofi-push.sh` shifts `gaps_out` to create space for the sidebar layout without overlapping windows.
 
@@ -433,7 +433,7 @@ flowchart LR
   end
 ```
 
-> [Source: dev-shells.puml](./diagrams/dev-shells.puml) | [Export: dev-shells.png](./diagrams/png/dev-shells.png)
+> [Source: dev-shells.puml](./diagrams/dev-shells.puml)
 
 | Shell | Alias | Contents |
 |-------|-------|---------|
