@@ -11,8 +11,10 @@ let
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
-    runtimeInputs = [ pkgs.curl pkgs.git pkgs.openssh pkgs.imagemagick pkgs.coreutils pkgs.gawk pkgs.google-chrome ];
-    text = builtins.readFile ../config/bin/grafana-snapshot-sync;
+    runtimeInputs = [ pkgs.curl pkgs.git pkgs.nodejs pkgs.openssh pkgs.imagemagick pkgs.coreutils pkgs.gawk pkgs.google-chrome pkgs.playwright-driver ];
+    text = ''
+      export PLAYWRIGHT_CORE_PATH=${pkgs.playwright-driver}
+    '' + builtins.readFile ../config/bin/grafana-snapshot-sync;
   };
 
   promtailConfig = pkgs.writeText "promtail.yaml" (builtins.toJSON {

@@ -14,7 +14,8 @@ UNTIL="${UNTIL:-now}"
 MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-5}"
 SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
 SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
-BROWSER_BIN="${BROWSER_BIN:-/run/current-system/sw/bin/google-chrome}"
+PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
+CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
 
 # uid:slug:file
 DASHBOARDS=(
@@ -37,11 +38,6 @@ if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -x "$BROWSER_BIN" ]]; then
-  echo "snapshot-sync: browser binary not executable: $BROWSER_BIN" >&2
-  exit 1
-fi
-
 has_changes=0
 
 for item in "${DASHBOARDS[@]}"; do
@@ -50,15 +46,35 @@ for item in "${DASHBOARDS[@]}"; do
   target_file="${OUT_DIR}/${filename}"
 
   dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
-  "$BROWSER_BIN" \
-    --headless \
-    --disable-gpu \
-    --no-sandbox \
-    --hide-scrollbars \
-    --window-size=2200,1200 \
-    --virtual-time-budget=15000 \
-    --screenshot="$new_file" \
-    "$dashboard_url" >/dev/null 2>&1
+  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+    echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
+    exit 1
+  fi
+
+  PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
+  CHROME_BIN="$CHROME_BIN" \
+  DASHBOARD_URL="$dashboard_url" \
+  OUTPUT_FILE="$new_file" \
+  node <<'NODE'
+const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
+
+(async () => {
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROME_BIN,
+    headless: true,
+    args: ['--no-sandbox'],
+  });
+
+  const page = await browser.newPage({ viewport: { width: 2200, height: 1200 } });
+  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'networkidle' });
+  await page.waitForSelector('h2[title]', { timeout: 30000 });
+  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
+  await browser.close();
+})().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
+NODE
 
   if [[ ! -f "$target_file" ]]; then
     mv "$new_file" "$target_file"
