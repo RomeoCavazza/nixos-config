@@ -10,6 +10,7 @@
     <img src="https://img.shields.io/badge/Flakes-Enabled-7EBAE4?style=for-the-badge&logo=snowflake&logoColor=white" alt="Flakes">
     <img src="https://img.shields.io/badge/Guix-Enabled-FFD700?style=for-the-badge&logo=gnu-guix&logoColor=white" alt="Guix">
     <img src="https://img.shields.io/badge/NVIDIA-Prime-76B900?style=for-the-badge&logo=nvidia&logoColor=white" alt="NVIDIA">
+    <img src="https://img.shields.io/badge/Observability-Prometheus%20%7C%20Loki%20%7C%20Grafana-0E7490?style=for-the-badge&logo=grafana&logoColor=white" alt="Observability Stack">
   </div>
 </div>
 
@@ -150,7 +151,7 @@ Annexes and technical references live in `docs/`:
 - [**docs/README.md**](./docs/README.md) — annexes, Mermaid diagrams, and regeneration commands
 - [**docs/cloc-report.md**](./docs/cloc-report.md) — raw cloc report
 - [**docs/specification.txt**](./docs/specification.txt) — dense configuration glossary
-- [**docs/diagrams/**](./docs/diagrams/) — PlantUML sources (`.puml`)
+- [**docs/diagrams/**](./docs/diagrams/) — puml sources (`.puml`) and generated PNGs in `docs/assets/diagrams/`
 
 ---
 

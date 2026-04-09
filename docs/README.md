@@ -8,7 +8,7 @@ Technical documentation annexes for the `setup-os` NixOS configuration — cover
 
 The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and overlay composition.
 
-![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/flake-outputs.png)
+![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/flake-outputs.png)
 
 The flake pins ten inputs. `nixpkgs` (unstable) is the primary package set. `nixpkgs-stable` is used for two specific packages — Guix, which requires a stable release, and Promtail, which has a module-level conflict with the current Loki version on unstable. `rust-overlay` injects Rust nightly and stable toolchains via an overlay. Hyprland is pinned to `v0.54.2`, and all three plugins (`hyprspace`, `hyprland-plugins`, `hyprtasking`) follow that exact version via `inputs.hyprland.follows` — this prevents ABI mismatches between the compositor and its plugins.
 
@@ -89,7 +89,7 @@ Hyprland is a tiling Wayland compositor with XWayland enabled for X11 applicatio
 
 The Seaglass visual theme uses teal (`#94E2D5`) as its accent and is propagated at the config layer — not injected at runtime — so the identity stays consistent across every component without coordination logic.
 
-![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/theme-flow.png)
+![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/theme-flow.png)
 
 `seaglass.conf` sets border colors, 12px rounding, blur parameters, and active/inactive window states. Waybar uses `mocha.css` for the full Catppuccin Mocha palette as CSS variables, with `style.css` overriding the accent to `#94e2d5`. Modules have transparent backgrounds with `border-radius: 999px` and a subtle teal hover glow. Rofi uses `column-tco.rasi` for the sidebar layout and `apps-grid.rasi` for the application grid. The foot terminal palette is tracked directly in `config/foot/foot.ini`. GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor at size 24.
 
@@ -119,19 +119,21 @@ The `rust-overlay` flake input remains active and injects Rust nightly and stabl
 
 ## 9. Code Metrics
 
-Generated with `cloc`, excluding `.git`, `assets`, and build artifacts. Full report: [`cloc-report.md`](./cloc-report.md).
+Generated with `cloc`, excluding `.git`, `docs/assets`, and `docs/wiki`. Full report: [`cloc-report.md`](./cloc-report.md).
 
 | Language | Files | Code |
 |---|---:|---:|
 | C++ | 8 | 2563 |
-| Nix | 22 | 1489 |
-| Markdown | 9 | 910 |
+| Nix | 22 | 1629 |
+| Markdown | 9 | 694 |
+| JSON | 7 | 681 |
 | Bourne Shell | 21 | 647 |
-| JSON | 4 | 283 |
-| PlantUML | 8 | 230 |
-| Bash | 11 | 222 |
+| Text | 3 | 475 |
+| PlantUML | 9 | 360 |
+| Bourne Again Shell | 14 | 357 |
+| C/C++ Header | 3 | 150 |
 | CSS | 2 | 125 |
 | YAML | 5 | 106 |
-| **Total** | **107** | **7 415** |
+| **Total** | **114** | **8 023** |
 
-The C++ lines are the three locally vendored Hyprland plugins (`Hyprchroma-fork`, `hyprspace-fork`, `hypr-canvas-fork`), compiled from source during `nixos-rebuild`. The 22 Nix files cover the flake, system configuration, 10 system modules, and 3 Home Manager app modules. Shell scripts split between Bourne Shell (the 21 scripts in `config/bin/` and Waybar) and Bash (Home Manager-managed scripts with full completion support).
+The C++ lines are the three locally vendored Hyprland plugins (`Hyprchroma-fork`, `hyprspace-fork`, `hypr-canvas-fork`), compiled from source during `nixos-rebuild`. The 22 Nix files cover the flake, system configuration, 10 system modules, and 3 Home Manager app modules. Shell scripts now split across Bourne Shell and Bourne Again Shell as more runtime automation was added for observability and snapshot publishing.

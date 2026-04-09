@@ -53,7 +53,7 @@ let
     meta.description = "Infinite canvas plugin for Hyprland";
   };
 
-  terminal-rain-lightning = pkgs.python3Packages.buildPythonApplication rec {
+  terminal-rain-lightning = pkgs.python3Packages.buildPythonApplication {
     pname = "terminal-rain-lightning";
     version = "master";
 
@@ -72,21 +72,6 @@ let
     ];
 
     doCheck = false;
-  };
-
-  hyprland-logo-cursor = pkgs.stdenv.mkDerivation {
-    pname = "hyprland-logo-cursor";
-    version = "master";
-    src = pkgs.fetchFromGitHub {
-      owner = "hyprcow";
-      repo = "hyprland_theme";
-      rev = "main";
-      sha256 = "0ff8n019n7gapj3yy0rk5f8jg4l3vqjwb72wyikiwsqgcvzi38v6";
-    };
-    installPhase = ''
-      mkdir -p $out/share/icons/Hyprland-Logo
-      cp -r * $out/share/icons/Hyprland-Logo/
-    '';
   };
 
   edexUiAppImage = pkgs.fetchurl {

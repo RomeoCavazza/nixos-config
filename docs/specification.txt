@@ -376,4 +376,4 @@ Commands
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
   flake-outputs.puml    nixosConfigurations — 10 inputs, system + HM + sops output
 
-  Regenerate PNGs      nix shell nixpkgs#plantuml --command plantuml -tpng -o docs/diagrams/png docs/diagrams/*.puml
+  Regenerate PNGs      nix shell nixpkgs#plantuml --command plantuml -tpng -o docs/assets/diagrams docs/diagrams/*.puml
