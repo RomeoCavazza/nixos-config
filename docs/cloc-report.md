@@ -1,23 +1,23 @@
-cloc|github.com/AlDanial/cloc v 2.08  T=0.02 s (3489.8 files/s, 354211.9 lines/s)
+cloc|github.com/AlDanial/cloc v 2.08  T=0.02 s (4584.8 files/s, 400208.4 lines/s)
 --- | ---
 
 Language|files|blank|comment|code
 :-------|-------:|-------:|-------:|-------:
-C++|6|377|135|2140
-Nix|23|220|124|1617
-Markdown|7|354|0|1088
-Text|1|87|0|262
-JSON|3|0|0|259
+C++|8|482|164|2563
+Nix|22|203|120|1489
+Markdown|9|315|0|910
+Bourne Shell|21|171|25|647
+Text|3|102|0|454
+JSON|4|0|0|283
 PlantUML|8|39|0|230
+Bourne Again Shell|11|51|32|222
+C/C++ Header|3|48|25|150
 CSS|2|30|20|125
-Bourne Again Shell|10|26|27|106
-Bourne Shell|4|32|17|102
-C/C++ Header|2|34|15|100
+YAML|5|21|4|106
 Lisp|3|22|23|77
-YAML|3|20|0|70
+INI|2|6|0|49
+make|3|16|0|48
 TOML|2|2|0|39
-INI|1|6|0|32
-make|2|7|0|26
 Meson|1|4|0|23
 --------|--------|--------|--------|--------
-SUM:|78|1260|361|6296
+SUM:|107|1512|413|7415

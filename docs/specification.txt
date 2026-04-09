@@ -9,20 +9,25 @@ Project Type: Hybrid NixOS Workstation (Hyprland/GNOME)
 --------------------------------------------------------------------------------
 The project uses a Nix Flake for reproducible system deployment and dev shells.
 
-Inputs:
+Inputs (10 total):
   - nixpkgs: Unstable branch for bleeding-edge desktop features.
-  - nixpkgs-stable: Frozen 24.11 for specific utilities (e.g. Guix).
-  - home-manager: User environment sync.
+  - nixpkgs-stable: Frozen 24.11 for specific utilities (Guix, Promtail).
+  - home-manager: User environment sync (inline in nixosConfigurations).
   - sops-nix: Declarative secret management for encrypted, committable secrets.
   - rust-overlay: Nightly/Stable Rust toolchains.
-  - hyprchroma: Shader-based theme extension for Hyprland.
+  - hyprland: Wayland compositor, pinned to v0.54.2.
+  - hyprspace: Local fork (path:./home/tco/pkgs/hyprspace-fork), follows hyprland.
+  - hyprland-plugins: Official plugin ecosystem, follows hyprland.
+  - hyprtasking: Task management plugin, follows hyprland.
   - nix-snapd: Canonical Snap daemon implementation for NixOS.
+  Note: Hyprchroma is NOT a flake input — it is a local fork compiled inline from
+  home/tco/pkgs/Hyprchroma-fork/src/main.cpp during home-manager activation.
 
 Outputs:
   - nixosConfigurations.nixos: Sole entry point. System + Home Manager applied atomically.
-  - devShells:
-    * .#ai: Python 3.11 lab with NVIDIA/CUDA library paths.
-    * .#embedded: Full C++/Rust toolchain (gcc, cmake) + MCU tools (esptool).
+  Note: devShells (.#ai, .#embedded) were present in earlier versions but have been
+  removed. Development environments are now managed via home-manager packages and
+  per-project flakes.
 
 --------------------------------------------------------------------------------
 2. SYSTEM LAYER (configuration.nix)
@@ -30,7 +35,8 @@ Outputs:
 Entry point: /etc/nixos/configuration.nix.
 
 Boot Logic (systemd-boot):
-  - configurationLimit = 1: Strict rollbacks for disk space management.
+  - configurationLimit = 1: Limits boot menu to 1 NixOS entry. Rollback via
+    nixos-rebuild switch --rollback or flake.lock revert + rebuild.
   - Dual Boot: Custom Windows 11 entry pointing to /EFI/Microsoft/Boot/bootmgfw.efi.
   - I2C Support: Explicit loading of i2c-dev/i2c-i801 for hardware sensors.
 
@@ -84,10 +90,24 @@ virtualisation.nix:
   - binfmt emulation: Allows running aarch64 (ARM) binaries on x86_64 host.
 
 ollama.nix:
-  - Local AI daemon logic for LLM inference.
+  - Local AI daemon (ollama-cuda). OLLAMA_NUM_CTX=32768, OLLAMA_KEEP_ALIVE=24h,
+    OLLAMA_KV_CACHE_TYPE=q8_0.
 
 observability.nix:
-  - Performance monitoring and system metrics tools.
+  - Prometheus :9090, Node Exporter :9100, Loki :3100, Grafana :3000.
+  - Promtail runs as raw systemd service (NixOS module conflict workaround),
+    binary sourced from pkgs-stable.promtail via custom overlay.
+
+gdm-wallpaper.nix:
+  - Custom NixOS module (not in nixpkgs). Patches gnome-shell-theme.gresource
+    by injecting CSS overrides, recompiling with glib-compile-resources.
+
+databases.nix:
+  - PostgreSQL 17 + PostGIS, Redis (2GB allkeys-lru, AOF+RDB), Qdrant :6333.
+
+nginx.nix:
+  - Reverse proxy: localhost:8081, dev.localhost:8082, streamlit.localhost:8083.
+    WebSocket proxying enabled.
 
 --------------------------------------------------------------------------------
 4b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
@@ -330,13 +350,13 @@ data.nix (home/tco/modules/apps/)
   Data/observability: dbeaver-bin, grafana, influxdb2.
 
 --------------------------------------------------------------------------------
-12. Dev shells (flake outputs)
+12. Rust toolchain
 --------------------------------------------------------------------------------
-devShells (flake outputs)
-  Development shells. .#ai: Python 3.11, pip, NVIDIA libs. .#embedded: Rust (rust-src, rust-analyzer), gcc, clang, cmake, gdb, arduino-ide/cli, esptool, openocd, minicom, mosquitto.
-
 rust-overlay (flake input)
-  Rust overlay (oxalica/rust-overlay). Used in pkgs and in embedded devShell (rust-bin.stable.latest).
+  Rust overlay (oxalica/rust-overlay). Injects rust-nightly and rust-stable
+  toolchains into nixpkgs. Available system-wide and in home.nix packages.
+  devShells (.#ai, .#embedded) were removed from the flake — development
+  environments are now handled via home-manager packages and per-project flakes.
 
 --------------------------------------------------------------------------------
 Commands

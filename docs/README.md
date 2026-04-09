@@ -412,32 +412,8 @@ Legacy applets, launcher packs, and powermenu variants were removed from the shi
 
 ---
 
-## 8. Development Shells
+## 8. Development Tooling
 
-The flake exposes two development environments accessible via `nix develop`.
+Development environments are no longer exposed as flake `devShells`. The embedded and AI toolchains are now installed directly through Home Manager (`home/tco/home.nix`) and the user app modules (`home/tco/modules/apps/embedded.nix`, `data.nix`), making them available in every shell without an explicit `nix develop` invocation. Per-project environments use project-local `flake.nix` files with `direnv` integration (`programs.direnv.enable = true` with `nix-direnv`).
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
-flowchart LR
-  subgraph ai["devShells.ai  — alias: devai"]
-    py[python311 + pip]
-    gpu[nvidia_x11\nLD_LIBRARY_PATH patched]
-    libs[stdenv.cc + zlib + glib]
-  end
-
-  subgraph emb["devShells.embedded  — alias: devemb"]
-    rust[Rust stable\nrust-src + rust-analyzer]
-    cc[GCC + Clang + CMake + GDB]
-    mcu[Arduino IDE/CLI\nesptool + openocd + minicom]
-    mqtt[mosquitto MQTT broker]
-  end
-```
-
-> [Source: dev-shells.puml](./diagrams/dev-shells.puml)
-
-| Shell | Alias | Contents |
-|-------|-------|---------|
-| `#ai` | `devai` | Python 3.11, pip, NVIDIA libs, `LD_LIBRARY_PATH` patched for CUDA |
-| `#embedded` | `devemb` | Rust (stable + `rust-src` + `rust-analyzer`), GCC, Clang, CMake, GDB, Arduino IDE/CLI, esptool, openocd, minicom, mosquitto |
-
-The `#ai` shell explicitly sets `LD_LIBRARY_PATH` to expose `stdenv.cc.cc.lib` and `nvidia_x11` for Python packages that load native CUDA extensions (e.g., PyTorch). The `#embedded` shell uses `rust-overlay` to pin a precise Rust stable release, ensuring reproducibility. The `arduino-ide`, `esptool`, and `openocd` combination covers the full embedded lifecycle: IDE → compilation → flashing → JTAG debugging.
+The `rust-overlay` flake input remains active and injects Rust nightly and stable toolchains into `nixpkgs`, available both system-wide and in `home.nix`.
