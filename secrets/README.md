@@ -2,24 +2,17 @@
 
 This directory contains `sops`-encrypted secrets that are safe to commit to the repository.
 
-Current usage:
+In this repository, [`../modules/backup.nix`](../modules/backup.nix) reads
+[`backup.yaml`](./backup.yaml) via `sops-nix`, renders the resulting secrets to
+runtime-only files under `/run/secrets`, and lets `restic` use them to
+authenticate to Backblaze B2.
 
-- [`../modules/backup.nix`](../modules/backup.nix) reads [`backup.yaml`](./backup.yaml) via `sops-nix`
-- the resulting secrets are rendered to runtime-only files under `/run/secrets`
-- `restic` uses those runtime files to authenticate to Backblaze B2
-
-How this works here:
-
-- [`backup.yaml`](./backup.yaml) contains the Backblaze B2 and Restic secrets
-- values are encrypted with `sops`
-- the encrypted data key is wrapped for the configured `age` recipient
-- decryption happens locally during activation
-
-In practice:
-
-- seeing [`backup.yaml`](./backup.yaml) in the repo is expected
-- the file is encrypted, not plaintext
-- the matching private key is kept outside this repository
+[`backup.yaml`](./backup.yaml) contains the Backblaze B2 and Restic secrets.
+Its values are encrypted with `sops`, the encrypted data key is wrapped for the
+configured `age` recipient, and decryption happens locally during activation.
+So seeing [`backup.yaml`](./backup.yaml) in the repo is expected: the file is
+encrypted, not plaintext, and the matching private key stays outside this
+repository.
 
 What is safe to commit:
 
