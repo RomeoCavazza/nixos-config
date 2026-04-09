@@ -136,7 +136,9 @@ flowchart TB
 
 ## Documentation
 
-The root `README.md` is the main source of truth for this repository. Annexes live in `docs/`:
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
+
+Annexes and technical references live in `docs/`:
 
 - [**docs/README.md**](./docs/README.md) — annexes, Mermaid diagrams, and regeneration commands
 - [**docs/cloc-report.md**](./docs/cloc-report.md) — raw cloc report
