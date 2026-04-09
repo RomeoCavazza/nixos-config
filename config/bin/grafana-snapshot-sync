@@ -14,6 +14,7 @@ UNTIL="${UNTIL:-now}"
 MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-5}"
 SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
 SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
+BROWSER_BIN="${BROWSER_BIN:-/run/current-system/sw/bin/google-chrome}"
 
 # uid:slug:file
 DASHBOARDS=(
@@ -24,6 +25,23 @@ DASHBOARDS=(
 
 mkdir -p "$OUT_DIR"
 
+for _ in $(seq 1 30); do
+  if curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+
+if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
+  echo "snapshot-sync: grafana is not reachable at ${GRAFANA_URL}" >&2
+  exit 1
+fi
+
+if [[ ! -x "$BROWSER_BIN" ]]; then
+  echo "snapshot-sync: browser binary not executable: $BROWSER_BIN" >&2
+  exit 1
+fi
+
 has_changes=0
 
 for item in "${DASHBOARDS[@]}"; do
@@ -31,8 +49,16 @@ for item in "${DASHBOARDS[@]}"; do
   new_file="${TMP_DIR}/${filename}"
   target_file="${OUT_DIR}/${filename}"
 
-  render_url="${GRAFANA_URL}/render/d/${uid}/${slug}?from=${SINCE}&to=${UNTIL}&width=2200&height=1200&tz=UTC"
-  curl -fsS "$render_url" -o "$new_file"
+  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
+  "$BROWSER_BIN" \
+    --headless \
+    --disable-gpu \
+    --no-sandbox \
+    --hide-scrollbars \
+    --window-size=2200,1200 \
+    --virtual-time-budget=15000 \
+    --screenshot="$new_file" \
+    "$dashboard_url" >/dev/null 2>&1
 
   if [[ ! -f "$target_file" ]]; then
     mv "$new_file" "$target_file"
