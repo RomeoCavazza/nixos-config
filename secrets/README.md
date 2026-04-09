@@ -1,6 +1,6 @@
 # Secrets
 
-This directory contains `sops`-encrypted secrets that are intentionally committed to the repository.
+This directory contains `sops`-encrypted secrets that are safe to commit to the repository.
 
 What is safe to commit:
 
