@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -9,7 +9,7 @@
     ./modules/databases.nix
     ./modules/ollama.nix
     ./modules/nginx.nix
-    # ./modules/observability.nix
+    ./modules/observability.nix
     ./modules/gdm-wallpaper.nix
   ];
 

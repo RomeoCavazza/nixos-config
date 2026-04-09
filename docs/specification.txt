@@ -97,6 +97,11 @@ observability.nix:
   - Prometheus :9090, Node Exporter :9100, Loki :3100, Grafana :3000.
   - Promtail runs as raw systemd service (NixOS module conflict workaround),
     binary sourced from pkgs-stable.promtail via custom overlay.
+  - Three dashboards are provisioned: `nixos-metrics`, `nix-efficiency`,
+    `incident-correlation`.
+  - Local Continuous Documentation: `grafana-snapshot-sync.timer` renders PNG
+    snapshots to docs/assets/live and commits only when image delta > 5%.
+  - Log correlation labels: promtail injects `component=display|build|system`.
 
 gdm-wallpaper.nix:
   - Custom NixOS module (not in nixpkgs). Patches gnome-shell-theme.gresource

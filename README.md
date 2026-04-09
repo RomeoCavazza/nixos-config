@@ -138,6 +138,13 @@ flowchart TB
 
 The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
 
+## Live Infrastructure
+
+The observability stack (Prometheus + Loki + Grafana + Promtail) publishes live
+dashboard snapshots generated locally by a systemd timer.
+
+![Live Nix Efficiency](./docs/assets/live/nix-efficiency.png)
+
 Annexes and technical references live in `docs/`:
 
 - [**docs/README.md**](./docs/README.md) — annexes, Mermaid diagrams, and regeneration commands

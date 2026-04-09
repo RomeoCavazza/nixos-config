@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Collect NixOS/Nix store metrics and write them to the Prometheus textfile
+# collector directory. Run by the nix-metrics.timer systemd unit every 15 min.
+
+set -euo pipefail
+
+OUTFILE="/var/lib/node_exporter/textfile_collector/nix-store.prom"
+TMPFILE="${OUTFILE}.tmp"
+
+# --- Nix store used space (fast: read from df, no store walk) ----------------
+store_bytes=$(df --output=used -B1 /nix/store 2>/dev/null | tail -1 | tr -d ' ' || echo 0)
+
+# --- Total paths in store (fast: directory entry count) ----------------------
+store_paths=$(ls -1 /nix/store 2>/dev/null | wc -l || echo 0)
+
+# --- Current system closure --------------------------------------------------
+closure_paths=$(nix-store -q --requisites /run/current-system 2>/dev/null | wc -l || echo 0)
+closure_bytes=$(nix path-info -rS /run/current-system 2>/dev/null \
+  | awk '{sum += $2} END { print (sum ? sum : 0) }')
+
+# --- Current NixOS generation ------------------------------------------------
+current_gen=$(nix-env --list-generations -p /nix/var/nix/profiles/system 2>/dev/null \
+  | grep '(current)' | awk '{print $1}' || echo 0)
+generations_count=$(nix-env --list-generations -p /nix/var/nix/profiles/system 2>/dev/null \
+  | awk 'NF > 0 { c++ } END { print (c ? c : 0) }')
+
+# --- flake.lock freshness ----------------------------------------------------
+flake_lock="/etc/nixos/flake.lock"
+if [[ -f "$flake_lock" ]]; then
+  lock_age=$(( $(date +%s) - $(stat -c %Y "$flake_lock") ))
+else
+  lock_age=0
+fi
+
+# --- Pressure Stall Information (PSI) ---------------------------------------
+# We expose avg10 as a percent-like value for Grafana gauge panels.
+pressure_cpu_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/cpu 2>/dev/null || echo 0)
+pressure_io_some_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/io 2>/dev/null || echo 0)
+pressure_mem_some_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/memory 2>/dev/null || echo 0)
+
+# --- Write atomically --------------------------------------------------------
+cat > "$TMPFILE" << EOF
+# HELP nix_store_bytes Nix store used space in bytes (from df)
+# TYPE nix_store_bytes gauge
+nix_store_bytes ${store_bytes}
+
+# HELP nix_store_paths Total number of paths currently in the Nix store
+# TYPE nix_store_paths gauge
+nix_store_paths ${store_paths}
+
+# HELP nix_closure_paths Number of store paths in the running system closure
+# TYPE nix_closure_paths gauge
+nix_closure_paths ${closure_paths}
+
+# HELP nix_closure_bytes Cumulative size of the running system closure in bytes
+# TYPE nix_closure_bytes gauge
+nix_closure_bytes ${closure_bytes}
+
+# HELP nix_generation Current NixOS generation number
+# TYPE nix_generation gauge
+nix_generation ${current_gen}
+
+# HELP nix_generations_count Number of retained NixOS generations
+# TYPE nix_generations_count gauge
+nix_generations_count ${generations_count}
+
+# HELP nix_flake_lock_age_seconds Seconds since flake.lock was last modified
+# TYPE nix_flake_lock_age_seconds gauge
+nix_flake_lock_age_seconds ${lock_age}
+
+# HELP nix_pressure_cpu_avg10 CPU PSI avg10 from /proc/pressure/cpu
+# TYPE nix_pressure_cpu_avg10 gauge
+nix_pressure_cpu_avg10 ${pressure_cpu_avg10}
+
+# HELP nix_pressure_io_some_avg10 IO PSI some avg10 from /proc/pressure/io
+# TYPE nix_pressure_io_some_avg10 gauge
+nix_pressure_io_some_avg10 ${pressure_io_some_avg10}
+
+# HELP nix_pressure_mem_some_avg10 Memory PSI some avg10 from /proc/pressure/memory
+# TYPE nix_pressure_mem_some_avg10 gauge
+nix_pressure_mem_some_avg10 ${pressure_mem_some_avg10}
+EOF
+
+mv "$TMPFILE" "$OUTFILE"

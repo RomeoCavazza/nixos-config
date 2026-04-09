@@ -225,6 +225,11 @@ in
     executable = true;
   };
 
+  home.file.".local/bin/rebuild" = {
+    source = ../../config/bin/rebuild;
+    executable = true;
+  };
+
   home.file.".local/lib/libhypr-darkwindow.so" = {
     source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
     executable = true;
@@ -462,7 +467,7 @@ in
       ls = "eza --icons";
       devai = "nix develop /etc/nixos#ai";
       devemb = "nix develop /etc/nixos#embedded";
-      rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+      rebuild = "command rebuild";
     };
   };
 

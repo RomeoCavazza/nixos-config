@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Wrapper around nixos-rebuild that records build duration, exit status,
+# and timestamp to the Prometheus textfile collector.
+#
+# Usage: rebuild switch | rebuild boot | rebuild test | rebuild --help
+#   (passes all arguments to nixos-rebuild and defaults to the local flake)
+
+OUTFILE="/var/lib/node_exporter/textfile_collector/nix-rebuild.prom"
+
+# Use the nixos-rebuild from the running system to avoid sudo PATH issues.
+NIXOS_REBUILD=/run/current-system/sw/bin/nixos-rebuild
+FLAKE_REF=/etc/nixos#nixos
+
+start_ns=$(date +%s%N)
+start_ts=$(date +%s)
+
+# Run rebuild — allow failure so we can still record the exit code.
+sudo "$NIXOS_REBUILD" --flake "$FLAKE_REF" "$@"
+exit_code=$?
+
+end_ns=$(date +%s%N)
+duration_ms=$(( (end_ns - start_ns) / 1000000 ))
+success=$([ "$exit_code" -eq 0 ] && echo 1 || echo 0)
+
+# Write to /tmp first (no root needed), then move atomically as root.
+TMPFILE=$(mktemp /tmp/nix-rebuild.prom.XXXXXX)
+cat > "$TMPFILE" << EOF
+# HELP nix_rebuild_duration_ms Duration of the last nixos-rebuild in milliseconds
+# TYPE nix_rebuild_duration_ms gauge
+nix_rebuild_duration_ms ${duration_ms}
+
+# HELP nix_rebuild_timestamp_seconds Unix timestamp of the last nixos-rebuild
+# TYPE nix_rebuild_timestamp_seconds gauge
+nix_rebuild_timestamp_seconds ${start_ts}
+
+# HELP nix_rebuild_success Whether the last nixos-rebuild succeeded (1) or failed (0)
+# TYPE nix_rebuild_success gauge
+nix_rebuild_success ${success}
+EOF
+
+sudo mv "$TMPFILE" "$OUTFILE"
+
+exit "$exit_code"

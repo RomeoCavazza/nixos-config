@@ -79,7 +79,7 @@ Home Manager runs inline within the system build, applied atomically on every `n
 
 **Pywal** is available in the user environment with custom templates tracked at `config/wal/templates/` and deployed to `~/.config/wal/templates/`. `colors-hyprland.conf` and `colors-foot.ini` allow wallpaper-derived palette generation when desired. The live desktop theme is repo-defined by default; pywal is opt-in per session.
 
-**Shell:** Bash with Starship prompt (Catppuccin-style teal gradient). Key alias: `rebuild` → `sudo nixos-rebuild switch --flake /etc/nixos#nixos`.
+**Shell:** Bash with Starship prompt (Catppuccin-style teal gradient). Key alias: `rebuild` → `command rebuild` (wrapper script with rebuild metrics export).
 
 ---
 
