@@ -14,12 +14,22 @@ result-*
 *.bak
 *~
 
-# Secrets et clés
+# Secrets et clés en clair uniquement
 *.key
 *.pem
 *.p12
+*.agekey
+.env
+.env.*
 .secrets/
 secrets.nix
+secrets/*.dec
+secrets/*.plaintext
+secrets/*.txt
+
+# Secrets SOPS chiffrés à conserver dans le repo
+!.sops.yaml
+!secrets/*.yaml
 
 # Fichiers de backup
 *.backup

@@ -17,6 +17,8 @@
     hyprtasking.inputs.hyprland.follows = "hyprland";
     nix-snapd.url = "github:nix-community/nix-snapd";
     nix-snapd.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { self, nixpkgs, nixpkgs-stable, home-manager, ... }@inputs:
@@ -30,6 +32,8 @@
         modules = [
           ./configuration.nix
           inputs.nix-snapd.nixosModules.default
+          inputs.sops-nix.nixosModules.sops
+          ./modules/backup.nix
           home-manager.nixosModules.home-manager
           {
             # FORCE L'UPDATE DE NIX VERS LA VERSION PATCHÉE

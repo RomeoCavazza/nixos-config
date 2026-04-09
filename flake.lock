@@ -634,7 +634,8 @@
         "nix-snapd": "nix-snapd",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay",
+        "sops-nix": "sops-nix"
       }
     },
     "rust-overlay": {
@@ -654,6 +655,26 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775682595,
+        "narHash": "sha256-0E9PohY/VuESLq0LR4doaH7hTag513sDDW5n5qmHd1Q=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "d2e8438d5886e92bc5e7c40c035ab6cae0c41f76",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
         "type": "github"
       }
     },
