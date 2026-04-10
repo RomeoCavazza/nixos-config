@@ -2,11 +2,24 @@
   "title": "NixOS Metrics",
   "uid": "nixos-metrics",
   "schemaVersion": 38,
-  "refresh": "1m",
+  "refresh": "30s",
+  "description": "Live health view for Nix pressure, rebuild cost, and store growth.",
   "panels": [
     {
+      "id": 0,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 3 },
+      "type": "text",
+      "title": "Live system state",
+      "transparent": true,
+      "options": {
+        "mode": "markdown",
+        "content": "**Read this dashboard left to right:** pressure now, retained state, then trends. It is refreshed live by Grafana and the PNG snapshot pipeline only mirrors the current state.",
+        "contentType": "markdown"
+      }
+    },
+    {
       "id": 1,
-      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "gridPos": { "x": 0, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "CPU Pressure",
       "datasource": "Prometheus",
@@ -31,7 +44,7 @@
     },
     {
       "id": 2,
-      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "gridPos": { "x": 8, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "IO Pressure",
       "datasource": "Prometheus",
@@ -56,7 +69,7 @@
     },
     {
       "id": 3,
-      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "gridPos": { "x": 16, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "RAM Pressure",
       "datasource": "Prometheus",
@@ -81,7 +94,7 @@
     },
     {
       "id": 4,
-      "gridPos": { "x": 0, "y": 4, "w": 4, "h": 4 },
+      "gridPos": { "x": 0, "y": 8, "w": 8, "h": 4 },
       "type": "stat",
       "title": "Generation",
       "datasource": "Prometheus",
@@ -90,7 +103,7 @@
     },
     {
       "id": 5,
-      "gridPos": { "x": 4, "y": 4, "w": 4, "h": 4 },
+      "gridPos": { "x": 8, "y": 8, "w": 8, "h": 4 },
       "type": "stat",
       "title": "Store Size",
       "datasource": "Prometheus",
@@ -100,7 +113,7 @@
     },
     {
       "id": 6,
-      "gridPos": { "x": 8, "y": 4, "w": 4, "h": 4 },
+      "gridPos": { "x": 16, "y": 8, "w": 8, "h": 4 },
       "type": "stat",
       "title": "Closure Size",
       "datasource": "Prometheus",
@@ -109,40 +122,8 @@
       "fieldConfig": { "defaults": { "unit": "decbytes" } }
     },
     {
-      "id": 7,
-      "gridPos": { "x": 12, "y": 4, "w": 4, "h": 4 },
-      "type": "stat",
-      "title": "Closure Paths",
-      "datasource": "Prometheus",
-      "targets": [{ "expr": "nix_closure_paths", "legendFormat": "paths", "refId": "A" }],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } }
-    },
-    {
-      "id": 8,
-      "gridPos": { "x": 16, "y": 4, "w": 4, "h": 4 },
-      "type": "stat",
-      "title": "flake.lock age (days)",
-      "datasource": "Prometheus",
-      "targets": [{ "expr": "nix_flake_lock_age_seconds / 86400", "legendFormat": "days", "refId": "A" }],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "d",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 14 },
-              { "color": "red", "value": 30 }
-            ]
-          },
-          "color": { "mode": "thresholds" }
-        }
-      }
-    },
-    {
       "id": 9,
-      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
       "type": "timeseries",
       "title": "Nix Store Size over Time",
       "datasource": "Prometheus",
@@ -153,30 +134,13 @@
       "fieldConfig": { "defaults": { "unit": "decbytes" } }
     },
     {
-      "id": 10,
-      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
-      "type": "timeseries",
-      "title": "Store Overhead (paths outside current closure)",
-      "datasource": "Prometheus",
-      "targets": [{ "expr": "nix_store_paths - nix_closure_paths", "legendFormat": "orphaned paths", "refId": "A" }]
-    },
-    {
       "id": 11,
-      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 20, "w": 24, "h": 8 },
       "type": "timeseries",
       "title": "Rebuild Duration",
       "datasource": "Prometheus",
       "targets": [{ "expr": "nix_rebuild_duration_ms / 1000", "legendFormat": "duration (s)", "refId": "A" }],
       "fieldConfig": { "defaults": { "unit": "s" } }
-    },
-    {
-      "id": 12,
-      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
-      "type": "timeseries",
-      "title": "flake.lock Age",
-      "datasource": "Prometheus",
-      "targets": [{ "expr": "nix_flake_lock_age_seconds / 86400", "legendFormat": "days since update", "refId": "A" }],
-      "fieldConfig": { "defaults": { "unit": "d" } }
     }
   ]
 }

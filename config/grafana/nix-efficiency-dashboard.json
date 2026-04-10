@@ -3,35 +3,23 @@
   "uid": "nix-efficiency",
   "schemaVersion": 38,
   "refresh": "1m",
+  "description": "Trend view for freshness, generation debt, and rebuild cost.",
   "panels": [
     {
-      "id": 1,
-      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
-      "type": "gauge",
-      "title": "Generation Debt",
-      "datasource": "Prometheus",
-      "targets": [{ "expr": "nix_generations_count", "legendFormat": "retained generations", "refId": "A" }],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "min": 0,
-          "max": 40,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 10 },
-              { "color": "red", "value": 20 }
-            ]
-          },
-          "color": { "mode": "thresholds" }
-        }
+      "id": 0,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 3 },
+      "type": "text",
+      "title": "Efficiency lens",
+      "transparent": true,
+      "options": {
+        "mode": "markdown",
+        "content": "**Use this view to spot drift.** It is built to answer one question: how much retained state and rebuild cost is accumulating over time?",
+        "contentType": "markdown"
       }
     },
     {
-      "id": 2,
-      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 6 },
+      "id": 1,
+      "gridPos": { "x": 0, "y": 3, "w": 6, "h": 6 },
       "type": "gauge",
       "title": "Freshness Index (days)",
       "datasource": "Prometheus",
@@ -55,25 +43,44 @@
       }
     },
     {
+      "id": 2,
+      "gridPos": { "x": 6, "y": 3, "w": 6, "h": 6 },
+      "type": "gauge",
+      "title": "Generation Debt",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "nix_generations_count", "legendFormat": "retained generations", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 40,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 10 },
+              { "color": "red", "value": 20 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      }
+    },
+    {
       "id": 3,
-      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "gridPos": { "x": 12, "y": 3, "w": 12, "h": 6 },
       "type": "timeseries",
-      "title": "Closure Size vs Closure Paths",
+      "title": "Rebuild Duration Trend",
       "datasource": "Prometheus",
       "targets": [
-        { "expr": "nix_closure_bytes", "legendFormat": "closure bytes", "refId": "A" },
-        { "expr": "nix_closure_paths", "legendFormat": "closure paths", "refId": "B" }
+        { "expr": "nix_rebuild_duration_ms / 1000", "legendFormat": "duration s", "refId": "A" }
       ],
-      "fieldConfig": { "defaults": { "unit": "decbytes" }, "overrides": [
-        {
-          "matcher": { "id": "byName", "options": "closure paths" },
-          "properties": [{ "id": "unit", "value": "none" }]
-        }
-      ] }
+      "fieldConfig": { "defaults": { "unit": "s" } }
     },
     {
       "id": 4,
-      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
+      "gridPos": { "x": 0, "y": 9, "w": 12, "h": 8 },
       "type": "timeseries",
       "title": "Store vs Closure Bytes",
       "datasource": "Prometheus",
@@ -85,25 +92,24 @@
     },
     {
       "id": 5,
-      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
+      "gridPos": { "x": 12, "y": 9, "w": 12, "h": 8 },
       "type": "timeseries",
-      "title": "Store Overhead Paths",
+      "title": "Closure Volume vs Path Count",
       "datasource": "Prometheus",
       "targets": [
-        { "expr": "nix_store_paths - nix_closure_paths", "legendFormat": "overhead paths", "refId": "A" }
+        { "expr": "nix_closure_bytes", "legendFormat": "closure bytes", "refId": "A" },
+        { "expr": "nix_closure_paths", "legendFormat": "closure paths", "refId": "B" }
       ],
-      "fieldConfig": { "defaults": { "unit": "none" } }
-    },
-    {
-      "id": 6,
-      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 8 },
-      "type": "timeseries",
-      "title": "Rebuild Duration Trend",
-      "datasource": "Prometheus",
-      "targets": [
-        { "expr": "nix_rebuild_duration_ms / 1000", "legendFormat": "duration s", "refId": "A" }
-      ],
-      "fieldConfig": { "defaults": { "unit": "s" } }
+      "fieldConfig": { "defaults": { "unit": "decbytes", "custom": { "axisPlacement": "left", "axisLabel": "Bytes" } }, "overrides": [
+        {
+          "matcher": { "id": "byName", "options": "closure paths" },
+          "properties": [
+            { "id": "unit", "value": "none" },
+            { "id": "custom.axisPlacement", "value": "right" },
+            { "id": "custom.axisLabel", "value": "Count" }
+          ]
+        }
+      ] }
     }
   ]
 }

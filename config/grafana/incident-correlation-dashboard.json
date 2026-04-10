@@ -3,10 +3,23 @@
   "uid": "incident-correlation",
   "schemaVersion": 38,
   "refresh": "30s",
+  "description": "High-frequency pressure timeline linked to Loki logs for incident analysis.",
   "panels": [
     {
+      "id": 0,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 3 },
+      "type": "text",
+      "title": "Incident context",
+      "transparent": true,
+      "options": {
+        "mode": "markdown",
+        "content": "**This dashboard is for correlation, not overview.** Start with pressure, then move immediately to the log panel when something spikes.",
+        "contentType": "markdown"
+      }
+    },
+    {
       "id": 1,
-      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 5 },
+      "gridPos": { "x": 0, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "CPU Pressure",
       "datasource": "Prometheus",
@@ -31,7 +44,7 @@
     },
     {
       "id": 2,
-      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 5 },
+      "gridPos": { "x": 8, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "IO Pressure",
       "datasource": "Prometheus",
@@ -56,7 +69,7 @@
     },
     {
       "id": 3,
-      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 5 },
+      "gridPos": { "x": 16, "y": 3, "w": 8, "h": 5 },
       "type": "gauge",
       "title": "Memory Pressure",
       "datasource": "Prometheus",
@@ -81,7 +94,7 @@
     },
     {
       "id": 4,
-      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 8 },
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
       "type": "timeseries",
       "title": "Pressure Timeline",
       "datasource": "Prometheus",
@@ -94,7 +107,7 @@
     },
     {
       "id": 5,
-      "gridPos": { "x": 0, "y": 13, "w": 24, "h": 10 },
+      "gridPos": { "x": 0, "y": 16, "w": 24, "h": 10 },
       "type": "logs",
       "title": "Loki Journal (component filter)",
       "datasource": "Loki",
