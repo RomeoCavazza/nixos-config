@@ -139,6 +139,11 @@ flowchart TB
 
 The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
 
+- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic)
+- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown)
+- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
+- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
+
 ## Live Infrastructure
 
 The observability stack (Prometheus + Loki + Grafana + Promtail) publishes live
@@ -146,14 +151,6 @@ dashboard snapshots generated locally by a systemd timer.
 
 ### Main Live Dashboard
 ![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
-
-### Loki Correlation Preview
-Instead of exposing raw logs directly in the README, this preview shows Loki in context through incident correlation.
-
-![Live Incident Correlation](./docs/assets/live/incident-dashboard.png)
-
-### Efficiency View
-![Live Nix Efficiency](./docs/assets/live/nix-efficiency.png)
 
 Annexes and technical references live in `docs/`:
 
