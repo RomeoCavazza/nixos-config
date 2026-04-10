@@ -144,6 +144,15 @@ The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the prim
 The observability stack (Prometheus + Loki + Grafana + Promtail) publishes live
 dashboard snapshots generated locally by a systemd timer.
 
+### Main Live Dashboard
+![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
+
+### Loki Correlation Preview
+Instead of exposing raw logs directly in the README, this preview shows Loki in context through incident correlation.
+
+![Live Incident Correlation](./docs/assets/live/incident-dashboard.png)
+
+### Efficiency View
 ![Live Nix Efficiency](./docs/assets/live/nix-efficiency.png)
 
 Annexes and technical references live in `docs/`:

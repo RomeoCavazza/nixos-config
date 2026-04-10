@@ -99,8 +99,9 @@ observability.nix:
     binary sourced from pkgs-stable.promtail via custom overlay.
   - Three dashboards are provisioned: `nixos-metrics`, `nix-efficiency`,
     `incident-correlation`.
-  - Local Continuous Documentation: `grafana-snapshot-sync.timer` renders PNG
-    snapshots to docs/assets/live and commits only when image delta > 5%.
+  - Local Continuous Documentation: `grafana-snapshot-sync.timer` captures
+    dashboards via headless browser, writes snapshots to docs/assets/live, and
+    commits only when image delta > 5%.
   - Log correlation labels: promtail injects `component=display|build|system`.
 
 gdm-wallpaper.nix:
@@ -376,4 +377,4 @@ Commands
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
   flake-outputs.puml    nixosConfigurations — 10 inputs, system + HM + sops output
 
-  Regenerate PNGs      nix shell nixpkgs#plantuml --command plantuml -tpng -o docs/assets/diagrams docs/diagrams/*.puml
+  Regenerate PNGs      (cd docs/diagrams && nix shell nixpkgs#plantuml --command plantuml -tpng -o ../assets/diagrams ./*.puml)

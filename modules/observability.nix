@@ -143,6 +143,7 @@ in
       server.http_listen_port = 3100;
       common = {
         path_prefix = "/var/lib/loki";
+        ring.kvstore.store = "inmemory";
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
           rules_directory = "/var/lib/loki/rules";
