@@ -101,7 +101,7 @@ observability.nix:
     `incident-correlation`.
   - Local Continuous Documentation: `grafana-snapshot-sync.timer` captures
     dashboards via headless browser, writes snapshots to docs/assets/live, and
-    commits only when image delta > 5%.
+    publishes through a dedicated checkout when image delta > 0.5%.
   - Log correlation labels: promtail injects `component=display|build|system`.
 
 gdm-wallpaper.nix:

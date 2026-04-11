@@ -70,6 +70,7 @@ in
   systemd.tmpfiles.rules = [
     "d ${textfileDir} 0755 root root -"
     "d /var/lib/promtail 0755 root root -"
+    "d /var/lib/grafana-snapshot-sync 0755 tco users -"
     "d /etc/nixos/docs/assets/live 0755 tco users -"
   ];
 
@@ -100,20 +101,25 @@ in
       Group = "users";
       WorkingDirectory = "/etc/nixos";
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
-      Environment = [
-        "MIN_CHANGE_PERCENT=5"
-        "HOME=/home/tco"
-        "SNAPSHOT_GIT_NAME=Romeo Cavazza"
-        "SNAPSHOT_GIT_EMAIL=romeo.cavazza@users.noreply.github.com"
-      ];
+    };
+    environment = {
+      MIN_CHANGE_PERCENT = "0.5";
+      HOME = "/home/tco";
+      SNAPSHOT_GIT_NAME = "Romeo Cavazza";
+      SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
+      SNAPSHOT_REPO_URL = "git@github.com:RomeoCavazza/setup-os.git";
+      SNAPSHOT_BRANCH = "main";
+      PUBLISH_REPO_DIR = "/var/lib/grafana-snapshot-sync/setup-os";
     };
   };
 
   systemd.timers.grafana-snapshot-sync = {
     wantedBy = [ "timers.target" ];
     timerConfig = {
-      OnBootSec = "15min";
-      OnUnitActiveSec = "1h";
+      OnBootSec = "5min";
+      OnUnitActiveSec = "15min";
+      AccuracySec = "1min";
+      Persistent = true;
       Unit = "grafana-snapshot-sync.service";
     };
   };

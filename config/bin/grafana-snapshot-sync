@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
-# Render Grafana dashboards to PNG and push only meaningful visual updates.
+# Render Grafana dashboards to PNG and publish meaningful visual updates.
 
 set -euo pipefail
 
-REPO_DIR="/etc/nixos"
-OUT_DIR="${REPO_DIR}/docs/assets/live"
+REPO_DIR="${REPO_DIR:-/etc/nixos}"
+OUT_DIR="${OUT_DIR:-${REPO_DIR}/docs/assets/live}"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 GRAFANA_URL="${GRAFANA_URL:-http://127.0.0.1:3000}"
 SINCE="${SINCE:-now-6h}"
 UNTIL="${UNTIL:-now}"
-MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-5}"
+MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.5}"
 SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
 SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
+SNAPSHOT_REPO_URL="${SNAPSHOT_REPO_URL:-git@github.com:RomeoCavazza/setup-os.git}"
+SNAPSHOT_BRANCH="${SNAPSHOT_BRANCH:-main}"
+PUBLISH_REPO_DIR="${PUBLISH_REPO_DIR:-/var/lib/grafana-snapshot-sync/setup-os}"
 PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
 CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
+GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new}"
+
+export GIT_SSH_COMMAND
 
 # uid:slug:file
 DASHBOARDS=(
@@ -38,7 +44,7 @@ if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-has_changes=0
+selected_files=()
 
 for item in "${DASHBOARDS[@]}"; do
   IFS=":" read -r uid slug filename <<< "$item"
@@ -77,45 +83,72 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 NODE
 
   if [[ ! -f "$target_file" ]]; then
-    mv "$new_file" "$target_file"
-    has_changes=1
+    echo "snapshot-sync: ${filename} is new and will be published"
+    selected_files+=("$filename")
     continue
   fi
 
-  changed_pixels=$(compare -metric AE "$target_file" "$new_file" null: 2>&1 || true)
+  changed_pixels_raw=$(compare -metric AE "$target_file" "$new_file" null: 2>&1 || true)
+  changed_pixels="${changed_pixels_raw%% *}"
+  changed_pixels="${changed_pixels:-0}"
   total_pixels=$(identify -format "%[fx:w*h]" "$target_file")
   percent_changed=$(awk -v c="$changed_pixels" -v t="$total_pixels" 'BEGIN { if (t == 0) print 100; else printf "%.2f", (c * 100) / t }')
 
   if awk -v p="$percent_changed" -v m="$MIN_CHANGE_PERCENT" 'BEGIN { exit !(p > m) }'; then
-    mv "$new_file" "$target_file"
-    has_changes=1
+    echo "snapshot-sync: ${filename} changed ${percent_changed}% (${changed_pixels}/${total_pixels}), threshold ${MIN_CHANGE_PERCENT}%; will publish"
+    selected_files+=("$filename")
+  else
+    echo "snapshot-sync: ${filename} changed ${percent_changed}% (${changed_pixels}/${total_pixels}), threshold ${MIN_CHANGE_PERCENT}%; skipped"
   fi
 done
 
-if [[ "$has_changes" -eq 0 ]]; then
+if [[ "${#selected_files[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-cd "$REPO_DIR"
-
-if [[ ! -w .git/index ]]; then
-  echo "snapshot-sync: repository is not writable by current user" >&2
+if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
+  echo "snapshot-sync: ${PUBLISH_REPO_DIR} exists but is not a git checkout" >&2
   exit 1
 fi
 
-if ! git config user.name >/dev/null; then
-  git config user.name "$SNAPSHOT_GIT_NAME"
+if [[ ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
+  mkdir -p "$(dirname "$PUBLISH_REPO_DIR")"
+  git clone --branch "$SNAPSHOT_BRANCH" --single-branch "$SNAPSHOT_REPO_URL" "$PUBLISH_REPO_DIR"
 fi
 
-if ! git config user.email >/dev/null; then
-  git config user.email "$SNAPSHOT_GIT_EMAIL"
-fi
+git_publish() {
+  git -C "$PUBLISH_REPO_DIR" "$@"
+}
 
-git add docs/assets/live/*.png
+git_publish remote set-url origin "$SNAPSHOT_REPO_URL"
+git_publish fetch origin "$SNAPSHOT_BRANCH"
+git_publish checkout "$SNAPSHOT_BRANCH"
+git_publish merge --ff-only "origin/${SNAPSHOT_BRANCH}"
 
-if git diff --cached --quiet; then
+mkdir -p "${PUBLISH_REPO_DIR}/docs/assets/live"
+
+for filename in "${selected_files[@]}"; do
+  cp "${TMP_DIR}/${filename}" "${PUBLISH_REPO_DIR}/docs/assets/live/${filename}"
+done
+
+git_publish add docs/assets/live/*.png
+
+if git_publish diff --cached --quiet; then
+  echo "snapshot-sync: selected files already match ${SNAPSHOT_REPO_URL}:${SNAPSHOT_BRANCH}"
+  for filename in "${selected_files[@]}"; do
+    rm -f "${OUT_DIR}/${filename}"
+    cp "${TMP_DIR}/${filename}" "${OUT_DIR}/${filename}"
+  done
   exit 0
 fi
 
-git commit -m "docs(live): refresh Grafana snapshots"
-git push
+git_publish \
+  -c "user.name=${SNAPSHOT_GIT_NAME}" \
+  -c "user.email=${SNAPSHOT_GIT_EMAIL}" \
+  commit -m "docs(live): refresh Grafana snapshots"
+git_publish push origin "HEAD:${SNAPSHOT_BRANCH}"
+
+for filename in "${selected_files[@]}"; do
+  rm -f "${OUT_DIR}/${filename}"
+  cp "${TMP_DIR}/${filename}" "${OUT_DIR}/${filename}"
+done

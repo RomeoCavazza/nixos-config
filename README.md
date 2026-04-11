@@ -155,7 +155,7 @@ The dashboard set is now intentionally split by purpose:
 - Nix Efficiency: drift view (freshness, generation debt, closure structure)
 - Incident Correlation: pressure spikes mapped to Loki logs
 
-Snapshot generation is documentation-only (hourly + visual delta gate). Live
+Snapshot generation is documentation-only (15 minute timer + 0.5% visual delta gate). Live
 operations always happen in Grafana directly.
 
 ### Main Live Dashboard
