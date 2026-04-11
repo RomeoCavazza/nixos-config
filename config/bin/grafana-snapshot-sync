@@ -21,11 +21,11 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 export GIT_SSH_COMMAND
 
-# uid:slug:file
+# uid:slug:file:viewport_height:capture_mode
 DASHBOARDS=(
-  "nixos-metrics:nixos-metrics:live-dashboard.png"
-  "nix-efficiency:nix-efficiency:nix-efficiency.png"
-  "incident-correlation:incident-correlation:incident-dashboard.png"
+  "nixos-metrics:nixos-metrics:live-dashboard.png:1200:full"
+  "nix-efficiency:nix-efficiency:nix-efficiency.png:1200:full"
+  "incident-correlation:incident-correlation:incident-dashboard.png:900:viewport"
 )
 
 if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
@@ -64,7 +64,9 @@ fi
 selected_files=()
 
 for item in "${DASHBOARDS[@]}"; do
-  IFS=":" read -r uid slug filename <<< "$item"
+  IFS=":" read -r uid slug filename viewport_height capture_mode <<< "$item"
+  viewport_height="${viewport_height:-1200}"
+  capture_mode="${capture_mode:-full}"
   new_file="${TMP_DIR}/${filename}"
   target_file="${OUT_DIR}/${filename}"
 
@@ -77,6 +79,8 @@ for item in "${DASHBOARDS[@]}"; do
   PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
   CHROME_BIN="$CHROME_BIN" \
   DASHBOARD_URL="$dashboard_url" \
+  VIEWPORT_HEIGHT="$viewport_height" \
+  SNAPSHOT_FULL_PAGE="$([[ "$capture_mode" == "full" ]] && echo "true" || echo "false")" \
   OUTPUT_FILE="$new_file" \
   node <<'NODE'
 const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
@@ -88,10 +92,20 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     args: ['--no-sandbox'],
   });
 
-  const page = await browser.newPage({ viewport: { width: 2200, height: 1200 } });
-  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'networkidle' });
+  const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || 1200);
+  const fullPage = process.env.SNAPSHOT_FULL_PAGE !== 'false';
+
+  const page = await browser.newPage({
+    viewport: { width: 2200, height: viewportHeight },
+    deviceScaleFactor: 1,
+  });
+
+  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('h2[title]', { timeout: 30000 });
-  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
+  await page.waitForFunction(() => document.querySelectorAll('h2[title]').length >= 3, { timeout: 30000 });
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage, animations: 'disabled' });
   await browser.close();
 })().catch((error) => {
   console.error(error);
@@ -101,6 +115,14 @@ NODE
 
   if [[ ! -f "$target_file" ]]; then
     echo "snapshot-sync: ${filename} is new and will be published"
+    selected_files+=("$filename")
+    continue
+  fi
+
+  old_dimensions=$(identify -format "%wx%h" "$target_file")
+  new_dimensions=$(identify -format "%wx%h" "$new_file")
+  if [[ "$old_dimensions" != "$new_dimensions" ]]; then
+    echo "snapshot-sync: ${filename} dimensions changed ${old_dimensions} -> ${new_dimensions}; will publish"
     selected_files+=("$filename")
     continue
   fi
