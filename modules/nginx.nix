@@ -8,6 +8,34 @@
     recommendedGzipSettings  = true;
 
     virtualHosts = {
+      "grafana.localhost-proxy" = {
+        serverName = "localhost";
+        listen = [ { addr = "127.0.0.1"; port = 3000; ssl = false; } ];
+        locations = {
+          "=/theme/grafana-aquamarine.css" = {
+            alias = "${../config/grafana/theme/aquamarine.css}";
+            extraConfig = ''
+              types { text/css css; }
+              default_type text/css;
+              add_header Cache-Control "no-store";
+            '';
+          };
+
+          "/" = {
+            proxyPass       = "http://127.0.0.1:3001";
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_set_header Accept-Encoding   "";
+
+              sub_filter_once on;
+              sub_filter
+                '</head>'
+                '<link rel="stylesheet" type="text/css" href="/theme/grafana-aquamarine.css"></head>';
+            '';
+          };
+        };
+      };
+
       "localhost-proxy" = {
         serverName = "localhost";
         listen = [ { addr = "127.0.0.1"; port = 8081; ssl = false; } ];

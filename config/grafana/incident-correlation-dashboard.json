@@ -45,15 +45,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 10
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 30
               }
             ]
@@ -105,7 +105,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "color": "#299c46",
+                  "color": "#94e2d5",
                   "index": 0,
                   "text": "Quiet"
                 }
@@ -116,7 +116,7 @@
               "options": {
                 "from": 0,
                 "result": {
-                  "color": "#299c46",
+                  "color": "#94e2d5",
                   "index": 1,
                   "text": "Quiet"
                 },
@@ -128,7 +128,7 @@
               "options": {
                 "from": 1,
                 "result": {
-                  "color": "#EAB839",
+                  "color": "#5e9be1",
                   "index": 2,
                   "text": "Watch"
                 },
@@ -140,7 +140,7 @@
               "options": {
                 "from": 5,
                 "result": {
-                  "color": "#d44a3a",
+                  "color": "#cba6f7",
                   "index": 3,
                   "text": "Noisy"
                 },
@@ -153,15 +153,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 1
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 5
               }
             ]
@@ -212,15 +212,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 5
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 10
               }
             ]
@@ -272,15 +272,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 5
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 10
               }
             ]
@@ -332,15 +332,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 5
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 10
               }
             ]
@@ -391,15 +391,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 300
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 900
               }
             ]
@@ -492,22 +492,92 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 10
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 30
               }
             ]
           },
           "unit": "percent"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#94e2d5",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 12
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IO"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#2a9fe8",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "MEM"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b4befe",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 9,
@@ -572,17 +642,17 @@
             {
               "options": {
                 "0": {
-                  "color": "#299c46",
+                  "color": "#94e2d5",
                   "index": 0,
                   "text": "Good"
                 },
                 "1": {
-                  "color": "#EAB839",
+                  "color": "#5e9be1",
                   "index": 1,
                   "text": "Watch"
                 },
                 "2": {
-                  "color": "#d44a3a",
+                  "color": "#cba6f7",
                   "index": 2,
                   "text": "Critical"
                 }
@@ -594,15 +664,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#299c46",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#EAB839",
+                "color": "#5e9be1",
                 "value": 1
               },
               {
-                "color": "#d44a3a",
+                "color": "#cba6f7",
                 "value": 2
               }
             ]

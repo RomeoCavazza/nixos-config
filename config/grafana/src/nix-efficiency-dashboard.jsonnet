@@ -87,8 +87,8 @@ g.dashboard(
       legendCalcs=['lastNotNull', 'max'],
       lineInterpolation='linear',
       overrides=[
-        g.overrideUnitByName('flake age', 'd', axisPlacement='left', axisLabel='Days', fillOpacity=12),
-        g.overrideUnitByName('generations', 'none', axisPlacement='right', axisLabel='Count', fillOpacity=6),
+        g.overrideUnitByName('flake age', 'd', axisPlacement='left', axisLabel='Days', color=g.fixedColor(g.colors.aqua), fillOpacity=12),
+        g.overrideUnitByName('generations', 'none', axisPlacement='right', axisLabel='Count', color=g.fixedColor(g.colors.lavender), fillOpacity=6),
       ]
     ),
     g.timeseriesPanel(
@@ -107,7 +107,8 @@ g.dashboard(
       legendPlacement='right',
       legendCalcs=['lastNotNull', 'max'],
       overrides=[
-        g.overrideUnitByName('closure', 'decbytes', fillOpacity=6),
+        g.overrideUnitByName('store', 'decbytes', color=g.fixedColor(g.colors.ice), fillOpacity=12),
+        g.overrideUnitByName('closure', 'decbytes', color=g.fixedColor(g.colors.sapphire), fillOpacity=6),
       ]
     ),
     g.rowPanel(40, 'Closure and Build Shape', 13),
@@ -129,12 +130,13 @@ g.dashboard(
       legendCalcs=['lastNotNull', 'max'],
       lineInterpolation='linear',
       overrides=[
+        g.overrideUnitByName('closure bytes', 'decbytes', color=g.fixedColor(g.colors.ice), fillOpacity=12),
         g.overrideUnitByName(
           'closure paths',
           'none',
           axisPlacement='right',
           axisLabel='Count',
-          color={ mode: 'fixed', fixedColor: 'semi-dark-blue' },
+          color=g.fixedColor(g.colors.sky),
           fillOpacity=4,
           lineWidth=1
         ),
@@ -154,7 +156,10 @@ g.dashboard(
       legendDisplayMode='table',
       legendPlacement='bottom',
       legendCalcs=['lastNotNull', 'max'],
-      lineInterpolation='linear'
+      lineInterpolation='linear',
+      overrides=[
+        g.overrideUnitByName('duration', 's', color=g.fixedColor(g.colors.aqua), fillOpacity=10),
+      ]
     ),
     g.rowPanel(50, 'Drift Regime', 22),
     g.stateTimelinePanel(
@@ -180,9 +185,9 @@ g.dashboard(
         {
           type: 'value',
           options: {
-            '0': { text: 'Good', color: '#299c46', index: 0 },
-            '1': { text: 'Watch', color: '#EAB839', index: 1 },
-            '2': { text: 'Critical', color: '#d44a3a', index: 2 },
+            '0': { text: 'Good', color: g.colors.aqua, index: 0 },
+            '1': { text: 'Watch', color: g.colors.sapphire, index: 1 },
+            '2': { text: 'Critical', color: g.colors.mauve, index: 2 },
           },
         },
       ]

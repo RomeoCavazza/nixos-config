@@ -43,7 +43,8 @@ let
         }
         {
           source_labels = [ "__journal__systemd_unit" ];
-          regex = "(hyprland|hypr.*)\\.service";
+          # display-manager covers GDM/SDDM; hypr* covers any future hyprland system unit
+          regex = "(hyprland|hypr.*|display-manager)\\.service";
           replacement = "display";
           target_label = "component";
         }
@@ -68,7 +69,10 @@ in
   environment.etc."grafana-secret-key".text = "SW2YcwTIb9zpOOhoPsMm";
 
   systemd.tmpfiles.rules = [
-    "d ${textfileDir} 0755 root root -"
+    # tco owns the dir so the rebuild wrapper can write nix-rebuild.prom without sudo.
+    # nix-metrics runs as root and can write there regardless.
+    # node_exporter reads 644 files — no group membership needed.
+    "d ${textfileDir} 0755 tco users -"
     "d /var/lib/promtail 0755 root root -"
     "d /var/lib/grafana-snapshot-sync 0755 tco users -"
     "d /etc/nixos/docs/assets/live 0755 tco users -"
@@ -93,8 +97,8 @@ in
 
   systemd.services.grafana-snapshot-sync = {
     description = "Render Grafana dashboards and sync changed PNGs to git";
-    after = [ "grafana.service" "network-online.target" ];
-    wants = [ "network-online.target" ];
+    after = [ "grafana.service" "nginx.service" "network-online.target" ];
+    wants = [ "nginx.service" "network-online.target" ];
     serviceConfig = {
       Type = "oneshot";
       User = "tco";
@@ -181,7 +185,8 @@ in
     settings = {
       server = {
         http_addr = "127.0.0.1";
-        http_port = 3000;
+        http_port = 3001;
+        root_url = "http://127.0.0.1:3000/";
       };
       security = {
         secret_key = "$__file{/etc/grafana-secret-key}";

@@ -40,7 +40,7 @@ g.dashboard(
       h=3,
       legend='generation',
       unit='none',
-      thresholds=g.thresholds([{ color: '#299c46', value: null }])
+      thresholds=g.thresholds([{ color: g.colors.aqua, value: null }])
     ),
     g.statPanel(
       24,
@@ -93,7 +93,12 @@ g.dashboard(
       legendDisplayMode='table',
       legendPlacement='bottom',
       legendCalcs=['lastNotNull', 'max'],
-      lineInterpolation='linear'
+      lineInterpolation='linear',
+      overrides=[
+        g.overrideUnitByName('CPU', 'percent', color=g.fixedColor(g.colors.aqua), fillOpacity=12),
+        g.overrideUnitByName('IO', 'percent', color=g.fixedColor(g.colors.cyan), fillOpacity=10),
+        g.overrideUnitByName('MEM', 'percent', color=g.fixedColor(g.colors.lavender), fillOpacity=8),
+      ]
     ),
     g.statPanel(
       32,
@@ -145,7 +150,8 @@ g.dashboard(
       legendPlacement='right',
       legendCalcs=['lastNotNull', 'max'],
       overrides=[
-        g.overrideUnitByName('closure', 'decbytes', fillOpacity=8),
+        g.overrideUnitByName('store', 'decbytes', color=g.fixedColor(g.colors.ice), fillOpacity=14),
+        g.overrideUnitByName('closure', 'decbytes', color=g.fixedColor(g.colors.sapphire), fillOpacity=8),
       ]
     ),
     g.statPanel(
@@ -187,12 +193,12 @@ g.dashboard(
       legend='success',
       unit='none',
       thresholds=g.thresholds([
-        { color: '#d44a3a', value: null },
-        { color: '#299c46', value: 1 },
+        { color: g.colors.rose, value: null },
+        { color: g.colors.aqua, value: 1 },
       ]),
       mappings=[
-        g.rangeMapping(0, 0, 'Failed', '#d44a3a', 0),
-        g.rangeMapping(1, 1, 'OK', '#299c46', 1),
+        g.rangeMapping(0, 0, 'Failed', g.colors.rose, 0),
+        g.rangeMapping(1, 1, 'OK', g.colors.aqua, 1),
         g.noDataMapping,
       ]
     ),
@@ -220,9 +226,9 @@ g.dashboard(
         {
           type: 'value',
           options: {
-            '0': { text: 'Good', color: '#299c46', index: 0 },
-            '1': { text: 'Watch', color: '#EAB839', index: 1 },
-            '2': { text: 'Critical', color: '#d44a3a', index: 2 },
+            '0': { text: 'Good', color: g.colors.aqua, index: 0 },
+            '1': { text: 'Watch', color: g.colors.sapphire, index: 1 },
+            '2': { text: 'Critical', color: g.colors.mauve, index: 2 },
           },
         },
       ]

@@ -29,10 +29,10 @@ g.dashboard(
       unit='none',
       thresholds=g.greenYellowRedHex(1, 5),
       mappings=[
-        { type: 'special', options: { match: 'null', result: { text: 'Quiet', color: '#299c46', index: 0 } } },
-        g.rangeMapping(0, 0, 'Quiet', '#299c46', 1),
-        g.rangeMapping(1, 4, 'Watch', '#EAB839', 2),
-        g.rangeMapping(5, 999999, 'Noisy', '#d44a3a', 3),
+        { type: 'special', options: { match: 'null', result: { text: 'Quiet', color: g.colors.aqua, index: 0 } } },
+        g.rangeMapping(0, 0, 'Quiet', g.colors.aqua, 1),
+        g.rangeMapping(1, 4, 'Watch', g.colors.sapphire, 2),
+        g.rangeMapping(5, 999999, 'Noisy', g.colors.mauve, 3),
       ]
     ),
     g.statPanel(
@@ -99,7 +99,12 @@ g.dashboard(
       legendDisplayMode='table',
       legendPlacement='right',
       legendCalcs=['lastNotNull', 'max'],
-      lineInterpolation='linear'
+      lineInterpolation='linear',
+      overrides=[
+        g.overrideUnitByName('CPU', 'percent', color=g.fixedColor(g.colors.aqua), fillOpacity=12),
+        g.overrideUnitByName('IO', 'percent', color=g.fixedColor(g.colors.cyan), fillOpacity=10),
+        g.overrideUnitByName('MEM', 'percent', color=g.fixedColor(g.colors.lavender), fillOpacity=8),
+      ]
     ),
     g.stateTimelinePanel(
       32,
@@ -124,9 +129,9 @@ g.dashboard(
         {
           type: 'value',
           options: {
-            '0': { text: 'Good', color: '#299c46', index: 0 },
-            '1': { text: 'Watch', color: '#EAB839', index: 1 },
-            '2': { text: 'Critical', color: '#d44a3a', index: 2 },
+            '0': { text: 'Good', color: g.colors.aqua, index: 0 },
+            '1': { text: 'Watch', color: g.colors.sapphire, index: 1 },
+            '2': { text: 'Critical', color: g.colors.mauve, index: 2 },
           },
         },
       ]

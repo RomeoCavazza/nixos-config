@@ -1,0 +1,188 @@
+:root,
+html[data-theme='dark'],
+body {
+  --color-bg-canvas: #050914 !important;
+  --color-bg-primary: rgba(10, 18, 31, 0.96) !important;
+  --color-bg-secondary: rgba(12, 24, 39, 0.92) !important;
+  --color-bg-tertiary: rgba(17, 32, 52, 0.86) !important;
+  --color-border-weak: rgba(148, 226, 213, 0.16) !important;
+  --color-border-medium: rgba(137, 220, 235, 0.26) !important;
+  --color-text-primary: #f6f8fc !important;
+  --color-text-secondary: #cdd6f4 !important;
+  --color-text-disabled: #7b92ad !important;
+  --color-primary-main: #94e2d5 !important;
+  --color-primary-shade: #2a9fe8 !important;
+  --color-primary-transparent: rgba(148, 226, 213, 0.16) !important;
+  --color-success-main: #94e2d5 !important;
+  --color-warning-main: #5e9be1 !important;
+  --color-error-main: #cba6f7 !important;
+  color-scheme: dark;
+}
+
+html,
+body,
+#reactRoot,
+.grafana-app,
+.main-view,
+.page-container,
+.dashboard-page,
+.dashboard-container,
+.dashboard-scroll,
+.scrollbar-view {
+  background-color: #050914 !important;
+}
+
+body,
+.grafana-app {
+  background-image:
+    linear-gradient(128deg, rgba(0, 95, 255, 0.16) 0%, rgba(0, 95, 255, 0) 38%),
+    linear-gradient(222deg, rgba(203, 166, 247, 0.13) 0%, rgba(203, 166, 247, 0) 34%),
+    linear-gradient(180deg, #050914 0%, #07101d 52%, #0a1020 100%) !important;
+  color: #cdd6f4 !important;
+}
+
+.main-view,
+.page-container,
+.dashboard-page,
+.dashboard-container,
+.dashboard-scroll,
+.scrollbar-view {
+  background: transparent !important;
+}
+
+.panel-container,
+.dashboard-panel,
+[data-testid='data-testid panel'] {
+  background:
+    linear-gradient(180deg, rgba(13, 24, 38, 0.95) 0%, rgba(8, 14, 25, 0.98) 100%) !important;
+  border: 1px solid rgba(148, 226, 213, 0.18) !important;
+  border-radius: 8px !important;
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(172, 230, 243, 0.03) inset,
+    0 1px 0 rgba(172, 230, 243, 0.08) inset !important;
+  overflow: hidden;
+}
+
+.panel-container:hover,
+.panel-container:focus-within {
+  border-color: rgba(137, 220, 235, 0.32) !important;
+  box-shadow:
+    0 20px 54px rgba(0, 0, 0, 0.34),
+    0 0 22px rgba(42, 159, 232, 0.08),
+    0 1px 0 rgba(172, 230, 243, 0.12) inset !important;
+}
+
+.panel-content,
+[data-testid='data-testid Panel content'] {
+  background: transparent !important;
+}
+
+.panel-title-container,
+.panel-title,
+.dashboard-row__title,
+.dashboard-row__title a,
+.page-title,
+.navbar-page-btn,
+.css-1aanzv4 {
+  color: #cdd6f4 !important;
+  letter-spacing: 0 !important;
+}
+
+.panel-title,
+.dashboard-row__title,
+.dashboard-row__title a {
+  font-weight: 650 !important;
+}
+
+.dashboard-row,
+.dashboard-row__title {
+  background: transparent !important;
+  border-color: rgba(148, 226, 213, 0.13) !important;
+}
+
+.dashboard-row__title {
+  color: #ace6f3 !important;
+}
+
+a,
+.link,
+button[aria-selected='true'],
+[role='tab'][aria-selected='true'] {
+  color: #94e2d5 !important;
+}
+
+button,
+.btn,
+.gf-form-input,
+.input-wrapper input,
+input,
+textarea,
+select {
+  background-color: rgba(8, 16, 30, 0.76) !important;
+  border-color: rgba(148, 226, 213, 0.18) !important;
+  border-radius: 8px !important;
+  color: #f6f8fc !important;
+}
+
+button:hover,
+.btn:hover {
+  background-color: rgba(42, 159, 232, 0.13) !important;
+  border-color: rgba(137, 220, 235, 0.34) !important;
+}
+
+.page-toolbar,
+.dashboard-toolbar,
+.time-picker,
+.navbar,
+.sidemenu,
+.submenu-controls {
+  background:
+    linear-gradient(180deg, rgba(7, 14, 26, 0.92), rgba(6, 11, 21, 0.84)) !important;
+  border-color: rgba(148, 226, 213, 0.14) !important;
+  box-shadow: 0 1px 0 rgba(172, 230, 243, 0.07) inset !important;
+}
+
+.panel-container svg text,
+.panel-container canvas + div,
+.axisLabel,
+.legend,
+.graph-legend,
+.viz-legend {
+  fill: #bac2de !important;
+  color: #bac2de !important;
+}
+
+.logs-panel-container,
+.logs-row,
+.logs-row__message,
+.logs-row__time {
+  background: transparent !important;
+  color: #cdd6f4 !important;
+}
+
+.logs-row:hover {
+  background-color: rgba(148, 226, 213, 0.08) !important;
+}
+
+.alert-info,
+.empty-search-result {
+  background-color: rgba(42, 159, 232, 0.12) !important;
+  border-color: rgba(137, 220, 235, 0.24) !important;
+  color: #cdd6f4 !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07101d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2a9fe8, #94e2d5);
+  border: 2px solid #07101d;
+  border-radius: 8px;
+}

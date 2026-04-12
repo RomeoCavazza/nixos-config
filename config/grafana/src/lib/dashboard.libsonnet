@@ -1,26 +1,42 @@
 local colors = {
-  green: 'green',
-  yellow: 'yellow',
-  red: 'red',
-  text: 'text',
+  aqua: '#94e2d5',
+  cyan: '#2a9fe8',
+  blue: '#005fff',
+  sapphire: '#5e9be1',
+  sky: '#89dceb',
+  ice: '#ace6f3',
+  lavender: '#b4befe',
+  mauve: '#cba6f7',
+  rose: '#a66d88',
+  text: '#cdd6f4',
+  ok: '#94e2d5',
+  warn: '#5e9be1',
+  crit: '#cba6f7',
 };
 
 {
+  colors:: colors,
+
+  fixedColor(color):: {
+    mode: 'fixed',
+    fixedColor: color,
+  },
+
   thresholds(steps):: {
     mode: 'absolute',
     steps: steps,
   },
 
   greenYellowRed(warn, crit):: $.thresholds([
-    { color: colors.green, value: null },
-    { color: colors.yellow, value: warn },
-    { color: colors.red, value: crit },
+    { color: colors.ok, value: null },
+    { color: colors.warn, value: warn },
+    { color: colors.crit, value: crit },
   ]),
 
   greenYellowRedHex(warn, crit):: $.thresholds([
-    { color: '#299c46', value: null },
-    { color: '#EAB839', value: warn },
-    { color: '#d44a3a', value: crit },
+    { color: colors.ok, value: null },
+    { color: colors.warn, value: warn },
+    { color: colors.crit, value: crit },
   ]),
 
   noDataMapping:: {
@@ -321,9 +337,9 @@ local colors = {
         unit: unit,
         color: { mode: 'thresholds' },
         thresholds: if thresholds == null then $.thresholds([
-          { color: '#299c46', value: null },
-          { color: '#EAB839', value: 1 },
-          { color: '#d44a3a', value: 2 },
+          { color: colors.ok, value: null },
+          { color: colors.warn, value: 1 },
+          { color: colors.crit, value: 2 },
         ]) else thresholds,
         mappings: mappings,
         custom: {
