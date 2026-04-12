@@ -47,7 +47,7 @@
         "y": 2
       },
       "id": 20,
-      "title": "Incident strip",
+      "title": "Incident KPIs — snapshot",
       "type": "row"
     },
     {
@@ -104,15 +104,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 10
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 30
               }
             ]
@@ -164,9 +164,9 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "color": "text",
+                  "color": "#299c46",
                   "index": 0,
-                  "text": "No data"
+                  "text": "Quiet"
                 }
               },
               "type": "special"
@@ -175,7 +175,7 @@
               "options": {
                 "from": 0,
                 "result": {
-                  "color": "green",
+                  "color": "#299c46",
                   "index": 1,
                   "text": "Quiet"
                 },
@@ -187,7 +187,7 @@
               "options": {
                 "from": 1,
                 "result": {
-                  "color": "yellow",
+                  "color": "#EAB839",
                   "index": 2,
                   "text": "Watch"
                 },
@@ -199,7 +199,7 @@
               "options": {
                 "from": 5,
                 "result": {
-                  "color": "red",
+                  "color": "#d44a3a",
                   "index": 3,
                   "text": "Noisy"
                 },
@@ -212,15 +212,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 1
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 5
               }
             ]
@@ -266,22 +266,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -297,6 +297,11 @@
       },
       "id": 1,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -304,8 +309,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -315,7 +320,7 @@
         }
       ],
       "title": "CPU Pressure",
-      "type": "gauge"
+      "type": "bargauge"
     },
     {
       "collapsed": false,
@@ -326,7 +331,7 @@
         "y": 8
       },
       "id": 30,
-      "title": "Pressure signals",
+      "title": "Pressure Signals — avg10 breakdown",
       "type": "row"
     },
     {
@@ -336,22 +341,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -367,6 +372,11 @@
       },
       "id": 2,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -374,8 +384,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -385,7 +395,7 @@
         }
       ],
       "title": "IO Pressure",
-      "type": "gauge"
+      "type": "bargauge"
     },
     {
       "datasource": "Prometheus",
@@ -394,22 +404,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -425,6 +435,11 @@
       },
       "id": 3,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -432,8 +447,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -443,7 +458,7 @@
         }
       ],
       "title": "Memory Pressure",
-      "type": "gauge"
+      "type": "bargauge"
     },
     {
       "datasource": "Prometheus",
@@ -459,8 +474,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 50,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -476,11 +491,28 @@
             "spanNulls": true,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "line"
             }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "#d44a3a",
+                "value": 30
+              }
+            ]
           },
           "unit": "percent"
         },
@@ -503,7 +535,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -536,7 +568,7 @@
         "y": 14
       },
       "id": 31,
-      "title": "Logs",
+      "title": "Log Correlation — journal stream",
       "type": "row"
     },
     {
@@ -553,8 +585,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 55,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -570,11 +602,28 @@
             "spanNulls": true,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "#d44a3a",
+                "value": 30
+              }
+            ]
           },
           "unit": "percent"
         },
@@ -590,15 +639,16 @@
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -622,12 +672,114 @@
       "type": "timeseries"
     },
     {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 82,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#299c46",
+                  "index": 0,
+                  "text": "Good"
+                },
+                "1": {
+                  "color": "#EAB839",
+                  "index": 1,
+                  "text": "Watch"
+                },
+                "2": {
+                  "color": "#d44a3a",
+                  "index": 2,
+                  "text": "Critical"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "#d44a3a",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 7,
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.90000000000000002,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "clamp_max((nix_pressure_cpu_avg10 >= bool 10) + (nix_pressure_cpu_avg10 >= bool 30), 2)",
+          "legendFormat": "CPU regime",
+          "refId": "A"
+        },
+        {
+          "expr": "clamp_max((nix_pressure_io_some_avg10 >= bool 10) + (nix_pressure_io_some_avg10 >= bool 30), 2)",
+          "legendFormat": "IO regime",
+          "refId": "B"
+        },
+        {
+          "expr": "clamp_max((nix_pressure_mem_some_avg10 >= bool 10) + (nix_pressure_mem_some_avg10 >= bool 30), 2)",
+          "legendFormat": "MEM regime",
+          "refId": "C"
+        }
+      ],
+      "title": "Incident Regime Timeline",
+      "type": "state-timeline"
+    },
+    {
       "datasource": "Loki",
       "gridPos": {
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 26
       },
       "id": 5,
       "options": {

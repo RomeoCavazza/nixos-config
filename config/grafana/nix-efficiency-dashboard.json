@@ -47,7 +47,7 @@
         "y": 2
       },
       "id": 20,
-      "title": "Drift scorecard",
+      "title": "Drift Scorecard — current state",
       "type": "row"
     },
     {
@@ -105,15 +105,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 15
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 30
               }
             ]
@@ -163,15 +163,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 10
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 20
               }
             ]
@@ -219,15 +219,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 300
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 900
               }
             ]
@@ -278,15 +278,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 60000
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 100000
               }
             ]
@@ -335,7 +335,7 @@
         "y": 8
       },
       "id": 30,
-      "title": "Drift trends",
+      "title": "Drift Trends — 6 h rolling",
       "type": "row"
     },
     {
@@ -351,16 +351,16 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "drawStyle": "bars",
+            "fillOpacity": 78,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineWidth": 0,
             "pointSize": 4,
             "scaleDistribution": {
               "type": "linear"
@@ -372,8 +372,25 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "line"
             }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 300
+              },
+              {
+                "color": "#d44a3a",
+                "value": 900
+              }
+            ]
           },
           "unit": "s"
         },
@@ -389,9 +406,10 @@
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -424,8 +442,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 24,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -467,6 +485,10 @@
               {
                 "id": "custom.axisLabel",
                 "value": "Days"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 24
               }
             ]
           },
@@ -487,6 +509,10 @@
               {
                 "id": "custom.axisLabel",
                 "value": "Count"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
               }
             ]
           }
@@ -502,10 +528,11 @@
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -537,7 +564,7 @@
         "y": 16
       },
       "id": 31,
-      "title": "Storage footprint",
+      "title": "Storage Footprint — store vs closure",
       "type": "row"
     },
     {
@@ -554,8 +581,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 28,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -579,7 +606,24 @@
           },
           "unit": "decbytes"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "closure"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 10
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -591,10 +635,11 @@
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -631,8 +676,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 26,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -681,6 +726,14 @@
                   "fixedColor": "semi-dark-blue",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
               }
             ]
           }
@@ -696,10 +749,11 @@
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -721,6 +775,120 @@
       ],
       "title": "Closure Volume vs Path Count",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 32,
+      "title": "Drift Regime — threshold timeline",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 82,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#299c46",
+                  "index": 0,
+                  "text": "Good"
+                },
+                "1": {
+                  "color": "#EAB839",
+                  "index": 1,
+                  "text": "Watch"
+                },
+                "2": {
+                  "color": "#d44a3a",
+                  "index": 2,
+                  "text": "Critical"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 1
+              },
+              {
+                "color": "#d44a3a",
+                "value": 2
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 33,
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.90000000000000002,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "clamp_max((nix_flake_lock_age_seconds / 86400 >= bool 15) + (nix_flake_lock_age_seconds / 86400 >= bool 30), 2)",
+          "legendFormat": "flake age",
+          "refId": "A"
+        },
+        {
+          "expr": "clamp_max((nix_generations_count >= bool 10) + (nix_generations_count >= bool 20), 2)",
+          "legendFormat": "generations",
+          "refId": "B"
+        },
+        {
+          "expr": "clamp_max((nix_rebuild_duration_ms / 1000 >= bool 300) + (nix_rebuild_duration_ms / 1000 >= bool 900), 2)",
+          "legendFormat": "rebuild duration",
+          "refId": "C"
+        }
+      ],
+      "title": "Freshness, Generation, and Rebuild Regimes",
+      "type": "state-timeline"
     }
   ],
   "refresh": "1m",

@@ -47,7 +47,7 @@
         "y": 2
       },
       "id": 20,
-      "title": "Health strip",
+      "title": "System Health — live snapshot",
       "type": "row"
     },
     {
@@ -117,15 +117,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 60
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 300
               }
             ]
@@ -179,15 +179,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 10
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 30
               }
             ]
@@ -238,7 +238,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               }
             ]
@@ -289,15 +289,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 80000000000
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 140000000000
               }
             ]
@@ -348,15 +348,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 1000000000000
               },
               {
-                "color": "red",
+                "color": "#d44a3a",
                 "value": 1500000000000
               }
             ]
@@ -405,7 +405,7 @@
         "y": 6
       },
       "id": 30,
-      "title": "Pressure now",
+      "title": "Pressure Signals — current avg10",
       "type": "row"
     },
     {
@@ -415,22 +415,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -446,6 +446,11 @@
       },
       "id": 1,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -453,8 +458,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -464,7 +469,7 @@
         }
       ],
       "title": "CPU Pressure",
-      "type": "gauge"
+      "type": "bargauge"
     },
     {
       "datasource": "Prometheus",
@@ -473,22 +478,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -504,6 +509,11 @@
       },
       "id": 2,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -511,8 +521,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -522,7 +532,7 @@
         }
       ],
       "title": "IO Pressure",
-      "type": "gauge"
+      "type": "bargauge"
     },
     {
       "datasource": "Prometheus",
@@ -531,22 +541,22 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 100,
+          "max": 15,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "#299c46",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
+                "color": "#EAB839",
+                "value": 5
               },
               {
-                "color": "red",
-                "value": 30
+                "color": "#d44a3a",
+                "value": 10
               }
             ]
           },
@@ -562,6 +572,11 @@
       },
       "id": 3,
       "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -569,8 +584,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showUnfilled": true,
+        "valueMode": "color"
       },
       "targets": [
         {
@@ -580,7 +595,176 @@
         }
       ],
       "title": "RAM Pressure",
-      "type": "gauge"
+      "type": "bargauge"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "id": 40,
+      "options": {
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "nix_pressure_cpu_avg10",
+          "legendFormat": "CPU",
+          "refId": "A"
+        },
+        {
+          "expr": "nix_pressure_io_some_avg10",
+          "legendFormat": "IO",
+          "refId": "B"
+        },
+        {
+          "expr": "nix_pressure_mem_some_avg10",
+          "legendFormat": "MEM",
+          "refId": "C"
+        }
+      ],
+      "title": "Pressure Breakdown",
+      "type": "piechart"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 50,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 10
+              },
+              {
+                "color": "#d44a3a",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 12
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "nix_pressure_cpu_avg10",
+          "legendFormat": "CPU",
+          "refId": "A"
+        },
+        {
+          "expr": "nix_pressure_io_some_avg10",
+          "legendFormat": "IO",
+          "refId": "B"
+        },
+        {
+          "expr": "nix_pressure_mem_some_avg10",
+          "legendFormat": "MEM",
+          "refId": "C"
+        }
+      ],
+      "title": "Pressure History",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -588,10 +772,10 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 18
       },
       "id": 31,
-      "title": "Trends",
+      "title": "Store and Build Trends",
       "type": "row"
     },
     {
@@ -608,8 +792,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -633,22 +817,40 @@
           },
           "unit": "decbytes"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "current closure"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 12
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
+        "h": 8,
+        "w": 15,
         "x": 0,
-        "y": 13
+        "y": 19
       },
       "id": 9,
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
+          "displayMode": "table",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -684,16 +886,16 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 8,
-            "gradientMode": "none",
+            "drawStyle": "bars",
+            "fillOpacity": 78,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineWidth": 0,
             "pointSize": 4,
             "scaleDistribution": {
               "type": "linear"
@@ -705,26 +907,44 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "line"
             }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 300
+              },
+              {
+                "color": "#d44a3a",
+                "value": 900
+              }
+            ]
           },
           "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 20
+        "h": 8,
+        "w": 9,
+        "x": 15,
+        "y": 19
       },
       "id": 11,
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull"
+            "lastNotNull",
+            "max"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
