@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-GRAFANA_URL="${GRAFANA_URL:-http://127.0.0.1:3000}"
+GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
 SINCE="${SINCE:-now-6h}"
 UNTIL="${UNTIL:-now}"
 MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.5}"

@@ -186,7 +186,7 @@ in
       server = {
         http_addr = "127.0.0.1";
         http_port = 3001;
-        root_url = "http://127.0.0.1:3000/";
+        root_url = "http://localhost:3000/";
       };
       security = {
         secret_key = "$__file{/etc/grafana-secret-key}";
