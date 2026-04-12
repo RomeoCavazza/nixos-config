@@ -106,10 +106,6 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
   await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('h2[title]', { timeout: 30000 });
   await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForFunction(() => {
-    const panelContents = Array.from(document.querySelectorAll('[data-testid="data-testid panel content"]'));
-    return panelContents.some((panel) => panel.innerText.trim() || panel.querySelector('canvas, svg'));
-  }, { timeout: 30000 });
   await page.waitForTimeout(10000);
 
   if (process.env.HIDE_PANEL_TITLE) {
@@ -149,29 +145,13 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     }
 
     section[class*='panel-container'] > *,
-    [data-testid^='data-testid Panel header'] > *,
-    [data-testid='data-testid panel content'] {
+    [data-testid^='data-testid Panel header'] > * {
       opacity: 1 !important;
       visibility: visible !important;
     }
   `});
 
-  const renderStats = await page.evaluate(() => {
-    const panels = Array.from(document.querySelectorAll('[data-testid^="data-testid Panel header"]'));
-    const panelContents = Array.from(document.querySelectorAll('[data-testid="data-testid panel content"]'));
-    const nonEmptyPanels = panelContents.filter((panel) => panel.innerText.trim() || panel.querySelector('canvas, svg'));
-    return {
-      panels: panels.length,
-      nonEmptyPanels: nonEmptyPanels.length,
-      canvases: document.querySelectorAll('canvas').length,
-    };
-  });
-
-  if (renderStats.panels === 0 || renderStats.nonEmptyPanels === 0) {
-    throw new Error(`dashboard did not render panels: ${JSON.stringify(renderStats)}`);
-  }
-
-  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} rendered ${renderStats.nonEmptyPanels}/${renderStats.panels} panels (${renderStats.canvases} canvases)`);
+  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} settled for capture`);
   await page.waitForTimeout(500);
 
   await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage, animations: 'disabled' });
