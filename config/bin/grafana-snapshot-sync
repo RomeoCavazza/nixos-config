@@ -110,7 +110,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     const panelContents = Array.from(document.querySelectorAll('[data-testid="data-testid panel content"]'));
     return panelContents.some((panel) => panel.innerText.trim() || panel.querySelector('canvas, svg'));
   }, { timeout: 30000 });
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(10000);
 
   if (process.env.HIDE_PANEL_TITLE) {
     await page.evaluate((title) => {
