@@ -11,17 +11,17 @@ This page documents the local observability stack and the continuous documentati
 ### NixOS Metrics
 Live cockpit for current pressure and rebuild cost.
 
-![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/live/live-dashboard.png)
+![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
 
 ### Nix Efficiency
 Drift dashboard for freshness, generation debt, and closure efficiency.
 
-![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/live/nix-efficiency.png)
+![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
 
 ### Incident Correlation
 PSI spikes aligned with journald logs for fast root-cause analysis.
 
-![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/live/incident-dashboard.png)
+![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
 
 Snapshots are checked every 15 minutes and published when visual delta exceeds 0.5%.
 
