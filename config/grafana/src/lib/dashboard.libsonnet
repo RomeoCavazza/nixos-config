@@ -293,7 +293,10 @@ local colors = {
     h=4,
     mappings=[],
     thresholds=null,
-    unit='none'
+    unit='none',
+    showLegend=false,
+    showValue='never',
+    rowHeight=0.84
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -308,9 +311,9 @@ local colors = {
     options: {
       alignValue: 'center',
       mergeValues: true,
-      rowHeight: 0.9,
-      showValue: 'auto',
-      legend: { displayMode: 'list', placement: 'bottom', showLegend: true },
+      rowHeight: rowHeight,
+      showValue: showValue,
+      legend: { displayMode: 'list', placement: 'bottom', showLegend: showLegend },
       tooltip: { mode: 'multi', sort: 'desc' },
     },
     fieldConfig: {
@@ -361,7 +364,8 @@ local colors = {
     legendPlacement='bottom',
     legendCalcs=['lastNotNull'],
     tooltipSort='none',
-    axisPlacement='auto'
+    axisPlacement='auto',
+    showLegend=true
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -374,7 +378,7 @@ local colors = {
       targets
     ),
     options: {
-      legend: { calcs: legendCalcs, displayMode: legendDisplayMode, placement: legendPlacement, showLegend: true },
+      legend: { calcs: legendCalcs, displayMode: legendDisplayMode, placement: legendPlacement, showLegend: showLegend },
       tooltip: { mode: tooltip, sort: tooltipSort },
     },
     fieldConfig: {

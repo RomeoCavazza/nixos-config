@@ -22,75 +22,16 @@
   "liveNow": false,
   "panels": [
     {
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 0,
-      "options": {
-        "content": "**This dashboard is for correlation, not overview.** Start with pressure, then move immediately to logs when something spikes.",
-        "contentType": "markdown",
-        "mode": "markdown"
-      },
-      "title": "Incident context",
-      "transparent": true,
-      "type": "text"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 0
       },
       "id": 20,
-      "title": "Incident KPIs — snapshot",
+      "title": "Incident Snapshot",
       "type": "row"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "unit": "dateTimeAsIso"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 0,
-        "y": 3
-      },
-      "id": 21,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "expr": "time() * 1000",
-          "legendFormat": "value",
-          "refId": "A"
-        }
-      ],
-      "title": "Rendered",
-      "type": "stat"
     },
     {
       "datasource": "Prometheus",
@@ -123,11 +64,11 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 4,
-        "y": 3
+        "w": 4,
+        "x": 0,
+        "y": 1
       },
-      "id": 22,
+      "id": 21,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -231,11 +172,11 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 9,
-        "y": 3
+        "w": 4,
+        "x": 4,
+        "y": 1
       },
-      "id": 23,
+      "id": 22,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -266,8 +207,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 15,
-          "min": 0,
+          "decimals": 2,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -290,18 +230,17 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 3
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 1
       },
-      "id": 1,
+      "id": 23,
       "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -309,8 +248,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "valueMode": "color"
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -320,19 +258,7 @@
         }
       ],
       "title": "CPU Pressure",
-      "type": "bargauge"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "id": 30,
-      "title": "Pressure Signals — avg10 breakdown",
-      "type": "row"
+      "type": "stat"
     },
     {
       "datasource": "Prometheus",
@@ -341,8 +267,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 15,
-          "min": 0,
+          "decimals": 2,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -365,18 +290,17 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 0,
-        "y": 9
+        "h": 3,
+        "w": 4,
+        "x": 12,
+        "y": 1
       },
-      "id": 2,
+      "id": 24,
       "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -384,8 +308,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "valueMode": "color"
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -395,7 +318,7 @@
         }
       ],
       "title": "IO Pressure",
-      "type": "bargauge"
+      "type": "stat"
     },
     {
       "datasource": "Prometheus",
@@ -404,8 +327,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "max": 15,
-          "min": 0,
+          "decimals": 2,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -428,18 +350,17 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 8,
-        "y": 9
+        "h": 3,
+        "w": 4,
+        "x": 16,
+        "y": 1
       },
-      "id": 3,
+      "id": 25,
       "options": {
-        "displayMode": "gradient",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -447,8 +368,7 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "valueMode": "color"
+        "textMode": "auto"
       },
       "targets": [
         {
@@ -458,7 +378,78 @@
         }
       ],
       "title": "Memory Pressure",
-      "type": "bargauge"
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 300
+              },
+              {
+                "color": "#d44a3a",
+                "value": 900
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 26,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "nix_rebuild_duration_ms / 1000",
+          "legendFormat": "duration",
+          "refId": "A"
+        }
+      ],
+      "title": "Last Rebuild",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 30,
+      "title": "Pressure Signal",
+      "type": "row"
     },
     {
       "datasource": "Prometheus",
@@ -474,14 +465,14 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 50,
+            "fillOpacity": 12,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "smooth",
+            "lineInterpolation": "linear",
             "lineWidth": 2,
             "pointSize": 4,
             "scaleDistribution": {
@@ -491,7 +482,7 @@
             "spanNulls": true,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "line"
@@ -519,123 +510,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 16,
-        "y": 9
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "expr": "nix_pressure_cpu_avg10",
-          "legendFormat": "CPU",
-          "refId": "A"
-        },
-        {
-          "expr": "nix_pressure_io_some_avg10",
-          "legendFormat": "IO",
-          "refId": "B"
-        },
-        {
-          "expr": "nix_pressure_mem_some_avg10",
-          "legendFormat": "MEM",
-          "refId": "C"
-        }
-      ],
-      "title": "Pressure Timeline",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
+        "h": 9,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 5
       },
       "id": 31,
-      "title": "Log Correlation — journal stream",
-      "type": "row"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 55,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "area"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#299c46",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 10
-              },
-              {
-                "color": "#d44a3a",
-                "value": 30
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 15
-      },
-      "id": 6,
       "options": {
         "legend": {
           "calcs": [
@@ -668,7 +548,7 @@
           "refId": "C"
         }
       ],
-      "title": "Pressure Timeline Detail",
+      "title": "Pressure Timeline",
       "type": "timeseries"
     },
     {
@@ -732,22 +612,22 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 3,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 14
       },
-      "id": 7,
+      "id": 32,
       "options": {
         "alignValue": "center",
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "mergeValues": true,
-        "rowHeight": 0.90000000000000002,
-        "showValue": "auto",
+        "rowHeight": 0.83999999999999997,
+        "showValue": "never",
         "tooltip": {
           "mode": "multi",
           "sort": "desc"
@@ -756,17 +636,17 @@
       "targets": [
         {
           "expr": "clamp_max((nix_pressure_cpu_avg10 >= bool 10) + (nix_pressure_cpu_avg10 >= bool 30), 2)",
-          "legendFormat": "CPU regime",
+          "legendFormat": "CPU",
           "refId": "A"
         },
         {
           "expr": "clamp_max((nix_pressure_io_some_avg10 >= bool 10) + (nix_pressure_io_some_avg10 >= bool 30), 2)",
-          "legendFormat": "IO regime",
+          "legendFormat": "IO",
           "refId": "B"
         },
         {
           "expr": "clamp_max((nix_pressure_mem_some_avg10 >= bool 10) + (nix_pressure_mem_some_avg10 >= bool 30), 2)",
-          "legendFormat": "MEM regime",
+          "legendFormat": "MEM",
           "refId": "C"
         }
       ],
@@ -774,14 +654,26 @@
       "type": "state-timeline"
     },
     {
-      "datasource": "Loki",
+      "collapsed": false,
       "gridPos": {
-        "h": 10,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 17
       },
-      "id": 5,
+      "id": 40,
+      "title": "Journal Correlation",
+      "type": "row"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 41,
       "options": {
         "dedupStrategy": "none",
         "showCommonLabels": false,
