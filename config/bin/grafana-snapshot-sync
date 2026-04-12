@@ -71,7 +71,7 @@ for item in "${DASHBOARDS[@]}"; do
   new_file="${TMP_DIR}/${filename}"
   target_file="${OUT_DIR}/${filename}"
 
-  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
+  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&refresh=5m&kiosk"
   if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
     echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
     exit 1
@@ -104,9 +104,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 
   await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('h2[title]', { timeout: 30000 });
-  await page.waitForFunction(() => document.querySelectorAll('h2[title]').length >= 3, { timeout: 30000 });
-  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
-  await page.waitForTimeout(5000);
+  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(6000);
 
   if (process.env.HIDE_PANEL_TITLE) {
     await page.evaluate((title) => {

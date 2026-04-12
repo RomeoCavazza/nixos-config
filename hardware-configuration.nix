@@ -15,12 +15,12 @@
 
   # --- Filesystems ---
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/5c9aa730-7073-4894-8edd-7e815f76ca38";
+    device = "/dev/disk/by-uuid/81622f02-7f85-42d9-ba8f-e29216a6f869";
     fsType = "ext4";
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/31967aa1-d0f2-4ff6-ad9b-aa6a4000edb7";
+    device = "/dev/disk/by-uuid/32bf39cf-49e9-42b4-b0f3-6decc3abdc1d";
     fsType = "ext4";
   };
 
@@ -32,7 +32,7 @@
 
   # --- Swap ---
   swapDevices = [
-    { device = "/dev/disk/by-uuid/990989c3-b2b4-410c-87a2-239ad865c3a3"; }
+    { device = "/dev/disk/by-uuid/a4fa3a47-8ff2-4551-ae26-4414891817cd"; }
   ];
 
   # --- Networking & CPU ---

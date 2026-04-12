@@ -1,49 +1,5 @@
-# Fichiers ISO volumineux
-*.iso
-
-# Configuration matérielle (UUID de disques, interfaces réseau)
-
-# Fichiers de verrouillage
-
-# Fichiers de système NixOS générés
-result
-result-*
-
-# Fichiers temporaires
-*.swp
-*.bak
-*~
-
-# Secrets et clés en clair uniquement
-*.key
-*.pem
-*.p12
-*.agekey
-.env
-.env.*
-.secrets/
-secrets.nix
-secrets/*.dec
-secrets/*.plaintext
-secrets/*.txt
-
-# Secrets SOPS chiffrés à conserver dans le repo
-!.sops.yaml
-!secrets/*.yaml
-
-# Fichiers de backup
-*.backup
-*.old
-
-# Python
-.venv/
-**/.venv/
-__pycache__/
-*.pyc
-
-# direnv
-.direnv/
-
-# Nix results
-result
-result-*
+# Large binaries — use home.nix fetchurl/AppImage references instead
+config/bin/cursor-app
+config/bin/*.AppImage
+config/bin/*.png
+*.prom.tmp.*

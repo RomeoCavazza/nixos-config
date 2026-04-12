@@ -22,7 +22,8 @@ end_ns=$(date +%s%N)
 duration_ms=$(( (end_ns - start_ns) / 1000000 ))
 success=$([ "$exit_code" -eq 0 ] && echo 1 || echo 0)
 
-# Write to /tmp first (no root needed), then move atomically as root.
+# Write atomically. The textfile_collector dir is owned by tco (see observability.nix
+# tmpfiles rule) so no sudo is needed here — and node_exporter reads 644 files fine.
 TMPFILE=$(mktemp /tmp/nix-rebuild.prom.XXXXXX)
 cat > "$TMPFILE" << EOF
 # HELP nix_rebuild_duration_ms Duration of the last nixos-rebuild in milliseconds
@@ -38,6 +39,6 @@ nix_rebuild_timestamp_seconds ${start_ts}
 nix_rebuild_success ${success}
 EOF
 
-sudo mv "$TMPFILE" "$OUTFILE"
+install -m 644 "$TMPFILE" "$OUTFILE" && rm -f "$TMPFILE"
 
 exit "$exit_code"

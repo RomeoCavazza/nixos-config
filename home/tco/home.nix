@@ -138,6 +138,11 @@ in
     };
   };
 
+  xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source = ../../config/icons/hicolor/256x256/apps/antigravity-icon.png;
+  xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source = ../../config/icons/hicolor/512x512/apps/antigravity-icon.png;
+  xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source = ../../config/icons/hicolor/256x256/apps/cursor-icon.png;
+  xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source = ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
+
   xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
   xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
   xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
@@ -400,6 +405,7 @@ in
       };
       init.defaultBranch = "main";
       pull.rebase = true;
+      safe.directory = "/etc/nixos";
     };
   };
 

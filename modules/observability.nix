@@ -107,7 +107,7 @@ in
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
     };
     environment = {
-      MIN_CHANGE_PERCENT = "0.5";
+      MIN_CHANGE_PERCENT = "0.3";
       HOME = "/home/tco";
       SNAPSHOT_GIT_NAME = "Romeo Cavazza";
       SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
