@@ -151,10 +151,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     }
   `});
 
-  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} settled for capture`);
-  await page.waitForTimeout(500);
-
   await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage, animations: 'disabled' });
+  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} captured`);
   await browser.close();
 })().catch((error) => {
   console.error(error);
