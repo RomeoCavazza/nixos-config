@@ -80,6 +80,7 @@ for item in "${DASHBOARDS[@]}"; do
   PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
   CHROME_BIN="$CHROME_BIN" \
   DASHBOARD_URL="$dashboard_url" \
+  SNAPSHOT_NAME="$filename" \
   VIEWPORT_HEIGHT="$viewport_height" \
   SNAPSHOT_FULL_PAGE="$([[ "$capture_mode" == "full" ]] && echo "true" || echo "false")" \
   HIDE_PANEL_TITLE="$hide_panel_title" \
@@ -105,7 +106,11 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
   await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('h2[title]', { timeout: 30000 });
   await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(6000);
+  await page.waitForFunction(() => {
+    const panelContents = Array.from(document.querySelectorAll('[data-testid="data-testid panel content"]'));
+    return panelContents.some((panel) => panel.innerText.trim() || panel.querySelector('canvas, svg'));
+  }, { timeout: 30000 });
+  await page.waitForTimeout(3000);
 
   if (process.env.HIDE_PANEL_TITLE) {
     await page.evaluate((title) => {
@@ -123,6 +128,50 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
       }
     }, process.env.HIDE_PANEL_TITLE);
   }
+
+  await page.addStyleTag({ content: `
+    *, *::before, *::after {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    section[class*='panel-container'],
+    [data-testid^='data-testid Panel header'] {
+      opacity: 1 !important;
+      visibility: visible !important;
+      background: linear-gradient(180deg, rgba(19, 99, 136, 0.88), rgba(8, 42, 76, 0.82)) !important;
+    }
+
+    section[class*='panel-container']::before,
+    [data-testid^='data-testid Panel header']::before {
+      display: none !important;
+    }
+
+    section[class*='panel-container'] > *,
+    [data-testid^='data-testid Panel header'] > *,
+    [data-testid='data-testid panel content'] {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  `});
+
+  const renderStats = await page.evaluate(() => {
+    const panels = Array.from(document.querySelectorAll('[data-testid^="data-testid Panel header"]'));
+    const panelContents = Array.from(document.querySelectorAll('[data-testid="data-testid panel content"]'));
+    const nonEmptyPanels = panelContents.filter((panel) => panel.innerText.trim() || panel.querySelector('canvas, svg'));
+    return {
+      panels: panels.length,
+      nonEmptyPanels: nonEmptyPanels.length,
+      canvases: document.querySelectorAll('canvas').length,
+    };
+  });
+
+  if (renderStats.panels === 0 || renderStats.nonEmptyPanels === 0) {
+    throw new Error(`dashboard did not render panels: ${JSON.stringify(renderStats)}`);
+  }
+
+  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} rendered ${renderStats.nonEmptyPanels}/${renderStats.panels} panels (${renderStats.canvases} canvases)`);
+  await page.waitForTimeout(500);
 
   await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage, animations: 'disabled' });
   await browser.close();
