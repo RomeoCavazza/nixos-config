@@ -140,7 +140,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
       opacity: 1 !important;
       visibility: visible !important;
       transform: none !important;
-      background: linear-gradient(180deg, rgba(19, 99, 136, 0.88), rgba(8, 42, 76, 0.82)) !important;
+      background: rgba(8, 42, 76, 0.88) !important;
     }
 
     section[class*='panel-container']::before,
