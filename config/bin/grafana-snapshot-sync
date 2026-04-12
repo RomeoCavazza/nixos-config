@@ -139,6 +139,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     [data-testid^='data-testid Panel header'] {
       opacity: 1 !important;
       visibility: visible !important;
+      transform: none !important;
       background: linear-gradient(180deg, rgba(19, 99, 136, 0.88), rgba(8, 42, 76, 0.82)) !important;
     }
 
