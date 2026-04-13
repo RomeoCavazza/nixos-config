@@ -11,7 +11,7 @@
 > **Declarative, reproducible, and auditable infrastructure for a development workstation.**  
 > Managed entirely through Nix Flakes, Home Manager, and encrypted secrets — rebuilt from scratch in a single command.
 
-![](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/wiki.png)
+![](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/htop.png)
 
 ## Wiki Pages
 

@@ -122,7 +122,7 @@ flowchart TB
 <br>
 
 ### System Metrics
-<img src="./docs/assets/screen-htop.png" alt="HTOP Screen" width="100%">
+<img src="./docs/assets/htop.png" alt="HTOP Screen" width="100%">
 
 *Real-time system monitoring and resource management.*
 
