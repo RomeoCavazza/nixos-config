@@ -12,13 +12,14 @@ let
         nativeBuildInputs = [ pkgs.dart-sass ];
       }
       ''
-        mkdir -p $out source/config/grafana/theme source/config/scss
+            mkdir -p $out source/config/grafana/theme source/config/scss
 
-        cp ${../config/grafana/theme/aquamarine.scss} source/config/grafana/theme/aquamarine.scss
-        cp -R ${../config/scss}/. source/config/scss/
+            cp ${../config/grafana/theme/aquamarine.scss} source/config/grafana/theme/aquamarine.scss
+            cp -R ${../config/scss}/. source/config/scss/
 
         sass \
           --no-source-map \
+          --no-charset \
           --style=expanded \
           source/config/grafana/theme/aquamarine.scss \
           $out/aquamarine.css

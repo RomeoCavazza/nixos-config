@@ -14,17 +14,18 @@ let
         nativeBuildInputs = [ pkgs.dart-sass ];
       }
       ''
-        mkdir -p $out source/config/hypr/waybar source/config/scss
+            mkdir -p $out source/config/hypr/waybar source/config/scss
 
-        cp -R ${../../config/hypr/waybar}/. $out/
-        chmod -R u+w $out
-        rm -f $out/style.css
+            cp -R ${../../config/hypr/waybar}/. $out/
+            chmod -R u+w $out
+            rm -f $out/style.css
 
-        cp ${../../config/hypr/waybar/style.scss} source/config/hypr/waybar/style.scss
-        cp -R ${../../config/scss}/. source/config/scss/
+            cp ${../../config/hypr/waybar/style.scss} source/config/hypr/waybar/style.scss
+            cp -R ${../../config/scss}/. source/config/scss/
 
         sass \
           --no-source-map \
+          --no-charset \
           --style=expanded \
           source/config/hypr/waybar/style.scss \
           $out/style.css

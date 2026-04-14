@@ -29,6 +29,7 @@ compile() {
   mkdir -p "$(dirname "$dst")"
   "$sass_bin" \
     --no-source-map \
+    --no-charset \
     --style=expanded \
     "$src" "$dst"
 }
