@@ -350,14 +350,18 @@
         "systems": "systems_2"
       },
       "locked": {
-        "path": "./home/tco/pkgs/hyprspace-fork",
-        "type": "path"
+        "lastModified": 1775008321,
+        "narHash": "sha256-ZkywpQRf9MNGvAPPN42Nsfr/SbTqu9Hx8POFSkG72kA=",
+        "owner": "RomeoCavazza",
+        "repo": "Hyprspace",
+        "rev": "6514eb33bef3063fa3c970a8c2b2bb6e1ad4f762",
+        "type": "github"
       },
       "original": {
-        "path": "./home/tco/pkgs/hyprspace-fork",
-        "type": "path"
-      },
-      "parent": []
+        "owner": "RomeoCavazza",
+        "repo": "Hyprspace",
+        "type": "github"
+      }
     },
     "hyprtasking": {
       "inputs": {
