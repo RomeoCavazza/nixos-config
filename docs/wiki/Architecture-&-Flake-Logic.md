@@ -36,7 +36,7 @@ The base system tracks `nixos-unstable`. This gives access to current kernel ver
 
 Two packages are sourced from `nixos-24.11` via a custom overlay rather than from the unstable channel. Promtail — the log shipping agent — has a module-level option conflict with the current Loki version on unstable, and fixing it would require either forking the module or pinning Loki to an older version. The simpler solution is to use the stable channel's Promtail binary and run it as a raw systemd service, bypassing the NixOS module entirely. Guix, the GNU package manager, also requires a specific build environment that is more reliably available in the stable channel. Both packages are injected into the package set via a custom overlay so that the rest of the configuration sees them as ordinary packages with no special handling.
 
-Hyprland and all three of its plugins are pinned to the exact same version tag. Hyprland plugin ABI is not stable between compositor versions — a plugin compiled against one commit of the Hyprland source tree will either crash or refuse to load when paired with a different commit. Pinning everything to v0.54.2 and vendoring the plugin sources locally in `home/tco/pkgs/` eliminates this class of failure entirely. The plugins are compiled during `nixos-rebuild` against the pinned Hyprland headers from the flake input — there are no binary downloads, no version assumptions, and no possibility of drift between the compositor and its plugins.
+Hyprland is pinned to v0.54.2, and the custom plugins are pinned through RomeoCavazza GitHub forks. Hyprland plugin ABI is not stable between compositor versions — a plugin compiled against one commit of the Hyprland source tree will either crash or refuse to load when paired with a different commit. Pinning the forks through Nix inputs or fixed `fetchFromGitHub` revisions eliminates this class of failure while keeping the plugin sources maintained in their own repositories. The plugins are compiled during `nixos-rebuild` against the pinned Hyprland headers from the flake input — there are no binary downloads, no version assumptions, and no hidden local fork copies.
 
 ---
 
@@ -122,10 +122,6 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 ├── home/tco/
 │   ├── home.nix                     # Home Manager entry: packages, dotfile symlinks, shell, GTK, Starship
 │   ├── modules/apps/                # Optional HM modules: cad.nix, data.nix, embedded.nix
-│   └── pkgs/                        # Hyprland plugins compiled against pinned v0.54.2 headers
-│       ├── Hyprchroma-fork/         # Inactive-window tinting + workspace transitions
-│       ├── hypr-canvas-fork/        # Infinite canvas workspace grouping
-│       └── hyprspace-fork/          # Exposé-style workspace overview (SUPER+Tab)
 │
 ├── config/                          # Dotfiles symlinked into ~/.config/ by Home Manager
 │   ├── bin/                         # User scripts on $PATH (hypr-layout-toggle, legion-pulse, waybar-toggle, …)

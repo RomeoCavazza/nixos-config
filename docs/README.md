@@ -75,7 +75,7 @@ Home Manager runs inline within the system build, applied atomically on every `n
 
 **User packages** cover shell utilities (bat, eza, fzf, yazi, zoxide), editors (Zed, Neovim, VSCode with Nix/Python/Rust extensions), AI coding tools (aider-chat, Cursor AppImage via wrapper), Rust and Node.js 22 toolchains, creative tools (OBS, Discord, Spotify), and system monitoring (btop, nvitop, glances). Domain-specific toolchains are grouped in optional app modules: `cad.nix` (Obsidian, KiCad, FreeCAD), `embedded.nix` (Arduino IDE/CLI, esptool, minicom), `data.nix` (DBeaver, Grafana, InfluxDB2).
 
-**Hyprchroma / hypr-darkwindow.** The local Hyprchroma fork is compiled inline from `home/tco/pkgs/Hyprchroma-fork/src/main.cpp` during Home Manager activation, producing `~/.local/lib/libhypr-darkwindow.so`. The plugin provides inactive-window tinting and workspace-transition smoothing. Configuration lives in `config/hypr/theme/hyprchroma.conf`; the dispatcher `togglechromakey` enables runtime toggling.
+**Hyprchroma / hypr-darkwindow.** The RomeoCavazza/Hyprchroma fork is fetched by Nix and compiled during Home Manager activation, producing `~/.local/lib/libhypr-darkwindow.so`. The plugin provides inactive-window tinting and workspace-transition smoothing. Configuration lives in `config/hypr/theme/hyprchroma.conf`; the dispatcher `togglechromakey` enables runtime toggling.
 
 **Pywal** is available in the user environment with custom templates tracked at `config/wal/templates/` and deployed to `~/.config/wal/templates/`. `colors-hyprland.conf` and `colors-foot.ini` allow wallpaper-derived palette generation when desired. The live desktop theme is repo-defined by default; pywal is opt-in per session.
 
@@ -136,4 +136,4 @@ Generated with `cloc`, excluding `.git`, `docs/assets`, and `docs/wiki`. Full re
 | YAML | 5 | 106 |
 | **Total** | **114** | **8 023** |
 
-The C++ lines are the three locally vendored Hyprland plugins (`Hyprchroma-fork`, `hyprspace-fork`, `hypr-canvas-fork`), compiled from source during `nixos-rebuild`. The 22 Nix files cover the flake, system configuration, 10 system modules, and 3 Home Manager app modules. Shell scripts now split across Bourne Shell and Bourne Again Shell as more runtime automation was added for observability and snapshot publishing.
+The C++ plugin sources live in the RomeoCavazza Hyprland plugin forks and are fetched or locked by Nix during `nixos-rebuild`. The Nix files cover the flake, system configuration, system modules, and Home Manager app modules. Shell scripts now split across Bourne Shell and Bourne Again Shell as more runtime automation was added for observability and snapshot publishing.

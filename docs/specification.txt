@@ -16,12 +16,12 @@ Inputs (10 total):
   - sops-nix: Declarative secret management for encrypted, committable secrets.
   - rust-overlay: Nightly/Stable Rust toolchains.
   - hyprland: Wayland compositor, pinned to v0.54.2.
-  - hyprspace: Local fork (path:./home/tco/pkgs/hyprspace-fork), follows hyprland.
+  - hyprspace: RomeoCavazza/Hyprspace flake input, follows hyprland.
   - hyprland-plugins: Official plugin ecosystem, follows hyprland.
   - hyprtasking: Task management plugin, follows hyprland.
   - nix-snapd: Canonical Snap daemon implementation for NixOS.
-  Note: Hyprchroma is NOT a flake input — it is a local fork compiled inline from
-  home/tco/pkgs/Hyprchroma-fork/src/main.cpp during home-manager activation.
+  Note: Hyprchroma is NOT a flake input — it is fetched from
+  RomeoCavazza/Hyprchroma and compiled during home-manager activation.
 
 Outputs:
   - nixosConfigurations.nixos: Sole entry point. System + Home Manager applied atomically.
@@ -207,10 +207,10 @@ Hyprland (programs.hyprland)
   enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, theme/hyprchroma.conf, waybar).
 
 Hyprchroma fork / hypr-darkwindow
-  Local Hyprchroma fork compiled inline from home/tco/pkgs/Hyprchroma-fork/src/main.cpp into libhypr-darkwindow.so. Used for inactive-window tint and workspace-transition smoothing.
+  RomeoCavazza/Hyprchroma fork compiled into libhypr-darkwindow.so. Used for inactive-window tint and workspace-transition smoothing.
 
 hyprspace (flake input)
-  Local Hyprspace fork sourced from home/tco/pkgs/hyprspace-fork. Used for the overview plugin on Hyprland v0.54.2.
+  RomeoCavazza/Hyprspace fork locked as a flake input. Used for the overview plugin on Hyprland v0.54.2.
 
 seaglass
   Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf and hyprchroma.conf.

@@ -40,9 +40,6 @@ nixos/
 │           ├── cad.nix       # obsidian, kicad, freecad
 │           ├── embedded.nix  # arduino, esptool, minicom
 │           └── data.nix      # dbeaver, grafana, influxdb2
-│   └── pkgs/
-│       ├── Hyprchroma-fork
-│       └── hyprspace-fork
 ├── modules/          # System-only modules (services, drivers)
 │   ├── backup.nix
 │   ├── nvidia-prime.nix
