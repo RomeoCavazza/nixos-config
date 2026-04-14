@@ -1,3 +1,19 @@
 [submodule "docs/wiki"]
 	path = docs/wiki
 	url = https://github.com/RomeoCavazza/setup-os.wiki.git
+
+[submodule "config/nvim"]
+	path = config/nvim
+	url = https://github.com/RomeoCavazza/nvim-config.git
+
+[submodule "home/tco/pkgs/Hyprchroma-fork"]
+	path = home/tco/pkgs/Hyprchroma-fork
+	url = https://github.com/RomeoCavazza/Hyprchroma.git
+
+[submodule "home/tco/pkgs/hypr-canvas-fork"]
+	path = home/tco/pkgs/hypr-canvas-fork
+	url = https://github.com/RomeoCavazza/hypr-canvas.git
+
+[submodule "home/tco/pkgs/hyprspace-fork"]
+	path = home/tco/pkgs/hyprspace-fork
+	url = https://github.com/RomeoCavazza/Hyprspace.git
