@@ -4,8 +4,12 @@ let
   hyprspacePkg = inputs.hyprspace.packages.${pkgs.system}.Hyprspace;
 
   # Hyprchroma v3.3 — grouped adaptive chromakey tint
-  # Point to the fork source
-  hyprchroma-src = pkgs.writeText "hyprchroma-main.cpp" (builtins.readFile ./pkgs/Hyprchroma-fork/src/main.cpp);
+  hyprchroma-src = pkgs.fetchFromGitHub {
+    owner = "RomeoCavazza";
+    repo  = "Hyprchroma";
+    rev   = "a0241fd4c25e2a4d40a4cbfe8db2e30fc8e98233";
+    hash  = "sha256-PYBD6lhPdVsf1iPpM1+ikRSE7ce+LKevVwsyDFfFzKA=";
+  };
   hypr-darkwindow = pkgs.stdenv.mkDerivation {
     pname   = "hypr-darkwindow";
     version = "3.3.1-v054";
@@ -17,7 +21,7 @@ let
       g++ -shared -fPIC -std=c++2b -O2 \
         $(pkg-config --cflags hyprland pixman-1 libdrm) \
         -DWLR_USE_UNSTABLE \
-        ${hyprchroma-src} \
+        ${hyprchroma-src}/src/main.cpp \
         -o libhypr-darkwindow.so
     '';
     installPhase = ''
@@ -25,6 +29,12 @@ let
       cp libhypr-darkwindow.so $out/lib/
     '';
     meta.description = "Hyprchroma v3.3 — grouped adaptive chromakey tint";
+  };
+  hypr-canvas-src = pkgs.fetchFromGitHub {
+    owner = "RomeoCavazza";
+    repo  = "hypr-canvas";
+    rev   = "08358afacbac9f9a7ac45dc59a1a55188717b55c";
+    hash  = "sha256-pA6NSjk7SX+tdSY1aWlaI+ygXUl+K/dk1xGB7ok8CIs=";
   };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
@@ -36,14 +46,12 @@ let
     nativeBuildInputs = [ pkgs.pkg-config ];
     buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
 
-    buildPhase =
-      let srcDir = lib.cleanSource ./pkgs/hypr-canvas-fork;
-      in ''
-        g++ -shared -fPIC -std=c++2b -O2 \
-          $(pkg-config --cflags hyprland pixman-1 libdrm) \
-          ${srcDir}/src/main.cpp ${srcDir}/src/canvas.cpp \
-          -o hypr-canvas.so
-      '';
+    buildPhase = ''
+      g++ -shared -fPIC -std=c++2b -O2 \
+        $(pkg-config --cflags hyprland pixman-1 libdrm) \
+        ${hypr-canvas-src}/src/main.cpp ${hypr-canvas-src}/src/canvas.cpp \
+        -o hypr-canvas.so
+    '';
 
     installPhase = ''
       mkdir -p $out/lib
