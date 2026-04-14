@@ -1,23 +1,45 @@
-@charset "UTF-8";
 /*!
  * style.scss — Waybar GTK stylesheet (source SCSS)
  * Compilé vers style.css par : scss-compile
  * NE PAS modifier style.css directement.
  */
+
+// NOTE : mocha.css n'est PAS importé ici.
+// Toutes les valeurs @define-color sont résolues via $wb-* dans _variables.scss.
+// Le CSS compilé contiendra uniquement des valeurs hex/rgba littérales —
+// aucun @import, @define-color ou @color GTK-spécifique.
+
+@use '../../scss/variables' as *;
+@use '../../scss/mixins' as *;
+
 * {
   font-family: "SpaceMono Nerd Font";
   font-size: 15px;
 }
 
+// ===========================
+// BARRE PRINCIPALE
+// ===========================
+
 window#waybar {
+  // FULL transparent
   background: transparent;
-  color: #94e2d5;
+  color: $wb-accent;
+
+  // Bordure "existante" mais invisible -> garde les proportions
   border-radius: 14px;
   border: 2px solid transparent;
+
+  // Anti-glow / anti-contour GTK
   outline: none;
   box-shadow: none;
+
   padding: 6px 0;
 }
+
+// ===========================
+// MODULES
+// ===========================
 
 #clock, #battery, #cpu, #memory, #temperature,
 #pulseaudio, #tray, #bluetooth, #mpris,
@@ -28,9 +50,7 @@ window#waybar {
   padding: 0 12px;
   border-radius: 999px;
   transition: all 0.15s ease;
-  border: 0;
-  outline: none;
-  box-shadow: none;
+  @include no-decoration;
 }
 
 #clock:hover, #battery:hover, #cpu:hover, #memory:hover,
@@ -39,9 +59,13 @@ window#waybar {
 #custom-nixos:hover,
 #network:hover,
 #taskbar:hover {
-  background-color: rgba(148, 226, 213, 0.12);
-  color: #94e2d5;
+  background-color: $wb-hover-bg;
+  color: $wb-accent;
 }
+
+// ===========================
+// TASKBAR — toutes les icônes
+// ===========================
 
 #taskbar {
   padding: 0 10px;
@@ -49,23 +73,25 @@ window#waybar {
 
 #taskbar button {
   background: transparent;
-  border: 0;
-  outline: none;
-  box-shadow: none;
+  @include no-decoration;
+
   padding: 0 6px;
   margin: 0 2px;
+
   border-radius: 999px;
   transition: all 0.15s ease;
+
+  // au lieu de cacher, on affiche
   opacity: 0.75;
 }
 
 #taskbar button:hover {
-  background-color: rgba(148, 226, 213, 0.1);
+  background-color: $wb-taskbar-hover;
   opacity: 1;
 }
 
 #taskbar button.active {
-  background-color: rgba(148, 226, 213, 0.14);
+  background-color: $wb-taskbar-active;
   opacity: 1;
 }
 
@@ -73,41 +99,47 @@ window#waybar {
   margin: 0;
 }
 
+// ===========================
+// WORKSPACES — DOTS ONLY
+// ===========================
+
 #workspaces {
   background: transparent;
   padding: 0 6px;
-  border: 0;
-  outline: none;
-  box-shadow: none;
+  @include no-decoration;
 }
 
 #workspaces button {
   background: transparent;
-  border: 0;
-  outline: none;
-  box-shadow: none;
-  color: #94e2d5;
+  @include no-decoration;
+
+  color: $wb-accent; // dots teal
   padding: 0;
   margin: 0 14px;
+
   min-width: 0;
   min-height: 0;
+
   transition: none;
 }
 
+// Aucun effet hover visuel
 #workspaces button:hover {
   background: transparent;
   box-shadow: none;
   outline: none;
-  color: #94e2d5;
+  color: $wb-accent;
 }
 
+// Workspace actif
 #workspaces button.active {
   background: transparent;
   box-shadow: none;
   outline: none;
-  color: #94e2d5;
+  color: $wb-accent;
 }
 
+// Supprime totalement focus ring GTK
 #workspaces button:focus,
 #workspaces button:focus-visible {
   outline: none;

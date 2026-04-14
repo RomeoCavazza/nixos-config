@@ -1,0 +1,108 @@
+// =============================================================
+// _variables.scss — Design tokens partagés
+// =============================================================
+// Deux namespaces :
+//   $wb-*  : Waybar  (Catppuccin Mocha + accent teal)
+//   $gf-*  : Grafana (Aquamarine theme)
+//
+// Ne pas modifier aquamarine.css / style.css directement.
+// Éditer les sources .scss, puis lancer : scss-compile
+// =============================================================
+
+// -------------------------------------------------------------
+// WAYBAR — Catppuccin Mocha
+// Résout tous les @define-color de mocha.css
+// -------------------------------------------------------------
+
+$wb-accent:          #94e2d5; // = Hyprland active_border = Mocha teal
+
+// Palette Mocha complète
+$wb-rosewater:       #f5e0dc;
+$wb-flamingo:        #f2cdcd;
+$wb-pink:            #f5c2e7;
+$wb-mauve:           #cba6f7;
+$wb-red:             #f38ba8;
+$wb-maroon:          #eba0ac;
+$wb-peach:           #fab387;
+$wb-yellow:          #f9e2af;
+$wb-green:           #a6e3a1;
+$wb-teal:            #94e2d5; // alias de $wb-accent
+$wb-sky:             #89dceb;
+$wb-sapphire:        #74c7ec;
+$wb-blue:            #89b4fa;
+$wb-lavender:        #b4befe;
+$wb-text:            #cdd6f4;
+$wb-subtext1:        #bac2de;
+$wb-subtext0:        #a6adc8;
+$wb-overlay2:        #9399b2;
+$wb-overlay1:        #7f849c;
+$wb-overlay0:        #6c7086;
+$wb-surface2:        #585b70;
+$wb-surface1:        #45475a;
+$wb-surface0:        #313244;
+$wb-base:            #1e1e2e;
+$wb-mantle:          #181825;
+$wb-crust:           #11111b;
+$wb-brown:           #561508;
+
+// Fonds hover/active dérivés de l'accent avec alpha
+$wb-hover-bg:        rgba(148, 226, 213, 0.12); // modules :hover
+$wb-taskbar-hover:   rgba(148, 226, 213, 0.10); // taskbar button:hover
+$wb-taskbar-active:  rgba(148, 226, 213, 0.14); // taskbar button.active
+
+// -------------------------------------------------------------
+// GRAFANA — Aquamarine theme
+// -------------------------------------------------------------
+
+// Couleurs primaires
+$gf-aqua:            #36e7d6;
+$gf-aqua-strong:     #12afa0;
+$gf-aqua-soft:       #8df4ec;
+$gf-ultramarine:     #155ec9;
+$gf-navy:            #0b3161;
+$gf-cobalt-deep:     #07183b;
+$gf-cobalt-mid:      #04163a;
+$gf-seaglass:        #47918a;
+$gf-violet:          #b48efa;
+$gf-cyan-bright:     #27c6ff;
+
+// Texte
+$gf-text-primary:    #f6fbff;
+$gf-text-secondary:  #d8f7fb;
+$gf-text-disabled:   #96cbd2;
+
+// Bordures (aqua-soft + alpha)
+$gf-border-weak:     rgba(141, 244, 236, 0.24);
+$gf-border-medium:   rgba(54, 231, 214, 0.42);
+$gf-border-strong:   rgba(141, 244, 236, 0.44);
+
+// Fonds
+$gf-bg-primary:      rgba(11, 49, 97, 0.58);
+$gf-bg-secondary:    rgba(17, 94, 150, 0.32);
+$gf-bg-tertiary:     rgba(54, 231, 214, 0.13);
+$gf-primary-transparent: rgba(54, 231, 214, 0.18); // ≠ $gf-bg-tertiary !
+$gf-bg-input:        rgba(4, 22, 54, 0.62);
+$gf-bg-row:          rgba(4, 22, 54, 0.42);
+$gf-bg-row-deep:     rgba(4, 22, 54, 0.64);
+$gf-bg-toolbar:      rgba(4, 22, 54, 0.72);
+$gf-bg-toolbar-lo:   rgba(4, 22, 54, 0.42);
+
+// Panneaux
+$gf-panel-bg:        rgba(7, 43, 72, 0.46);
+$gf-panel-soft:      rgba(27, 111, 142, 0.22);
+$gf-panel-top:       rgba(19, 99, 136, 0.52);
+$gf-panel-bottom:    rgba(8, 42, 76, 0.38);
+
+// Reflets / insets
+$gf-highlight:       rgba(246, 251, 255, 0.16);
+$gf-highlight-hover: rgba(246, 251, 255, 0.22);
+$gf-inset-line:      rgba(246, 251, 255, 0.10);
+
+// Ombres de panel
+$gf-shadow-dark:     rgba(3, 13, 38, 0.22);
+$gf-shadow-glow:     rgba(18, 175, 160, 0.08);
+$gf-shadow-hover:    rgba(3, 13, 38, 0.28);
+$gf-shadow-glow-hover: rgba(54, 231, 214, 0.13);
+
+// Scrollbar
+$gf-scrollbar-track: rgba(4, 22, 54, 0.64);

@@ -152,6 +152,7 @@ in
   home.file.".config/foot".source = ../../config/foot;
   home.file.".config/swappy/config".source = ../../config/swappy/config;
   home.file.".config/conky".source = ../../config/conky;
+  home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/nvim";
   xdg.configFile."eDEX-UI/settings.json".source = ../../config/edex/settings.json;
 
   home.file.".local/bin/cursor" = {
@@ -217,6 +218,11 @@ in
 
   home.file.".local/bin/rebuild" = {
     source = ../../config/bin/rebuild;
+    executable = true;
+  };
+
+  home.file.".local/bin/scss-compile" = {
+    source = ../../config/bin/scss-compile;
     executable = true;
   };
 
@@ -336,6 +342,7 @@ in
     pipes
     sl
     terminal-rain-lightning
+    dart-sass 
   ];
 
   gtk = {

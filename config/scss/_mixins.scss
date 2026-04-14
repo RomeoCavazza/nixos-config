@@ -1,0 +1,80 @@
+// =============================================================
+// _mixins.scss — Mixins réutilisables
+// =============================================================
+// Trois mixins couvrant les patterns répétitifs détectés
+// dans style.css (Waybar) et aquamarine.css (Grafana).
+// =============================================================
+
+@use 'sass:string';
+@use 'variables' as *;
+
+// -------------------------------------------------------------
+// glass($blur, $saturate, $brightness)
+//
+// Génère backdrop-filter + -webkit-backdrop-filter en une seule
+// déclaration. Remplace les 6+ blocs répétés dans aquamarine.css.
+//
+// Exemples :
+//   @include glass(18px, 1.24, 1.08);
+//   @include glass(12px, 1.18);          // brightness par défaut = 1
+//   @include glass(8px);                 // saturate par défaut = 1.2
+// -------------------------------------------------------------
+@mixin glass($blur, $saturate: 1.2, $brightness: 1) {
+  // Interpolation complète pour contourner la fonction SCSS saturate() built-in
+  $val: string.unquote("blur(#{$blur}) saturate(#{$saturate}) brightness(#{$brightness})");
+  backdrop-filter: $val !important;
+  -webkit-backdrop-filter: $val !important;
+}
+
+// -------------------------------------------------------------
+// no-decoration
+//
+// Reset GTK widget : supprime border, outline et box-shadow.
+// Remplace les blocs répétés dans style.scss (Waybar).
+//
+// Exemple :
+//   @include no-decoration;
+// -------------------------------------------------------------
+@mixin no-decoration {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+// -------------------------------------------------------------
+// glass-panel($blur, $saturate, $brightness,
+//             $border-color, $bg-top, $bg-bottom, $shadows...)
+//
+// Panneau glassmorphisme complet : gradient de fond + bordure +
+// box-shadow + backdrop-filter en un seul include.
+// Correspond au pattern section[class*='panel-container'].
+//
+// Exemple :
+//   section[class*='panel-container'] {
+//     @include glass-panel(
+//       18px, 1.24, 1.08,
+//       $gf-border-weak,
+//       $gf-panel-top, $gf-panel-bottom,
+//       0 20px 56px $gf-shadow-dark,
+//       0 0 34px $gf-shadow-glow,
+//       0 1px 0 $gf-highlight inset
+//     );
+//   }
+// -------------------------------------------------------------
+@mixin glass-panel(
+  $blur,
+  $saturate,
+  $brightness,
+  $border-color,
+  $bg-top,
+  $bg-bottom,
+  $shadows...
+) {
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, $bg-top 0%, $bg-bottom 100%) !important;
+  border: 1px solid $border-color !important;
+  border-radius: 8px !important;
+  box-shadow: $shadows !important;
+  @include glass($blur, $saturate, $brightness);
+}

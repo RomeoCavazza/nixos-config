@@ -48,22 +48,13 @@ PSI spikes aligned with journald logs for fast root-cause analysis. This view an
 
 Snapshots are checked every 15 minutes and published when visual delta exceeds 0.5%.
 
-<<<<<<< HEAD
-=======
-The three views read as a sequence: health now, drift over time, then incident explanation.
-
->>>>>>> c87fdde (docs: update htop image reference)
 Recent changes:
 
 - Removed freshness redundancy from the main cockpit dashboard
 - Kept freshness only in the efficiency dashboard
 - Applied explicit dual-axis semantics for closure volume (Bytes) vs path count (Count)
-<<<<<<< HEAD
-- Visual overhaul: stat panels switched to `colorMode="background"`, timeseries use hue/opacity fills, and pressure panels are stacked with threshold zone backgrounds
-- Snapshot capture hardened for headless Chromium by applying a paint-safe panel fallback immediately before screenshots
-=======
 - Visual overhaul: stat panels switched to `colorMode="background"` (full panel coloring on thresholds), timeseries upgraded with `gradientMode="hue"` fills, pressure panels stacked with threshold zone backgrounds
->>>>>>> c87fdde (docs: update htop image reference)
+- Snapshot capture hardened for headless Chromium by applying a paint-safe panel fallback immediately before screenshots
 
 The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON. Shared panel helpers live in `config/grafana/src/lib/dashboard.libsonnet`, with a small Grafonnet-style API for stat strips, gauges, time series, rows, logs, thresholds, and value mappings.
 

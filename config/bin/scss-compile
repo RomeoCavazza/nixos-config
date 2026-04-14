@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Compile les sources SCSS vers les CSS utilisés par Waybar et Grafana.
+# Les CSS compilés sont commités dans git — SCSS est la source de vérité.
+#
+# Usage :
+#   scss-compile
+#   SASS=dart-sass scss-compile
+#
+# Prérequis : dart-sass (pkgs.dart-sass dans home.nix)
+# Sans rebuild : nix shell nixpkgs#dart-sass -c scss-compile
+
+set -euo pipefail
+
+repo_dir="${REPO_DIR:-$(git -C "$(dirname "$0")" rev-parse --show-toplevel 2>/dev/null || pwd)}"
+sass_bin="${SASS:-sass}"
+
+if ! command -v "$sass_bin" >/dev/null 2>&1; then
+  echo "scss-compile: dart-sass introuvable" >&2
+  echo "  après rebuild : sass est disponible directement" >&2
+  echo "  sans rebuild  : nix shell nixpkgs#dart-sass -c scss-compile" >&2
+  exit 1
+fi
+
+compile() {
+  local src="$1" dst="$2"
+  echo "scss-compile: $src → $dst"
+  "$sass_bin" \
+    --no-source-map \
+    --style=expanded \
+    "$src" "$dst"
+}
+
+compile \
+  "${repo_dir}/config/hypr/waybar/style.scss" \
+  "${repo_dir}/config/hypr/waybar/style.css"
+
+compile \
+  "${repo_dir}/config/grafana/theme/aquamarine.scss" \
+  "${repo_dir}/config/grafana/theme/aquamarine.css"
+
+echo "scss-compile: OK"
+echo "  → git diff config/hypr/waybar/style.css"
+echo "  → git diff config/grafana/theme/aquamarine.css"
