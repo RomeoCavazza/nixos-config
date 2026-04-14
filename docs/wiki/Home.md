@@ -66,7 +66,7 @@ Three overlays are applied to the package set before any module evaluates: one f
 
 GDM is the display manager. At login, the user selects between Hyprland as the primary Wayland compositor and GNOME as a full fallback session. The two environments share the same audio backend (Pipewire), the same portal layer, and the same user packages, with no conflicts between them.
 
-The Hyprland setup goes beyond basic window manager configuration. Three plugins are compiled from locally vendored forks: Hyprspace provides a workspace overview, hypr-canvas provides an infinite canvas for grouping workspaces, and Hyprchroma applies an adaptive tint shader. Color theming is handled dynamically by PyWal, which extracts a palette from the active wallpaper and writes it into template files that Hyprland, the foot terminal, and Waybar all read — keeping the color scheme consistent across every visible surface without manual coordination.
+The Hyprland setup goes beyond basic window manager configuration. Three plugins are compiled from RomeoCavazza GitHub forks: Hyprspace provides a workspace overview, hypr-canvas provides an infinite canvas for grouping workspaces, and Hyprchroma applies an adaptive tint shader. Color theming is handled dynamically by PyWal, which extracts a palette from the active wallpaper and writes it into template files that Hyprland, the foot terminal, and Waybar all read — keeping the color scheme consistent across every visible surface without manual coordination.
 
 ---
 

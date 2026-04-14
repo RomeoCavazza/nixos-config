@@ -1,20 +1,47 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   hyprland-pkg = inputs.hyprland.packages.${pkgs.system}.hyprland;
   hyprspacePkg = inputs.hyprspace.packages.${pkgs.system}.Hyprspace;
+  waybarConfig =
+    pkgs.runCommand "waybar-config"
+      {
+        nativeBuildInputs = [ pkgs.dart-sass ];
+      }
+      ''
+        mkdir -p $out source/config/hypr/waybar source/config/scss
+
+        cp -R ${../../config/hypr/waybar}/. $out/
+        chmod -R u+w $out
+        rm -f $out/style.css
+
+        cp ${../../config/hypr/waybar/style.scss} source/config/hypr/waybar/style.scss
+        cp -R ${../../config/scss}/. source/config/scss/
+
+        sass \
+          --no-source-map \
+          --style=expanded \
+          source/config/hypr/waybar/style.scss \
+          $out/style.css
+      '';
 
   # Hyprchroma v3.3 — grouped adaptive chromakey tint
   hyprchroma-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";
-    repo  = "Hyprchroma";
-    rev   = "a0241fd4c25e2a4d40a4cbfe8db2e30fc8e98233";
-    hash  = "sha256-PYBD6lhPdVsf1iPpM1+ikRSE7ce+LKevVwsyDFfFzKA=";
+    repo = "Hyprchroma";
+    rev = "a0241fd4c25e2a4d40a4cbfe8db2e30fc8e98233";
+    hash = "sha256-PYBD6lhPdVsf1iPpM1+ikRSE7ce+LKevVwsyDFfFzKA=";
   };
   hypr-darkwindow = pkgs.stdenv.mkDerivation {
-    pname   = "hypr-darkwindow";
+    pname = "hypr-darkwindow";
     version = "3.3.1-v054";
-    srcs        = [];
-    dontUnpack  = true;
+    srcs = [ ];
+    dontUnpack = true;
     nativeBuildInputs = [ pkgs.pkg-config ];
     buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
     buildPhase = ''
@@ -32,15 +59,15 @@ let
   };
   hypr-canvas-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";
-    repo  = "hypr-canvas";
-    rev   = "08358afacbac9f9a7ac45dc59a1a55188717b55c";
-    hash  = "sha256-pA6NSjk7SX+tdSY1aWlaI+ygXUl+K/dk1xGB7ok8CIs=";
+    repo = "hypr-canvas";
+    rev = "08358afacbac9f9a7ac45dc59a1a55188717b55c";
+    hash = "sha256-pA6NSjk7SX+tdSY1aWlaI+ygXUl+K/dk1xGB7ok8CIs=";
   };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
     version = "0.2.0-patched";
 
-    srcs = [];
+    srcs = [ ];
     dontUnpack = true;
 
     nativeBuildInputs = [ pkgs.pkg-config ];
@@ -146,16 +173,20 @@ in
     };
   };
 
-  xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source = ../../config/icons/hicolor/256x256/apps/antigravity-icon.png;
-  xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source = ../../config/icons/hicolor/512x512/apps/antigravity-icon.png;
-  xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source = ../../config/icons/hicolor/256x256/apps/cursor-icon.png;
-  xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source = ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
+  xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source =
+    ../../config/icons/hicolor/256x256/apps/antigravity-icon.png;
+  xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source =
+    ../../config/icons/hicolor/512x512/apps/antigravity-icon.png;
+  xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source =
+    ../../config/icons/hicolor/256x256/apps/cursor-icon.png;
+  xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source =
+    ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
 
   xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
   xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
   xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
   home.file.".config/hypr".source = ../../config/hypr;
-  home.file.".config/waybar".source = ../../config/hypr/waybar;
+  home.file.".config/waybar".source = waybarConfig;
   home.file.".config/rofi".source = ../../config/rofi;
   home.file.".config/foot".source = ../../config/foot;
   home.file.".config/swappy/config".source = ../../config/swappy/config;
@@ -299,7 +330,12 @@ in
     rustfmt
     black
     isort
-    (python3.withPackages (ps: with ps; [ pip pyglet ]))
+    (python3.withPackages (
+      ps: with ps; [
+        pip
+        pyglet
+      ]
+    ))
     typescript-language-server
     vscode-langservers-extracted
     tailwindcss-language-server
@@ -350,7 +386,7 @@ in
     pipes
     sl
     terminal-rain-lightning
-    dart-sass 
+    dart-sass
   ];
 
   gtk = {
@@ -478,5 +514,6 @@ in
   };
 
   xdg.configFile."wal/templates/colors-foot.ini".source = ../../config/wal/templates/colors-foot.ini;
-  xdg.configFile."wal/templates/colors-hyprland.conf".source = ../../config/wal/templates/colors-hyprland.conf;
+  xdg.configFile."wal/templates/colors-hyprland.conf".source =
+    ../../config/wal/templates/colors-hyprland.conf;
 }

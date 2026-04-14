@@ -139,7 +139,7 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 │   │   ├── hypridle.conf            # Idle timeout and lock triggers
 │   │   ├── hyprlock.conf            # Lock screen appearance
 │   │   ├── theme/                   # seaglass.conf, hyprchroma.conf, rules.conf
-│   │   └── waybar/                  # config.jsonc, modules.json, style.css, WaybarCava.sh, activeapp.sh
+│   │   └── waybar/                  # config.jsonc, modules.json, style.scss, mocha.css, WaybarCava.sh, activeapp.sh
 │   ├── rofi/                        # config.rasi, theme.rasi, tokens.rasi + custom themes and launch scripts
 │   ├── swappy/config                # Screenshot annotation tool config
 │   └── wal/templates/               # Pywal palette templates for Hyprland and Foot

@@ -5,8 +5,8 @@
 //   $wb-*  : Waybar  (Catppuccin Mocha + accent teal)
 //   $gf-*  : Grafana (Aquamarine theme)
 //
-// Ne pas modifier aquamarine.css / style.css directement.
-// Éditer les sources .scss, puis lancer : scss-compile
+// aquamarine.css / style.css sont générés par Nix.
+// Éditer les sources .scss, puis rebuild ; scss-compile sert aux previews.
 // =============================================================
 
 // -------------------------------------------------------------

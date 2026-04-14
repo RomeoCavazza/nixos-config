@@ -216,7 +216,7 @@ seaglass
   Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf and hyprchroma.conf.
 
 Waybar (config/hypr/waybar)
-  Status bar (config.jsonc, style.css, mocha.css, scripts).
+  Status bar (config.jsonc, generated style.css from style.scss, mocha.css, scripts).
 
 WaybarCava.sh (config/hypr/waybar/WaybarCava.sh)
   Cava integration script. Generates temporary config in /tmp/bar_cava_config. Processes raw ASCII output from Cava into bar characters for Waybar. Handles silence masking.
