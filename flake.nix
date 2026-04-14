@@ -9,7 +9,7 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
     hyprland.url = "github:hyprwm/Hyprland/v0.54.2";
-    hyprspace.url = "path:./home/tco/pkgs/hyprspace-fork";
+    hyprspace.url = "github:RomeoCavazza/Hyprspace";
     hyprspace.inputs.hyprland.follows = "hyprland";
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
     hyprland-plugins.inputs.hyprland.follows = "hyprland";
