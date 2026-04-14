@@ -135,16 +135,9 @@ flowchart TB
 
 ---
 
-## Documentation
-
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
-
-- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic)
-- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown)
-- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
-- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
-
 ## Live Infrastructure
+
+![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
 
 The observability stack (Prometheus + Loki + Grafana + Promtail) publishes live
 dashboard snapshots generated locally by a systemd timer.
@@ -158,15 +151,23 @@ The dashboard set is now intentionally split by purpose:
 Snapshot generation is documentation-only (15 minute timer + 0.5% visual delta gate). Live
 operations always happen in Grafana directly.
 
-### Main Live Dashboard
-![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
-
 Annexes and technical references live in `docs/`:
 
 - [**docs/README.md**](./docs/README.md) — annexes, Mermaid diagrams, and regeneration commands
 - [**docs/cloc-report.md**](./docs/cloc-report.md) — raw cloc report
 - [**docs/specification.txt**](./docs/specification.txt) — dense configuration glossary
 - [**docs/diagrams/**](./docs/diagrams/) — puml sources (`.puml`) and generated PNGs in `docs/assets/diagrams/`
+
+---
+
+## Documentation
+
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
+
+- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic)
+- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown)
+- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
+- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
 
 ---
 
