@@ -1,7 +1,6 @@
 <div align="center">
   <img src="./docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
-  <p><strong>Declarative, modular, and optimized workstation configuration</strong></p>
 
   <div align="center">
     <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
@@ -19,14 +18,6 @@
 ---
 
 ## Overview
-
-> [!IMPORTANT]
-> **Warning**: This configuration is tailored for my hardware. Don't blindly use these settings unless you know what they entail. Use at your own risk!
-
-> [!NOTE]
-> This repository uses a modular structure, allowing you to easily toggle specific services (databases, AI, monitoring) by importing the corresponding files in `configuration.nix`.
-
-### Documentation
 
 The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository.
 
@@ -183,6 +174,12 @@ for paths, timers, retention, and restore commands.
 ---
 
 ## Installation
+
+> [!IMPORTANT]
+> **Warning**: This configuration is tailored for my hardware. Don't blindly use these settings unless you know what they entail. Use at your own risk!
+
+> [!NOTE]
+> This repository uses a modular structure, allowing you to easily toggle specific services (databases, AI, monitoring) by importing the corresponding files in `configuration.nix`.
 
 ### Prerequisites
 - [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso)
