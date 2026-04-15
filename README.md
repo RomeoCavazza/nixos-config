@@ -42,6 +42,8 @@ Local technical annexes:
 - [docs/specification.txt](./docs/specification.txt) - dense configuration glossary
 - [docs/diagrams/](./docs/diagrams/) - PlantUML sources and generated PNGs
 
+### Architecture
+
 ```
 nixos/
 ├── config/
