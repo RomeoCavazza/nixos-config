@@ -136,52 +136,47 @@ flowchart TB
 
 ![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
 
-The observability stack (Prometheus + Loki + Grafana + Promtail) publishes live
-dashboard snapshots generated locally by a systemd timer.
+Prometheus, Loki, Grafana, and Promtail provide local observability. The
+snapshots committed under `docs/assets/live/` are documentation artifacts only:
+they are refreshed by a 15-minute systemd timer when the visual delta is over
+0.5%. Live operations stay in Grafana.
 
-The dashboard set is now intentionally split by purpose:
+Dashboard snapshots:
 
-- NixOS Metrics: cockpit now view (pressure and rebuild cost)
-- Nix Efficiency: drift view (freshness, generation debt, closure structure)
-- Incident Correlation: pressure spikes mapped to Loki logs
+- [NixOS Metrics](./docs/assets/live/live-dashboard.png) - current pressure and rebuild cost
+- [Nix Efficiency](./docs/assets/live/nix-efficiency.png) - freshness, generation debt, closure structure
+- [Incident Correlation](./docs/assets/live/incident-dashboard.png) - pressure spikes mapped to Loki logs
 
-Snapshot generation is documentation-only (15 minute timer + 0.5% visual delta gate). Live
-operations always happen in Grafana directly.
-
-Annexes and technical references live in `docs/`:
-
-- [**docs/README.md**](./docs/README.md) — annexes, Mermaid diagrams, and regeneration commands
-- [**docs/cloc-report.md**](./docs/cloc-report.md) — raw cloc report
-- [**docs/specification.txt**](./docs/specification.txt) — dense configuration glossary
-- [**docs/diagrams/**](./docs/diagrams/) — puml sources (`.puml`) and generated PNGs in `docs/assets/diagrams/`
+Runbook details live in the
+[Observability wiki page](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics).
 
 ---
 
 ## Documentation
 
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository. It covers the architecture and flake design, the SOPS/Age secrets model, and a detailed breakdown of every system and user module with the reasoning behind each configuration decision.
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository.
 
 - [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic)
 - [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown)
 - [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
 - [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
 
+Local technical annexes:
+
+- [docs/README.md](./docs/README.md) - annexes, Mermaid diagrams, and regeneration commands
+- [docs/cloc-report.md](./docs/cloc-report.md) - raw cloc report
+- [docs/specification.txt](./docs/specification.txt) - dense configuration glossary
+- [docs/diagrams/](./docs/diagrams/) - PlantUML sources and generated PNGs
+
 ---
 
 ## Backup & Secrets
 
-This setup now ships with encrypted cloud backups built around:
-
-- `sops-nix` for encrypted, committable secrets
-- `restic` for deduplicated snapshots
-- Backblaze B2 as the remote object storage backend
-
-The active design is split in two backup jobs:
-
-- `b2-critical` — `/etc/nixos`, `~/.ssh`, `~/.gnupg`, `~/.config`
-- `b2-data` — `~/Desktop`, `~/Documents`, `~/Images`
-
-Secrets are stored in-repo in encrypted form under [`secrets/`](./secrets/), while the local Age private key stays outside the repository.
+Backups use `sops-nix`, `restic`, and Backblaze B2, split into `b2-critical`
+for configuration and secret-adjacent material, and `b2-data` for user files.
+Secrets are committed only in encrypted form under [`secrets/`](./secrets/).
+See the [Security & Secrets wiki page](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
+for paths, timers, retention, and restore commands.
 
 ---
 
