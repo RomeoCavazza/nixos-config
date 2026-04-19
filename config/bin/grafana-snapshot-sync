@@ -23,9 +23,9 @@ export GIT_SSH_COMMAND
 
 # uid:slug:file:viewport_height:capture_mode:hide_panel_title
 DASHBOARDS=(
-  "nixos-engine:nixos-engine:live-dashboard.png:1200:full:"
-  "nixos-forge:nixos-forge:nix-efficiency.png:1200:full:"
-  "nixos-black-box:nixos-black-box:incident-dashboard.png:1200:full:Journald Incident Feed"
+  "nixos-engine:nixos-engine:nixos-engine.png:1200:full:"
+  "nixos-forge:nixos-forge:nixos-forge.png:1200:full:"
+  "nixos-black-box:nixos-black-box:nixos-black-box.png:1200:full:Journald Incident Feed"
 )
 
 if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
@@ -45,7 +45,7 @@ git_publish() {
 git_publish remote set-url origin "$SNAPSHOT_REPO_URL"
 git_publish fetch origin "$SNAPSHOT_BRANCH"
 git_publish checkout "$SNAPSHOT_BRANCH"
-git_publish reset --hard "origin/${SNAPSHOT_BRANCH}"
+
 
 mkdir -p "$OUT_DIR"
 

@@ -36,7 +36,7 @@ sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
 Live cockpit for pressure, retained state, store size, closure size, and rebuild cost. This is the first view to check when the machine feels slow or a rebuild looks suspicious.
 
 
-![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
+![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nixos-engine.png)
 
 - Pressure now: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
 - Retained state: `nix_generation`, `nix_generations_count`
@@ -49,7 +49,7 @@ Live cockpit for pressure, retained state, store size, closure size, and rebuild
 Drift dashboard for freshness, generation debt, closure efficiency, and rebuild cost over time. This is where stale inputs and retained-generation debt become visible before they turn into cleanup work.
 
 
-![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
+![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nixos-forge.png)
 
 - Freshness: `nix_flake_lock_age_seconds`
 - Generation debt: `nix_generations_count`
@@ -63,7 +63,7 @@ Drift dashboard for freshness, generation debt, closure efficiency, and rebuild 
 PSI spikes aligned with journald logs for fast root-cause analysis. This view answers the next question after a pressure spike: which part of the system was talking at the same time?
 
 
-![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
+![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nixos-black-box.png)
 
 - Pressure signal: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
 - Build context: `nix_rebuild_duration_ms`, `nix_rebuild_success`
