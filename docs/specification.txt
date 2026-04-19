@@ -94,14 +94,18 @@ ollama.nix:
     OLLAMA_KV_CACHE_TYPE=q8_0.
 
 observability.nix:
-  - Prometheus :9090, Node Exporter :9100, Loki :3100, Grafana :3000.
+  - Prometheus :9090, Node Exporter :9100, NVIDIA GPU Exporter :9835,
+    Loki :3100, Grafana listener :3001 (proxied to :3000 by nginx.nix).
   - Promtail runs as raw systemd service (NixOS module conflict workaround),
     binary sourced from pkgs-stable.promtail via custom overlay.
-  - Three dashboards are provisioned: `nixos-metrics`, `nix-efficiency`,
-    `incident-correlation`.
-  - Local Continuous Documentation: `grafana-snapshot-sync.timer` captures
-    dashboards via headless browser, writes snapshots to docs/assets/live, and
-    publishes through a dedicated checkout when image delta > 0.5%.
+  - Four dashboards provisioned from /etc/nixos/config/grafana/ (hot-reload
+    mutable path): nixos-metrics.json, nix-efficiency.json,
+    incident-correlation.json, nixos-compiled.json.
+  - Local Continuous Documentation: `grafana-snapshot-sync.timer` (every 15min)
+    captures dashboards via headless Playwright/Chrome, writes PNGs to
+    docs/assets/live, publishes via git push when image delta > 0.3%
+    (MIN_CHANGE_PERCENT=0.3 in service environment).
+  - Additional timers: nix-metrics (15min), hypr-metrics (30s).
   - Log correlation labels: promtail injects `component=display|build|system`.
 
 gdm-wallpaper.nix:
@@ -112,8 +116,12 @@ databases.nix:
   - PostgreSQL 17 + PostGIS, Redis (2GB allkeys-lru, AOF+RDB), Qdrant :6333.
 
 nginx.nix:
-  - Reverse proxy: localhost:8081, dev.localhost:8082, streamlit.localhost:8083.
-    WebSocket proxying enabled.
+  - Four virtual hosts, all on 127.0.0.1, all with WebSocket proxying:
+    * localhost:3000  → Grafana listener :3001  (grafana.localhost-proxy)
+    * localhost:8081  → localhost:80             (localhost-proxy, generic dev)
+    * dev.localhost:8082 → localhost:80          (dev.localhost-proxy)
+    * streamlit.localhost:8083 → localhost:8501  (streamlit.localhost-proxy)
+  - Ports 8081/8082/8083 opened in firewall. Port 3000 is loopback-only.
 
 --------------------------------------------------------------------------------
 4b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
@@ -172,7 +180,11 @@ config/
   Source configuration tree (hypr, waybar, rofi, foot, doom, bin, swappy).
 
 config/bin/
-  Custom scripts: antigravity, cursor, edex-conky-toggle, edex-toggle, hypr-plugins-init, legion-pulse, legion-toggle.
+  Custom scripts (18 total): antigravity, cursor, cursor-toggle,
+  edex-conky-toggle, edex-toggle, grafana-generate, grafana-snapshot-sync,
+  hypr-close-all, hypr-layout-toggle, hypr-metrics, hypr-plugins-init,
+  legion-pulse, legion-toggle, nix-flamegraph.py, nix-metrics, rebuild,
+  scss-compile, waybar-toggle.
 
 antigravity (home.file.".local/bin/antigravity")
   Wrapper script that runs /etc/nixos/config/bin/antigravity. Lets you invoke the system binary from the user profile.
@@ -223,20 +235,28 @@ seaglass
 Waybar (config/hypr/waybar)
   Status bar (config.jsonc, generated style.css from style.scss, mocha.css, scripts).
 
-WaybarCava.sh (config/hypr/waybar/WaybarCava.sh)
-  Cava integration script. Generates temporary config in /tmp/bar_cava_config. Processes raw ASCII output from Cava into bar characters for Waybar. Handles silence masking.
+WaybarCava.sh (config/bin/WaybarCava.sh → ~/.local/bin/ via home.file)
+  Cava integration script. Generates temporary config in /tmp/bar_cava_config.
+  Processes raw ASCII output from Cava into bar characters for Waybar.
+  Handles silence masking.
 
-activeapp.sh (config/hypr/waybar/activeapp.sh)
-  Active window tracker. Uses `hyprctl activewindow` and `jq` to extract class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.). Outputs JSON for Waybar.
+activeapp.sh (config/bin/activeapp.sh → deployed via home.file)
+  Active window tracker. Uses `hyprctl activewindow` and `jq` to extract
+  class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.).
+  Outputs JSON for Waybar.
 
 rofi (config/rofi, home.file.".config/rofi")
   Active runtime: config.rasi, theme.rasi, custom/column-tco.rasi, scripts/rofi-push.sh, bin/rofi-grid.sh, themes/apps-grid.rasi. Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
 
-rofi-push.sh (config/rofi/scripts/rofi-push.sh)
-  Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400. Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi without overlapping windows. Restores original gaps on exit.
+rofi-push.sh (config/bin/rofi-push.sh → ~/.local/bin/ via home.file)
+  Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400.
+  Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi
+  without overlapping windows. Restores original gaps on exit.
 
-rofi-grid.sh (config/rofi/bin/rofi-grid.sh)
-  Display management. Temporarily increases Hyprland blur size when Rofi is active. Kills Waybar on launch and relaunches it on exit to ensure visual consistency.
+rofi-grid.sh (config/bin/rofi-grid.sh → ~/.local/bin/ via home.file)
+  Display management. Temporarily increases Hyprland blur size when Rofi
+  is active. Kills Waybar on launch and relaunches it on exit to ensure
+  visual consistency.
 
 foot (config/foot/, home.file.".config/foot")
   Foot terminal configuration (foot.ini). Theme and colour palette.
@@ -324,7 +344,10 @@ virtualisation.nix (modules/)
   Libvirt and virtualisation tools.
 
 emacs.nix (modules/)
-  Emacs / Doom configuration (referenced in config/doom).
+  Emacs daemon (emacs-pgtk, Wayland-native). LSP servers: nil (Nix),
+  bash-language-server. Build tools: clang, cmake, gnumake, libtool.
+  Publishing: pandoc, graphviz. LaTeX: texlive scheme-medium.
+  User config lives in config/doom/ (Doom Emacs).
 
 launcher.nix (modules/)
   Launcher integration (Rofi etc.).
@@ -380,7 +403,10 @@ Commands
   theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
   integration-logic.puml   Logical dependencies between Nix, Rofi, and Waybar
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
-  flake-outputs.puml    nixosConfigurations — 10 inputs, system + HM + sops output
+  flake-outputs.puml    nixosConfigurations — 10 inputs (nixpkgs, nixpkgs-stable,
+                        home-manager, rust-overlay, hyprland, hyprspace,
+                        hyprland-plugins, hyprtasking, nix-snapd, sops-nix),
+                        system + HM + sops output
 
   Regenerate PlantUML  (cd docs/diagrams/puml && nix shell nixpkgs#plantuml --command plantuml -tpng -o ../png ./*.puml)
   Regenerate TreeViews  node docs/diagrams/carbon/render-code-map.mjs
