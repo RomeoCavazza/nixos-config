@@ -37,32 +37,13 @@ Local technical annexes:
 
 ```
 nixos/
-├── config/
-│   ├── bin/          # Custom scripts
-│   ├── doom/         # Doom Emacs
-│   ├── foot/         # Terminal
-│   ├── hypr/         # Hyprland + Waybar
-│   ├── rofi/         # Active Rofi runtime
-│   └── swappy/       # Screenshot editor config
-├── home/tco/
-│   ├── home.nix      # Home Manager entry point
-│   ├── modules/
-│       └── apps/
-│           ├── cad.nix       # obsidian, kicad, freecad
-│           ├── embedded.nix  # arduino, esptool, minicom
-│           └── data.nix      # dbeaver, grafana, influxdb2
-├── modules/          # System-only modules (services, drivers)
-│   ├── backup.nix
-│   ├── nvidia-prime.nix
-│   ├── virtualisation.nix
-│   ├── databases.nix
-│   ├── ollama.nix
-│   ├── observability.nix
-│   └── ...
-├── secrets/          # SOPS-encrypted secrets committed safely
-├── configuration.nix
-├── flake.nix
-└── flake.lock
+├── config/           # Application-specific configurations (Hypr, scripts, terminal)
+├── home/tco/         # Home Manager entry point and user-space modules
+│   └── modules/      # Domain-specific apps (CAD, data, embedded)
+├── modules/          # System-level services and driver configurations
+├── secrets/          # SOPS-encrypted secrets
+├── configuration.nix # Core system entry point
+└── flake.nix         # Flake definition and inputs
 ```
 
 ---
