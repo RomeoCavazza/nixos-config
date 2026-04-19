@@ -1,17 +1,14 @@
+// Grafana dashboard helpers (Grafonnet-style).
+// Colors use Grafana's built-in semantic names so dashboards
+// render with the stock dark theme without custom CSS.
+
 local colors = {
-  aqua: '#36e7d6',
-  cyan: '#27c6ff',
-  blue: '#155ec9',
-  sapphire: '#65b8ff',
-  sky: '#8df4ec',
-  ice: '#d3fbff',
-  lavender: '#9cb7ff',
-  mauve: '#b48efa',
-  rose: '#a66d88',
-  text: '#d8f7fb',
-  ok: '#36e7d6',
-  warn: '#65b8ff',
-  crit: '#b48efa',
+  ok: 'green',
+  warn: 'orange',
+  crit: 'red',
+  info: 'blue',
+  accent: 'purple',
+  neutral: 'text',
 };
 
 {
@@ -33,17 +30,14 @@ local colors = {
     { color: colors.crit, value: crit },
   ]),
 
-  greenYellowRedHex(warn, crit):: $.thresholds([
-    { color: colors.ok, value: null },
-    { color: colors.warn, value: warn },
-    { color: colors.crit, value: crit },
-  ]),
+  // Legacy alias kept for existing call sites.
+  greenYellowRedHex(warn, crit):: $.greenYellowRed(warn, crit),
 
   noDataMapping:: {
     type: 'special',
     options: {
       match: 'null',
-      result: { text: 'No data', color: colors.text, index: 0 },
+      result: { text: 'No data', color: colors.neutral, index: 0 },
     },
   },
 
@@ -75,7 +69,7 @@ local colors = {
     schemaVersion: 39,
     version: 1,
     editable: true,
-    graphTooltip: 0,
+    graphTooltip: 1,
     fiscalYearStartMonth: 0,
     liveNow: false,
     tags: ['nixos', 'local-observability'],
@@ -128,7 +122,7 @@ local colors = {
     x,
     y,
     w,
-    h=3,
+    h=4,
     datasource='Prometheus',
     legend='value',
     unit=null,
@@ -138,7 +132,8 @@ local colors = {
     thresholds=null,
     mappings=null,
     colorMode='value',
-    graphMode='area'
+    graphMode='area',
+    textMode='auto'
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -149,10 +144,11 @@ local colors = {
     options: {
       reduceOptions: { values: false, calcs: ['lastNotNull'], fields: '' },
       orientation: 'auto',
-      textMode: 'auto',
+      textMode: textMode,
       colorMode: colorMode,
       graphMode: graphMode,
       justifyMode: 'auto',
+      percentChangeColorMode: 'standard',
     },
     fieldConfig: {
       defaults:
@@ -208,8 +204,7 @@ local colors = {
   barGaugePanel(
     id,
     title,
-    expr,
-    legend,
+    targets,
     x,
     y,
     w,
@@ -227,7 +222,16 @@ local colors = {
     type: 'bargauge',
     title: title,
     datasource: 'Prometheus',
-    targets: [$.prometheusTarget(expr, legend)],
+    targets: std.mapWithIndex(
+      function(i, t)
+        $.prometheusTarget(
+          t.expr,
+          t.legend,
+          std.get(t, 'refId', std.substr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, 1)),
+          instant=true
+        ),
+      targets
+    ),
     options: {
       reduceOptions: { values: false, calcs: ['lastNotNull'], fields: '' },
       orientation: orientation,
@@ -237,6 +241,7 @@ local colors = {
       showUnfilled: true,
       minVizWidth: 0,
       minVizHeight: 10,
+      sizing: 'auto',
     },
     fieldConfig: {
       defaults: {
@@ -312,7 +317,7 @@ local colors = {
     unit='none',
     showLegend=false,
     showValue='never',
-    rowHeight=0.84
+    rowHeight=0.9
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -343,7 +348,7 @@ local colors = {
         ]) else thresholds,
         mappings: mappings,
         custom: {
-          fillOpacity: 82,
+          fillOpacity: 80,
           lineWidth: 0,
           spanNulls: false,
           hideFrom: { legend: false, tooltip: false, viz: false },
@@ -364,11 +369,11 @@ local colors = {
     unit=null,
     axisLabel='',
     overrides=[],
-    fillOpacity=8,
-    gradientMode='none',
+    fillOpacity=10,
+    gradientMode='opacity',
     thresholdsStyle='off',
     stackingMode='none',
-    tooltip='single',
+    tooltip='multi',
     thresholds=null,
     drawStyle='line',
     lineInterpolation='smooth',
@@ -379,9 +384,10 @@ local colors = {
     legendDisplayMode='list',
     legendPlacement='bottom',
     legendCalcs=['lastNotNull'],
-    tooltipSort='none',
+    tooltipSort='desc',
     axisPlacement='auto',
-    showLegend=true
+    showLegend=true,
+    colorMode='palette-classic'
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -400,7 +406,7 @@ local colors = {
     fieldConfig: {
       defaults:
         {
-          color: { mode: 'palette-classic' },
+          color: { mode: colorMode },
           custom: {
             axisCenteredZero: false,
             axisColorMode: 'text',

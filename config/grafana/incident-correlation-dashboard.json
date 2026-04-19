@@ -18,7 +18,7 @@
   "description": "High-frequency pressure timeline linked to Loki logs for incident analysis.",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "liveNow": false,
   "panels": [
     {
@@ -29,8 +29,8 @@
         "x": 0,
         "y": 0
       },
-      "id": 20,
-      "title": "Incident Snapshot",
+      "id": 10,
+      "title": "Snapshot",
       "type": "row"
     },
     {
@@ -45,15 +45,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 10
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 30
               }
             ]
@@ -63,17 +63,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 0,
         "y": 1
       },
-      "id": 21,
+      "id": 11,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -86,7 +87,7 @@
       "targets": [
         {
           "expr": "max({__name__=~\"nix_pressure_cpu_avg10|nix_pressure_io_some_avg10|nix_pressure_mem_some_avg10\"})",
-          "legendFormat": "pressure",
+          "legendFormat": "value",
           "refId": "A"
         }
       ],
@@ -105,7 +106,7 @@
               "options": {
                 "match": "null",
                 "result": {
-                  "color": "#36e7d6",
+                  "color": "green",
                   "index": 0,
                   "text": "Quiet"
                 }
@@ -116,7 +117,7 @@
               "options": {
                 "from": 0,
                 "result": {
-                  "color": "#36e7d6",
+                  "color": "green",
                   "index": 1,
                   "text": "Quiet"
                 },
@@ -128,7 +129,7 @@
               "options": {
                 "from": 1,
                 "result": {
-                  "color": "#65b8ff",
+                  "color": "orange",
                   "index": 2,
                   "text": "Watch"
                 },
@@ -140,7 +141,7 @@
               "options": {
                 "from": 5,
                 "result": {
-                  "color": "#b48efa",
+                  "color": "red",
                   "index": 3,
                   "text": "Noisy"
                 },
@@ -153,15 +154,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 1
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 5
               }
             ]
@@ -171,17 +172,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 4,
         "y": 1
       },
-      "id": 22,
+      "id": 12,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -197,7 +199,7 @@
           "refId": "A"
         }
       ],
-      "title": "Recent Errors",
+      "title": "Recent Errors (15m)",
       "type": "stat"
     },
     {
@@ -212,15 +214,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 5
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 10
               }
             ]
@@ -230,17 +232,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 8,
         "y": 1
       },
-      "id": 23,
+      "id": 13,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -253,7 +256,7 @@
       "targets": [
         {
           "expr": "nix_pressure_cpu_avg10",
-          "legendFormat": "cpu",
+          "legendFormat": "value",
           "refId": "A"
         }
       ],
@@ -272,15 +275,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 5
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 10
               }
             ]
@@ -290,17 +293,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 12,
         "y": 1
       },
-      "id": 24,
+      "id": 14,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -313,7 +317,7 @@
       "targets": [
         {
           "expr": "nix_pressure_io_some_avg10",
-          "legendFormat": "io",
+          "legendFormat": "value",
           "refId": "A"
         }
       ],
@@ -332,15 +336,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 5
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 10
               }
             ]
@@ -350,17 +354,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 16,
         "y": 1
       },
-      "id": 25,
+      "id": 15,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -373,7 +378,7 @@
       "targets": [
         {
           "expr": "nix_pressure_mem_some_avg10",
-          "legendFormat": "mem",
+          "legendFormat": "value",
           "refId": "A"
         }
       ],
@@ -387,19 +392,20 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 300
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 900
               }
             ]
@@ -409,17 +415,18 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 4,
         "x": 20,
         "y": 1
       },
-      "id": 26,
+      "id": 16,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -432,7 +439,7 @@
       "targets": [
         {
           "expr": "nix_rebuild_duration_ms / 1000",
-          "legendFormat": "duration",
+          "legendFormat": "value",
           "refId": "A"
         }
       ],
@@ -445,9 +452,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
-      "id": 30,
+      "id": 20,
       "title": "Pressure Signal",
       "type": "row"
     },
@@ -465,14 +472,14 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 12,
+            "fillOpacity": 16,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 4,
             "scaleDistribution": {
@@ -485,115 +492,46 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "line"
+              "mode": "dashed"
             }
           },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 10
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 30
               }
             ]
           },
           "unit": "percent"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#36e7d6",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 12
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "IO"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#27c6ff",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "MEM"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#9cb7ff",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 8
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 6
       },
-      "id": 31,
+      "id": 21,
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
+            "mean",
             "max"
           ],
           "displayMode": "table",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
@@ -629,7 +567,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "fillOpacity": 82,
+            "fillOpacity": 80,
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -642,17 +580,17 @@
             {
               "options": {
                 "0": {
-                  "color": "#36e7d6",
+                  "color": "green",
                   "index": 0,
                   "text": "Good"
                 },
                 "1": {
-                  "color": "#65b8ff",
+                  "color": "orange",
                   "index": 1,
                   "text": "Watch"
                 },
                 "2": {
-                  "color": "#b48efa",
+                  "color": "red",
                   "index": 2,
                   "text": "Critical"
                 }
@@ -664,15 +602,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#36e7d6",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "#65b8ff",
+                "color": "orange",
                 "value": 1
               },
               {
-                "color": "#b48efa",
+                "color": "red",
                 "value": 2
               }
             ]
@@ -682,12 +620,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 15
       },
-      "id": 32,
+      "id": 22,
       "options": {
         "alignValue": "center",
         "legend": {
@@ -696,7 +634,7 @@
           "showLegend": false
         },
         "mergeValues": true,
-        "rowHeight": 0.83999999999999997,
+        "rowHeight": 0.90000000000000002,
         "showValue": "never",
         "tooltip": {
           "mode": "multi",
@@ -720,7 +658,7 @@
           "refId": "C"
         }
       ],
-      "title": "Incident Regime Timeline",
+      "title": "Incident Regime",
       "type": "state-timeline"
     },
     {
@@ -729,9 +667,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 19
       },
-      "id": 40,
+      "id": 30,
       "title": "Journal Correlation",
       "type": "row"
     },
@@ -741,9 +679,9 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 20
       },
-      "id": 41,
+      "id": 31,
       "options": {
         "dedupStrategy": "none",
         "showCommonLabels": false,
@@ -758,7 +696,7 @@
           "refId": "A"
         }
       ],
-      "title": "Loki Journal (display/build)",
+      "title": "Loki Journal (display / build)",
       "type": "logs"
     }
   ],
