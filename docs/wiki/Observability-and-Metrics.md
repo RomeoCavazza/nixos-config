@@ -28,7 +28,7 @@ Snapshots are checked every 15 minutes and published when visual delta exceeds 0
 Regeneration command:
 ```bash
 cd /etc/nixos
-nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
+sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
 ```
 
 ### 1. NixOS System Cockpit
@@ -38,7 +38,9 @@ The primary view for overall system health and real-time monitoring.
 ![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
 
 - **Operational Rail (25 Gauges)**: CPU/RAM/PSI, Thermal sensors, Store Fill, Journal Incidents, hyprland status.
-- **Resource Pressure Heatmap**: Multi-dimensional visual density of CPU/Mem/IO pressure.
+- **Resource Pressure Heatmap**: Multi-dimensional view of CPU/Mem/IO pressure with sharpened raw spikes.
+- **Resource Pressure Timeline**: Historical PSI trends for identifying bottlenecks.
+- **Temperature Sensors**: Detailed chip and thermal zone monitoring (CPU, NVMe, etc.).
 - **NVIDIA GPU Metrics**: VRAM occupancy and real-time Power Draw (Watts).
 - 🧬 **Source**: `config/grafana/src/nix-dashboard.jsonnet`
 
@@ -51,7 +53,7 @@ Tracking drift, generation debt, and the cost of system rebuilds.
 - **Generation Debt**: `nix_generations_count` and `nix_flake_lock_age_seconds`.
 - **Closure Shape**: `nix_closure_bytes` vs `nix_store_bytes` ratio.
 - **Store Performance**: Rebuild activity calendar and scheduler pulse.
-- **Rebuild impact**: Includes Pressure Timeline to monitor build-induced system stress.
+- **System stress context**: Includes Pressure Timeline and Thermal sensors to monitor impact of heavy builds.
 - 🧬 **Source**: `config/grafana/src/nix-efficiency-dashboard.jsonnet`
 
 ### 3. Incident Diagnostics
@@ -63,7 +65,7 @@ Log correlation matched with hardware risk signals for fast root-cause analysis.
 - **Incident Risk River**: Stream graph of disk/net risk signals vs log volume.
 - **Journal Logs**: Filtered incident feed (`failed`, `panic`, `segfault`, etc.).
 - **Network & Disk Faults**: I/O throughput vs latency and network error rates.
-- **Correlation Context**: Includes Temperature Sensors to match log events with physical hardware stress.
+- **Correlation Context**: Includes Pressure Timeline and GPU metrics to match log events with hardware stress.
 - 🧬 **Source**: `config/grafana/src/incident-correlation-dashboard.jsonnet`
 
 ---
