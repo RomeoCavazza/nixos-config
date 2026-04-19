@@ -1,70 +1,88 @@
-# NixOS Workstation: Sovereignty by Design
+# NixOS Workstation Configuration
 
 [![NixOS](https://img.shields.io/badge/NixOS-26.05%20Unstable-5277C3?logo=nixos&logoColor=white)](https://nixos.org)
 [![Hyprland](https://img.shields.io/badge/Hyprland-v0.54.2-blue)](https://hyprland.org)
 [![Home Manager](https://img.shields.io/badge/Home%20Manager-Integrated-4E9A06)](https://github.com/nix-community/home-manager)
 [![SOPS-nix](https://img.shields.io/badge/Secrets-SOPS%2FAge-FF6600)](https://github.com/Mic92/sops-nix)
 [![Observability](https://img.shields.io/badge/Observability-Prometheus%20%7C%20Loki%20%7C%20Grafana-0E7490?logo=grafana&logoColor=white)](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
+[![Live Snapshots](https://img.shields.io/badge/Live%20Snapshots-Auto--Published-22c55e?logo=github&logoColor=white)](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/live/nix-efficiency.png)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 
-> **Infrastructure as Code pushed to its limit, applied to the personal workstation.**  
-> This is a fully declarative, reproducible, and auditable system built on the philosophy of digital sovereignty.
+> **Declarative, reproducible, and auditable infrastructure for a development workstation.**  
+> Managed entirely through Nix Flakes, Home Manager, and encrypted secrets — rebuilt from scratch in a single command.
 
 ![](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/htop.png)
 
----
+## Wiki Pages
 
-## Overview
-
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository.
-
-- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic) — inputs, overlays, build flow, and rollback strategy.
-- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown) — per-module deep-dive into the engineering decisions.
-- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets) — SOPS/Age cryptographic model and secret lifecycle.
-- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics) — Dashboards, correlation logs, and live snapshots.
+- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic) — inputs, overlays, build flow, rollback strategy, store hygiene
+- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets) — SOPS/Age cryptographic model, secret lifecycle, backup encryption
+- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown) — per-module deep-dive with the reasoning behind each configuration decision
+- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics) — PSI gauges, Nix efficiency dashboards, Loki correlation, and live snapshot publication
 
 ---
 
-## The Vision: A Desktop for Life
+## What This Is
 
-Managing a workstation with NixOS is a move from **mutable, opaque environments** to a **declarative state**. It represents the same discipline that production infrastructure demands: every change goes through code, every dependency is pinned, and every secret is encrypted.
+This repository is not a collection of dotfiles. It is a fully declarative system configuration covering the entire stack — kernel parameters, GPU drivers, system services, user packages, editor configuration, application themes, and encrypted cloud backups — expressed as version-controlled Nix code.
 
-The goal is to reclaim **Digital Sovereignty**. On this machine, nothing is "magic." If a tool isn't declared in the configuration, it doesn't exist. This eliminates configuration drift and ensures that the system you run today is the exact system you will run in five years, on any hardware.
-
-### Core Properties
-
-**Reproducibility.** The entire system state is pinned in `flake.lock`. A cold reinstall is a `git clone` followed by a single command. It eliminates the "works on my machine" problem—the `flake.lock` file is the contract.
-
-**Security.** Secrets (API keys, backup credentials) are encrypted with **SOPS/Age**. They are decrypted into a `tmpfs` (RAM-only) at activation, leaving no trace on disk. The system identity itself handles decryption, ensuring that secrets never enter the repository in plaintext.
-
-**Observability.** A production-grade SRE stack (Prometheus, Loki, Grafana) monitors the host. This builds the intuition needed to manage high-availability systems by watching a real machine under real workloads.
+The machine is a Lenovo Legion laptop running NixOS on an Intel/NVIDIA hybrid setup. The primary compositor is Hyprland on Wayland, with GNOME available as a secondary session through GDM. Both environments coexist without conflicts: GDM handles session selection at login, and each session manages its own portal and audio backends independently. The system channel tracks `nixos-unstable` for access to current drivers and toolchains, while a subset of packages is pinned to `nixos-24.11` where stability or compatibility requires it. The entire state of the machine — what runs, what is installed, how services are configured — is defined by this repository. Nothing runs on this machine that is not declared here.
 
 ---
 
-## Architecture & Logic
+## Why This Matters
 
-The configuration defines a single system output, `nixosConfigurations.nixos`, which applies two layers atomically:
-1.  **NixOS System Layer**: Kernel, drivers, and system services defined in `configuration.nix`.
-2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in `home/tco/home.nix`.
+Managing a personal workstation with Nix Flakes is a deliberate engineering choice, not an aesthetic one. It imposes the same discipline that production infrastructure demands: every change goes through code, every dependency is pinned, every secret is treated as sensitive material. The result is a system that behaves identically after a full reinstall, on a different disk, or months later — because its state is entirely defined by the repository, not by accumulated manual steps.
 
-Both layers are versioned in the same flake. It is not possible to apply a system update without syncing the user environment, and a failure in either part prevents activation of the entire rebuild.
+Three properties define a production-grade infrastructure. This configuration demonstrates all three at the workstation level.
+
+**Reproducibility.** The entire system state is pinned in `flake.lock`. A cold reinstall is a `git clone` followed by a single `nixos-rebuild switch`. No manual steps, no configuration drift, no "works on my machine." The `flake.lock` file is the contract: what is pinned there is what runs. Updates are explicit, reviewed via `git diff flake.lock`, and applied atomically on the next rebuild.
+
+**Security.** API keys and backup credentials are encrypted with Age before being committed to the repository. They are decrypted into an ephemeral `tmpfs` mount at activation time by the machine's own Age identity, which never enters the repository. The key property of SOPS is that it encrypts values while leaving keys in plaintext — so the structure of what secrets exist is auditable without exposing the content. Decrypted material lives only in RAM and is gone on reboot.
+
+**Observability.** A complete local monitoring stack runs as NixOS services. Prometheus scrapes system metrics from Node Exporter, Promtail ships the systemd journal to Loki, and Grafana provides unified dashboards pre-wired to both sources. The rationale is practical: understanding what a healthy system looks like at the metrics level — CPU patterns, memory pressure, driver events, service restart frequency — is intuition built by watching a real system, not by reading documentation. Running the same tools used in production on a personal machine builds that intuition daily.
+
+---
+
+## Repository Structure
+
+The repository is organized around a clear separation of concerns. `flake.nix` declares what the system depends on. `configuration.nix` declares what services the system runs. `home/tco/home.nix` declares what the user environment looks like. The `modules/` directory contains the implementation of each service, kept separate so any module can be toggled, audited, or copied to another host independently.
+
+The `config/` directory holds application dotfiles — Hyprland, Waybar, Rofi, the foot terminal, Doom Emacs, and others — which Home Manager symlinks into place during activation. The `secrets/` directory holds SOPS-encrypted credential files. The `docs/` directory holds architecture documentation and technical specifications.
+
+---
+
+## Architecture
+
+The flake defines a single system output, `nixosConfigurations.nixos`, which combines two independent trees applied atomically on every rebuild. The first is the NixOS system layer — kernel, drivers, services, system packages — built from `configuration.nix` and the modules it imports. The second is the Home Manager user layer — editor configuration, shell, themes, user-space applications — built from `home/tco/home.nix`. Home Manager is embedded inline in the flake rather than managed as a separate command, which means both layers are always in sync. It is not possible to apply a system change without also applying the corresponding user change, and if either half fails to build, neither is activated.
+
+<<<<<<< HEAD
+The flake declares ten external inputs. The base system tracks `nixos-unstable` for current packages. Two packages — `promtail` and `guix` — are sourced from `nixos-24.11` via a custom overlay to avoid module conflicts and build environment issues that exist on the unstable channel. Hyprland and all three of its plugins are pinned to the same exact version tag, because compositor plugins share internal ABI with the compositor binary and a version mismatch between the two causes crashes or silent failures at load time. The plugin sources are vendored locally in `home/tco/pkgs/` and compiled during `nixos-rebuild` against the pinned Hyprland headers — no binary downloads, no version ambiguity.
+=======
+The flake declares ten external inputs. The base system tracks `nixos-unstable` for current packages. Two packages — `promtail` and `guix` — are sourced from `nixos-24.11` via a custom overlay to avoid module conflicts and build environment issues that exist on the unstable channel. Hyprland and the custom plugins are pinned through the flake lock or fixed GitHub source revisions, because compositor plugins share internal ABI with the compositor binary and a version mismatch between the two causes crashes or silent failures at load time. The plugin sources live in RomeoCavazza GitHub forks and are compiled during `nixos-rebuild` against the pinned Hyprland headers — no binary downloads, no hidden local fork copies.
+>>>>>>> 4425623 (docs: sync wiki files)
+
+Three overlays are applied to the package set before any module evaluates: one from `rust-overlay` to inject Rust toolchains, one from the Hyprland flake to inject compositor packages, and one custom overlay that pulls `promtail` and `guix` from the stable channel.
 
 ---
 
 ## Desktop Environment
 
-**GDM** serves as the display manager, allowing a seamless choice between **Hyprland** (on Wayland) and **GNOME** (as a fallback). The two environments coexist without friction, sharing the same audio (Pipewire) and portal layers.
+GDM is the display manager. At login, the user selects between Hyprland as the primary Wayland compositor and GNOME as a full fallback session. The two environments share the same audio backend (Pipewire), the same portal layer, and the same user packages, with no conflicts between them.
 
-The Hyprland setup is highly custom, using plugins for workspace overviews and infinite canvas layouts. Dynamic theming is handled via **PyWal**, which synchronizes the color palette of the terminal, status bar, and compositor based on the active wallpaper.
+<<<<<<< HEAD
+The Hyprland setup goes beyond basic window manager configuration. Three plugins are compiled from locally vendored forks: Hyprspace provides a workspace overview, hypr-canvas provides an infinite canvas for grouping workspaces, and Hyprchroma applies an adaptive tint shader. Color theming is handled dynamically by PyWal, which extracts a palette from the active wallpaper and writes it into template files that Hyprland, the foot terminal, and Waybar all read — keeping the color scheme consistent across every visible surface without manual coordination.
+=======
+The Hyprland setup goes beyond basic window manager configuration. Three plugins are compiled from RomeoCavazza GitHub forks: Hyprspace provides a workspace overview, hypr-canvas provides an infinite canvas for grouping workspaces, and Hyprchroma applies an adaptive tint shader. Color theming is handled dynamically by PyWal, which extracts a palette from the active wallpaper and writes it into template files that Hyprland, the foot terminal, and Waybar all read — keeping the color scheme consistent across every visible surface without manual coordination.
+>>>>>>> 4425623 (docs: sync wiki files)
 
 ---
 
-## Development Toolchains
+## Development Tooling
 
-Each engineering domain is encapsulated in a dedicated module. Enabling a full toolchain is a single import line away:
-- **Rust & systems programming** (via `rust-overlay`).
-- **Python & Data Engineering** (with InfluxDB, PostgreSQL, Qdrant).
-- **Local AI & LLMs** (via Ollama on CUDA and vector search).
-- **Embedded & Hardware** (Arduino, ESPTool, KiCad, FreeCAD).
+The workstation is configured for multiple engineering disciplines. Rather than installing tools ad hoc, each domain has a dedicated module — either a Home Manager module for user-space tools or a NixOS module for services — so the full toolchain for any domain is available immediately after a rebuild and equally cleanly removed by dropping an import.
+
+The domains covered include Rust systems programming, Python data work, web development, CAD and PCB design with KiCad and FreeCAD, embedded firmware work with Arduino and esptool, database engineering with PostgreSQL and Qdrant, and local LLM inference through Ollama on CUDA. The breadth reflects a generalist engineering practice where the workstation adapts to the problem at hand.
 
 ---
 
@@ -77,13 +95,19 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 # Update all flake inputs and rebuild
 nix flake update && sudo nixos-rebuild switch --flake .#nixos
 
-# Preview changes before switching
+# Preview what will change before switching
 sudo nixos-rebuild build --flake .#nixos && nvd diff /run/current-system result
 
 # Edit an encrypted secret
 sops secrets/backup.yaml
+
+# Check backup timer schedule
+systemctl list-timers | grep restic
+
+# Check observability stack status
+systemctl status prometheus grafana loki
 ```
 
 ---
 
-*This wiki is the living documentation of a system that defines its own existence. Fork it, improve it, and reclaim your digital sovereignty.*
+*This wiki is generated from source — the configuration it describes is the configuration that runs.*
