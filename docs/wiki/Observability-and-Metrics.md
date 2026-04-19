@@ -16,7 +16,7 @@ The stack is intentionally small: Prometheus and Node Exporter handle metrics, L
 | Promtail | systemd service | Journald scraping and labeling |
 | Grafana | `localhost:3000` | Dashboards and correlation UI |
 
-All services are Nix-declared and activated with `nixos-rebuild`.
+All services are Nix-declared in [`modules/observability.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/observability.nix) and activated with `nixos-rebuild`.
 
 
 ## Dashboards Overview
@@ -91,9 +91,9 @@ Promtail adds a `component` label for targeted LogQL queries:
 ## Technical Pipeline
 
 1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/).
-2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate) produces the provisioned JSON.
-3. **Capture**: `grafana-snapshot-sync.timer` captures PNGs every 15m.
-4. **Publish**: PNGs reaching >0.5% delta are pushed to `docs/assets/live/`.
+2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate) produces the provisioned JSON in [`config/grafana/dashboards/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/dashboards/).
+3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 15m.
+4. **Publish**: PNGs reaching >0.5% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
 
-Rendered assets path: `docs/assets/live/`.
+Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
 Publisher checkout: `/var/lib/grafana-snapshot-sync/setup-os`.

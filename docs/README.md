@@ -61,7 +61,7 @@ Audio runs through Pipewire with the full compatibility layer enabled: ALSA with
 
 Home Manager runs inline within the system build, applied atomically on every `nixos-rebuild switch`. The user configuration covers package installation, dotfile symlinking, shell environment, program configuration, and GTK theming — all expressed as declarative Nix code in [`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix) and its imported modules.
 
-**Dotfile strategy.** Application configs live under `config/` in the repository and are symlinked into place by Home Manager via `home.file` entries. Editing files directly at `/etc/nixos/config/hypr/hyprland.conf` takes effect immediately for Hyprland (which reads from the symlink target), and the change is tracked in git. The active symlink map:
+**Dotfile strategy.** Application configs live under [`config/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/) in the repository and are symlinked into place by Home Manager via `home.file` entries. Editing files directly at `/etc/nixos/config/hypr/hyprland.conf` takes effect immediately for Hyprland (which reads from the symlink target), and the change is tracked in git. The active symlink map:
 
 ```
 ~/.config/hypr     → /etc/nixos/config/hypr/
@@ -75,9 +75,9 @@ Home Manager runs inline within the system build, applied atomically on every `n
 
 **User packages** cover shell utilities (bat, eza, fzf, yazi, zoxide), editors (Zed, Neovim, VSCode with Nix/Python/Rust extensions), AI coding tools (aider-chat, Cursor AppImage via wrapper), Rust and Node.js 22 toolchains, creative tools (OBS, Discord, Spotify), and system monitoring (btop, nvitop, glances). Domain-specific toolchains are grouped in optional app modules: [`cad.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/cad.nix) (Obsidian, KiCad, FreeCAD), [`embedded.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/embedded.nix) (Arduino IDE/CLI, esptool, minicom), [`data.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/data.nix) (DBeaver, Grafana, InfluxDB2).
 
-**Hyprchroma / hypr-darkwindow.** The RomeoCavazza/Hyprchroma fork is fetched by Nix and compiled during Home Manager activation, producing `~/.local/lib/libhypr-darkwindow.so`. The plugin provides inactive-window tinting and workspace-transition smoothing. Configuration lives in `config/hypr/theme/hyprchroma.conf`; the dispatcher `togglechromakey` enables runtime toggling.
+**Hyprchroma / hypr-darkwindow.** The RomeoCavazza/Hyprchroma fork is fetched by Nix and compiled during Home Manager activation, producing `~/.local/lib/libhypr-darkwindow.so`. The plugin provides inactive-window tinting and workspace-transition smoothing. Configuration lives in [`config/hypr/theme/hyprchroma.conf`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/theme/hyprchroma.conf); the dispatcher `togglechromakey` enables runtime toggling.
 
-**Pywal** is available in the user environment with custom templates tracked at `config/wal/templates/` and deployed to `~/.config/wal/templates/`. `colors-hyprland.conf` and `colors-foot.ini` allow wallpaper-derived palette generation when desired. The live desktop theme is repo-defined by default; pywal is opt-in per session.
+**Pywal** is available in the user environment with custom templates tracked at [`config/wal/templates/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/wal/templates/) and deployed to `~/.config/wal/templates/`. [`colors-hyprland.conf`](https://github.com/RomeoCavazza/setup-os/blob/main/config/wal/templates/colors-hyprland.conf) and [`colors-foot.ini`](https://github.com/RomeoCavazza/setup-os/blob/main/config/wal/templates/colors-foot.ini) allow wallpaper-derived palette generation when desired. The live desktop theme is repo-defined by default; pywal is opt-in per session.
 
 **Shell:** Bash with Starship prompt (Catppuccin-style teal gradient). Key alias: `rebuild` → `command rebuild` (wrapper script with rebuild metrics export).
 
@@ -85,34 +85,34 @@ Home Manager runs inline within the system build, applied atomically on every `n
 
 ## 5. Desktop Environment — Hyprland + Seaglass Theme
 
-Hyprland is a tiling Wayland compositor with XWayland enabled for X11 application compatibility. Its configuration lives in `config/hypr/`. Three plugins extend the compositor: Hyprspace (workspace overview), hypr-canvas (infinite canvas for workspace grouping), and Hyprchroma/hypr-darkwindow (adaptive tint shader). All three are compiled from RomeoCavazza GitHub forks pinned through Nix inputs or `fetchFromGitHub` for Hyprland v0.54.2.
+Hyprland is a tiling Wayland compositor with XWayland enabled for X11 application compatibility. Its configuration lives in [`config/hypr/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/). Three plugins extend the compositor: Hyprspace (workspace overview), hypr-canvas (infinite canvas for workspace grouping), and Hyprchroma/hypr-darkwindow (adaptive tint shader). All three are compiled from RomeoCavazza GitHub forks pinned through Nix inputs or `fetchFromGitHub` for Hyprland v0.54.2.
 
 The Seaglass visual theme uses teal (`#94E2D5`) as its accent and is propagated at the config layer — not injected at runtime — so the identity stays consistent across every component without coordination logic.
 
 ![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/theme-flow.png)
 
-`seaglass.conf` sets border colors, 12px rounding, blur parameters, and active/inactive window states. Waybar uses tracked `mocha.css` for the full Catppuccin Mocha palette as CSS variables, while Nix compiles `style.scss` into the generated `style.css` that overrides the accent to `#94e2d5`. Modules have transparent backgrounds with `border-radius: 999px` and a subtle teal hover glow. Rofi uses `column-tco.rasi` for the sidebar layout and `apps-grid.rasi` for the application grid. The foot terminal palette is tracked directly in `config/foot/foot.ini`. GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor at size 24.
+[`seaglass.conf`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/theme/seaglass.conf) sets border colors, 12px rounding, blur parameters, and active/inactive window states. Waybar uses tracked [`mocha.css`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/mocha.css) for the full Catppuccin Mocha palette as CSS variables, while Nix compiles [`style.scss`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/style.scss) into the generated `style.css` that overrides the accent to `#94e2d5`. Modules have transparent backgrounds with `border-radius: 999px` and a subtle teal hover glow. Rofi uses [`column-tco.rasi`](https://github.com/RomeoCavazza/setup-os/blob/main/config/rofi/column-tco.rasi) for the sidebar layout and [`apps-grid.rasi`](https://github.com/RomeoCavazza/setup-os/blob/main/config/rofi/apps-grid.rasi) for the application grid. The foot terminal palette is tracked directly in [`config/foot/foot.ini`](https://github.com/RomeoCavazza/setup-os/blob/main/config/foot/foot.ini). GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor at size 24.
 
 ---
 
 ## 6. Waybar
 
-Waybar is the Wayland status bar, configured from `config/hypr/waybar/` and materialized by Home Manager at `~/.config/waybar/`. The layout is defined in `config.jsonc`, the palette in tracked `mocha.css`, and per-component styles in generated `style.css` compiled from `style.scss`.
+Waybar is the Wayland status bar, configured from [`config/hypr/waybar/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/) and materialized by Home Manager at `~/.config/waybar/`. The layout is defined in [`config.jsonc`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/config.jsonc), the palette in tracked [`mocha.css`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/mocha.css), and per-component styles in generated `style.css` compiled from [`style.scss`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/waybar/style.scss).
 
-Two runtime scripts drive the dynamic modules. `WaybarCava.sh` generates a temporary Cava config on launch with 14 bars at 60fps over PulseAudio, pipes the raw ASCII output through character substitution and silence masking, and outputs unicode bar characters for the `custom/cava` module. `activeapp.sh` queries `hyprctl activewindow` for the focused window's class, maps it to a Nerd Font icon via a case statement (`firefox` → , `code` → 󰨞, `foot` → ), and outputs JSON for the active window module.
+Two runtime scripts drive the dynamic modules. [`WaybarCava.sh`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/WaybarCava.sh) generates a temporary Cava config on launch with 14 bars at 60fps over PulseAudio, pipes the raw ASCII output through character substitution and silence masking, and outputs unicode bar characters for the `custom/cava` module. [`activeapp.sh`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/activeapp.sh) queries `hyprctl activewindow` for the focused window's class, maps it to a Nerd Font icon via a case statement (`firefox` → , `code` → 󰨞, `foot` → ), and outputs JSON for the active window module.
 
 ---
 
 ## 7. Rofi
 
-Rofi is configured in `config/rofi/` with two active launch paths. The sidebar launcher runs via `rofi-push.sh`, which shifts Hyprland's `gaps_out` to create space for the panel without overlapping windows, then restores original gaps on close. The application grid runs via `rofi-grid.sh`, which temporarily increases blur size and kills Waybar on open, restoring both on exit. The sidebar uses `column-tco.rasi` and the grid uses `apps-grid.rasi`. Both are referenced from `hyprland.conf` via the `$menu` and `$powermenu` variables.
+Rofi is configured in [`config/rofi/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/rofi/) with two active launch paths. The sidebar launcher runs via [`rofi-push.sh`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/rofi-push.sh), which shifts Hyprland's `gaps_out` to create space for the panel without overlapping windows, then restores original gaps on close. The application grid runs via [`rofi-grid.sh`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/rofi-grid.sh), which temporarily increases blur size and kills Waybar on open, restoring both on exit. The sidebar uses [`column-tco.rasi`](https://github.com/RomeoCavazza/setup-os/blob/main/config/rofi/column-tco.rasi) and the grid uses [`apps-grid.rasi`](https://github.com/RomeoCavazza/setup-os/blob/main/config/rofi/apps-grid.rasi). Both are referenced from [`hyprland.conf`](https://github.com/RomeoCavazza/setup-os/blob/main/config/hypr/hyprland.conf) via the `$menu` and `$powermenu` variables.
 
 ---
 
 
 ## 8. Code Metrics
 
-Generated with `cloc`, excluding `.git`, `docs/assets`, and `docs/wiki`. Full report: [`cloc-report.md`](./cloc-report.md).
+Generated with `cloc`, excluding `.git`, [`docs/assets`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/), and [`docs/wiki`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/wiki/). Full report: [`cloc-report.md`](./cloc-report.md).
 
 | Language | Files | Code |
 |---|---:|---:|

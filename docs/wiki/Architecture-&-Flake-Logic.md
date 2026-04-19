@@ -1,8 +1,8 @@
-This page is a reading map for the repository. It does not try to repeat every detail: the longer references live in `docs/README.md`, `docs/specification.txt`, and the modules themselves. The goal here is simple: know where to look, why each directory exists, and how the flake assembles the system.
+This page is a reading map for the repository. It does not try to repeat every detail: the longer references live in [`docs/README.md`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/README.md), [`docs/specification.txt`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/specification.txt), and the modules themselves. The goal here is simple: know where to look, why each directory exists, and how the flake assembles the system.
 
 Read the repository through three rules:
 
-- [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix) and `flake.lock` are the build contract: inputs, pinned versions, and the NixOS output.
+- [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix) and [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock) are the build contract: inputs, pinned versions, and the NixOS output.
 - [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix) builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
 - [`docs/diagrams/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/) contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
 
@@ -29,7 +29,7 @@ Generated HTML: [code-map.html](https://github.com/RomeoCavazza/setup-os/blob/ma
 └── secrets/
 ```
 
-The root stays intentionally flat. The four top-level files define the machine: the [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix), its lockfile, the main [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), and the detected [`hardware-configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/hardware-configuration.nix). The directories then split responsibility across system modules, the user layer, dotfiles, documentation, and secrets.
+The root stays intentionally flat. The four top-level files define the machine: the [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix), its lockfile [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock), the main [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), and the detected [`hardware-configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/hardware-configuration.nix). The directories then split responsibility across system modules ([`modules/`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/)), the user layer ([`home/`](https://github.com/RomeoCavazza/setup-os/blob/main/home/)), dotfiles ([`config/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/)), documentation ([`docs/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/)), and secrets ([`secrets/`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/)).
 
 [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix) exposes one important output: `nixosConfigurations.nixos`. It evaluates [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
 
@@ -60,7 +60,7 @@ Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/setup-os
 
 [`modules/`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/) is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), except [`backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix), which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
 
-`edex.nix`, `lamp.nix`, and `streamlit.nix` are optional blocks. They remain documented and ready to connect, but they do not define the default machine behavior until they are imported.
+[`edex.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/edex.nix), [`lamp.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/lamp.nix), and [`streamlit.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/streamlit.nix) are optional blocks. They remain documented and ready to connect, but they do not define the default machine behavior until they are imported.
 
 ---
 
@@ -82,7 +82,7 @@ Generated HTML: [code-map-home.html](https://github.com/RomeoCavazza/setup-os/bl
 
 [`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix) describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
 
-The `apps/` modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
+The [`apps/`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/) modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
 
 ---
 
@@ -108,9 +108,9 @@ Generated HTML: [code-map-config.html](https://github.com/RomeoCavazza/setup-os/
 └── wal/
 ```
 
-`config/` contains the files used by the graphical session: scripts, themes, Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs, and Grafana dashboards. Home Manager does not copy that logic into `home.nix`; it exposes these files into `$HOME` through symlinks or declared files.
+[`config/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/) contains the files used by the graphical session: scripts, themes, Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs, and Grafana dashboards. Home Manager does not copy that logic into [`home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix); it exposes these files into `$HOME` through symlinks or declared files.
 
-This separation keeps `home.nix` readable. Nix describes how files are linked into the user profile; `config/` keeps the editable content in a normal Linux configuration tree.
+This separation keeps [`home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix) readable. Nix describes how files are linked into the user profile; [`config/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/) keeps the editable content in a normal Linux configuration tree.
 
 ---
 
@@ -133,15 +133,15 @@ Generated HTML: [code-map-docs.html](https://github.com/RomeoCavazza/setup-os/bl
 └── wiki/
 ```
 
-`docs/` is the reading layer for the system. Wiki pages live in `docs/wiki/`, longer annexes live in `docs/README.md`, and the compact inventory lives in `docs/specification.txt`.
+[`docs/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/) is the reading layer for the system. Wiki pages live in [`docs/wiki/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/wiki/), longer annexes live in [`docs/README.md`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/README.md), and the compact inventory lives in [`docs/specification.txt`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/specification.txt).
 
 Diagrams are separated to avoid mixing source and rendered assets:
 
-- `docs/diagrams/puml/` contains the PlantUML sources.
-- `docs/diagrams/carbon/` contains the TreeView HTML visualizer and its renderer.
-- `docs/diagrams/png/` contains the images published in the README and Wiki.
+- [`docs/diagrams/puml/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/puml/) contains the PlantUML sources.
+- [`docs/diagrams/carbon/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/) contains the TreeView HTML visualizer and its renderer.
+- [`docs/diagrams/png/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/png/) contains the images published in the README and Wiki.
 
-Other media stay in `docs/assets/`: screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: `docs/assets/gdm-background.png` is also referenced by `configuration.nix` for the GDM wallpaper.
+Other media stay in [`docs/assets/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/): screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: [`docs/assets/gdm-background.png`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/gdm-background.png) is also referenced by [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix) for the GDM wallpaper.
 
 ---
 
@@ -157,7 +157,7 @@ Generated HTML: [code-map-secrets.html](https://github.com/RomeoCavazza/setup-os
 └── README.md
 ```
 
-`secrets/` stays intentionally small. `backup.yaml` is versioned because it is encrypted with SOPS/Age; useful values are only available at activation time through `sops-nix`. The local README explains how to manage this area without mixing secrets into system modules.
+[`secrets/`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/) stays intentionally small. [`backup.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml) is versioned because it is encrypted with SOPS/Age; useful values are only available at activation time through `sops-nix`. The local [`README`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/README.md) explains how to manage this area without mixing secrets into system modules.
 
 ---
 
@@ -177,3 +177,5 @@ nix shell nixpkgs#plantuml --command plantuml -tpng -o ../png ./*.puml
 ```
 
 Wiki pages use `raw.githubusercontent.com` links for PNGs. Local paths such as `file:///etc/nixos/...` are intentionally avoided because they do not work on GitHub or in the published Wiki.
+
+The renderer script lives at [`docs/diagrams/carbon/render-code-map.mjs`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/render-code-map.mjs). PlantUML sources live in [`docs/diagrams/puml/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/puml/) and output to [`docs/diagrams/png/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/png/).

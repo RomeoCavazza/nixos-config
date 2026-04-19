@@ -1,6 +1,6 @@
-Each module in `modules/` is a self-contained NixOS configuration unit. A module only activates when listed in `configuration.nix`'s `imports` — removing one line disables the entire service, cleanly, with no orphaned options left behind. This page documents what each module does, why it exists as a separate unit, and what engineering decisions shaped its configuration.
+Each module in [`modules/`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/) is a self-contained NixOS configuration unit. A module only activates when listed in [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix)'s `imports` — removing one line disables the entire service, cleanly, with no orphaned options left behind. This page documents what each module does, why it exists as a separate unit, and what engineering decisions shaped its configuration.
 
-The goal is to keep `configuration.nix` legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
+The goal is to keep [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix) legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
 
 ![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/scheme.png)
 
@@ -59,7 +59,7 @@ The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/
 - [`embedded.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/embedded.nix) provides the Arduino IDE and CLI, esptool for ESP8266/ESP32 firmware flashing, and minicom for serial port monitoring.
 - [`data.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/data.nix) installs DBeaver (a universal database GUI), Grafana, and InfluxDB2 for time-series data work.
 
-The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line.
+The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line in [`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix).
 
 ---
 
@@ -146,14 +146,14 @@ WebSocket proxying is enabled on all virtual hosts, which is required for develo
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/edex-ui.png" alt="eDEX-UI" width="28" />
 </p>
 
-Three modules exist in `modules/` but are not active by default. They are ready to use but represent services that are not always needed.
+Three modules exist in [`modules/`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/) but are not active by default. They are ready to use but represent services that are not always needed.
 
 
 - [`lamp.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/lamp.nix) provides a full Apache, PHP, and MariaDB stack for PHP development, with two virtual hosts and a PHP build that includes xdebug and opcache.
 - [`streamlit.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/streamlit.nix) runs a Streamlit application as a sandboxed systemd service, installing Python dependencies via `uv` at runtime without Nix packaging.
 - [`edex.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/edex.nix) builds an FHS environment for eDEX-UI, which requires a traditional Linux filesystem layout that NixOS's `/nix/store`-based approach does not provide by default.
 
-Any of these can be activated by adding the corresponding `./modules/filename.nix` line to `configuration.nix`'s `imports` list and running a rebuild.
+Any of these can be activated by adding the corresponding `./modules/filename.nix` line to [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix)'s `imports` list and running a rebuild.
 
 ---
 
@@ -168,7 +168,7 @@ Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA
 
 Two configuration choices are worth explaining. `OLLAMA_KEEP_ALIVE` is set to 24 hours, which keeps a loaded model in VRAM between requests. Without this, Ollama unloads the model after 5 minutes of inactivity, and the next request pays a cold-start cost of 2 to 10 seconds depending on model size. The tradeoff is 4 to 8 GB of VRAM reserved while a model is loaded. `OLLAMA_KV_CACHE_TYPE` is set to `q8_0`, which quantizes the key-value cache to 8-bit integers, reducing VRAM usage with a negligible quality impact on most tasks.
 
-Ollama is paired with Qdrant (for vector search) and `aider-chat` (installed in `home.nix`) to form a self-contained local AI development environment with no external API dependency.
+Ollama is paired with Qdrant (for vector search) and [`aider-chat`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix) (installed in [`home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix)) to form a self-contained local AI development environment with no external API dependency.
 
 Qdrant is the vector database of this stack. It pairs with Ollama to form a local RAG pipeline: Ollama handles embedding generation and inference, while Qdrant handles the nearest-neighbour search over those embeddings. The combination provides a fully self-hosted semantic search capability.
 
