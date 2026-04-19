@@ -28,10 +28,10 @@ The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the prim
 
 Local technical annexes:
 
-- [docs/README.md](./docs/README.md) - annexes, Mermaid diagrams, and regeneration commands
+- [docs/README.md](./docs/README.md) - technical annexes, diagram index, and regeneration commands
 - [docs/cloc-report.md](./docs/cloc-report.md) - raw cloc report
 - [docs/specification.txt](./docs/specification.txt) - dense configuration glossary
-- [docs/diagrams/](./docs/diagrams/) - PlantUML sources and generated PNGs
+- [docs/diagrams/](./docs/diagrams/) - PlantUML sources, Carbon TreeView maps, and generated PNGs
 
 ### Architecture
 

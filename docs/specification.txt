@@ -188,6 +188,11 @@ DarkWindow / Hyprchroma
 assets/
   Root folder: media referenced by the shipped README (logo, screenshots, wallpaper, hero-video).
 
+diagrams/
+  Diagram workspace. puml/ contains PlantUML sources, carbon/ contains the
+  TreeView HTML renderer and generated HTML views, png/ contains committed
+  PNG renders referenced by README and wiki pages.
+
 --------------------------------------------------------------------------------
 7. Display, desktop and theme
 --------------------------------------------------------------------------------
@@ -377,4 +382,5 @@ Commands
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
   flake-outputs.puml    nixosConfigurations — 10 inputs, system + HM + sops output
 
-  Regenerate PNGs      (cd docs/diagrams && nix shell nixpkgs#plantuml --command plantuml -tpng -o ../assets/diagrams ./*.puml)
+  Regenerate PlantUML  (cd docs/diagrams/puml && nix shell nixpkgs#plantuml --command plantuml -tpng -o ../png ./*.puml)
+  Regenerate TreeViews  node docs/diagrams/carbon/render-code-map.mjs

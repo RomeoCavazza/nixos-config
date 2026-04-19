@@ -8,7 +8,7 @@ Technical documentation annexes for the `setup-os` NixOS configuration — cover
 
 The entire system is defined by a single `flake.nix`. It acts as the entry point for everything: system builds, user environments, and overlay composition.
 
-![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/flake-outputs.png)
+![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/flake-outputs.png)
 
 The flake pins ten inputs. `nixpkgs` (unstable) is the primary package set. `nixpkgs-stable` is used for two specific packages — Guix, which requires a stable release, and Promtail, which has a module-level conflict with the current Loki version on unstable. `rust-overlay` injects Rust nightly and stable toolchains via an overlay. Hyprland is pinned to `v0.54.2`, and all three plugins (`hyprspace`, `hyprland-plugins`, `hyprtasking`) follow that exact version via `inputs.hyprland.follows` — this prevents ABI mismatches between the compositor and its plugins.
 
@@ -89,7 +89,7 @@ Hyprland is a tiling Wayland compositor with XWayland enabled for X11 applicatio
 
 The Seaglass visual theme uses teal (`#94E2D5`) as its accent and is propagated at the config layer — not injected at runtime — so the identity stays consistent across every component without coordination logic.
 
-![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/theme-flow.png)
+![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/theme-flow.png)
 
 `seaglass.conf` sets border colors, 12px rounding, blur parameters, and active/inactive window states. Waybar uses tracked `mocha.css` for the full Catppuccin Mocha palette as CSS variables, while Nix compiles `style.scss` into the generated `style.css` that overrides the accent to `#94e2d5`. Modules have transparent backgrounds with `border-radius: 999px` and a subtle teal hover glow. Rofi uses `column-tco.rasi` for the sidebar layout and `apps-grid.rasi` for the application grid. The foot terminal palette is tracked directly in `config/foot/foot.ini`. GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor at size 24.
 
