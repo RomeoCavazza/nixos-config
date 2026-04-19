@@ -13,7 +13,7 @@ The solution is to encrypt secrets before committing and decrypt them at runtime
 ## Secrets Flow
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'fontSize': '16px' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569', 'fontSize': '16px' }}}%%
 flowchart LR
   A["Public Repository<br/>GitHub"] -->|committed| B["secrets/backup.yaml<br/>encrypted with SOPS"]
   C["editor_tco key<br/>developer machine"] -.->|SOPS edit| B

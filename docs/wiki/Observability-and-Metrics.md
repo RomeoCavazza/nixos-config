@@ -4,67 +4,6 @@
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/logo/prometheus.png" alt="Prometheus" width="26" />
 </p>
 
-This page documents the local observability stack and the continuous documentation flow around it.
-
-## Live Snapshots (Core)
-
-The three live views are the operational contract for this machine: health now, drift over time, then incident explanation. Each snapshot embeds the metrics it is responsible for instead of relying on a separate metric index.
-
-### NixOS Metrics
-
-Live cockpit for pressure, retained state, store size, closure size, and rebuild cost. This is the first view to check when the machine feels slow or a rebuild looks suspicious.
-
-- Pressure now: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
-- Retained state: `nix_generation`, `nix_generations_count`
-- Footprint: `nix_store_bytes`, `nix_store_paths`, `nix_closure_bytes`, `nix_closure_paths`
-- Rebuild outcome: `nix_rebuild_duration_ms`, `nix_rebuild_success`
-- Source: `config/grafana/src/nix-dashboard.jsonnet` -> `config/grafana/nix-dashboard.json`
-
-![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
-
-### Nix Efficiency
-
-Drift dashboard for freshness, generation debt, closure efficiency, and rebuild cost over time. This is where stale inputs and retained-generation debt become visible before they turn into cleanup work.
-
-- Freshness: `nix_flake_lock_age_seconds`
-- Generation debt: `nix_generations_count`
-- Closure shape: `nix_closure_bytes`, `nix_closure_paths`
-- Store pressure: `nix_store_bytes`
-- Rebuild cost: `nix_rebuild_duration_ms`
-- Source: `config/grafana/src/nix-efficiency-dashboard.jsonnet` -> `config/grafana/nix-efficiency-dashboard.json`
-
-![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
-
-### Incident Correlation
-
-PSI spikes aligned with journald logs for fast root-cause analysis. This view answers the next question after a pressure spike: which part of the system was talking at the same time?
-
-- Pressure signal: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
-- Build context: `nix_rebuild_duration_ms`, `nix_rebuild_success`
-- Log context: `{job="systemd-journal",component=~"display|build"}`
-- Source: `config/grafana/src/incident-correlation-dashboard.jsonnet` -> `config/grafana/incident-correlation-dashboard.json`
-
-![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
-
-Snapshots are checked every 15 minutes and published when visual delta exceeds 0.5%.
-
-Recent changes:
-
-- Removed freshness redundancy from the main cockpit dashboard
-- Kept freshness only in the efficiency dashboard
-- Applied explicit dual-axis semantics for closure volume (Bytes) vs path count (Count)
-- Visual overhaul: stat panels switched to `colorMode="background"` (full panel coloring on thresholds), timeseries upgraded with `gradientMode="hue"` fills, pressure panels stacked with threshold zone backgrounds
-- Snapshot capture hardened for headless Chromium by applying a paint-safe panel fallback immediately before screenshots
-
-The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON. Shared panel helpers live in `config/grafana/src/lib/dashboard.libsonnet`, with a small Grafonnet-style API for stat strips, gauges, time series, rows, logs, thresholds, and value mappings.
-
-Regeneration command:
-
-```bash
-cd /etc/nixos
-sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
-```
-
 ## Stack Summary
 
 The stack is intentionally small: Prometheus and Node Exporter handle metrics, Loki and Promtail handle logs, and Grafana ties the signals together.
@@ -79,13 +18,66 @@ The stack is intentionally small: Prometheus and Node Exporter handle metrics, L
 
 All services are Nix-declared and activated with `nixos-rebuild`.
 
+
+## Live Snapshots
+
+The three live views are the operational contract for this machine: health now, drift over time, then incident explanation. Each snapshot embeds the metrics it is responsible for instead of relying on a separate metric index. Snapshots are checked every 15 minutes and published when visual delta exceeds 0.5%.
+
+The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON. Shared panel helpers live in `config/grafana/src/lib/dashboard.libsonnet`, with a small Grafonnet-style API.
+
+Regeneration command:
+```bash
+cd /etc/nixos
+sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
+```
+
+### NixOS Metrics
+
+Live cockpit for pressure, retained state, store size, closure size, and rebuild cost. This is the first view to check when the machine feels slow or a rebuild looks suspicious.
+
+
+![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
+
+- Pressure now: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
+- Retained state: `nix_generation`, `nix_generations_count`
+- Footprint: `nix_store_bytes`, `nix_store_paths`, `nix_closure_bytes`, `nix_closure_paths`
+- Rebuild outcome: `nix_rebuild_duration_ms`, `nix_rebuild_success`
+- Source: `config/grafana/src/nix-dashboard.jsonnet` -> `config/grafana/nix-dashboard.json`
+
+### Nix Efficiency
+
+Drift dashboard for freshness, generation debt, closure efficiency, and rebuild cost over time. This is where stale inputs and retained-generation debt become visible before they turn into cleanup work.
+
+
+![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
+
+- Freshness: `nix_flake_lock_age_seconds`
+- Generation debt: `nix_generations_count`
+- Closure shape: `nix_closure_bytes`, `nix_closure_paths`
+- Store pressure: `nix_store_bytes`
+- Rebuild cost: `nix_rebuild_duration_ms`
+- Source: `config/grafana/src/nix-efficiency-dashboard.jsonnet` -> `config/grafana/nix-efficiency-dashboard.json`
+
+### Incident Correlation
+
+PSI spikes aligned with journald logs for fast root-cause analysis. This view answers the next question after a pressure spike: which part of the system was talking at the same time?
+
+
+![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
+
+- Pressure signal: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
+- Build context: `nix_rebuild_duration_ms`, `nix_rebuild_success`
+- Log context: `{job="systemd-journal",component=~"display|build"}`
+- Source: `config/grafana/src/incident-correlation-dashboard.jsonnet` -> `config/grafana/incident-correlation-dashboard.json`
+
+
 ### Prometheus Metric Source
 
 Prometheus is the verification layer between the local collectors and Grafana. When a dashboard panel looks wrong, this is where the raw `nix_*` series are checked first: if the query is fresh here, the issue is in dashboard rendering; if it is missing here, the issue is in collection.
 
 ![Prometheus query view](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/prometheus.png)
 
-## Log Correlation Labels (Promtail)
+### Log Correlation Labels (Promtail)
 
 Promtail adds a `component` label so dashboard spikes can be matched to the right part of the machine:
 
