@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Utilise pgrep -f pour être sûr de matcher le script bash
+# Use pgrep -f to make sure the Bash script is matched.
 if pgrep -f "legion-pulse" > /dev/null
 then
     pkill -f "legion-pulse"

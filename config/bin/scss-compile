@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Compile les sources SCSS vers un dossier de preview.
-# En production, Nix/Home Manager génère les CSS pendant le build.
+# Compile SCSS sources into a preview directory.
+# In production, Nix/Home Manager generates CSS during the build.
 #
 # Usage :
 #   scss-compile
 #   scss-compile /tmp/scss-preview
 #   SASS=dart-sass scss-compile
 #
-# Prérequis : dart-sass (pkgs.dart-sass dans home.nix)
-# Sans rebuild : nix shell nixpkgs#dart-sass -c scss-compile
+# Requirement: dart-sass (pkgs.dart-sass in home.nix)
+# Without a rebuild: nix shell nixpkgs#dart-sass -c scss-compile
 
 set -euo pipefail
 
@@ -17,9 +17,9 @@ sass_bin="${SASS:-sass}"
 out_dir="${1:-${TMPDIR:-/tmp}/scss-compile}"
 
 if ! command -v "$sass_bin" >/dev/null 2>&1; then
-  echo "scss-compile: dart-sass introuvable" >&2
-  echo "  après rebuild : sass est disponible directement" >&2
-  echo "  sans rebuild  : nix shell nixpkgs#dart-sass -c scss-compile" >&2
+  echo "scss-compile: dart-sass not found" >&2
+  echo "  after rebuild     : sass is available directly" >&2
+  echo "  without rebuild   : nix shell nixpkgs#dart-sass -c scss-compile" >&2
   exit 1
 fi
 

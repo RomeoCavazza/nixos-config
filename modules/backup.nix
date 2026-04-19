@@ -88,8 +88,6 @@ in
 
       exclude = [
         "${homeDir}/Downloads"
-        "${homeDir}/Telechargements"
-        "${homeDir}/Téléchargements"
         "**/node_modules"
         "**/target"
         "**/.direnv"

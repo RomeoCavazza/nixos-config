@@ -5,21 +5,21 @@ WIDTH=110
 ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -normal-window)
 CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
 
-# Récupère le gaps_out "base" (chez toi c'est 16)
+# Read the base gaps_out value.
 BASE_GAP="$(hyprctl getoption general:gaps_out -j | jq -r '.int' 2>/dev/null || echo 16)"
 [[ "$BASE_GAP" =~ ^[0-9]+$ ]] || BASE_GAP=16
 
-# Applique un gaps_out gauche uniquement (si supporté)
+# Apply a left-only gaps_out value when supported.
 apply_left_only_gap() {
   local left="$1"
   local base="$2"
 
-  # 1) format avec virgules (souvent accepté)
+  # 1) Comma-separated format, commonly accepted.
   if hyprctl keyword general:gaps_out "${base},${base},${base},${left}" >/dev/null 2>&1; then
     return 0
   fi
 
-  # 2) format avec espaces (certaines builds)
+  # 2) Space-separated format, accepted by some builds.
   if hyprctl keyword general:gaps_out "${base} ${base} ${base} ${left}" >/dev/null 2>&1; then
     return 0
   fi
@@ -28,7 +28,7 @@ apply_left_only_gap() {
 }
 
 restore_gap() {
-  # on restaure "global" base; si tu avais déjà 4 valeurs dans ton conf, tu peux les remettre ici
+  # Restore the global base value.
   hyprctl keyword general:gaps_out "$BASE_GAP" >/dev/null 2>&1 || true
 }
 
@@ -56,7 +56,7 @@ stop_conky_rails
 
 LEFT_GAP=$((BASE_GAP + WIDTH))
 
-# IMPORTANT: si pas supporté -> on n'applique rien (sinon ça shrink partout)
+# If unsupported, apply nothing to avoid shrinking every edge.
 if ! apply_left_only_gap "$LEFT_GAP" "$BASE_GAP"; then
   exit 1
 fi

@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  # PHP assemblé avec extensions utiles (inclut openssl)
+  # PHP assembled with useful extensions, including openssl.
   phpWithExt = pkgs.php.buildEnv {
     extensions = ({ all, enabled }: with all; [
       curl gd intl mbstring mysqli opcache pdo_mysql session zlib xdebug openssl
@@ -9,14 +9,14 @@ let
     extraConfig = ''
       display_errors = On
       error_reporting = E_ALL
-      ; Sécurité raisonnable par défaut
+      ; Reasonable secure defaults
       expose_php = Off
       allow_url_fopen = On
       allow_url_include = Off
     '';
   };
 
-  # Script d'init MariaDB - ⚠️ MODIFIER LES IDENTIFIANTS AVANT DÉPLOIEMENT
+  # MariaDB init script. Change credentials before deployment.
   mysqlInit = pkgs.writeText "mysql-init.sql" ''
     CREATE USER IF NOT EXISTS 'dev_user'@'localhost' IDENTIFIED BY 'CHANGE_THIS_PASSWORD';
     CREATE DATABASE IF NOT EXISTS testdb;
@@ -28,14 +28,14 @@ in
   #### Apache + PHP (mod_php, prefork)
   services.httpd = {
     enable = true;
-    adminAddr = "admin@localhost";  # ⚠️ CHANGER L'EMAIL ADMIN
+    adminAddr = "admin@localhost";  # Change the admin email.
 
     # mod_php => prefork
     mpm = "prefork";
     enablePHP = true;
     phpPackage = phpWithExt;
 
-    # Utilisateur/groupe NixOS standards pour httpd
+    # Standard NixOS user/group for httpd.
     user = "wwwrun";
     group = "wwwrun";
 
@@ -47,7 +47,7 @@ in
       FileETag MTime Size
       EnableSendfile Off
 
-      # VHost par défaut
+      # Default VHost.
       <Directory "/var/www">
         AllowOverride All
         Require all granted
@@ -81,25 +81,24 @@ in
 
     ensureDatabases = [ "testdb" ];
     ensureUsers = [{
-      name = "dev_user";  # ⚠️ UTILISATEUR PAR DÉFAUT - CHANGER
+      name = "dev_user";  # Default user; change before deployment.
       ensurePermissions = { "testdb.*" = "ALL PRIVILEGES"; };
     }];
     initialScript = mysqlInit;
 
-    # Écoute uniquement en local
+    # Listen on localhost only.
     settings.mysqld.bind-address = "127.0.0.1";
   };
 
-  #### Paquets utiles côté LAMP (facultatif)
+  #### Useful LAMP packages (optional)
   environment.systemPackages = with pkgs; [
     phpWithExt
     phpPackages.composer
   ];
 
   # NOTE :
-  # - La création de /var/www et autres règles de tmpfiles
-  #   doit être gérée centralement dans la configuration système
-  #   pour éviter les collisions entre modules.
-  # - Si tu veux Adminer automatiquement, on pourra l’ajouter
-  #   via tmpfiles (copie/symlink) vers /var/www/adminer.php.
+  # - /var/www creation and other tmpfiles rules should be managed
+  #   centrally in the system configuration to avoid module collisions.
+  # - Adminer can be added later through tmpfiles as a copy/symlink
+  #   to /var/www/adminer.php.
 }

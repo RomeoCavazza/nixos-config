@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 1) Mode "tar extract" (ton cas actuel)
+# 1) Extracted tarball mode.
 BIN_TAR="$HOME/.local/src/antigravity/Antigravity/antigravity"
 
-# 2) Si un jour tu mets une AppImage ici
+# 2) Optional AppImage mode.
 APPIMAGE="$HOME/.local/bin/appimages/Antigravity.AppImage"
 
 if [ -f "$BIN_TAR" ]; then
@@ -17,9 +17,9 @@ if [ -f "$APPIMAGE" ]; then
   exec appimage-run "$APPIMAGE" "$@"
 fi
 
-echo "Antigravity introuvable." >&2
-echo "Attendu soit:" >&2
-echo "  - binaire tar: $BIN_TAR" >&2
+echo "Antigravity not found." >&2
+echo "Expected one of:" >&2
+echo "  - tar binary: $BIN_TAR" >&2
 echo "  - appimage:   $APPIMAGE" >&2
-echo "Hint: extraire Antigravity.tar.gz dans ~/.local/src/antigravity" >&2
+echo "Hint: extract Antigravity.tar.gz into ~/.local/src/antigravity" >&2
 exit 1

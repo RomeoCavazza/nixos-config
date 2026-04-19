@@ -30,7 +30,7 @@ in
         "/var/lib/streamlit/venv/bin/python -m pip install --no-cache-dir --upgrade pip 'streamlit==1.45.*'"
       ];
 
-      # ⬇️ Lancer via python -m streamlit (évite les soucis de shebang/exec)
+      # Launch through python -m streamlit to avoid shebang/exec issues.
       ExecStart = ''
         /var/lib/streamlit/venv/bin/python -m streamlit run ${app} \
           --server.port=8501 --server.address=127.0.0.1 --server.headless=true
@@ -42,7 +42,7 @@ in
       DynamicUser = true;
       ReadWritePaths = [ "/var/lib/streamlit" ];
 
-      # Sandbox raisonnable (strict peut parfois bloquer des exec sur venv)
+      # Reasonable sandboxing; strict mode can block venv executions.
       ProtectSystem = "full";
       PrivateTmp = true;
       NoNewPrivileges = true;

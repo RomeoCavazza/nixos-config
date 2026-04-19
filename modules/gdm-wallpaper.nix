@@ -20,20 +20,20 @@ in
             workdir=$(mktemp -d)
             resource=$out/share/gnome-shell/gnome-shell-theme.gresource
             
-            # 1. Extraire TOUS les fichiers du gresource original
+            # 1. Extract every file from the original gresource.
             for r in $(${prev.glib.dev}/bin/gresource list $resource); do
               mkdir -p "$workdir$(dirname $r)"
               filename=$(echo $r | sed 's|^/org/gnome/shell/theme/||')
               ${prev.glib.dev}/bin/gresource extract $resource $r > "$workdir/$filename"
             done
             
-            # 2. Copier l'image personnalisée
+            # 2. Copy the custom image.
             cp ${cfg.path} "$workdir/custom-background.png"
             
-            # 3. Patcher TOUS les fichiers CSS trouvés dans le thème
-            # On cible #lockDialogGroup, .login-screen et .login-background
+            # 3. Patch every CSS file found in the theme.
+            # Target #lockDialogGroup, .login-screen, and .login-background.
             for css in "$workdir"/*.css; do
-              echo "Patcher $css..."
+              echo "Patching $css..."
               echo "
               #lockDialogGroup, .login-mask, .login-screen, .login-background, .login-dialog-container {
                 background-image: url('custom-background.png') !important;
@@ -58,7 +58,7 @@ in
               }" >> "$css"
             done
             
-            # 4. Générer le fichier XML complet
+            # 4. Generate the full XML file.
             echo '<?xml version="1.0" encoding="UTF-8"?>' > "$workdir/theme.gresource.xml"
             echo '<gresources><gresource prefix="/org/gnome/shell/theme">' >> "$workdir/theme.gresource.xml"
             for f in $(cd "$workdir" && find . -type f -not -name "theme.gresource.xml"); do
@@ -67,10 +67,10 @@ in
             done
             echo '</gresource></gresources>' >> "$workdir/theme.gresource.xml"
             
-            # 5. Re-compiler le tout
+            # 5. Recompile everything.
             ${prev.glib.dev}/bin/glib-compile-resources --target="$workdir/new.gresource" --sourcedir="$workdir" "$workdir/theme.gresource.xml"
             
-            # 6. Remplacer l'original
+            # 6. Replace the original file.
             cp "$workdir/new.gresource" $resource
             rm -rf $workdir
           '';

@@ -10,65 +10,65 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       (corfu +orderless)  ; Completion ultra-rapide et moderne
-       vertico             ; Interface de recherche moderne (remplace ivy/helm)
+       (corfu +orderless)  ; Fast, modern completion
+       vertico             ; Modern search interface replacing ivy/helm
 
        :ui
-       doom              ; Le thème
-       doom-dashboard    ; L'écran d'accueil
+       doom              ; Theme
+       doom-dashboard    ; Start screen
        hl-todo           ; Highlight TODO/FIXME/NOTE/DEPRECATED
-       modeline          ; La barre d'état
-       ophints           ; Indices visuels
-       (popup +defaults) ; Gestion des fenêtres popups
-       (vc-gutter +pretty) ; Indicateurs Git dans la marge
-       vi-tilde-fringe   ; Marqueurs de fin de fichier (~)
-       workspaces        ; Gestion des espaces de travail
-       zen               ; Mode sans distraction
+       modeline          ; Status bar
+       ophints           ; Visual hints
+       (popup +defaults) ; Popup window handling
+       (vc-gutter +pretty) ; Git indicators in the margin
+       vi-tilde-fringe   ; End-of-file markers (~)
+       workspaces        ; Workspace management
+       zen               ; Distraction-free mode
 
        :editor
-       (evil +everywhere); Vim bindings partout
-       file-templates    ; Snippets automatiques pour nouveaux fichiers
-       fold              ; Pliage de code
-       (format +onsave)  ; Formatage auto à la sauvegarde
-       snippets          ; Templates de code
-       multiple-cursors  ; Édition multiple
+       (evil +everywhere); Vim bindings everywhere
+       file-templates    ; Automatic snippets for new files
+       fold              ; Code folding
+       (format +onsave)  ; Auto-format on save
+       snippets          ; Code templates
+       multiple-cursors  ; Multiple editing cursors
 
        :emacs
-       dired             ; Gestionnaire de fichiers puissant
-       electric          ; Indentation intelligente
-       undo              ; Historique d'annulation avancé (undo-tree)
+       dired             ; File manager
+       electric          ; Smart indentation
+       undo              ; Advanced undo history (undo-tree)
        vc                ; Version control
 
        :term
-       vterm             ; Terminal intégré rapide (Nécessite le module système emacs.nix)
+       vterm             ; Fast embedded terminal; needs the emacs.nix system module
 
        :checkers
-       syntax            ; Vérification de syntaxe (Flycheck)
-       (spell +flyspell) ; Correction orthographique
+       syntax            ; Syntax checking (Flycheck)
+       (spell +flyspell) ; Spell checking
 
        :tools
-       (eval +overlay)   ; REPL et exécution de code inline
+       (eval +overlay)   ; REPL and inline code evaluation
        lookup            ; Documentation (K)
-       lsp               ; Language Server Protocol (Moteur d'intelligence)
-       magit             ; Interface Git suprême
-       pdf               ; Lecteur PDF (pour les papiers de recherche)
-       tree-sitter       ; Parsing de code ultra-rapide
-       docker            ; Gestion Docker
+       lsp               ; Language Server Protocol engine
+       magit             ; Git interface
+       pdf               ; PDF reader for research papers
+       tree-sitter       ; Fast code parsing
+       docker            ; Docker management
 
        :os
        (:if (featurep :system 'macos) macos)
        tty
 
        :lang
-       emacs-lisp        ; Pour configurer Emacs
-       markdown          ; Pour la documentation
-       nix               ; Pour NixOS
-       (org +roam +dragndrop +present) ; Le second cerveau (Notes, Agenda, Zettelkasten)
+       emacs-lisp        ; Configure Emacs
+       markdown          ; Documentation
+       nix               ; NixOS
+       (org +roam +dragndrop +present) ; Notes, agenda, and Zettelkasten
        sh                ; Scripting shell (Bash)
-       (python +lsp +pyright) ; Data Science & IA (Support lourd)
-       (rust +lsp)       ; Embedded haute perf
+       (python +lsp +pyright) ; Data science and AI
+       (rust +lsp)       ; High-performance embedded work
        (cc +lsp)         ; C/C++ (Arduino/ESP32)
-       latex             ; Pour les formules scientifiques
+       latex             ; Scientific formulas
        yaml              ; Config Docker/K8s
        json              ; Data
 

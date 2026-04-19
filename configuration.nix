@@ -267,7 +267,7 @@
     binfmt = true;
   };
 
-  # --- Ajoute ce bloc juste avant la dernière accolade ---
+  # Local USB device access rule.
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTRS{idVendor}=="04b5", ATTRS{idProduct}=="6cde", MODE="0666"
   '';

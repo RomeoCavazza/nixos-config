@@ -33,12 +33,12 @@ restore() {
   hyprctl keyword decoration:blur:passes "$OLD_PASSES" >/dev/null 2>&1 || true
   hyprctl keyword decoration:blur:ignore_opacity "$OLD_IGNORE" >/dev/null 2>&1 || true
 
-  # Relance waybar (toujours) — on laisse pas de conditions fragiles
+  # Always restart Waybar; avoid fragile conditions.
   nohup waybar -c "$WAYBAR_CFG" -s "$WAYBAR_CSS" >/dev/null 2>&1 &
 }
 trap restore EXIT INT TERM
 
-# Boost blur (léger)
+# Slightly boost blur.
 hyprctl keyword decoration:blur:size 8 >/dev/null 2>&1
 
 # Rofi sidebar and Conky rails must not overlap.

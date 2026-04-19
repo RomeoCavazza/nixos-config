@@ -37,7 +37,7 @@ The primary view for overall system health and real-time monitoring.
 
 ![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
 
-<sub>Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-dashboard.jsonnet)</sub>
+Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-dashboard.jsonnet)
 
 - **Operational Rail (25 Gauges)**: CPU/RAM/PSI, Thermal sensors, Store Fill, Journal Incidents, hyprland status.
 - **Resource Pressure Heatmap**: Multi-dimensional view of CPU/Mem/IO pressure with sharpened raw spikes.
@@ -51,7 +51,7 @@ Tracking drift, generation debt, and the cost of system rebuilds.
 
 ![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
 
-<sub>Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)</sub>
+Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)
 
 - **Generation Debt**: `nix_generations_count` and `nix_flake_lock_age_seconds`.
 - **Closure Shape**: `nix_closure_bytes` vs `nix_store_bytes` ratio.
@@ -64,7 +64,7 @@ Log correlation matched with hardware risk signals for fast root-cause analysis.
 
 ![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
 
-<sub>Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)</sub>
+Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)
 
 - **Incident Risk River**: Stream graph of disk/net risk signals vs log volume.
 - **Journal Logs**: Filtered incident feed (`failed`, `panic`, `segfault`, etc.).

@@ -36,14 +36,14 @@
           ./modules/backup.nix
           home-manager.nixosModules.home-manager
           {
-            # FORCE L'UPDATE DE NIX VERS LA VERSION PATCHÉE
+            # Force Nix to the latest patched package.
             nix.package = nixpkgs.legacyPackages.${system}.nixVersions.latest;
             
             nixpkgs.overlays = [
               (import inputs.rust-overlay)
               inputs.hyprland.overlays.default
               (final: prev: {
-                # On bypass le nom 'promtail' pour éviter le conflit d'option
+                # Use a distinct package name to avoid the Promtail option conflict.
                 promtail-bin = pkgs-stable.promtail;
                 guix = pkgs-stable.guix;
               })

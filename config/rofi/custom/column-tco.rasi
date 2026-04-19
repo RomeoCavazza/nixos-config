@@ -14,7 +14,7 @@ configuration {
     c-teal:        #94E2D5;
     c-selected-bg: #313244;
 
-    /* Full transparent par défaut */
+    /* Fully transparent by default */
     background-color: transparent;
     text-color:       @c-teal;
 }
@@ -22,15 +22,15 @@ configuration {
 window {
     transparency:     "real";
 
-    /* FULL transparent (pas de bloc noir / blur qui accroche) */
+    /* Fully transparent, with no black block or sticky blur */
     background-color: transparent;
 
-    /* Bordure "existante" mais invisible */
+    /* Existing but invisible border */
     border:           2px;
     border-color:     transparent;
     border-radius:    0px 40px 40px 0px;
 
-    /* Anti faux-contour */
+    /* Avoid false outlines */
     box-shadow:       0px 0px 0px 0px;
 
     location:         west;
@@ -77,11 +77,11 @@ element {
     cursor:        pointer;
     margin:        0px 5px;
 
-    /* Bordure "existante" mais invisible */
+    /* Existing but invisible border */
     border:        2px;
     border-color:  transparent;
 
-    /* Anti faux-contour */
+    /* Avoid false outlines */
     box-shadow:    0px 0px 0px 0px;
 }
 
@@ -98,9 +98,9 @@ element-icon {
 element selected {
     background-color: @c-selected-bg;
 
-    /* IMPORTANT : on laisse la bordure invisible même en selected */
+    /* Keep the border invisible even when selected */
     border-color:     @c-teal;
 
-    /* au cas où */
+    /* Defensive reset */
     box-shadow:       0px 0px 0px 0px;
 }

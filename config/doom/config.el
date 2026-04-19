@@ -1,38 +1,38 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; --- IDENTITÉ ---
+;; --- IDENTITY ---
 (setq user-full-name "Romeo Cavazza"
       user-mail-address "ton.email@exemple.com")
 
-;; --- APPARENCE ---
-;; Utilise la police Nerd Font installée via NixOS
+;; --- APPEARANCE ---
+;; Use the Nerd Font installed through NixOS.
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 14 :weight 'medium)
       doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 14))
 
-;; Thème visuel
+;; Visual theme.
 (setq doom-theme 'doom-one)
 
-;; Affiche les numéros de ligne relatifs (style Vim)
+;; Show relative line numbers, Vim-style.
 (setq display-line-numbers-type 'relative)
 
-;; --- ORG MODE (Le Cerveau) ---
+;; --- ORG MODE ---
 (setq org-directory "~/org/")
 
-;; --- CONFIGURATION IA (GPTEL + OLLAMA) ---
+;; --- AI CONFIGURATION (GPTEL + OLLAMA) ---
 (use-package! gptel
   :config
-  ;; CORRECTION ICI : 'mistral (Symbole) au lieu de "mistral" (String)
+  ;; Use the symbol form, not the string form.
   (setq! gptel-model 'mistral
          gptel-backend (gptel-make-ollama "Ollama"
                          :host "localhost:11434"
                          :stream t
                          :models '(mistral llama3 gemma:2b))))
 
-;; Raccourci pour ouvrir un chat IA : SPC o c
+;; Shortcut to open an AI chat: SPC o c.
 (map! :leader
       (:prefix ("o" . "open")
        :desc "Open AI Chat" "c" #'gptel))
 
 ;; --- PERFORMANCE ---
-;; Améliore la réactivité du LSP
+;; Improve LSP responsiveness.
 (setq lsp-idle-delay 0.500)

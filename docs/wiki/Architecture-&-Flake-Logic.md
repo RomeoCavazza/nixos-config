@@ -1,20 +1,20 @@
-Cette page sert de carte de lecture du dépôt. Elle ne cherche pas à tout redire: les détails longs vivent dans `docs/README.md`, `docs/specification.txt` et les modules eux-mêmes. Ici, l'objectif est simple: comprendre où regarder, pourquoi les dossiers existent, et comment la flake assemble le système.
+This page is a reading map for the repository. It does not try to repeat every detail: the longer references live in `docs/README.md`, `docs/specification.txt`, and the modules themselves. The goal here is simple: know where to look, why each directory exists, and how the flake assembles the system.
 
-Le dépôt se lit en trois règles:
+Read the repository through three rules:
 
-- `flake.nix` et `flake.lock` sont le contrat de build: les inputs, les versions et la sortie NixOS.
-- `configuration.nix` construit la machine; Home Manager est intégré dedans, donc système et utilisateur basculent ensemble.
-- `docs/diagrams/` contient les cartes visuelles: sources PlantUML, HTML Carbon TreeView et PNG publiés.
+- `flake.nix` and `flake.lock` are the build contract: inputs, pinned versions, and the NixOS output.
+- `configuration.nix` builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
+- `docs/diagrams/` contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
 
 ![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/flake-outputs.png)
 
 ---
 
-## Racine du dépôt
+## Repository Root
 
 ![Root TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map.png)
 
-HTML généré: [code-map.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map.html)
+Generated HTML: [code-map.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map.html)
 
 ```text
 /etc/nixos/
@@ -29,17 +29,17 @@ HTML généré: [code-map.html](https://github.com/RomeoCavazza/setup-os/blob/ma
 └── secrets/
 ```
 
-La racine reste volontairement plate. Les quatre fichiers du haut définissent la machine: la flake, son lockfile, la configuration NixOS principale et la configuration matérielle détectée. Les dossiers séparent ensuite les responsabilités: modules système, couche utilisateur, dotfiles, documentation et secrets.
+The root stays intentionally flat. The four top-level files define the machine: the flake, its lockfile, the main NixOS configuration, and the detected hardware configuration. The directories then split responsibility across system modules, the user layer, dotfiles, documentation, and secrets.
 
-`flake.nix` expose une seule sortie importante: `nixosConfigurations.nixos`. Elle évalue `configuration.nix`, injecte les modules nécessaires, puis embarque Home Manager inline. C'est ce choix qui permet à `nixos-rebuild switch` d'appliquer système et utilisateur dans la même activation.
+`flake.nix` exposes one important output: `nixosConfigurations.nixos`. It evaluates `configuration.nix`, injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
 
 ---
 
-## Modules système
+## System Modules
 
 ![Modules TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map-modules.png)
 
-HTML généré: [code-map-modules.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-modules.html)
+Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-modules.html)
 
 ```text
 /etc/nixos/modules/
@@ -58,17 +58,17 @@ HTML généré: [code-map-modules.html](https://github.com/RomeoCavazza/setup-os
 └── streamlit.nix
 ```
 
-`modules/` est la zone système pure. Chaque fichier ajoute une capacité de machine: GPU, virtualisation, bases locales, observabilité, backup, services ou intégration desktop. Ces modules sont importés explicitement depuis `configuration.nix`, sauf `backup.nix`, qui est injecté par la flake avec `sops-nix` pour garder les secrets et les jobs Restic dans le même câblage.
+`modules/` is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from `configuration.nix`, except `backup.nix`, which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
 
-Les fichiers `edex.nix`, `lamp.nix` et `streamlit.nix` sont des blocs optionnels. Ils restent documentés et prêts à être branchés, mais ils ne définissent pas le comportement par défaut de la machine tant qu'ils ne sont pas importés.
+`edex.nix`, `lamp.nix`, and `streamlit.nix` are optional blocks. They remain documented and ready to connect, but they do not define the default machine behavior until they are imported.
 
 ---
 
-## Couche utilisateur
+## User Layer
 
 ![Home TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map-home.png)
 
-HTML généré: [code-map-home.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-home.html)
+Generated HTML: [code-map-home.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-home.html)
 
 ```text
 /etc/nixos/home/tco/
@@ -80,17 +80,17 @@ HTML généré: [code-map-home.html](https://github.com/RomeoCavazza/setup-os/bl
         └── embedded.nix
 ```
 
-`home/tco/home.nix` décrit l'environnement utilisateur: paquets, shell, thèmes, entrées desktop, éditeurs et liens vers les dotfiles. Home Manager utilise le même `pkgs` que NixOS grâce à `useGlobalPkgs = true`, ce qui évite deux mondes de paquets divergents.
+`home/tco/home.nix` describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
 
-Les modules `apps/` regroupent les outils par contexte de travail. Ils restent utilisateur-only: ils ajoutent des logiciels et de la configuration de session, pas des daemons globaux ni des drivers.
+The `apps/` modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
 
 ---
 
-## Dotfiles et scripts
+## Dotfiles and Scripts
 
 ![Config TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map-config.png)
 
-HTML généré: [code-map-config.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-config.html)
+Generated HTML: [code-map-config.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-config.html)
 
 ```text
 /etc/nixos/config/
@@ -108,17 +108,17 @@ HTML généré: [code-map-config.html](https://github.com/RomeoCavazza/setup-os/
 └── wal/
 ```
 
-`config/` contient les fichiers réellement utilisés par la session: scripts, thèmes, configurations Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs et dashboards Grafana. Home Manager ne recopie pas cette logique dans `home.nix`; il expose ces fichiers dans `$HOME` par symlinks ou fichiers déclarés.
+`config/` contains the files used by the graphical session: scripts, themes, Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs, and Grafana dashboards. Home Manager does not copy that logic into `home.nix`; it exposes these files into `$HOME` through symlinks or declared files.
 
-Cette séparation garde `home.nix` lisible. Le Nix dit comment les fichiers sont reliés au profil utilisateur; `config/` garde le contenu éditable comme dans une configuration Linux classique.
+This separation keeps `home.nix` readable. Nix describes how files are linked into the user profile; `config/` keeps the editable content in a normal Linux configuration tree.
 
 ---
 
-## Documentation et diagrammes
+## Documentation and Diagrams
 
 ![Docs TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map-docs.png)
 
-HTML généré: [code-map-docs.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-docs.html)
+Generated HTML: [code-map-docs.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-docs.html)
 
 ```text
 /etc/nixos/docs/
@@ -133,15 +133,15 @@ HTML généré: [code-map-docs.html](https://github.com/RomeoCavazza/setup-os/bl
 └── wiki/
 ```
 
-`docs/` est le support de lecture du système. Les pages wiki sont dans `docs/wiki/`, les annexes longues dans `docs/README.md`, et l'inventaire compact dans `docs/specification.txt`.
+`docs/` is the reading layer for the system. Wiki pages live in `docs/wiki/`, longer annexes live in `docs/README.md`, and the compact inventory lives in `docs/specification.txt`.
 
-Les diagrammes sont rangés à part pour éviter le mélange:
+Diagrams are separated to avoid mixing source and rendered assets:
 
-- `docs/diagrams/puml/` contient les sources PlantUML.
-- `docs/diagrams/carbon/` contient le visualiseur TreeView HTML et son script de génération.
-- `docs/diagrams/png/` contient les images publiées dans README et Wiki.
+- `docs/diagrams/puml/` contains the PlantUML sources.
+- `docs/diagrams/carbon/` contains the TreeView HTML visualizer and its renderer.
+- `docs/diagrams/png/` contains the images published in the README and Wiki.
 
-Les autres médias restent dans `docs/assets/`: captures d'écran, logos, fonds et snapshots Grafana. Exception assumée: `docs/assets/gdm-background.png` est aussi référencé par `configuration.nix` pour le fond GDM.
+Other media stay in `docs/assets/`: screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: `docs/assets/gdm-background.png` is also referenced by `configuration.nix` for the GDM wallpaper.
 
 ---
 
@@ -149,7 +149,7 @@ Les autres médias restent dans `docs/assets/`: captures d'écran, logos, fonds 
 
 ![Secrets TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/code-map-secrets.png)
 
-HTML généré: [code-map-secrets.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-secrets.html)
+Generated HTML: [code-map-secrets.html](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/carbon/code-map-secrets.html)
 
 ```text
 /etc/nixos/secrets/
@@ -157,23 +157,23 @@ HTML généré: [code-map-secrets.html](https://github.com/RomeoCavazza/setup-os
 └── README.md
 ```
 
-`secrets/` reste minimal exprès. `backup.yaml` est versionné parce qu'il est chiffré avec SOPS/Age; les valeurs utiles ne sont disponibles qu'au moment de l'activation via `sops-nix`. Le README local explique comment gérer cette zone sans mélanger les secrets avec les modules système.
+`secrets/` stays intentionally small. `backup.yaml` is versioned because it is encrypted with SOPS/Age; useful values are only available at activation time through `sops-nix`. The local README explains how to manage this area without mixing secrets into system modules.
 
 ---
 
-## Régénération
+## Regeneration
 
-Les captures TreeView sont générées depuis la structure réelle du dépôt:
+TreeView screenshots are generated from the real repository structure:
 
 ```bash
 node docs/diagrams/carbon/render-code-map.mjs
 ```
 
-Les diagrammes PlantUML se régénèrent depuis leurs sources:
+PlantUML diagrams are regenerated from their sources:
 
 ```bash
 cd docs/diagrams/puml
 nix shell nixpkgs#plantuml --command plantuml -tpng -o ../png ./*.puml
 ```
 
-Les pages wiki utilisent des liens `raw.githubusercontent.com` vers les PNG. Les chemins locaux du type `file:///etc/nixos/...` sont volontairement évités, car ils ne fonctionnent ni dans GitHub ni dans le wiki publié.
+Wiki pages use `raw.githubusercontent.com` links for PNGs. Local paths such as `file:///etc/nixos/...` are intentionally avoided because they do not work on GitHub or in the published Wiki.

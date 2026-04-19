@@ -85,7 +85,7 @@ Home Manager runs inline within the system build, applied atomically on every `n
 
 ## 5. Desktop Environment — Hyprland + Seaglass Theme
 
-Hyprland is a tiling Wayland compositor with XWayland enabled for X11 application compatibility. Its configuration lives in `config/hypr/`. Three plugins extend the compositor: Hyprspace (workspace overview, Exposé-style), hypr-canvas (infinite canvas for workspace grouping), and Hyprchroma/hypr-darkwindow (adaptive tint shader). All three are compiled from RomeoCavazza GitHub forks pinned through Nix inputs or `fetchFromGitHub` for Hyprland v0.54.2.
+Hyprland is a tiling Wayland compositor with XWayland enabled for X11 application compatibility. Its configuration lives in `config/hypr/`. Three plugins extend the compositor: Hyprspace (workspace overview), hypr-canvas (infinite canvas for workspace grouping), and Hyprchroma/hypr-darkwindow (adaptive tint shader). All three are compiled from RomeoCavazza GitHub forks pinned through Nix inputs or `fetchFromGitHub` for Hyprland v0.54.2.
 
 The Seaglass visual theme uses teal (`#94E2D5`) as its accent and is propagated at the config layer — not injected at runtime — so the identity stays consistent across every component without coordination logic.
 

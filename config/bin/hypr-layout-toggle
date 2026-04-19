@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ==============================================================================
-# HYPR-LAYOUT-TOGGLE (Simple, decouplé de tout plugin)
+# HYPR-LAYOUT-TOGGLE (simple, decoupled from every plugin)
 # ==============================================================================
 
 TARGET_W=939
@@ -11,7 +11,7 @@ WS=$(hyprctl activeworkspace -j | jq '.id')
 WINDOWS=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS) | .address")
 
 # 1. DETECT STATE
-# Si au moins une fenêtre flotte sur ce workspace, on reset tout.
+# If at least one window floats on this workspace, reset everything.
 if hyprctl clients -j | jq -e ".[] | select(.workspace.id == $WS and .floating == true)" >/dev/null; then
   # 2. RESET (TILE ALL)
   cmds=""

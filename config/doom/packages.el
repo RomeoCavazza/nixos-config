@@ -1,8 +1,8 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;; Client LLM pour Emacs (Compatible Ollama)
+;; LLM client for Emacs, compatible with Ollama.
 (package! gptel)
 
-;; Support des diagrammes Mermaid dans Org-mode (Optionnel mais cool)
+;; Mermaid diagram support in Org mode.
 (package! ob-mermaid)

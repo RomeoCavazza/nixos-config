@@ -1,13 +1,13 @@
 /*!
- * style.scss — Waybar GTK stylesheet (source SCSS)
- * Compilé vers style.css par Nix/Home Manager.
- * Preview locale optionnelle : scss-compile
+ * style.scss - Waybar GTK stylesheet (source SCSS)
+ * Compiled into style.css by Nix/Home Manager.
+ * Optional local preview: scss-compile
  */
 
-// NOTE : mocha.css n'est PAS importé ici.
-// Toutes les valeurs @define-color sont résolues via $wb-* dans _variables.scss.
-// Le CSS compilé contiendra uniquement des valeurs hex/rgba littérales —
-// aucun @import, @define-color ou @color GTK-spécifique.
+// NOTE: mocha.css is not imported here.
+// Every @define-color value is resolved through $wb-* in _variables.scss.
+// The compiled CSS contains only literal hex/rgba values:
+// no @import, @define-color, or GTK-specific @color.
 
 @use '../../scss/variables' as *;
 @use '../../scss/mixins' as *;
@@ -18,7 +18,7 @@
 }
 
 // ===========================
-// BARRE PRINCIPALE
+// MAIN BAR
 // ===========================
 
 window#waybar {
@@ -26,7 +26,7 @@ window#waybar {
   background: transparent;
   color: $wb-accent;
 
-  // Bordure "existante" mais invisible -> garde les proportions
+  // Existing but invisible border keeps proportions stable.
   border-radius: 14px;
   border: 2px solid transparent;
 
@@ -64,7 +64,7 @@ window#waybar {
 }
 
 // ===========================
-// TASKBAR — toutes les icônes
+// TASKBAR - all icons
 // ===========================
 
 #taskbar {
@@ -81,7 +81,7 @@ window#waybar {
   border-radius: 999px;
   transition: all 0.15s ease;
 
-  // au lieu de cacher, on affiche
+  // Keep inactive buttons visible.
   opacity: 0.75;
 }
 

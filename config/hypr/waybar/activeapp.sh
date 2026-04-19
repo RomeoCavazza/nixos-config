@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Récupère la fenêtre active via Hyprland (JSON)
+# Read the active window from Hyprland as JSON.
 j="$(hyprctl -j activewindow 2>/dev/null || echo '{}')"
 
 cls="$(echo "$j" | jq -r '.class // ""')"
@@ -9,7 +9,7 @@ title="$(echo "$j" | jq -r '.title // ""')"
 
 icon=""  # fallback
 
-# Mapping basique (tu peux enrichir)
+# Basic mapping, easy to extend.
 case "${cls,,}" in
   foot|alacritty|kitty|wezterm) icon="" ;;
   firefox) icon="" ;;
@@ -26,6 +26,6 @@ case "${cls,,}" in
   mpv|vlc) icon="󰕼" ;;
 esac
 
-# Sortie JSON Waybar (return-type=json)
-# Tooltip = titre complet, texte = icône seulement
+# Waybar JSON output (return-type=json).
+# Tooltip is the full title; text is the icon only.
 printf '{"text":"%s","tooltip":"%s"}\n' "$icon" "${title//\"/\\\"}"
