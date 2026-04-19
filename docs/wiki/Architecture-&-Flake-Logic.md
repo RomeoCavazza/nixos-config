@@ -97,10 +97,12 @@ Generated HTML: [code-map-config.html](https://github.com/RomeoCavazza/setup-os/
 ├── bin/
 ├── conky/
 ├── doom/
+├── edex/
 ├── fastfetch/
 ├── foot/
 ├── grafana/
 ├── hypr/
+├── icons/
 ├── nvim/
 ├── rofi/
 ├── scss/

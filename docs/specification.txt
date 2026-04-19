@@ -177,7 +177,9 @@ Components:
   - Pywal: Automatic color palette generation from wallpapers.
 
 config/
-  Source configuration tree (hypr, waybar, rofi, foot, doom, bin, swappy).
+  Source configuration tree:
+  bin/, conky/, doom/, edex/, fastfetch/, foot/, grafana/, hypr/,
+  icons/, nvim/, rofi/, scss/, swappy/, wal/
 
 config/bin/
   Custom scripts (18 total): antigravity, cursor, cursor-toggle,
@@ -235,28 +237,28 @@ seaglass
 Waybar (config/hypr/waybar)
   Status bar (config.jsonc, generated style.css from style.scss, mocha.css, scripts).
 
-WaybarCava.sh (config/bin/WaybarCava.sh → ~/.local/bin/ via home.file)
+WaybarCava.sh (config/hypr/waybar/WaybarCava.sh)
   Cava integration script. Generates temporary config in /tmp/bar_cava_config.
   Processes raw ASCII output from Cava into bar characters for Waybar.
-  Handles silence masking.
+  Handles silence masking. Deployed to ~/.config/waybar/ via the Sass
+  compilation derivation (waybarConfig in home.nix).
 
-activeapp.sh (config/bin/activeapp.sh → deployed via home.file)
+activeapp.sh (config/hypr/waybar/activeapp.sh)
   Active window tracker. Uses `hyprctl activewindow` and `jq` to extract
   class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.).
-  Outputs JSON for Waybar.
+  Outputs JSON for Waybar. Deployed alongside WaybarCava.sh via waybarConfig.
 
 rofi (config/rofi, home.file.".config/rofi")
   Active runtime: config.rasi, theme.rasi, custom/column-tco.rasi, scripts/rofi-push.sh, bin/rofi-grid.sh, themes/apps-grid.rasi. Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
 
-rofi-push.sh (config/bin/rofi-push.sh → ~/.local/bin/ via home.file)
+rofi-push.sh (config/rofi/scripts/rofi-push.sh)
   Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400.
   Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi
   without overlapping windows. Restores original gaps on exit.
 
-rofi-grid.sh (config/bin/rofi-grid.sh → ~/.local/bin/ via home.file)
+rofi-grid.sh (config/rofi/bin/rofi-grid.sh)
   Display management. Temporarily increases Hyprland blur size when Rofi
-  is active. Kills Waybar on launch and relaunches it on exit to ensure
-  visual consistency.
+  is active. Kills Waybar on launch and relaunches on exit.
 
 foot (config/foot/, home.file.".config/foot")
   Foot terminal configuration (foot.ini). Theme and colour palette.
@@ -407,6 +409,9 @@ Commands
                         home-manager, rust-overlay, hyprland, hyprspace,
                         hyprland-plugins, hyprtasking, nix-snapd, sops-nix),
                         system + HM + sops output
+  display-audio.puml    Display stack, audio pipeline, and portal configuration
+  observability.puml    Prometheus/Loki/Grafana data flow and scrape topology
+  user-layer.puml       Home Manager user environment and dotfile symlink map
 
   Regenerate PlantUML  (cd docs/diagrams/puml && nix shell nixpkgs#plantuml --command plantuml -tpng -o ../png ./*.puml)
   Regenerate TreeViews  node docs/diagrams/carbon/render-code-map.mjs
