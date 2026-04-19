@@ -14,6 +14,7 @@ nixos/
     ├── nvidia-prime.nix      # Hybrid GPU (PRIME Offload)
     ├── observability.nix     # Prometheus, Loki, Grafana
     ├── ollama.nix            # Local LLM (AI)
+    ├── n8n.nix               # Workflow Automation
     ├── virtualisation.nix    # Docker, Libvirt, QEMU
     └── ...                   # Nginx, Emacs, GDM, etc.
 ```
@@ -119,6 +120,18 @@ Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA
 Two configuration choices are worth explaining. `OLLAMA_KEEP_ALIVE` is set to 24 hours, which keeps a loaded model in VRAM between requests. Without this, Ollama unloads the model after 5 minutes of inactivity, and the next request pays a cold-start cost of 2 to 10 seconds depending on model size. The tradeoff is 4 to 8 GB of VRAM reserved while a model is loaded. `OLLAMA_KV_CACHE_TYPE` is set to `q8_0`, which quantizes the key-value cache to 8-bit integers, reducing VRAM usage with a negligible quality impact on most tasks.
 
 Ollama is paired with Qdrant (for vector search) and `aider-chat` (installed in `home.nix`) to form a self-contained local AI development environment with no external API dependency.
+
+---
+
+### `n8n.nix` — Workflow Automation
+
+<p align="left">
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
+</p>
+
+This module (planned/optional) provides the orchestration layer for the local AI stack. By exposing a node-based interface, it allows for complex multi-step workflows that connect Ollama's inference and Qdrant's vector search to external triggers, webhooks, or centralized logging events.
+
+It is designed to run either as a native NixOS service or within a sandboxed OCI container, maintaining strict isolation for the automation logic.
 
 ---
 
