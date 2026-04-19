@@ -20,8 +20,8 @@ CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
 # uid:slug:file
 DASHBOARDS=(
   "nixos-metrics:nixos-metrics:live-dashboard.png"
-  "nix-efficiency:nix-efficiency:nix-efficiency.png"
-  "incident-correlation:incident-correlation:incident-dashboard.png"
+    "nix-efficiency:nix-efficiency:nix-efficiency.png"
+    "incident-correlation:incident-correlation:incident-dashboard.png"
 )
 
 mkdir -p "$OUT_DIR"
@@ -46,7 +46,7 @@ for item in "${DASHBOARDS[@]}"; do
   target_file="${OUT_DIR}/${filename}"
 
   dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
-  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]] && [[ -f $(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null)/lib/node_modules/playwright-core/index.js ]]; then PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver)/lib/node_modules/playwright-core/index.js; fi; if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
     echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
     exit 1
   fi
@@ -69,6 +69,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     viewport: { width: 1920, height: 3000 },
     deviceScaleFactor: 2, // Better resolution for documentation
   });
+  
+  page.on('console', msg => console.log(`snapshot-sync: browser: ${msg.text()}`));
+
 
   console.log(`snapshot-sync: navigating to ${process.env.DASHBOARD_URL}`);
   try {
@@ -87,12 +90,18 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 
     // Calculate the bounding box of the actual content to remove the "cushion of air"
     const clip = await page.evaluate(() => {
-      const panels = document.querySelectorAll('.react-grid-item, .panel-container');
+      const items = Array.from(document.querySelectorAll('.react-grid-item, .panel-container'));
+      const visibleItems = items.filter(p => {
+        const rect = p.getBoundingClientRect();
+        return rect.height > 10 && rect.width > 10;
+      });
+      
       let maxBottom = 0;
-      panels.forEach(p => {
+      visibleItems.forEach((p) => {
         const rect = p.getBoundingClientRect();
         if (rect.bottom > maxBottom) maxBottom = rect.bottom;
       });
+      
       // Fallback to viewport height if no panels are found or they are tiny
       const height = maxBottom > 200 ? Math.ceil(maxBottom) + 20 : 1200;
       return { x: 0, y: 0, width: 1920, height };
