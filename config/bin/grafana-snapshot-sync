@@ -9,7 +9,7 @@ TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
-SINCE="${SINCE:-now-3h}"
+SINCE="${SINCE:-now-6h}"
 UNTIL="${UNTIL:-now}"
 MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.3}"
 SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
@@ -46,7 +46,8 @@ for item in "${DASHBOARDS[@]}"; do
   target_file="${OUT_DIR}/${filename}"
 
   dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
-  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]] && [[ -f $(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null)/lib/node_modules/playwright-core/index.js ]]; then PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver)/lib/node_modules/playwright-core/index.js; fi; if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]] && [[ -f $(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null)/index.js ]]; then PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver)/index.js; fi
+  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
     echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
     exit 1
   fi
