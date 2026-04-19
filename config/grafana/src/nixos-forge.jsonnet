@@ -15,20 +15,18 @@ local railTitles = [
   'Flake Lock Age',
   'Store Used',
   'Store Free',
-  'Store Usage',
+  'Store Fill',
   'Closure Size',
-  'Closure Path Count',
-  'Retained Generations',
-  'Last Rebuild Duration',
-  'I/O Pressure',
+  'Closure Paths',
+  'Generations',
+  'Journal Incidents',
+  'IO PSI',
 ];
 
 local graphTitles = [
   'Rebuild Activity',
   'Nix Store Growth',
   'Store Path Retention Flamegraph',
-  'Process Scheduler Activity',
-  'Resource Pressure Heatmap',
 ];
 
 local railPanel(title, index) =

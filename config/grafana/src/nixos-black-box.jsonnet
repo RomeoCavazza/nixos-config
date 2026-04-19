@@ -12,9 +12,12 @@ local panelByTitle(title) =
   std.filter(function(panel) std.get(panel, 'title', '') == title, canonical.panels)[0];
 
 local railTitles = [
-  'Journal Incident Events',
-  'Max Read Latency',
-  'Max Write Latency',
+  'Journal Incidents',
+  'Build Log Faults',
+  'Read Latency',
+  'Write Latency',
+  'Net Faults/s',
+  'Critical Units',
   'Fullscreen Active',
   'Window Count',
 ];

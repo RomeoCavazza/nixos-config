@@ -24,6 +24,8 @@ local diskWriteSeverity = '(' + writeLatency + ' > bool 0.02) + (' + writeLatenc
 local netSeverity = '(' + netFaults + ' > bool 0) + (' + netFaults + ' > bool 0.1)';
 local journal = '{job="systemd-journal"}';
 local incidentPattern = '(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)';
+local dataAge = 'time() - max(timestamp(nix_store_bytes))';
+local maxPressure = 'max({__name__=~"nix_pressure_cpu_avg10|nix_pressure_io_some_avg10|nix_pressure_mem_some_avg10"})';
 local window = '$window';
 local storeGrowth = 'deriv(nix_store_bytes[' + window + '])';
 local closureGrowth = 'deriv(nix_closure_bytes[' + window + '])';
@@ -60,7 +62,7 @@ local railGauge(title, expr, unit='short', decimals=1, thresholds=null, min=0, m
           decimals: decimals,
           min: min,
           max: max,
-          thresholds: if thresholds == null then g.seaglassScale(70, 90) else thresholds,
+          thresholds: if thresholds == null then g.thresholds([{ color: c.teal, value: null }, { color: c.blue, value: 70 }, { color: c.pink, value: 90 }]) else thresholds,
         },
       overrides: [],
     },
@@ -78,11 +80,11 @@ local railSpark(title, expr, unit='short', decimals=1, thresholds=null, datasour
     unit=unit,
     decimals=decimals,
     datasource=datasource,
-    thresholds=thresholds,
     colorMode='value',
     graphMode='area',
     justifyMode='center',
-    textMode='value'
+    textMode='value',
+    thresholds=thresholds,
   );
 
 local asRailPanel(panel, id, y) =
@@ -949,40 +951,43 @@ local incidentRiskRiver =
   );
 
 local pulseCounters = [
-  railSpark('Uptime', 'time() - node_boot_time_seconds{job="node"}', unit='s', decimals=0, thresholds=g.thresholds([{ color: c.blue, value: null }])) { options+: { graphMode: 'none' } },
-  railGauge('CPU Utilization', cpuBusy, unit='percent', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(70, 90)),
-  railGauge('Memory Used', memUsedPercent, unit='percent', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(75, 90)),
+  railSpark('Uptime', 'time() - node_boot_time_seconds{job="node"}', unit='s', decimals=0, thresholds=g.thresholds([{ color: c.blue, value: null }])),
+  railGauge('CPU Busy', cpuBusy, unit='percent', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(70, 90)),
+  railGauge('RAM Used', memUsedPercent, unit='percent', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(75, 90)),
   railGauge('Load/Core', loadPerCore, unit='short', decimals=2, min=0, max=2, thresholds=g.greenYellowRed(0.8, 1.5)),
-  railGauge('CPU Pressure', 'nix_pressure_cpu_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(2, 5, 15, 30)),
-  railGauge('Memory Pressure', 'nix_pressure_mem_some_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(1, 3, 10, 25)),
-  railGauge('Flake Lock Age', 'nix_flake_lock_age_seconds / 86400', unit='d', decimals=1, min=0, max=14, thresholds=g.greenYellowRed(3, 7)),
+  railGauge('CPU PSI', 'nix_pressure_cpu_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(2, 5, 15, 30)),
+  railGauge('Memory PSI', 'nix_pressure_mem_some_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(1, 3, 10, 25)),
 ];
 
 local pressureCounters = [
-  railGauge('I/O Pressure', 'nix_pressure_io_some_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(1, 3, 10, 25)),
-  railGauge('Max Temperature', 'max({__name__=~"node_hwmon_temp_celsius|node_thermal_zone_temp",job="node"})', unit='celsius', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(70, 85)),
+  railGauge('IO PSI', 'nix_pressure_io_some_avg10', unit='percent', decimals=2, min=0, max=100, thresholds=g.fiveStep(1, 3, 10, 25)),
+  railGauge('Max Temp', 'max({__name__=~"node_hwmon_temp_celsius|node_thermal_zone_temp",job="node"})', unit='celsius', decimals=1, min=0, max=100, thresholds=g.greenYellowRed(70, 85)),
   railSpark('Running', 'node_procs_running{job="node"}', unit='none', decimals=0, thresholds=g.thresholds([{ color: c.teal, value: null }])),
   railGauge('Blocked', 'node_procs_blocked{job="node"}', unit='none', decimals=0, min=0, max=5, thresholds=g.greenYellowRed(1, 3)),
-  railSpark('Context Switches/s', 'sum(rate(node_context_switches_total{job="node"}[5m]))', unit='ops', decimals=0, thresholds=g.thresholds([{ color: c.blue, value: null }])),
+  railSpark('Ctx/s', 'sum(rate(node_context_switches_total{job="node"}[5m]))', unit='ops', decimals=0, thresholds=g.thresholds([{ color: c.blue, value: null }])),
 ];
 
 local storeCounters = [
-  railSpark('Store Used', 'nix_store_bytes', unit='bytes', decimals=1, thresholds=g.thresholds([{ color: c.blue, value: null }])),
-  railSpark('Store Free', 'nix_store_available_bytes', unit='bytes', decimals=1, thresholds=g.thresholds([{ color: c.green, value: null }])),
-  railGauge('Store Usage', 'nix_store_usage_ratio', unit='percentunit', decimals=1, min=0, max=1, thresholds=g.thresholds([{ color: c.blue, value: null }, { color: c.mauve, value: 0.75 }, { color: c.red, value: 0.95 }])),
-  railSpark('Closure Size', 'nix_closure_bytes', unit='bytes', decimals=1, thresholds=g.thresholds([{ color: c.teal, value: null }])),
-  railSpark('Closure Path Count', 'nix_closure_paths', unit='none', decimals=0, thresholds=g.thresholds([{ color: c.mauve, value: null }])),
-  railGauge('Retained Generations', 'nix_generations_count', unit='none', decimals=0, min=0, max=12, thresholds=g.greenYellowRed(6, 10)),
+  railGauge('Flake Lock Age', 'nix_flake_lock_age_seconds / 86400', unit='d', decimals=1, min=0, max=30, thresholds=g.greenYellowRed(15, 30)),
+  railSpark('Store Used', 'nix_store_bytes', unit='decbytes', decimals=1, thresholds=g.greenYellowRed(80000000000, 140000000000)),
+  railSpark('Store Free', 'nix_store_available_bytes', unit='decbytes', decimals=1, thresholds=g.thresholds([{ color: c.green, value: null }])),
+  railGauge('Store Fill', 'nix_store_usage_ratio', unit='percentunit', decimals=1, min=0, max=1, thresholds=g.greenYellowRed(0.75, 0.9)),
+  railSpark('Closure Size', 'nix_closure_bytes', unit='decbytes', decimals=1, thresholds=g.greenYellowRed(1000000000000, 1500000000000)),
+  railSpark('Closure Paths', 'nix_closure_paths', unit='none', decimals=0, thresholds=g.greenYellowRed(60000, 100000)),
+  railGauge('Generations', 'nix_generations_count', unit='none', decimals=0, min=0, max=12, thresholds=g.greenYellowRed(6, 10)),
 ];
 
 local incidentCounters = [
-  railSpark('Journal Incident Events', 'sum(count_over_time(' + journal + ' |~ "' + incidentPattern + '" [15m]))', datasource='Loki', unit='none', decimals=0, thresholds=g.greenYellowRed(3, 10)),
-  railGauge('Last Rebuild Duration', 'nix_rebuild_duration_ms / 1000', unit='s', decimals=1, min=0, max=120, thresholds=g.greenYellowRed(30, 90)),
-  railSpark('Max Read Latency', 'max(' + readLatency + ')', unit='s', decimals=4, thresholds=g.greenYellowRed(0.02, 0.10)),
-  railSpark('Max Write Latency', 'max(' + writeLatency + ')', unit='s', decimals=4, thresholds=g.greenYellowRed(0.02, 0.10)),
+  railGauge('Journal Incidents', 'sum(count_over_time(' + journal + ' |~ "' + incidentPattern + '" [15m]))', datasource='Loki', unit='none', decimals=0, min=0, max=20, thresholds=g.greenYellowRed(3, 10)),
+  railGauge('Build Log Faults', 'sum(count_over_time({job="systemd-journal",component="build"} |~ "' + incidentPattern + '" [15m]))', datasource='Loki', unit='none', decimals=0, min=0, max=8, thresholds=g.greenYellowRed(1, 4)),
+  railGauge('Read Latency', 'max(' + readLatency + ')', unit='s', decimals=4, min=0, max=0.2, thresholds=g.greenYellowRed(0.02, 0.10)),
+  railGauge('Write Latency', 'max(' + writeLatency + ')', unit='s', decimals=4, min=0, max=0.2, thresholds=g.greenYellowRed(0.02, 0.10)),
+  railGauge('Net Faults/s', 'sum(' + netFaults + ')', unit='ops', decimals=3, min=0, max=0.2, thresholds=g.greenYellowRed(0.01, 0.10)),
+  railGauge('Critical Units', 'sum(count_over_time({job="systemd-journal"} |= "Failed" [15m]))', datasource='Loki', unit='none', decimals=0, min=0, max=8, thresholds=g.greenYellowRed(1, 3)),
   railGauge('Fullscreen Active', 'hypr_fullscreen_active', unit='bool', decimals=0, min=0, max=1, thresholds=g.thresholds([{color: c.blue, value:null}])),
   railSpark('Window Count', 'hypr_windows_total', unit='none', decimals=0, thresholds=g.thresholds([{color: c.teal, value:null}])),
 ];
+
 
 local inspectionPanels = [
   cpuSaturation,

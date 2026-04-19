@@ -49,6 +49,8 @@
             "mode": "thresholds"
           },
           "decimals": 0,
+          "max": 20,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -78,11 +80,6 @@
       },
       "id": 1301,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -90,8 +87,13 @@
           "fields": "",
           "values": false
         },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
         "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -102,20 +104,22 @@
           "refId": "A"
         }
       ],
-      "title": "Journal Incident Events",
-      "type": "stat"
+      "title": "Journal Incidents",
+      "type": "gauge"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
+        "type": "loki",
+        "uid": "Loki"
       },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 4,
+          "decimals": 0,
+          "max": 8,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -125,15 +129,15 @@
               },
               {
                 "color": "#73d9f7",
-                "value": 0.02
+                "value": 1
               },
               {
                 "color": "#f5c2e7",
-                "value": 0.10000000000000001
+                "value": 4
               }
             ]
           },
-          "unit": "s"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -145,11 +149,6 @@
       },
       "id": 1302,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -157,24 +156,25 @@
           "fields": "",
           "values": false
         },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
         "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
+            "type": "loki",
+            "uid": "Loki"
           },
-          "editorMode": "code",
-          "expr": "max(rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001))",
-          "instant": false,
-          "legendFormat": "value",
-          "range": true,
+          "expr": "sum(count_over_time({job=\"systemd-journal\",component=\"build\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [15m]))",
           "refId": "A"
         }
       ],
-      "title": "Max Read Latency",
-      "type": "stat"
+      "title": "Build Log Faults",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -187,6 +187,8 @@
             "mode": "thresholds"
           },
           "decimals": 4,
+          "max": 0.20000000000000001,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -216,11 +218,6 @@
       },
       "id": 1303,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -228,8 +225,86 @@
           "fields": "",
           "values": false
         },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
         "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max(rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001))",
+          "instant": false,
+          "legendFormat": "Read Latency",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Read Latency",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4,
+          "max": 0.20000000000000001,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.02
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 27
+      },
+      "id": 1304,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -239,13 +314,155 @@
           "editorMode": "code",
           "expr": "max(rate(node_disk_write_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001))",
           "instant": false,
-          "legendFormat": "value",
+          "legendFormat": "Write Latency",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Max Write Latency",
-      "type": "stat"
+      "title": "Write Latency",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 3,
+          "max": 0.20000000000000001,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.01
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 32
+      },
+      "id": 1305,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by (device) (rate(node_network_receive_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_receive_drop_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_drop_total{job=\"node\",device!=\"lo\"}[5m])))",
+          "instant": false,
+          "legendFormat": "Net Faults/s",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Net Faults/s",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "max": 8,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 1
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 37
+      },
+      "id": 1306,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\"} |= \"Failed\" [15m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Critical Units",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -277,9 +494,9 @@
         "h": 5,
         "w": 5,
         "x": 0,
-        "y": 27
+        "y": 42
       },
-      "id": 1304,
+      "id": 1307,
       "options": {
         "reduceOptions": {
           "calcs": [
@@ -340,9 +557,9 @@
         "h": 5,
         "w": 5,
         "x": 0,
-        "y": 32
+        "y": 47
       },
-      "id": 1305,
+      "id": 1308,
       "options": {
         "colorMode": "value",
         "graphMode": "area",

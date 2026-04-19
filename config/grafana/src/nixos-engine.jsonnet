@@ -13,24 +13,25 @@ local panelByTitle(title) =
 
 local railTitles = [
   'Uptime',
-  'CPU Utilization',
-  'Memory Used',
+  'CPU Busy',
+  'RAM Used',
   'Load/Core',
-  'CPU Pressure',
-  'Memory Pressure',
-  'Max Temperature',
+  'CPU PSI',
+  'Memory PSI',
+  'Max Temp',
   'Running',
   'Blocked',
-  'Context Switches/s',
+  'Ctx/s',
 ];
 
 local graphTitles = [
   'CPU Utilization by Mode',
   'Load Average vs CPU Capacity',
-  'NVIDIA GPU Metrics',
   'Memory Usage Breakdown',
+  'Resource Pressure Heatmap',
   'Resource Pressure Timeline',
   'Temperature Sensors',
+  'Process Scheduler Activity',
 ];
 
 local railPanel(title, index) =
