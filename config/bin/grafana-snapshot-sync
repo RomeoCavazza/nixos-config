@@ -90,10 +90,15 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 
     // Calculate the bounding box of the actual content to remove the "cushion of air"
     const clip = await page.evaluate(() => {
-      const items = Array.from(document.querySelectorAll('.react-grid-item, .panel-container'));
+      // Find all grid items and specific panel containers
+      const items = Array.from(document.querySelectorAll('.react-grid-item, .panel-container, [data-testid="grid-item"]'));
+      
       const visibleItems = items.filter(p => {
         const rect = p.getBoundingClientRect();
-        return rect.height > 10 && rect.width > 10;
+        // Ignore tiny, invisible, or clearly out-of-bounds items
+        const isVisible = rect.height > 20 && rect.width > 20;
+        const isWithinReason = rect.bottom < 5000;
+        return isVisible && isWithinReason;
       });
       
       let maxBottom = 0;
@@ -102,8 +107,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
         if (rect.bottom > maxBottom) maxBottom = rect.bottom;
       });
       
-      // Fallback to viewport height if no panels are found or they are tiny
-      const height = maxBottom > 200 ? Math.ceil(maxBottom) + 20 : 1200;
+      // If we still get zero, fallback to a sensible default
+      // Otherwise, add a small 20px padding
+      const height = maxBottom > 100 ? Math.ceil(maxBottom) + 20 : 1200;
+      
       return { x: 0, y: 0, width: 1920, height };
     });
 

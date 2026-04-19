@@ -108,9 +108,9 @@ Promtail runs as a raw systemd service rather than through the NixOS module, bec
 ### `ollama.nix` — Local LLM Daemon (AI Stack)
 
 <p align="left">
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/ollama.png" alt="Ollama" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
 </p>
 
 Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA cuBLAS for matrix operations instead of falling back to CPU. The performance difference is substantial — roughly 5 to 10 times faster inference on GPU, which is the difference between a model feeling responsive and feeling unusable for interactive work.

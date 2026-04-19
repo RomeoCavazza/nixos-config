@@ -2,24 +2,6 @@ This page documents the structural decisions behind the flake and explains how t
 
 ![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/scheme.png)
 
-## Simplified Tree
-
-```text
-.
-├── config/
-├── docs/
-├── home/
-├── modules/
-├── secrets/
-├── configuration.nix
-├── flake.nix
-├── flake.lock
-├── hardware-configuration.nix
-├── LICENSE
-├── README.md
-└── secrets/
-```
-
 ---
 
 ## The Flake as a Single Source of Truth
