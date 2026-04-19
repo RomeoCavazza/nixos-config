@@ -4307,17 +4307,22 @@
         "auto": false,
         "current": {
           "selected": true,
-          "text": "3h",
-          "value": "3h"
+          "text": "6h",
+          "value": "6h"
         },
         "hide": 0,
         "label": "Growth window",
         "name": "window",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "3h",
             "value": "3h"
+          },
+          {
+            "selected": true,
+            "text": "6h",
+            "value": "6h"
           },
           {
             "selected": false,
@@ -4335,7 +4340,7 @@
             "value": "7d"
           }
         ],
-        "query": "3h,12h,24h,7d",
+        "query": "3h,6h,12h,24h,7d",
         "refresh": 2,
         "skipUrlSync": false,
         "type": "interval"
@@ -4343,7 +4348,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {

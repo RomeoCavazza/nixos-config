@@ -68,11 +68,11 @@ g.dashboard(
   '10s',
   'Host performance view for CPU, memory, load, pressure, thermals, and GPU telemetry.',
   variables=[
-    g.intervalVar('window', 'Growth window', ['3h', '12h', '24h', '7d'], '3h'),
+    g.intervalVar('window', 'Growth window', ['3h', '6h', '12h', '24h', '7d'], '6h'),
   ],
 ) {
   timezone: 'browser',
-  time: { from: 'now-3h', to: 'now' },
+  time: { from: 'now-6h', to: 'now' },
   panels:
     [summaryPanel]
     + std.mapWithIndex(function(index, title) railPanel(title, index), railTitles)

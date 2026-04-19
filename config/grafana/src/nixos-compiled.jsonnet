@@ -944,7 +944,7 @@ g.dashboard(
   '10s',
   'Canonical single-page overview of host performance, store health, rebuild activity, and incident diagnostics.',
   variables=[
-    g.intervalVar('window', 'Growth window', ['3h', '12h', '24h', '7d'], '3h'),
+    g.intervalVar('window', 'Growth window', ['3h', '6h', '12h', '24h', '7d'], '6h'),
   ],
 ) {
   timezone: 'browser',
@@ -957,7 +957,7 @@ g.dashboard(
     gridPos: { x: 0, y: 0, w: railW, h: summaryH },
   },
 
-  time: { from: 'now-3h', to: 'now' },
+  time: { from: 'now-6h', to: 'now' },
   panels:
     [summaryPanel]
     + counterStack(pulseCounters, 4101, pulseY)
