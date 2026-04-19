@@ -74,21 +74,18 @@ The third layer is `binfmt` emulation for `aarch64-linux`. This registers the AR
 
 ---
 
-### `databases.nix` — PostgreSQL, Redis, Qdrant
+### `databases.nix` — PostgreSQL, Redis
 
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/postgresql.png" alt="PostgreSQL" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/redis.webp" alt="Redis" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
 </p>
 
-Three databases are configured as local development services, each bound to localhost only and each serving a distinct use case.
+Two databases are configured as local development services, each bound to localhost only and each serving a distinct use case.
 
 PostgreSQL 17 runs with the PostGIS extension enabled. PostGIS is included by default because spatial queries come up often enough in data work that having to re-enable it per project is friction. The extension is loaded on demand, so there is no overhead when it is not used.
 
 Redis is configured for dual use. The eviction policy is `allkeys-lru`, which makes it behave correctly as a session cache — the least recently used keys are evicted when memory reaches the 2 GB limit. But persistence is also enabled (both AOF and RDB snapshots), so Redis survives a service restart, which is what a message queue or task queue requires. Keyspace notifications are enabled for patterns that subscribe to key expiration events. The 2 GB memory limit is a guard against Redis consuming unbounded memory when used carelessly during development.
-
-Qdrant is the vector database. It pairs with `ollama.nix` to form a local RAG pipeline: Ollama handles embedding generation and inference, Qdrant handles the nearest-neighbour search over those embeddings. The combination provides a fully self-hosted semantic search stack with no external API calls.
 
 ---
 
@@ -108,11 +105,12 @@ Promtail runs as a raw systemd service rather than through the NixOS module, bec
 
 ---
 
-### `ollama.nix` — Local LLM Daemon
+### `ollama.nix` — Local LLM Daemon (AI Stack)
 
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/ollama.png" alt="Ollama" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
 </p>
 
 Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA cuBLAS for matrix operations instead of falling back to CPU. The performance difference is substantial — roughly 5 to 10 times faster inference on GPU, which is the difference between a model feeling responsive and feeling unusable for interactive work.
@@ -120,6 +118,8 @@ Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA
 Two configuration choices are worth explaining. `OLLAMA_KEEP_ALIVE` is set to 24 hours, which keeps a loaded model in VRAM between requests. Without this, Ollama unloads the model after 5 minutes of inactivity, and the next request pays a cold-start cost of 2 to 10 seconds depending on model size. The tradeoff is 4 to 8 GB of VRAM reserved while a model is loaded. `OLLAMA_KV_CACHE_TYPE` is set to `q8_0`, which quantizes the key-value cache to 8-bit integers, reducing VRAM usage with a negligible quality impact on most tasks.
 
 Ollama is paired with Qdrant (for vector search) and `aider-chat` (installed in `home.nix`) to form a self-contained local AI development environment with no external API dependency.
+
+Qdrant is the vector database of this stack. It pairs with Ollama to form a local RAG pipeline: Ollama handles embedding generation and inference, while Qdrant handles the nearest-neighbour search over those embeddings. The combination provides a fully self-hosted semantic search capability.
 
 ---
 
