@@ -27,7 +27,7 @@ flowchart LR
 
 ## Cryptographic Stack
 
-The approach uses two tools in combination. SOPS (Secrets OPerationS) is a structured secret editor that encrypts the values of a YAML file while leaving the keys in plaintext. The actual `secrets/backup.yaml` in this repo looks like this once committed:
+The approach uses two tools in combination. SOPS (Secrets OPerationS) is a structured secret editor that encrypts the values of a YAML file while leaving the keys in plaintext. The actual [`secrets/backup.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml) in this repo looks like this once committed:
 
 ```yaml
 restic_password: ENC[AES256_GCM,data:zcUjTsN4AKk=,iv:XsmQm...,type:str]
@@ -43,7 +43,7 @@ Age is the underlying asymmetric encryption primitive, using X25519 key exchange
 
 ## Key Configuration
 
-The `.sops.yaml` at the repo root registers two Age recipients:
+The [`.sops.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/.sops.yaml) at the repo root registers two Age recipients:
 
 ```yaml
 keys:
@@ -64,7 +64,7 @@ creation_rules:
 
 ## NixOS Integration
 
-`backup.nix` declares how secrets are consumed at the system level:
+[`backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix) declares how secrets are consumed at the system level:
 
 ```nix
 sops.defaultSopsFile = ../secrets/backup.yaml;

@@ -32,7 +32,7 @@ The goal is to reclaim **Digital Sovereignty**. On this machine, nothing is "mag
 
 ### Core Properties
 
-**Reproducibility.** The entire system state is pinned in `flake.lock`. A cold reinstall is a `git clone` followed by a single command. It eliminates the "works on my machine" problem—the `flake.lock` file is the contract.
+**Reproducibility.** The entire system state is pinned in [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock). A cold reinstall is a `git clone` followed by a single command. It eliminates the "works on my machine" problem—the `flake.lock` file is the contract.
 
 **Security.** Secrets (API keys, backup credentials) are encrypted with **SOPS/Age**. They are decrypted into a `tmpfs` (RAM-only) at activation, leaving no trace on disk. The system identity itself handles decryption, ensuring that secrets never enter the repository in plaintext.
 
@@ -43,8 +43,8 @@ The goal is to reclaim **Digital Sovereignty**. On this machine, nothing is "mag
 ## Architecture & Logic
 
 The configuration defines a single system output, `nixosConfigurations.nixos`, which applies two layers atomically:
-1.  **NixOS System Layer**: Kernel, drivers, and system services defined in `configuration.nix`.
-2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in `home/tco/home.nix`.
+1.  **NixOS System Layer**: Kernel, drivers, and system services defined in [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix).
+2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in [`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix).
 
 Both layers are versioned in the same flake. It is not possible to apply a system update without syncing the user environment, and a failure in either part prevents activation of the entire rebuild.
 
@@ -81,7 +81,7 @@ nix flake update && sudo nixos-rebuild switch --flake .#nixos
 sudo nixos-rebuild build --flake .#nixos && nvd diff /run/current-system result
 
 # Edit an encrypted secret
-sops secrets/backup.yaml
+sops [secrets/backup.yaml](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml)
 ```
 
 ---

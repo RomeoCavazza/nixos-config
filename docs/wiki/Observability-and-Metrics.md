@@ -28,7 +28,7 @@ Snapshots are checked every 15 minutes and published when visual delta exceeds 0
 Regeneration command:
 ```bash
 cd /etc/nixos
-sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c ./config/bin/grafana-generate
+sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c [./config/bin/grafana-generate](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate)
 ```
 
 ### 1. NixOS System Cockpit
@@ -90,8 +90,8 @@ Promtail adds a `component` label for targeted LogQL queries:
 
 ## Technical Pipeline
 
-1. **Source**: Dashboards defined in `config/grafana/src/*.jsonnet`.
-2. **Compile**: `grafana-generate` produces the provisioned JSON.
+1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/).
+2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate) produces the provisioned JSON.
 3. **Capture**: `grafana-snapshot-sync.timer` captures PNGs every 15m.
 4. **Publish**: PNGs reaching >0.5% delta are pushed to `docs/assets/live/`.
 

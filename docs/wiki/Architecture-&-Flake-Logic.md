@@ -2,9 +2,9 @@ This page is a reading map for the repository. It does not try to repeat every d
 
 Read the repository through three rules:
 
-- `flake.nix` and `flake.lock` are the build contract: inputs, pinned versions, and the NixOS output.
-- `configuration.nix` builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
-- `docs/diagrams/` contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
+- [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix) and `flake.lock` are the build contract: inputs, pinned versions, and the NixOS output.
+- [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix) builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
+- [`docs/diagrams/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/diagrams/) contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
 
 ![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/diagrams/png/flake-outputs.png)
 
@@ -29,9 +29,9 @@ Generated HTML: [code-map.html](https://github.com/RomeoCavazza/setup-os/blob/ma
 └── secrets/
 ```
 
-The root stays intentionally flat. The four top-level files define the machine: the flake, its lockfile, the main NixOS configuration, and the detected hardware configuration. The directories then split responsibility across system modules, the user layer, dotfiles, documentation, and secrets.
+The root stays intentionally flat. The four top-level files define the machine: the [`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix), its lockfile, the main [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), and the detected [`hardware-configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/hardware-configuration.nix). The directories then split responsibility across system modules, the user layer, dotfiles, documentation, and secrets.
 
-`flake.nix` exposes one important output: `nixosConfigurations.nixos`. It evaluates `configuration.nix`, injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
+[`flake.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.nix) exposes one important output: `nixosConfigurations.nixos`. It evaluates [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
 
 ---
 
@@ -58,7 +58,7 @@ Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/setup-os
 └── streamlit.nix
 ```
 
-`modules/` is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from `configuration.nix`, except `backup.nix`, which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
+[`modules/`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/) is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix), except [`backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix), which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
 
 `edex.nix`, `lamp.nix`, and `streamlit.nix` are optional blocks. They remain documented and ready to connect, but they do not define the default machine behavior until they are imported.
 
@@ -80,7 +80,7 @@ Generated HTML: [code-map-home.html](https://github.com/RomeoCavazza/setup-os/bl
         └── embedded.nix
 ```
 
-`home/tco/home.nix` describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
+[`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix) describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
 
 The `apps/` modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
 

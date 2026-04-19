@@ -6,7 +6,6 @@ The goal is to keep `configuration.nix` legible. It should read as a declaration
 
 ---
 
-### `nvidia-prime.nix` — Hybrid GPU
 ### [`nvidia-prime.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/nvidia-prime.nix) — Hybrid GPU
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/nvidia.svg" alt="NVIDIA" width="28" />
@@ -20,7 +19,6 @@ Applications that need the discrete GPU use the `nvidia-offload` wrapper — for
 
 ---
 
-### `gdm-wallpaper.nix` — Custom GDM Login Screen
 ### [`gdm-wallpaper.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/gdm-wallpaper.nix) — Custom GDM Login Screen
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/gnome.svg" alt="GNOME" width="28" />
@@ -32,7 +30,6 @@ The approach is more surgical than replacing `gnome-shell` outright. Only the th
 
 ---
 
-### `launcher.nix` — Desktop Integration
 ### [`launcher.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/launcher.nix) — Desktop Integration
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/rofi.png" alt="Rofi" width="28" />
@@ -56,8 +53,7 @@ The module also installs Rofi, Waybar, the NetworkManager system tray applet, an
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/influxdb.png" alt="InfluxDB" width="28" />
 </p>
 
-The three modules in `home/tco/modules/apps/` are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, and they have no service dependencies.
-The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/) are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, et ils n'ont pas de dépendances de service.
+The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/) are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, and they have no service dependencies.
 
 - [`cad.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/cad.nix) groups Obsidian (notes and knowledge management), KiCad (PCB and schematic design), and FreeCAD (parametric 3D CAD) together.
 - [`embedded.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/modules/apps/embedded.nix) provides the Arduino IDE and CLI, esptool for ESP8266/ESP32 firmware flashing, and minicom for serial port monitoring.
@@ -67,7 +63,6 @@ The grouping reflects how these tools are actually used. They are domain-specifi
 
 ---
 
-### `backup.nix` — Restic + Backblaze B2
 ### [`backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix) — Restic + Backblaze B2
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/restic.png" alt="Restic" width="28" />
@@ -84,7 +79,6 @@ Both timers use `RandomizedDelaySec` to add a random offset to their start time,
 
 ---
 
-### `observability.nix` — Prometheus, Loki, Grafana
 ### [`observability.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/observability.nix) — Prometheus, Loki, Grafana
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/prometheus.png" alt="Prometheus" width="28" />
@@ -100,7 +94,6 @@ Promtail runs as a raw systemd service rather than through the NixOS module, bec
 
 ---
 
-### `databases.nix` — PostgreSQL, Redis
 ### [`databases.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/databases.nix) — PostgreSQL, Redis
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/postgresql.png" alt="PostgreSQL" width="28" />
@@ -115,7 +108,6 @@ Redis is configured for dual use. The eviction policy is `allkeys-lru`, which ma
 
 ---
 
-### `virtualisation.nix` — Containers, VMs, and ARM Emulation
 ### [`virtualisation.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/virtualisation.nix) — Containers, VMs, and ARM Emulation
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/docker.png" alt="Docker" width="28" />
@@ -133,7 +125,6 @@ The third layer is `binfmt` emulation for `aarch64-linux`. This registers the AR
 
 ---
 
-### `nginx.nix` — Local Reverse Proxy
 ### [`nginx.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/nginx.nix) — Local Reverse Proxy
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/nginx.webp" alt="Nginx" width="28" />
@@ -166,7 +157,6 @@ Any of these can be activated by adding the corresponding `./modules/filename.ni
 
 ---
 
-### `ollama.nix` — Local LLM Daemon (AI Stack)
 ### [`ollama.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/ollama.nix) — Local LLM Daemon (AI Stack)
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
@@ -184,7 +174,7 @@ Qdrant is the vector database of this stack. It pairs with Ollama to form a loca
 
 ---
 
-### `n8n.nix` — Workflow Automation
+### [`n8n.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/n8n.nix) — Workflow Automation
 
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
@@ -196,7 +186,6 @@ It is designed to run either as a native NixOS service or within a sandboxed OCI
 
 ---
 
-### `emacs.nix` — Emacs Daemon
 ### [`emacs.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/emacs.nix) — Emacs Daemon
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/emacs.png" alt="Emacs" width="28" />
