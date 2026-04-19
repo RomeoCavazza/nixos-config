@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>docs/ Tree View</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #0f62fe;
+      --text: #161616;
+      --muted: #6f6f6f;
+      --border: #c6c6c6;
+      --border-soft: #e0e0e0;
+      --layer-01: #ffffff;
+      --layer-02: #f4f4f4;
+      --canvas: #b9b9b9;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      height: 900px;
+      overflow: hidden;
+      background: var(--layer-02);
+      color: var(--text);
+      font-family: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+    }
+
+    .app {
+      width: 1600px;
+      height: 900px;
+      background: var(--layer-02);
+      border-top: 3px solid #004144;
+    }
+
+    .titlebar {
+      height: 31px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      background: #fefefe;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .title-icon {
+      width: 15px;
+      height: 15px;
+      border: 1px solid #0072c3;
+      background: linear-gradient(135deg, #e5f6ff, #ffffff);
+    }
+
+    .menubar {
+      height: 25px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 10px;
+      background: #f4f4f4;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 10px;
+      background: linear-gradient(#eeeeee, #d7d7d7);
+      border-bottom: 1px solid #8d8d8d;
+    }
+
+    .tool {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #bdbdbd;
+      background: #f4f4f4;
+      display: grid;
+      place-items: center;
+      color: #393939;
+      font-size: 16px;
+    }
+
+    .tool.active {
+      background: #d0e2ff;
+      border-color: #78a9ff;
+      color: var(--blue);
+    }
+
+    .tabs {
+      height: 31px;
+      display: flex;
+      align-items: end;
+      gap: 1px;
+      padding-left: 188px;
+      background: #eef2ef;
+      border-bottom: 1px solid #a8a8a8;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tab {
+      padding: 8px 12px 7px;
+      border: 1px solid transparent;
+      border-bottom: none;
+    }
+
+    .tab.active {
+      background: #ffffff;
+      border-color: #a8a8a8;
+      color: var(--blue);
+    }
+
+    .workspace {
+      height: calc(900px - 135px);
+      display: grid;
+      grid-template-columns: 415px 1fr 310px;
+      min-height: 0;
+    }
+
+    .sidebar {
+      background: var(--layer-01);
+      border-right: 2px solid #8d8d8d;
+      display: grid;
+      grid-template-rows: 34px 1fr;
+      min-height: 0;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 9px;
+      border-bottom: 1px solid var(--border-soft);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tree {
+      overflow: hidden;
+      padding-top: 4px;
+    }
+
+    .tree-row {
+      height: 28px;
+      display: grid;
+      grid-template-columns: 20px 18px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 6px;
+      padding-left: calc(8px + var(--indent));
+      padding-right: 8px;
+      border-bottom: 1px solid #eeeeee;
+      white-space: nowrap;
+    }
+
+    .tree-row.selected {
+      background: #d0e2ff;
+      outline: 2px solid var(--blue);
+      outline-offset: -2px;
+    }
+
+    .tree-row.muted {
+      color: var(--muted);
+      background: #f8f8f8;
+    }
+
+    .tree-caret {
+      color: #393939;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .tree-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-grid;
+      place-items: center;
+      color: #8d8d8d;
+      font-size: 11px;
+    }
+
+    .tree-icon.folder,
+    .tree-icon.root {
+      color: #0072c3;
+    }
+
+    .tree-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
+
+    .tree-meta {
+      color: var(--blue);
+      font-size: 12px;
+      padding-left: 10px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px),
+        var(--canvas);
+      background-size: 32px 32px;
+      border-right: 1px solid #8d8d8d;
+    }
+
+    .canvas-header {
+      position: absolute;
+      left: 24px;
+      top: 18px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(244, 244, 244, 0.88);
+      border: 1px solid #8d8d8d;
+      padding: 9px 12px;
+    }
+
+    .canvas-header strong {
+      font-size: 14px;
+    }
+
+    .canvas-header span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .canvas-svg {
+      position: absolute;
+      left: 34px;
+      top: 46px;
+      width: 100%;
+      height: 710px;
+    }
+
+    .edge {
+      fill: none;
+      stroke: #525252;
+      stroke-width: 1.4;
+      shape-rendering: crispEdges;
+    }
+
+    .node-card {
+      fill: #fefefa;
+      stroke: #6f6f6f;
+      stroke-width: 1;
+    }
+
+    .node-check {
+      fill: #f4f4f4;
+      stroke: #a8a8a8;
+    }
+
+    .node-title {
+      fill: #161616;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .node-meta {
+      fill: #525252;
+      font-size: 12px;
+    }
+
+    .node-status {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .node-handle {
+      opacity: 0.7;
+    }
+
+    .inspector {
+      background: var(--layer-01);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 0;
+    }
+
+    .inspector-title {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .inspector-title h1 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .inspector-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .properties {
+      overflow: hidden;
+      padding: 16px 18px;
+    }
+
+    .property {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      border-bottom: 1px solid var(--border-soft);
+      min-height: 34px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .property span:first-child {
+      color: var(--muted);
+    }
+
+    pre {
+      margin: 16px 0 0;
+      padding: 12px;
+      height: 210px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      background: #f4f4f4;
+      color: #262626;
+      font-family: "IBM Plex Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .legend {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-soft);
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      border: 1px solid #8d8d8d;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="titlebar">
+      <span class="title-icon"></span>
+      <span>TreeView - [setup-os Repository] - [docs/]</span>
+    </div>
+
+    <div class="menubar">
+      <span>File</span>
+      <span>Edit</span>
+      <span>View</span>
+      <span>Repository</span>
+      <span>Tools</span>
+      <span>Help</span>
+    </div>
+
+    <div class="toolbar">
+      <div class="tool">+</div>
+      <div class="tool">□</div>
+      <div class="tool active">▣</div>
+      <div class="tool">☰</div>
+      <div class="tool">▤</div>
+      <div class="tool">?</div>
+      <div style="margin-left:auto;color:#525252;font-size:13px;">Carbon-inspired TreeView screenshot · generated from repository data</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab ">Root</div>
+      <div class="tab ">config</div>
+      <div class="tab ">modules</div>
+      <div class="tab ">home</div>
+      <div class="tab active">docs</div>
+      <div class="tab ">secrets</div>
+    </div>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <div class="search">Search docs/ tree</div>
+        <div class="tree">
+
+      <div class="tree-row" style="--indent:0px">
+        <span class="tree-caret">▾</span>
+        <span class="tree-icon folder">▣</span>
+        <span class="tree-label">docs</span>
+        <span class="tree-meta">85 files</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:18px">
+        <span class="tree-caret">▾</span>
+        <span class="tree-icon folder">▣</span>
+        <span class="tree-label">assets</span>
+        <span class="tree-meta">67 files</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret">▾</span>
+        <span class="tree-icon folder">▣</span>
+        <span class="tree-label">diagrams</span>
+        <span class="tree-meta">8 files</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">display-audio.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">flake-outputs.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">integration-logic.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">observability.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">rofi-launcher-flow.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">system-architecture.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">theme-flow.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">user-layer.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret">▾</span>
+        <span class="tree-icon folder">▣</span>
+        <span class="tree-label">live</span>
+        <span class="tree-meta">3 files</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">incident-dashboard.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">live-dashboard.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">nix-efficiency.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret">▾</span>
+        <span class="tree-icon folder">▣</span>
+        <span class="tree-label">logo</span>
+        <span class="tree-meta">31 files</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">apache.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">arduino.svg</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">backblaze.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">dbeaver.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">docker.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">edex-ui.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">emacs.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">esptool.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">freecad.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">gnome.svg</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">graphana.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">influxdb.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:54px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon more">□</span>
+        <span class="tree-label">... 19 more</span>
+        <span class="tree-meta">collapsed</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">background.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">code-map-config.html</span>
+        <span class="tree-meta">29 KiB</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">code-map-config.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">code-map-docs.html</span>
+        <span class="tree-meta">40 KiB</span>
+      </div>
+
+
+      <div class="tree-row" style="--indent:36px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon file">□</span>
+        <span class="tree-label">code-map-docs.png</span>
+        <span class="tree-meta">asset</span>
+      </div>
+
+
+      <div class="tree-row muted" style="--indent:18px">
+        <span class="tree-caret"></span>
+        <span class="tree-icon more">□</span>
+        <span class="tree-label">... 26 more rows</span>
+        <span class="tree-meta">scroll</span>
+      </div>
+
+        </div>
+      </aside>
+
+      <main class="canvas-wrap">
+        <div class="canvas-header">
+          <strong>docs/ hierarchy</strong>
+          <span>8 dirs · 85 files</span>
+        </div>
+
+    <svg class="canvas-svg" viewBox="0 0 1280 1517" role="img" aria-label="docs/ tree view">
+      <path class="edge" d="M 655 124 H 580 V 124 H 505" />
+<path class="edge" d="M 655 124 H 580 V 174 H 505" />
+<path class="edge" d="M 655 124 H 580 V 224 H 505" />
+<path class="edge" d="M 655 124 H 580 V 271 H 505" />
+<path class="edge" d="M 655 124 H 580 V 321 H 505" />
+<path class="edge" d="M 655 124 H 580 V 371 H 505" />
+<path class="edge" d="M 655 124 H 580 V 421 H 505" />
+<path class="edge" d="M 655 124 H 580 V 471 H 505" />
+<path class="edge" d="M 655 124 H 580 V 521 H 505" />
+<path class="edge" d="M 655 124 H 580 V 124 H 505" />
+<path class="edge" d="M 709 571 H 607 V 571 H 505" />
+<path class="edge" d="M 709 571 H 607 V 621 H 505" />
+<path class="edge" d="M 709 571 H 607 V 671 H 505" />
+<path class="edge" d="M 709 571 H 607 V 721 H 505" />
+<path class="edge" d="M 709 571 H 607 V 771 H 505" />
+<path class="edge" d="M 709 571 H 607 V 821 H 505" />
+<path class="edge" d="M 709 571 H 607 V 871 H 505" />
+<path class="edge" d="M 709 571 H 607 V 921 H 505" />
+<path class="edge" d="M 709 571 H 607 V 971 H 505" />
+<path class="edge" d="M 655 124 H 580 V 571 H 505" />
+<path class="edge" d="M 716 1021 H 611 V 1021 H 505" />
+<path class="edge" d="M 655 124 H 580 V 1021 H 505" />
+<path class="edge" d="M 755 1071 H 630 V 1071 H 505" />
+<path class="edge" d="M 755 1071 H 630 V 1121 H 505" />
+<path class="edge" d="M 755 1071 H 630 V 1171 H 505" />
+<path class="edge" d="M 755 1071 H 630 V 1221 H 505" />
+<path class="edge" d="M 755 1071 H 630 V 1271 H 505" />
+<path class="edge" d="M 655 124 H 580 V 1071 H 505" />
+<path class="edge" d="M 655 124 H 468 V 1321 H 280" />
+<path class="edge" d="M 655 124 H 468 V 1371 H 280" />
+<path class="edge" d="M 655 124 H 468 V 1421 H 280" />
+
+      <g class="canvas-node folder" transform="translate(505, 95)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">diagrams</text>
+        <text class="node-meta" x="34" y="47">8 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(505, 145)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">live</text>
+        <text class="node-meta" x="34" y="47">3 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(505, 195)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">logo</text>
+        <text class="node-meta" x="34" y="47">31 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 245)">
+        <rect class="node-card" width="176" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">background.png</text>
+        <text class="node-meta" x="34" y="47">asset</text>
+        <text class="node-status" x="164" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 176 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 295)">
+        <rect class="node-card" width="218" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">code-map-config.html</text>
+        <text class="node-meta" x="34" y="47">29 KiB</text>
+        <text class="node-status" x="206" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 218 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 345)">
+        <rect class="node-card" width="211" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">code-map-config.png</text>
+        <text class="node-meta" x="34" y="47">asset</text>
+        <text class="node-status" x="199" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 211 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 395)">
+        <rect class="node-card" width="204" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">code-map-docs.html</text>
+        <text class="node-meta" x="34" y="47">40 KiB</text>
+        <text class="node-status" x="192" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 204 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 445)">
+        <rect class="node-card" width="197" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">code-map-docs.png</text>
+        <text class="node-meta" x="34" y="47">asset</text>
+        <text class="node-status" x="185" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 197 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node more" transform="translate(505, 495)">
+        <rect class="node-card" width="155" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#8d8d8d" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">... 20 more</text>
+        <text class="node-meta" x="34" y="47">collapsed</text>
+        <text class="node-status" x="143" y="47" text-anchor="end" fill="#8d8d8d">more</text>
+        <path class="node-handle" d="M 155 18 l 16 8 l -16 8 z" fill="#8d8d8d" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(280, 295)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">assets</text>
+        <text class="node-meta" x="34" y="47">67 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 545)">
+        <rect class="node-card" width="204" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">display-audio.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="192" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 204 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 595)">
+        <rect class="node-card" width="204" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">flake-outputs.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="192" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 204 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 645)">
+        <rect class="node-card" width="232" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">integration-logic.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="220" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 232 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 695)">
+        <rect class="node-card" width="204" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">observability.puml</text>
+        <text class="node-meta" x="34" y="47">2 KiB</text>
+        <text class="node-status" x="192" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 204 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 745)">
+        <rect class="node-card" width="150" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">README.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 150 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 795)">
+        <rect class="node-card" width="239" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">rofi-launcher-flow.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="227" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 239 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 845)">
+        <rect class="node-card" width="246" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">system-architecture.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="234" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 246 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 895)">
+        <rect class="node-card" width="183" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">theme-flow.puml</text>
+        <text class="node-meta" x="34" y="47">1 KiB</text>
+        <text class="node-status" x="171" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 183 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node more" transform="translate(505, 945)">
+        <rect class="node-card" width="150" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#8d8d8d" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">... 1 more</text>
+        <text class="node-meta" x="34" y="47">collapsed</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#8d8d8d">more</text>
+        <path class="node-handle" d="M 150 18 l 16 8 l -16 8 z" fill="#8d8d8d" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(280, 745)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">diagrams</text>
+        <text class="node-meta" x="34" y="47">9 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 995)">
+        <rect class="node-card" width="211" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">render-code-map.mjs</text>
+        <text class="node-meta" x="34" y="47">script</text>
+        <text class="node-status" x="199" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 211 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(280, 995)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">scripts</text>
+        <text class="node-meta" x="34" y="47">1 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 1045)">
+        <rect class="node-card" width="250" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">Architecture-&amp;-Flake-Logic.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="238" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 250 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 1095)">
+        <rect class="node-card" width="150" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">Home.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 150 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 1145)">
+        <rect class="node-card" width="218" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">Modules-Breakdown.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="206" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 218 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 1195)">
+        <rect class="node-card" width="250" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">Observability-and-Metrics.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="238" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 250 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(505, 1245)">
+        <rect class="node-card" width="225" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">Security-&amp;-Secrets.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="213" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 225 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(280, 1145)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">wiki</text>
+        <text class="node-meta" x="34" y="47">5 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(280, 1295)">
+        <rect class="node-card" width="176" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">cloc-report.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="164" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 176 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(280, 1345)">
+        <rect class="node-card" width="150" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">README.md</text>
+        <text class="node-meta" x="34" y="47">doc</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 150 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node file" transform="translate(280, 1395)">
+        <rect class="node-card" width="197" height="52" rx="2" />
+        <rect class="node-accent" width="4" height="52" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">specification.txt</text>
+        <text class="node-meta" x="34" y="47">16 KiB</text>
+        <text class="node-status" x="185" y="47" text-anchor="end" fill="#0072c3">leaf</text>
+        <path class="node-handle" d="M 197 18 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+
+      <g class="canvas-node folder" transform="translate(55, 745)">
+        <rect class="node-card" width="150" height="58" rx="2" />
+        <rect class="node-accent" width="4" height="58" fill="#0072c3" />
+        <rect class="node-check" x="12" y="16" width="13" height="13" rx="2" />
+        <text class="node-title" x="34" y="26">docs</text>
+        <text class="node-meta" x="34" y="47">85 files</text>
+        <text class="node-status" x="138" y="47" text-anchor="end" fill="#0072c3">branch</text>
+        <path class="node-handle" d="M 150 21 l 16 8 l -16 8 z" fill="#0072c3" />
+      </g>
+
+    </svg>
+
+      </main>
+
+      <section class="inspector">
+        <div class="inspector-title">
+          <h1>Architecture-&amp;-Flake-Logic.md</h1>
+          <p>Wiki pages, generated visual assets, PlantUML sources, dashboard screenshots, and repository specification.</p>
+        </div>
+
+        <div class="properties">
+          <div class="property"><span>Path</span><strong>docs/wiki/Architecture-&amp;-Flake-Logic.md</strong></div>
+<div class="property"><span>Type</span><strong>file</strong></div>
+<div class="property"><span>Files</span><strong>1</strong></div>
+<div class="property"><span>Dirs</span><strong>0</strong></div>
+<div class="property"><span>Size</span><strong>20 KiB</strong></div>
+<div class="property"><span>Source</span><strong>docs</strong></div>
+          <pre># Architecture &amp; Flake Logic
+## Flake comme source de vérité
+## Stratégie de résolution des inputs
+## Sortie unique
+## Composition des overlays
+## Couche système NixOS
+## Couche utilisateur Home Manager
+## `specialArgs` et `extraSpecialArgs`
+## Build flow et activation
+## Boot, rollback et garbage collection
+## Configuration matérielle
+## Hygiène du store Nix</pre>
+        </div>
+
+        <div class="legend">
+          <div class="legend-row"><span class="swatch" style="background:#0072c3"></span> Current subtree focus</div>
+          <div class="legend-row"><span class="swatch" style="background:#0f62fe"></span> Branch nodes</div>
+          <div class="legend-row"><span class="swatch" style="background:#525252"></span> Leaf nodes</div>
+          <div class="legend-row"><span class="swatch" style="background:#da1e28"></span> Secret or protected material</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
