@@ -19,7 +19,6 @@ local railTitles = [
   'Closure Size',
   'Closure Paths',
   'Generations',
-  'Journal Incidents',
   'IO PSI',
 ];
 
@@ -28,7 +27,6 @@ local graphTitles = [
   'Nix Store Growth',
   'Store Path Retention Flamegraph',
   'Process Scheduler Activity',
-  'Resource Pressure Heatmap',
 ];
 
 local railPanel(title, index) =

@@ -13,7 +13,6 @@ local panelByTitle(title) =
 
 local railTitles = [
   'Journal Incidents',
-  'Build Log Faults',
   'Read Latency',
   'Write Latency',
   'Net Faults/s',

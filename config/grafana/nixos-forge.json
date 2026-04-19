@@ -535,75 +535,6 @@
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "Loki"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "max": 20,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#94e2d5",
-                "value": null
-              },
-              {
-                "color": "#73d9f7",
-                "value": 3
-              },
-              {
-                "color": "#f5c2e7",
-                "value": 10
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 0,
-        "y": 47
-      },
-      "id": 1208,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sparkline": true,
-        "text": {},
-        "textMode": "value"
-      },
-      "pluginVersion": "13.0.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "Loki"
-          },
-          "expr": "sum(count_over_time({job=\"systemd-journal\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [15m]))",
-          "refId": "A"
-        }
-      ],
-      "title": "Journal Incidents",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
         "type": "prometheus",
         "uid": "Prometheus"
       },
@@ -648,9 +579,9 @@
         "h": 5,
         "w": 5,
         "x": 0,
-        "y": 52
+        "y": 47
       },
-      "id": 1209,
+      "id": 1208,
       "options": {
         "reduceOptions": {
           "calcs": [
@@ -1279,94 +1210,6 @@
       ],
       "title": "Process Scheduler Activity",
       "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 19,
-        "x": 5,
-        "y": 36
-      },
-      "id": 2205,
-      "options": {
-        "baidu": {
-          "callback": "bmapReady",
-          "key": ""
-        },
-        "editor": {
-          "format": "auto"
-        },
-        "editorMode": "code",
-        "gaode": {
-          "key": "",
-          "plugin": "AMap.Scale,AMap.ToolBar"
-        },
-        "getOption": "const palette = ['#94e2d5', '#5d9ae1', '#b48efa', '#f5c2e7', '#73d9f7', '#a56c89', '#8df4ec', '#6aa6ff'];\nconst text = '#f6fbff';\nconst muted = '#96cbd2';\nconst grid = '#202b60';\nconst base = '#050513';\nconst surface = '#0e184a';\nconst bulls = palette[0];\nconst bears = palette[3];\nconst secondary = palette[4];\nconst frames = context.panel.data.series || [];\n\nfunction values(field) {\n  const source = field && field.values;\n  if (!source) {\n    return [];\n  }\n  if (Array.isArray(source)) {\n    return source;\n  }\n  if (source.buffer) {\n    return Array.from(source.buffer);\n  }\n  if (typeof source.toArray === 'function') {\n    return source.toArray();\n  }\n  return Array.from(source);\n}\n\nfunction numberField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'number');\n}\n\nfunction timeField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'time');\n}\n\nfunction lastNumber(frame) {\n  const nums = values(numberField(frame));\n  const value = nums.length ? nums[nums.length - 1] : 0;\n  const n = Number(value);\n  return Number.isFinite(n) ? n : 0;\n}\n\nfunction points(frame) {\n  const times = values(timeField(frame));\n  const nums = values(numberField(frame));\n  return nums\n    .map((value, index) => [times[index], Number(value) || 0])\n    .filter((point) => point[0] !== undefined && point[0] !== null);\n}\n\nfunction labels(frame) {\n  const field = numberField(frame);\n  return (field && field.labels) || {};\n}\n\nfunction metricName(frame, fallback) {\n  const labelSet = labels(frame);\n  return String(labelSet.path || frame.name || frame.refId || fallback || '').replace(/^#\\d+\\s+/, '');\n}\n\nfunction lastByName(name) {\n  const frame = frames.find((item) => metricName(item, item.refId).toLowerCase().includes(name.toLowerCase()));\n  return frame ? lastNumber(frame) : 0;\n}\n\nfunction formatBytes(value) {\n  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];\n  let n = Number(value) || 0;\n  let unit = 0;\n  while (n >= 1024 && unit < units.length - 1) {\n    n /= 1024;\n    unit += 1;\n  }\n  return `${n.toFixed(n >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;\n}\n\nfunction shortPath(path) {\n  const value = String(path || '');\n  const slash = value.lastIndexOf('/');\n  return slash >= 0 ? value.slice(slash + 1) : value;\n}\nconst order = ['CPU', 'Memory', 'IO'];\nconst heatmapData = [];\nconst rawValues = [];\nconst colorRamp = [\n  { value: 0, color: [16, 18, 22] },\n  { value: 16, color: [22, 26, 31] },\n  { value: 32, color: [31, 38, 44] },\n  { value: 50, color: [42, 62, 66] },\n  { value: 68, color: [57, 123, 124] },\n  { value: 84, color: [112, 239, 229] },\n  { value: 100, color: [246, 251, 255] },\n];\n\nfunction percentile(values, q) {\n  const sorted = values\n    .filter(value => Number.isFinite(value))\n    .sort((a, b) => a - b);\n  if (!sorted.length) return 1;\n  const index = Math.min(sorted.length - 1, Math.max(0, Math.floor((sorted.length - 1) * q)));\n  return sorted[index];\n}\n\nlet times = new Set();\nframes.forEach(frame => {\n  points(frame).forEach(pt => times.add(pt[0]));\n});\nconst sortedTimes = Array.from(times).sort((a,b) => a - b);\nconst fallbackNow = Date.now();\nconst xMin = sortedTimes[0] || fallbackNow - 60 * 60 * 1000;\nconst xMax = sortedTimes[sortedTimes.length - 1] || fallbackNow;\n\nframes.forEach(frame => {\n  points(frame).forEach(pt => rawValues.push(Math.max(0, Number(pt[1]) || 0)));\n});\nconst visualMax = Math.max(0.1, percentile(rawValues, 0.98));\nconst logMax = Math.log1p(visualMax);\nconst shadeValue = (value) => Math.min(100, (Math.log1p(Math.max(0, value)) / logMax) * 100);\n\nfunction smoothPoints(framePoints) {\n  const radius = Math.min(6, Math.max(2, Math.round(framePoints.length / 120)));\n  return framePoints.map((pt, index) => {\n    let total = 0;\n    let weight = 0;\n    for (let offset = -radius; offset <= radius; offset += 1) {\n      const other = framePoints[index + offset];\n      if (!other) continue;\n      const currentWeight = Math.exp(-(offset * offset) / (2 * radius));\n      total += other.shade * currentWeight;\n      weight += currentWeight;\n    }\n    return {\n      time: pt.time,\n      raw: pt.raw,\n      shade: weight ? total / weight : pt.shade,\n    };\n  });\n}\n\nfunction hex(channel) {\n  return Math.round(channel).toString(16).padStart(2, '0');\n}\n\nfunction rgb(values) {\n  return `#${hex(values[0])}${hex(values[1])}${hex(values[2])}`;\n}\n\nfunction mix(left, right, amount) {\n  return [\n    left[0] + (right[0] - left[0]) * amount,\n    left[1] + (right[1] - left[1]) * amount,\n    left[2] + (right[2] - left[2]) * amount,\n  ];\n}\n\nfunction colorFor(value) {\n  const bounded = Math.max(0, Math.min(100, value));\n  for (let index = 1; index < colorRamp.length; index += 1) {\n    const left = colorRamp[index - 1];\n    const right = colorRamp[index];\n    if (bounded <= right.value) {\n      const span = Math.max(1, right.value - left.value);\n      return rgb(mix(left.color, right.color, (bounded - left.value) / span));\n    }\n  }\n  return rgb(colorRamp[colorRamp.length - 1].color);\n}\n\nconst refMap = { 'A': 0, 'B': 1, 'C': 2 };\nframes.forEach(frame => {\n  let yIndex = refMap[frame.refId];\n  if (yIndex === undefined) yIndex = 0;\n\n  const framePoints = points(frame)\n    .map(pt => {\n      const raw = Math.max(0, Number(pt[1]) || 0);\n      return { time: pt[0], raw: raw, shade: shadeValue(raw) };\n    })\n    .sort((a, b) => a.time - b.time);\n\n  smoothPoints(framePoints).forEach((pt, index, smoothedPoints) => {\n    const next = smoothedPoints[index + 1];\n    if (!next) return;\n    heatmapData.push([pt.time, yIndex, pt.raw, pt.shade, next.time, next.raw, next.shade]);\n  });\n});\n\nreturn {\n  grid: { top: 0, bottom: 24, left: 60, right: 20 },\n  xAxis: {\n    type: 'time',\n    min: xMin,\n    max: xMax,\n    splitLine: { show: false },\n    axisLine: { show: false },\n    axisTick: { show: false },\n    axisLabel: {\n      color: muted,\n      formatter: (value) => {\n        const d = new Date(value);\n        return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;\n      }\n    }\n  },\n  yAxis: {\n    type: 'category',\n    data: order,\n    splitLine: { show: false },\n    axisLine: { show: false },\n    axisTick: { show: false },\n    axisLabel: { color: text, fontWeight: 'bold' }\n  },\n  series: [{\n    type: 'custom',\n    renderItem: function (params, api) {\n      const startValue = api.value(0);\n      const yValue = api.value(1);\n      const endValue = api.value(4);\n      const start = api.coord([startValue, yValue]);\n      const end = api.coord([endValue, yValue]);\n      const rowHeight = api.size([0, 1])[1] || 32;\n      const gap = 8;\n      return {\n        type: 'rect',\n        shape: {\n          x: start[0],\n          y: start[1] - rowHeight / 2 + gap / 2,\n          width: Math.max(1, end[0] - start[0]),\n          height: Math.max(1, rowHeight - gap)\n        },\n        style: {\n          fill: {\n            type: 'linear',\n            x: 0,\n            y: 0,\n            x2: 1,\n            y2: 0,\n            colorStops: [\n              { offset: 0, color: colorFor(api.value(3)) },\n              { offset: 1, color: colorFor(api.value(6)) },\n            ],\n          },\n          opacity: 0.88\n        }\n      };\n    },\n    data: heatmapData,\n    encode: { x: [0, 4], y: 1, tooltip: [2, 5] },\n    emphasis: {\n      itemStyle: { borderColor: text, borderWidth: 1 }\n    }\n  }],\n  tooltip: {\n    position: 'top',\n    formatter: (params) => {\n      const start = new Date(params.data[0]);\n      const end = new Date(params.data[4]);\n      const startTime = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`;\n      const endTime = `${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`;\n      return `${order[params.data[1]]} Pressure<br/><b>${params.data[2].toFixed(2)}% -> ${params.data[5].toFixed(2)}%</b><br/>${startTime} - ${endTime}`;\n    }\n  }\n};\n",
-        "google": {
-          "callback": "gmapReady",
-          "key": ""
-        },
-        "map": "none",
-        "renderer": "canvas",
-        "themeEditor": {
-          "config": "{}",
-          "name": "default"
-        },
-        "visualEditor": {
-          "code": "",
-          "dataset": [],
-          "series": []
-        }
-      },
-      "pluginVersion": "7.2.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "nix_pressure_cpu_avg10",
-          "instant": false,
-          "legendFormat": "CPU",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "nix_pressure_mem_some_avg10",
-          "instant": false,
-          "legendFormat": "Memory",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "nix_pressure_io_some_avg10",
-          "instant": false,
-          "legendFormat": "IO",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "Resource Pressure Heatmap",
-      "type": "volkovlabs-echarts-panel"
     }
   ],
   "refresh": "10s",
