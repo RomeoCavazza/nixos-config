@@ -27,6 +27,8 @@ local graphTitles = [
   'Rebuild Activity',
   'Nix Store Growth',
   'Store Path Retention Flamegraph',
+  'Process Scheduler Activity',
+  'Resource Pressure Heatmap',
 ];
 
 local railPanel(title, index) =

@@ -27,11 +27,11 @@ local railTitles = [
 local graphTitles = [
   'CPU Utilization by Mode',
   'Load Average vs CPU Capacity',
+  'NVIDIA GPU Metrics',
   'Memory Usage Breakdown',
   'Resource Pressure Heatmap',
   'Resource Pressure Timeline',
   'Temperature Sensors',
-  'Process Scheduler Activity',
 ];
 
 local railPanel(title, index) =
