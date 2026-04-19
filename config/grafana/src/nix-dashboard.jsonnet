@@ -28,8 +28,6 @@ local graphTitles = [
   'Memory Usage Breakdown',
   'Load Average vs CPU Capacity',
   'Resource Pressure Heatmap',
-  'Resource Pressure Timeline',
-  'Temperature Sensors',
   'NVIDIA GPU Metrics',
 ];
 

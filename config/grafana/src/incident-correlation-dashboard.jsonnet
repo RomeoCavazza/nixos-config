@@ -27,9 +27,7 @@ local graphTitles = [
   'Journal Incident Logs',
   'Network Error and Drop Rate',
   'Disk I/O Throughput and Latency',
-  'Resource Pressure Timeline',
   'Temperature Sensors',
-  'NVIDIA GPU Metrics',
 ];
 
 local railPanel(title, index) =

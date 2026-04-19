@@ -28,8 +28,6 @@ local graphTitles = [
   'Store Path Retention Flamegraph',
   'Process Scheduler Activity',
   'Resource Pressure Timeline',
-  'Temperature Sensors',
-  'NVIDIA GPU Metrics',
 ];
 
 local railPanel(title, index) =
