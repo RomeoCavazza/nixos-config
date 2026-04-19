@@ -48,8 +48,10 @@ local colors = {
   info: mocha.blue,
   accent: mocha.teal,
 
-  // series palette (ordered for multi-series with palette-classic-like feel)
-  series: [mocha.blue, mocha.teal, mocha.mauve, mocha.peach, mocha.sapphire, mocha.pink, mocha.green, mocha.lavender],
+  // series palette aligned to the desktop: Hyprland/Waybar teal first, then
+  // the Mocha blues and warm diagnostic accents. Dashboard overrides should
+  // use these colors directly instead of relying on Grafana CSS injection.
+  series: [mocha.teal, mocha.blue, mocha.sky, mocha.sapphire, mocha.lavender, mocha.mauve, mocha.peach, mocha.green, mocha.yellow, mocha.red],
 
   // full palette exposed so dashboards can reach for any Mocha tone
   mocha: mocha,
@@ -82,6 +84,16 @@ local lerpColor = function(h1, h2, t)
 
 {
   colors:: colors,
+
+  prometheusDatasource:: { type: 'prometheus', uid: 'Prometheus' },
+  lokiDatasource:: { type: 'loki', uid: 'Loki' },
+  mixedDatasource:: { type: 'datasource', uid: '-- Mixed --' },
+
+  datasourceRef(ds)::
+    if std.type(ds) == 'object' then ds
+    else if ds == 'Loki' then $.lokiDatasource
+    else if ds == 'Prometheus' then $.prometheusDatasource
+    else ds,
 
   // High-End Hijack Utilities
   // Patch a specific panel by ID in a hijacked dashboard
@@ -119,7 +131,7 @@ local lerpColor = function(h1, h2, t)
 
   // Target override helper
   promTarget(expr, legend='', refId='A'):: {
-    datasource: { type: 'prometheus', uid: 'Prometheus' },
+    datasource: $.prometheusDatasource,
     expr: expr,
     legendFormat: legend,
     refId: refId,
@@ -213,9 +225,10 @@ local lerpColor = function(h1, h2, t)
     expr: expr,
     legendFormat: legendFormat,
     refId: refId,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
+    editorMode: 'code',
   }
-  + (if instant then { instant: true } else {})
+  + (if instant then { instant: true, range: false } else { instant: false, range: true })
   + (if format == null then {} else { format: format }),
 
   // Derivative of a gauge over a range (units per second).
@@ -237,7 +250,7 @@ local lerpColor = function(h1, h2, t)
   lokiTarget(expr, refId='A'):: {
     expr: expr,
     refId: refId,
-    datasource: 'Loki',
+    datasource: $.lokiDatasource,
   },
 
   // Error-rate from a Loki log stream: count matches of a regex per window.
@@ -245,7 +258,7 @@ local lerpColor = function(h1, h2, t)
     expr: 'sum(count_over_time(' + stream + ' |~ "' + pattern + '" [' + window + ']))',
     legendFormat: legend,
     refId: refId,
-    datasource: 'Loki',
+    datasource: $.lokiDatasource,
     queryType: 'range',
   },
 
@@ -279,12 +292,12 @@ local lerpColor = function(h1, h2, t)
     skipUrlSync: false,
   },
 
-  queryVar(name, label, query, datasource='Prometheus', includeAll=true, multi=false, regex=''):: {
+  queryVar(name, label, query, datasource=$.prometheusDatasource, includeAll=true, multi=false, regex=''):: {
     name: name,
     label: label,
     type: 'query',
     query: query,
-    datasource: datasource,
+    datasource: $.datasourceRef(datasource),
     refresh: 1,
     includeAll: includeAll,
     multi: multi,
@@ -297,7 +310,7 @@ local lerpColor = function(h1, h2, t)
 
   annotationOnExpr(name, expr, color, iconColor=null):: {
     name: name,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     enable: true,
     expr: expr,
     iconColor: if iconColor == null then color else iconColor,
@@ -440,8 +453,8 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'stat',
     title: title,
-    datasource: datasource,
-    targets: if datasource == 'Loki' || datasource == 'Loki' then [$.lokiTarget(expr)] else [$.prometheusTarget(expr, legend)],
+    datasource: $.datasourceRef(datasource),
+    targets: if datasource == 'Loki' then [$.lokiTarget(expr)] else [$.prometheusTarget(expr, legend)],
     options: {
       reduceOptions: { values: false, calcs: ['lastNotNull'], fields: '' },
       orientation: 'auto',
@@ -483,7 +496,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'gauge',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: [$.prometheusTarget(expr, legend)],
     options: {
       reduceOptions: { values: false, calcs: ['lastNotNull'], fields: '' },
@@ -523,7 +536,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'bargauge',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: std.mapWithIndex(
       function(i, t)
         $.prometheusTarget(
@@ -545,10 +558,13 @@ local lerpColor = function(h1, h2, t)
       sizing: 'auto',
     },
     fieldConfig: {
-      defaults: {
-        unit: unit,
-        min: min,
-        max: max,
+      defaults:
+        {
+          unit: unit,
+          min: min,
+        }
+        + (if max == null then {} else { max: max })
+        + {
         thresholds: if thresholds == null then $.greenYellowRed(10, 30) else thresholds,
         color: { mode: 'thresholds' },
       },
@@ -575,7 +591,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'state-timeline',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: std.mapWithIndex(
       function(i, t)
         $.prometheusTarget(t.expr, t.legend, std.get(t, 'refId', std.substr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, 1))),
@@ -622,7 +638,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'heatmap',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: [$.prometheusTarget(expr, legend) + { format: 'time_series' }],
     options: {
       calculate: true,
@@ -659,7 +675,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'table',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: std.mapWithIndex(
       function(i, t)
         $.prometheusTarget(
@@ -724,7 +740,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'timeseries',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.prometheusDatasource,
     targets: std.mapWithIndex(
       function(i, t)
         $.prometheusTarget(t.expr, t.legend, std.get(t, 'refId', std.substr('ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, 1))),
@@ -778,7 +794,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'timeseries',
     title: title,
-    datasource: 'Prometheus',
+    datasource: $.mixedDatasource,
     targets: builtTargets,
     options: {
       legend: { calcs: legendCalcs, displayMode: legendDisplayMode, placement: legendPlacement, showLegend: true },
@@ -816,7 +832,7 @@ local lerpColor = function(h1, h2, t)
     gridPos: { x: x, y: y, w: w, h: h },
     type: 'logs',
     title: title,
-    datasource: 'Loki',
+    datasource: $.lokiDatasource,
     targets: [$.lokiTarget(expr)],
     options: {
       showTime: true,

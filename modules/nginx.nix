@@ -1,30 +1,5 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ ... }:
 
-let
-  grafanaAquamarineCss =
-    pkgs.runCommand "grafana-aquamarine-css"
-      {
-        nativeBuildInputs = [ pkgs.dart-sass ];
-      }
-      ''
-            mkdir -p $out source/config/grafana/theme source/config/scss
-
-            cp ${../config/grafana/theme/aquamarine.scss} source/config/grafana/theme/aquamarine.scss
-            cp -R ${../config/scss}/. source/config/scss/
-
-        sass \
-          --no-source-map \
-          --no-charset \
-          --style=expanded \
-          source/config/grafana/theme/aquamarine.scss \
-          $out/aquamarine.css
-      '';
-in
 {
   services.nginx = {
     enable = true;
@@ -43,26 +18,9 @@ in
           }
         ];
         locations = {
-          "=/theme/grafana-aquamarine.css" = {
-            alias = "${grafanaAquamarineCss}/aquamarine.css";
-            extraConfig = ''
-              types { text/css css; }
-              default_type text/css;
-              add_header Cache-Control "no-store";
-            '';
-          };
-
           "/" = {
             proxyPass = "http://127.0.0.1:3001";
             proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header Accept-Encoding   "";
-
-              sub_filter_once on;
-              sub_filter
-                '</head>'
-                '<link rel="stylesheet" type="text/css" href="/theme/grafana-aquamarine.css"></head>';
-            '';
           };
         };
       };

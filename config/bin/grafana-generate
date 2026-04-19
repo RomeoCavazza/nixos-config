@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Generate provisioned Grafana dashboards from Jsonnet sources.
-# MINIMAL PIPELINE: "NixOS Minimal" Only.
 
 set -euo pipefail
 
@@ -20,10 +19,19 @@ if ! command -v "$jq_bin" >/dev/null 2>&1; then
   exit 1
 fi
 
-# The One Minimal Dashboard
-echo "Generating: nixos.json"
-"$jsonnet_bin" "${src_dir}/nixos.jsonnet" | "$jq_bin" . > "${grafana_dir}/nixos.json"
+dashboards=(
+  "nixos-engine"
+  "nixos-forge"
+  "nixos-black-box"
+  "nixos-compiled"
+)
 
-# Integrity check
-"$jq_bin" -e . "${grafana_dir}/nixos.json" >/dev/null
+rm -f "${grafana_dir}/nixos.json"
+
+for dashboard in "${dashboards[@]}"; do
+  echo "Generating: ${dashboard}.json"
+  "$jsonnet_bin" "${src_dir}/${dashboard}.jsonnet" | "$jq_bin" . > "${grafana_dir}/${dashboard}.json"
+  "$jq_bin" -e . "${grafana_dir}/${dashboard}.json" >/dev/null
+done
+
 echo "Done."

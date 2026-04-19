@@ -23,9 +23,9 @@ export GIT_SSH_COMMAND
 
 # uid:slug:file:viewport_height:capture_mode:hide_panel_title
 DASHBOARDS=(
-  "nixos-metrics:nixos-metrics:live-dashboard.png:1200:full:"
-  "nix-efficiency:nix-efficiency:nix-efficiency.png:1200:full:"
-  "incident-correlation:incident-correlation:incident-dashboard.png:900:viewport:Loki Journal"
+  "nixos-engine:nixos-engine:live-dashboard.png:1200:full:"
+  "nixos-forge:nixos-forge:nix-efficiency.png:1200:full:"
+  "nixos-black-box:nixos-black-box:incident-dashboard.png:900:viewport:Journald Incident Feed"
 )
 
 if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then

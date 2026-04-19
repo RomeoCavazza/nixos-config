@@ -1,8 +1,8 @@
-// aquamarine.scss — Grafana dark theme overlay.
-// Intentionally minimal: Grafana's stock dark theme handles the canvas
-// and panel backgrounds. Only the primary/link accent is retinted to
-// the Waybar blue (#89b4fa) so interactive elements feel aligned with
-// the rest of the desktop.
+// aquamarine.scss - optional Grafana CSS experiment.
+//
+// This file is intentionally not injected into Grafana by Nginx. Dashboard
+// colors live in Jsonnet fieldConfig/overrides so graphs stay aligned with the
+// Hyprland / Waybar / Foot / Wal palette without modifying the HTML shell.
 
 $m-blue:   #89b4fa;
 $m-teal:   #94e2d5;

@@ -5,7 +5,7 @@ let
 
   nixMetricsScript = pkgs.writeShellApplication {
     name = "nix-metrics";
-    runtimeInputs = [ pkgs.nix pkgs.coreutils pkgs.gawk ];
+    runtimeInputs = [ pkgs.nix pkgs.coreutils pkgs.findutils pkgs.gawk pkgs.python3 ];
     text = builtins.readFile ../config/bin/nix-metrics;
   };
 
@@ -60,7 +60,10 @@ let
 
   grafanaDashboardsDir = pkgs.runCommand "grafana-dashboards" {} ''
     mkdir -p $out
-    cp ${../config/grafana/nixos.json} $out/nixos.json
+    cp ${../config/grafana/nixos-engine.json} $out/nixos-engine.json
+    cp ${../config/grafana/nixos-forge.json} $out/nixos-forge.json
+    cp ${../config/grafana/nixos-black-box.json} $out/nixos-black-box.json
+    cp ${../config/grafana/nixos-compiled.json} $out/nixos-compiled.json
   '';
 in
 {
@@ -180,6 +183,13 @@ in
 
   services.grafana = {
     enable = true;
+    declarativePlugins = with pkgs.grafanaPlugins; [
+      volkovlabs-echarts-panel
+      grafana-metricsdrilldown-app
+      grafana-lokiexplore-app
+      grafana-exploretraces-app
+      grafana-pyroscope-app
+    ];
     settings = {
       server = {
         http_addr = "127.0.0.1";
