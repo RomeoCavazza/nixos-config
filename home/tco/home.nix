@@ -298,6 +298,7 @@ in
     fd
     fzf
     jq
+    d2
     ripgrep
     yazi
     home-manager
@@ -407,6 +408,7 @@ in
       package = pkgs.bibata-cursors;
       size = 24;
     };
+    gtk4.theme = config.gtk.theme;
   };
 
   programs.starship = {
@@ -439,6 +441,19 @@ in
         esbenp.prettier-vscode
         jnoortheen.nix-ide
         mkhl.direnv
+      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          name = "appmap";
+          publisher = "appland";
+          version = "0.140.0";
+          sha256 = "1zqjyaw1k2n3v8qisy1yd2cdrzycigfpb8acv9vhxa295qsvr6cx";
+        }
+        {
+          name = "sourcetrail";
+          publisher = "astallinger";
+          version = "0.0.1";
+          sha256 = "0dpzs5azs3ygxvmsqmxx6d5vi2wvhzpf8p9bp580qyafv34ww6wx";
+        }
       ];
       userSettings = {
         "editor.fontFamily" = "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace'";
@@ -446,9 +461,16 @@ in
         "nix.enableLanguageServer" = true;
         "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
         "window.titleBarStyle" = "custom";
+        # Architectural & Reverse Engineering Settings
+        "appmap.view.codeObjects" = true;
+        "appmap.view.dependencyMap" = true;
+        "sourcetrail.port" = 6667;
+        "editor.minimap.enabled" = false; # Cleaner "Pro" look
+        "workbench.sideBar.location" = "left";
       };
     };
   };
+
 
   programs.git = {
     enable = true;
