@@ -1,0 +1,1229 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "#73d9f7",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Incident diagnostics view for journal events, thermal detail, disk latency, and network faults.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 12,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1000,
+      "options": {
+        "content": "Small local observability stack for NixOS health, rebuilds, pressure, logs, and desktop signals.\n\n| Component | Endpoint | Role |\n| --- | --- | --- |\n| ![Prometheus](https://img.shields.io/badge/Prometheus-metrics-b48efa?style=flat-square&logo=prometheus&logoColor=white&labelColor=101216) | `localhost:9090` | Metrics TSDB and query engine |\n| ![Node Exporter](https://img.shields.io/badge/Node_Exporter-host-70efe5?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | `localhost:9100` | Host metrics plus textfile collector |\n| ![Loki](https://img.shields.io/badge/Loki-logs-8df4ec?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3100` | Centralized logs |\n| ![Promtail](https://img.shields.io/badge/Promtail-journald-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `systemd service` | Journald scraping and labeling |\n| ![Grafana](https://img.shields.io/badge/Grafana-ui-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3000` | Dashboards and correlation UI |\n\n[GitHub](https://github.com/RomeoCavazza/setup-os) · [Observability wiki](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)\n",
+        "contentType": "markdown",
+        "mode": "markdown"
+      },
+      "title": "System Summary",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "max": 20,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 3
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 12
+      },
+      "id": 1301,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [15m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Journal Incidents",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4,
+          "max": 0.20000000000000001,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.02
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 17
+      },
+      "id": 1302,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max(rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001))",
+          "instant": false,
+          "legendFormat": "Read Latency",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Read Latency",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4,
+          "max": 0.20000000000000001,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.02
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 22
+      },
+      "id": 1303,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max(rate(node_disk_write_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001))",
+          "instant": false,
+          "legendFormat": "Write Latency",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Write Latency",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 3,
+          "max": 0.20000000000000001,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.01
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 27
+      },
+      "id": 1304,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by (device) (rate(node_network_receive_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_receive_drop_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_drop_total{job=\"node\",device!=\"lo\"}[5m])))",
+          "instant": false,
+          "legendFormat": "Net Faults/s",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Net Faults/s",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "max": 8,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 1
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 32
+      },
+      "id": 1305,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\"} |= \"Failed\" [15m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Critical Units",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5d9ae1",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bool"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 37
+      },
+      "id": 1306,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hypr_fullscreen_active",
+          "instant": false,
+          "legendFormat": "Fullscreen Active",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Fullscreen Active",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 42
+      },
+      "id": 1307,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hypr_windows_total",
+          "instant": false,
+          "legendFormat": "value",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Window Count",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Mixed --"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 0
+      },
+      "id": 2301,
+      "options": {
+        "baidu": {
+          "callback": "bmapReady",
+          "key": ""
+        },
+        "editor": {
+          "format": "auto"
+        },
+        "editorMode": "code",
+        "gaode": {
+          "key": "",
+          "plugin": "AMap.Scale,AMap.ToolBar"
+        },
+        "getOption": "const palette = ['#94e2d5', '#5d9ae1', '#b48efa', '#f5c2e7', '#73d9f7', '#a56c89', '#8df4ec', '#6aa6ff'];\nconst text = '#f6fbff';\nconst muted = '#96cbd2';\nconst grid = '#202b60';\nconst base = '#050513';\nconst surface = '#0e184a';\nconst bulls = palette[0];\nconst bears = palette[3];\nconst secondary = palette[4];\nconst frames = context.panel.data.series || [];\n\nfunction values(field) {\n  const source = field && field.values;\n  if (!source) {\n    return [];\n  }\n  if (Array.isArray(source)) {\n    return source;\n  }\n  if (source.buffer) {\n    return Array.from(source.buffer);\n  }\n  if (typeof source.toArray === 'function') {\n    return source.toArray();\n  }\n  return Array.from(source);\n}\n\nfunction numberField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'number');\n}\n\nfunction timeField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'time');\n}\n\nfunction lastNumber(frame) {\n  const nums = values(numberField(frame));\n  const value = nums.length ? nums[nums.length - 1] : 0;\n  const n = Number(value);\n  return Number.isFinite(n) ? n : 0;\n}\n\nfunction points(frame) {\n  const times = values(timeField(frame));\n  const nums = values(numberField(frame));\n  return nums\n    .map((value, index) => [times[index], Number(value) || 0])\n    .filter((point) => point[0] !== undefined && point[0] !== null);\n}\n\nfunction labels(frame) {\n  const field = numberField(frame);\n  return (field && field.labels) || {};\n}\n\nfunction metricName(frame, fallback) {\n  const labelSet = labels(frame);\n  return String(labelSet.path || frame.name || frame.refId || fallback || '').replace(/^#\\d+\\s+/, '');\n}\n\nfunction lastByName(name) {\n  const frame = frames.find((item) => metricName(item, item.refId).toLowerCase().includes(name.toLowerCase()));\n  return frame ? lastNumber(frame) : 0;\n}\n\nfunction formatBytes(value) {\n  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];\n  let n = Number(value) || 0;\n  let unit = 0;\n  while (n >= 1024 && unit < units.length - 1) {\n    n /= 1024;\n    unit += 1;\n  }\n  return `${n.toFixed(n >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;\n}\n\nfunction shortPath(path) {\n  const value = String(path || '');\n  const slash = value.lastIndexOf('/');\n  return slash >= 0 ? value.slice(slash + 1) : value;\n}\nconst styles = {\n  'read risk': { color: palette[0], opacity: 0.12 },\n  'write risk': { color: palette[3], opacity: 0.12 },\n  'net risk': { color: palette[2], opacity: 0.12 },\n  'system log': { color: palette[1], opacity: 0.18, width: 3 },\n  'build log': { color: palette[4], opacity: 0.18, width: 3 },\n  'display log': { color: palette[5], opacity: 0.18, width: 3 },\n};\n\nconst series = frames.map((frame, index) => {\n  const name = metricName(frame, frame.refId || `risk ${index + 1}`);\n  const s = styles[name] || { color: palette[index % palette.length], opacity: 0.2 };\n  return {\n    name,\n    type: 'line',\n    smooth: true,\n    symbol: 'none',\n    stack: 'risk',\n    areaStyle: { opacity: s.opacity },\n    lineStyle: { width: s.width || 2 },\n    itemStyle: { color: s.color },\n    data: points(frame),\n  };\n});\n\nreturn {\n  color: palette,\n  tooltip: { \n    trigger: 'axis', \n    axisPointer: { type: 'cross' },\n    formatter: (params) => {\n      const d = new Date(params[0].value[0]);\n      const time = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;\n      let res = `<b>${time}</b><br/>`;\n      params.forEach(p => {\n        res += `${p.marker} ${p.seriesName}: ${p.value[1].toFixed(2)}<br/>`;\n      });\n      return res;\n    }\n  },\n  legend: { orient: 'vertical', right: 12, top: 32, textStyle: { color: text, fontSize: 10 } },\n  grid: { left: 48, right: 150, top: 36, bottom: 32 },\n  xAxis: { \n    type: 'time', \n    axisLabel: { \n      color: muted,\n      formatter: (v) => {\n        const d = new Date(v);\n        return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;\n      }\n    }, \n    axisLine: { lineStyle: { color: grid } } \n  },\n  yAxis: { type: 'value', min: 0, axisLabel: { color: muted }, splitLine: { lineStyle: { color: grid } } },\n  series,\n};\n",
+        "google": {
+          "callback": "gmapReady",
+          "key": ""
+        },
+        "map": "none",
+        "renderer": "canvas",
+        "themeEditor": {
+          "config": "{}",
+          "name": "default"
+        },
+        "visualEditor": {
+          "code": "",
+          "dataset": [],
+          "series": []
+        }
+      },
+      "pluginVersion": "7.2.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max((rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001) > bool 0.02) + (rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001) > bool 0.10))",
+          "instant": false,
+          "legendFormat": "read risk",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max((rate(node_disk_write_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001) > bool 0.02) + (rate(node_disk_write_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001) > bool 0.10))",
+          "instant": false,
+          "legendFormat": "write risk",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max((sum by (device) (rate(node_network_receive_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_receive_drop_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_drop_total{job=\"node\",device!=\"lo\"}[5m])) > bool 0) + (sum by (device) (rate(node_network_receive_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_errs_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_receive_drop_total{job=\"node\",device!=\"lo\"}[5m]) + rate(node_network_transmit_drop_total{job=\"node\",device!=\"lo\"}[5m])) > bool 0.1))",
+          "instant": false,
+          "legendFormat": "net risk",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\",component=\"system\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [$__interval]))",
+          "legendFormat": "system log",
+          "queryType": "range",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\",component=\"build\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [$__interval]))",
+          "legendFormat": "build log",
+          "queryType": "range",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "sum(count_over_time({job=\"systemd-journal\",component=\"display\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\" [$__interval]))",
+          "legendFormat": "display log",
+          "queryType": "range",
+          "refId": "F"
+        }
+      ],
+      "title": "Incident Risk Timeline",
+      "type": "volkovlabs-echarts-panel"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "Loki"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 9
+      },
+      "id": 2302,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "Loki"
+          },
+          "expr": "{job=\"systemd-journal\"} |~ \"(?i)(error|failed|panic|oom|segfault|denied|timeout|i/o error)\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Journal Incident Logs",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 7,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 0.01
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 0.10000000000000001
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "rx errors .*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f5c2e7",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "tx errors .*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#a56c89",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "rx drops .*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8df4ec",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "tx drops .*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b48efa",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 18
+      },
+      "id": 2303,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_network_receive_errs_total{job=\"node\",device!=\"lo\"}[5m])",
+          "instant": false,
+          "legendFormat": "rx errors {{device}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_network_transmit_errs_total{job=\"node\",device!=\"lo\"}[5m])",
+          "instant": false,
+          "legendFormat": "tx errors {{device}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_network_receive_drop_total{job=\"node\",device!=\"lo\"}[5m])",
+          "instant": false,
+          "legendFormat": "rx drops {{device}}",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_network_transmit_drop_total{job=\"node\",device!=\"lo\"}[5m])",
+          "instant": false,
+          "legendFormat": "tx drops {{device}}",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Network Error and Drop Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 8,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "throughput read"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8df4ec",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 4
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "throughput write"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f5c2e7",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.drawStyle",
+                "value": "bars"
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 4
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "latency read"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5d9ae1",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "latency write"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b48efa",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 27
+      },
+      "id": 2304,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_read_bytes_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m])",
+          "instant": false,
+          "legendFormat": "throughput read",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_written_bytes_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m])",
+          "instant": false,
+          "legendFormat": "throughput write",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_read_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001)",
+          "instant": false,
+          "legendFormat": "latency read",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_disk_write_time_seconds_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{job=\"node\",device!~\"^(loop|ram|zram|dm-).*\"}[5m]), 0.001)",
+          "instant": false,
+          "legendFormat": "latency write",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Disk I/O Throughput and Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 36
+      },
+      "id": 2305,
+      "options": {
+        "baidu": {
+          "callback": "bmapReady",
+          "key": ""
+        },
+        "editor": {
+          "format": "auto"
+        },
+        "editorMode": "code",
+        "gaode": {
+          "key": "",
+          "plugin": "AMap.Scale,AMap.ToolBar"
+        },
+        "getOption": "const palette = ['#94e2d5', '#5d9ae1', '#b48efa', '#f5c2e7', '#73d9f7', '#a56c89', '#8df4ec', '#6aa6ff'];\nconst text = '#f6fbff';\nconst muted = '#96cbd2';\nconst grid = '#202b60';\nconst base = '#050513';\nconst surface = '#0e184a';\nconst bulls = palette[0];\nconst bears = palette[3];\nconst secondary = palette[4];\nconst frames = context.panel.data.series || [];\n\nfunction values(field) {\n  const source = field && field.values;\n  if (!source) {\n    return [];\n  }\n  if (Array.isArray(source)) {\n    return source;\n  }\n  if (source.buffer) {\n    return Array.from(source.buffer);\n  }\n  if (typeof source.toArray === 'function') {\n    return source.toArray();\n  }\n  return Array.from(source);\n}\n\nfunction numberField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'number');\n}\n\nfunction timeField(frame) {\n  return (frame.fields || []).find((field) => field.type === 'time');\n}\n\nfunction lastNumber(frame) {\n  const nums = values(numberField(frame));\n  const value = nums.length ? nums[nums.length - 1] : 0;\n  const n = Number(value);\n  return Number.isFinite(n) ? n : 0;\n}\n\nfunction points(frame) {\n  const times = values(timeField(frame));\n  const nums = values(numberField(frame));\n  return nums\n    .map((value, index) => [times[index], Number(value) || 0])\n    .filter((point) => point[0] !== undefined && point[0] !== null);\n}\n\nfunction labels(frame) {\n  const field = numberField(frame);\n  return (field && field.labels) || {};\n}\n\nfunction metricName(frame, fallback) {\n  const labelSet = labels(frame);\n  return String(labelSet.path || frame.name || frame.refId || fallback || '').replace(/^#\\d+\\s+/, '');\n}\n\nfunction lastByName(name) {\n  const frame = frames.find((item) => metricName(item, item.refId).toLowerCase().includes(name.toLowerCase()));\n  return frame ? lastNumber(frame) : 0;\n}\n\nfunction formatBytes(value) {\n  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];\n  let n = Number(value) || 0;\n  let unit = 0;\n  while (n >= 1024 && unit < units.length - 1) {\n    n /= 1024;\n    unit += 1;\n  }\n  return `${n.toFixed(n >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;\n}\n\nfunction shortPath(path) {\n  const value = String(path || '');\n  const slash = value.lastIndexOf('/');\n  return slash >= 0 ? value.slice(slash + 1) : value;\n}\n// Filter for main CPU/Package sensors to avoid clutter\nconst thermalPoints = frames.filter(f => {\n  const lbls = labels(f);\n  const name = lbls.sensor || lbls.chip || \"\";\n  return name.includes('Package') || name.includes('Core') || name.includes('temp') || name.includes('input');\n}).map(f => ({\n  name: labels(f).sensor || labels(f).chip || \"Sensor\",\n  data: points(f)\n}));\n\nif (thermalPoints.length === 0) return { title: { text: \"No Thermal Data\", left: 'center', top: 'center', textStyle: { color: muted } } };\n\nreturn {\n  color: palette,\n  tooltip: { \n    trigger: 'axis',\n    formatter: (params) => {\n      const d = new Date(params[0].value[0]);\n      const time = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;\n      let res = `<b>${time}</b><br/>`;\n      params.forEach(p => {\n        res += `${p.marker} ${p.seriesName}: ${p.value[1].toFixed(1)}°C<br/>`;\n      });\n      return res;\n    }\n  },\n  legend: {\n    orient: 'vertical',\n    top: 34,\n    right: 10,\n    bottom: 24,\n    type: 'scroll',\n    textStyle: { color: text, fontSize: 10 },\n    pageIconColor: palette[0],\n    pageTextStyle: { color: muted }\n  },\n  grid: { left: 40, right: 160, top: 40, bottom: 30 },\n  xAxis: { \n    type: 'time', \n    axisLabel: { \n      color: muted,\n      formatter: (v) => {\n        const d = new Date(v);\n        return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;\n      }\n    } \n  },\n  yAxis: { type: 'value', axisLabel: { color: muted, formatter: '{value}°C' }, splitLine: { lineStyle: { color: grid, type: 'dashed' } } },\n  series: thermalPoints.map((p, i) => {\n    const isPackage = p.name.includes('Package');\n    return {\n      name: p.name,\n      type: 'line',\n      showSymbol: false,\n      smooth: true,\n      lineStyle: { \n        width: isPackage ? 3 : 1, \n        color: isPackage ? palette[0] : (palette[1 + (i % 3)]),\n        opacity: isPackage ? 1 : 0.6\n      },\n      data: p.data\n    };\n  })\n};\n",
+        "google": {
+          "callback": "gmapReady",
+          "key": ""
+        },
+        "map": "none",
+        "renderer": "canvas",
+        "themeEditor": {
+          "config": "{}",
+          "name": "default"
+        },
+        "visualEditor": {
+          "code": "",
+          "dataset": [],
+          "series": []
+        }
+      },
+      "pluginVersion": "7.2.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_hwmon_temp_celsius",
+          "instant": false,
+          "legendFormat": "{{sensor}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Thermal Sensor Detail",
+      "type": "volkovlabs-echarts-panel"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": [
+    "nixos",
+    "local-observability"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m"
+    ]
+  },
+  "timezone": "browser",
+  "title": "NixOS Incident Diagnostics",
+  "uid": "incident-correlation",
+  "version": 1
+}

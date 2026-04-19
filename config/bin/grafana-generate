@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Generate provisioned Grafana dashboards from Jsonnet sources.
-
 set -euo pipefail
 
 repo_dir="${REPO_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
@@ -9,29 +7,18 @@ src_dir="${grafana_dir}/src"
 jsonnet_bin="${JSONNET:-jsonnet}"
 jq_bin="${JQ:-jq}"
 
-if ! command -v "$jsonnet_bin" >/dev/null 2>&1; then
-  echo "grafana-generate: jsonnet is required" >&2
-  exit 1
-fi
-
-if ! command -v "$jq_bin" >/dev/null 2>&1; then
-  echo "grafana-generate: jq is required" >&2
-  exit 1
-fi
-
-dashboards=(
-  "nixos-engine"
-  "nixos-forge"
-  "nixos-black-box"
-  "nixos-compiled"
+# Mapping legacy sources to your preferred JSON filenames
+declare -A mapping=(
+  ["nix-dashboard"]="nixos-metrics"
+  ["nix-efficiency-dashboard"]="nix-efficiency"
+  ["incident-correlation-dashboard"]="incident-correlation"
+  ["nixos-compiled"]="nixos-compiled"
 )
 
-rm -f "${grafana_dir}/nixos.json"
-
-for dashboard in "${dashboards[@]}"; do
-  echo "Generating: ${dashboard}.json"
-  "$jsonnet_bin" "${src_dir}/${dashboard}.jsonnet" | "$jq_bin" . > "${grafana_dir}/${dashboard}.json"
-  "$jq_bin" -e . "${grafana_dir}/${dashboard}.json" >/dev/null
+for src in "${!mapping[@]}"; do
+  target="${mapping[$src]}"
+  echo "Generating: ${target}.json from ${src}.jsonnet"
+  "$jsonnet_bin" "${src_dir}/${src}.jsonnet" | "$jq_bin" . > "${grafana_dir}/${target}.json"
 done
 
 echo "Done."

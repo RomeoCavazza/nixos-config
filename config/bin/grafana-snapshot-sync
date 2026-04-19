@@ -1,51 +1,28 @@
 #!/usr/bin/env bash
-# Render Grafana dashboards to PNG and publish meaningful visual updates.
+# Render Grafana dashboards to PNG and push only meaningful visual updates.
 
 set -euo pipefail
 
-GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
-SINCE="${SINCE:-now-6h}"
-UNTIL="${UNTIL:-now}"
-MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.5}"
-SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
-SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
-SNAPSHOT_REPO_URL="${SNAPSHOT_REPO_URL:-git@github.com:RomeoCavazza/setup-os.git}"
-SNAPSHOT_BRANCH="${SNAPSHOT_BRANCH:-main}"
-PUBLISH_REPO_DIR="${PUBLISH_REPO_DIR:-/var/lib/grafana-snapshot-sync/setup-os}"
-OUT_DIR="${OUT_DIR:-${PUBLISH_REPO_DIR}/docs/assets/live}"
-PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
-CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
-GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new}"
+REPO_DIR="/etc/nixos"
+OUT_DIR="${REPO_DIR}/docs/assets/live"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-export GIT_SSH_COMMAND
+GRAFANA_URL="${GRAFANA_URL:-http://127.0.0.1:3000}"
+SINCE="${SINCE:-now-3h}"
+UNTIL="${UNTIL:-now}"
+MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.3}"
+SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
+SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
+PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
+CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
 
-# uid:slug:file:viewport_height:capture_mode:hide_panel_title
+# uid:slug:file
 DASHBOARDS=(
-  "nixos-engine:nixos-engine:nixos-engine.png:4000:full:"
-  "nixos-forge:nixos-forge:nixos-forge.png:4000:full:"
-  "nixos-black-box:nixos-black-box:nixos-black-box.png:4000:full:Journald Incident Feed"
+  "nixos-metrics:nixos-metrics:live-dashboard.png"
+  "nix-efficiency:nix-efficiency:nix-efficiency.png"
+  "incident-correlation:incident-correlation:incident-dashboard.png"
 )
-
-if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
-  echo "snapshot-sync: ${PUBLISH_REPO_DIR} exists but is not a git checkout" >&2
-  exit 1
-fi
-
-if [[ ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
-  mkdir -p "$(dirname "$PUBLISH_REPO_DIR")"
-  git clone --branch "$SNAPSHOT_BRANCH" --single-branch "$SNAPSHOT_REPO_URL" "$PUBLISH_REPO_DIR"
-fi
-
-git_publish() {
-  git -C "$PUBLISH_REPO_DIR" "$@"
-}
-
-git_publish remote set-url origin "$SNAPSHOT_REPO_URL"
-
-git_publish checkout "$SNAPSHOT_BRANCH"
-
 
 mkdir -p "$OUT_DIR"
 
@@ -61,17 +38,14 @@ if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-selected_files=()
+has_changes=0
 
 for item in "${DASHBOARDS[@]}"; do
-  IFS=":" read -r uid slug filename viewport_height capture_mode hide_panel_title <<< "$item"
-  viewport_height="${viewport_height:-1400}"
-  capture_mode="${capture_mode:-full}"
-  hide_panel_title="${hide_panel_title:-}"
+  IFS=":" read -r uid slug filename <<< "$item"
   new_file="${TMP_DIR}/${filename}"
   target_file="${OUT_DIR}/${filename}"
 
-  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&refresh=5m&kiosk"
+  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
   if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
     echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
     exit 1
@@ -80,10 +54,6 @@ for item in "${DASHBOARDS[@]}"; do
   PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
   CHROME_BIN="$CHROME_BIN" \
   DASHBOARD_URL="$dashboard_url" \
-  SNAPSHOT_NAME="$filename" \
-  VIEWPORT_HEIGHT="$viewport_height" \
-  SNAPSHOT_FULL_PAGE="$([[ "$capture_mode" == "full" ]] && echo "true" || echo "false")" \
-  HIDE_PANEL_TITLE="$hide_panel_title" \
   OUTPUT_FILE="$new_file" \
   node <<'NODE'
 const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
@@ -95,73 +65,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     args: ['--no-sandbox'],
   });
 
-  const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || 1400);
-  const fullPage = process.env.SNAPSHOT_FULL_PAGE !== 'false';
-
-  const page = await browser.newPage({
-    viewport: { width: 1920, height: viewportHeight },
-    deviceScaleFactor: 1,
-  });
-
-  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('h2[title]', { timeout: 30000 });
-  await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(10000);
-
-  if (process.env.HIDE_PANEL_TITLE) {
-    await page.evaluate((title) => {
-      for (const heading of document.querySelectorAll('h2[title]')) {
-        if (!heading.getAttribute('title')?.includes(title)) {
-          continue;
-        }
-        let panel = heading;
-        while (panel && panel.tagName !== 'SECTION') {
-          panel = panel.parentElement;
-        }
-        if (panel) {
-          panel.style.display = 'none';
-        }
-      }
-    }, process.env.HIDE_PANEL_TITLE);
-  }
-
-  await page.addStyleTag({ content: `
-    *, *::before, *::after {
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-    }
-
-    section[class*='panel-container'],
-    [data-testid^='data-testid Panel header'],
-    [data-testid^='data-testid Panel container'] {
-      opacity: 1 !important;
-      visibility: visible !important;
-      transform: none !important;
-      /* Remove forced background to allow colorMode="background" panels to render */
-    }
-
-    /* Target the actual inner panel if needed */
-    [data-testid^='data-testid Panel content'] {
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-
-    section[class*='panel-container']::before,
-    [data-testid^='data-testid Panel header']::before,
-    [data-testid^='data-testid Panel container']::before {
-      display: none !important;
-    }
-
-    section[class*='panel-container'] > *,
-    [data-testid^='data-testid Panel header'] > *,
-    [data-testid^='data-testid Panel container'] > * {
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-  `});
-
-  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage, animations: 'disabled' });
-  console.log(`snapshot-sync: ${process.env.SNAPSHOT_NAME} captured`);
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1200 } });
+  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(5000);
+  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
   await browser.close();
 })().catch((error) => {
   console.error(error);
@@ -170,52 +77,45 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 NODE
 
   if [[ ! -f "$target_file" ]]; then
-    echo "snapshot-sync: ${filename} is new and will be published"
-    selected_files+=("$filename")
+    mv "$new_file" "$target_file"
+    has_changes=1
     continue
   fi
 
-  old_dimensions=$(identify -format "%wx%h" "$target_file")
-  new_dimensions=$(identify -format "%wx%h" "$new_file")
-  if [[ "$old_dimensions" != "$new_dimensions" ]]; then
-    echo "snapshot-sync: ${filename} dimensions changed ${old_dimensions} -> ${new_dimensions}; will publish"
-    selected_files+=("$filename")
-    continue
-  fi
-
-  changed_pixels_raw=$(compare -metric AE "$target_file" "$new_file" null: 2>&1 || true)
-  changed_pixels="${changed_pixels_raw%% *}"
-  changed_pixels="${changed_pixels:-0}"
+  changed_pixels=$(compare -metric AE "$target_file" "$new_file" null: 2>&1 || true)
   total_pixels=$(identify -format "%[fx:w*h]" "$target_file")
   percent_changed=$(awk -v c="$changed_pixels" -v t="$total_pixels" 'BEGIN { if (t == 0) print 100; else printf "%.2f", (c * 100) / t }')
 
   if awk -v p="$percent_changed" -v m="$MIN_CHANGE_PERCENT" 'BEGIN { exit !(p > m) }'; then
-    echo "snapshot-sync: ${filename} changed ${percent_changed}% (${changed_pixels}/${total_pixels}), threshold ${MIN_CHANGE_PERCENT}%; will publish"
-    selected_files+=("$filename")
-  else
-    echo "snapshot-sync: ${filename} changed ${percent_changed}% (${changed_pixels}/${total_pixels}), threshold ${MIN_CHANGE_PERCENT}%; skipped"
+    mv "$new_file" "$target_file"
+    has_changes=1
   fi
 done
 
-if [[ "${#selected_files[@]}" -eq 0 ]]; then
+if [[ "$has_changes" -eq 0 ]]; then
   exit 0
 fi
 
-mkdir -p "${PUBLISH_REPO_DIR}/docs/assets/live"
+cd "$REPO_DIR"
 
-for filename in "${selected_files[@]}"; do
-  cp "${TMP_DIR}/${filename}" "${PUBLISH_REPO_DIR}/docs/assets/live/${filename}"
-done
+if [[ ! -w .git/index ]]; then
+  echo "snapshot-sync: repository is not writable by current user" >&2
+  exit 1
+fi
 
-git_publish add docs/assets/live/*.png
+if ! git config user.name >/dev/null; then
+  git config user.name "$SNAPSHOT_GIT_NAME"
+fi
 
-if git_publish diff --cached --quiet; then
-  echo "snapshot-sync: selected files already match ${SNAPSHOT_REPO_URL}:${SNAPSHOT_BRANCH}"
+if ! git config user.email >/dev/null; then
+  git config user.email "$SNAPSHOT_GIT_EMAIL"
+fi
+
+git add docs/assets/live/*.png
+
+if git diff --cached --quiet; then
   exit 0
 fi
 
-git_publish \
-  -c "user.name=${SNAPSHOT_GIT_NAME}" \
-  -c "user.email=${SNAPSHOT_GIT_EMAIL}" \
-  commit -m "docs(live): refresh Grafana snapshots"
-git_publish push origin "HEAD:${SNAPSHOT_BRANCH}"
+git commit -m "docs(live): refresh Grafana snapshots"
+git push

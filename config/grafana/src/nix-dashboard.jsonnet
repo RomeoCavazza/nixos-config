@@ -53,8 +53,8 @@ local summaryPanel =
   };
 
 g.dashboard(
-  'NixOS Host Performance',
-  'nixos-engine',
+  'NixOS Metrics',
+  'nixos-metrics',
   '10s',
   'Host performance view for CPU, memory, load, pressure, thermals, and GPU telemetry.'
 ) {

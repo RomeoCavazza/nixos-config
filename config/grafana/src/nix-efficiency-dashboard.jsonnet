@@ -12,32 +12,32 @@ local panelByTitle(title) =
   std.filter(function(panel) std.get(panel, 'title', '') == title, canonical.panels)[0];
 
 local railTitles = [
-  'Journal Incidents',
-  'Read Latency',
-  'Write Latency',
-  'Net Faults/s',
-  'Critical Units',
-  'Fullscreen Active',
-  'Window Count',
+  'Flake Lock Age',
+  'Store Used',
+  'Store Free',
+  'Store Fill',
+  'Closure Size',
+  'Closure Paths',
+  'Generations',
+  'IO PSI',
 ];
 
 local graphTitles = [
-  'Incident Risk Timeline',
-  'Journal Incident Logs',
-  'Network Error and Drop Rate',
-  'Disk I/O Throughput and Latency',
-  'Thermal Sensor Detail',
+  'Rebuild Activity',
+  'Nix Store Growth',
+  'Store Path Retention Flamegraph',
+  'Process Scheduler Activity',
 ];
 
 local railPanel(title, index) =
   panelByTitle(title) {
-    id: 1301 + index,
+    id: 1201 + index,
     gridPos: { x: 0, y: summaryH + index * counterH, w: railW, h: counterH },
   };
 
 local graphPanel(title, index) =
   panelByTitle(title) {
-    id: 2301 + index,
+    id: 2201 + index,
     gridPos: { x: graphX, y: index * graphH, w: graphW, h: graphH },
   };
 
@@ -48,10 +48,13 @@ local summaryPanel =
   };
 
 g.dashboard(
-  'NixOS Incident Diagnostics',
-  'nixos-black-box',
+  'Nix Efficiency',
+  'nix-efficiency',
   '10s',
-  'Incident diagnostics view for journal events, thermal detail, disk latency, and network faults.'
+  'Store and rebuild view for closure growth, generations, rebuild activity, and pressure signals.',
+  variables=[
+    g.intervalVar('window', 'Growth window', ['3h', '12h', '24h', '7d'], '3h'),
+  ],
 ) {
   timezone: 'browser',
   time: { from: 'now-3h', to: 'now' },

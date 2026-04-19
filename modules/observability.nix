@@ -66,9 +66,9 @@ let
 
   grafanaDashboardsDir = pkgs.runCommand "grafana-dashboards" {} ''
     mkdir -p $out
-    cp ${../config/grafana/nixos-engine.json} $out/nixos-engine.json
-    cp ${../config/grafana/nixos-forge.json} $out/nixos-forge.json
-    cp ${../config/grafana/nixos-black-box.json} $out/nixos-black-box.json
+    cp ${../config/grafana/nixos-metrics.json} $out/nixos-metrics.json
+    cp ${../config/grafana/nix-efficiency.json} $out/nix-efficiency.json
+    cp ${../config/grafana/incident-correlation.json} $out/incident-correlation.json
     cp ${../config/grafana/nixos-compiled.json} $out/nixos-compiled.json
   '';
 in
@@ -120,6 +120,7 @@ in
     };
   };
 
+/*
   systemd.services.grafana-snapshot-sync = {
     description = "Render Grafana dashboards and sync changed PNGs to git";
     after = [ "grafana.service" "nginx.service" "network-online.target" ];
@@ -152,6 +153,7 @@ in
       Unit = "grafana-snapshot-sync.service";
     };
   };
+*/
 
   services.prometheus.exporters.node = {
     enable = true;
