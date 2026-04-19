@@ -45,7 +45,7 @@ git_publish() {
 git_publish remote set-url origin "$SNAPSHOT_REPO_URL"
 git_publish fetch origin "$SNAPSHOT_BRANCH"
 git_publish checkout "$SNAPSHOT_BRANCH"
-git_publish merge --ff-only "origin/${SNAPSHOT_BRANCH}"
+git_publish reset --hard "origin/${SNAPSHOT_BRANCH}"
 
 mkdir -p "$OUT_DIR"
 
