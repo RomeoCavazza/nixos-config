@@ -21,7 +21,7 @@ All services are Nix-declared and activated with `nixos-rebuild`.
 
 ## Live Snapshots
 
-The three live views are the operational contract for this machine: health now, drift over time, then incident explanation. Each snapshot embeds the metrics it is responsible for instead of relying on a separate metric index. Snapshots are checked every 15 minutes and published when visual delta exceeds 0.5%.
+The three live views are the operational contract for this machine: health now, drift over time, then incident explanation. Each snapshot embeds the metrics it is responsible for instead of relying on a separate metric index. Snapshots are checked every 15 minutes and published when visual delta exceeds 0.3%.
 
 The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON. Shared panel helpers live in `config/grafana/src/lib/dashboard.libsonnet`, with a small Grafonnet-style API.
 
@@ -42,7 +42,7 @@ Live cockpit for pressure, retained state, store size, closure size, and rebuild
 - Retained state: `nix_generation`, `nix_generations_count`
 - Footprint: `nix_store_bytes`, `nix_store_paths`, `nix_closure_bytes`, `nix_closure_paths`
 - Rebuild outcome: `nix_rebuild_duration_ms`, `nix_rebuild_success`
-- Source: `config/grafana/src/nix-dashboard.jsonnet` -> `config/grafana/nix-dashboard.json`
+- Source: `config/grafana/src/nix-dashboard.jsonnet` -> `config/grafana/nixos-metrics.json`
 
 ### Nix Efficiency
 
@@ -56,7 +56,7 @@ Drift dashboard for freshness, generation debt, closure efficiency, and rebuild 
 - Closure shape: `nix_closure_bytes`, `nix_closure_paths`
 - Store pressure: `nix_store_bytes`
 - Rebuild cost: `nix_rebuild_duration_ms`
-- Source: `config/grafana/src/nix-efficiency-dashboard.jsonnet` -> `config/grafana/nix-efficiency-dashboard.json`
+- Source: `config/grafana/src/nix-efficiency-dashboard.jsonnet` -> `config/grafana/nix-efficiency.json`
 
 ### Incident Correlation
 
@@ -68,7 +68,7 @@ PSI spikes aligned with journald logs for fast root-cause analysis. This view an
 - Pressure signal: `nix_pressure_cpu_avg10`, `nix_pressure_io_some_avg10`, `nix_pressure_mem_some_avg10`
 - Build context: `nix_rebuild_duration_ms`, `nix_rebuild_success`
 - Log context: `{job="systemd-journal",component=~"display|build"}`
-- Source: `config/grafana/src/incident-correlation-dashboard.jsonnet` -> `config/grafana/incident-correlation-dashboard.json`
+- Source: `config/grafana/src/incident-correlation-dashboard.jsonnet` -> `config/grafana/incident-correlation.json`
 
 
 ### Prometheus Metric Source
