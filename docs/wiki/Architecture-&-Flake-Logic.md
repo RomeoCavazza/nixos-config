@@ -96,6 +96,37 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 
 ---
 
+## Observability — The Trinity Stack
+
+The system observability is architected as a non-redundant "Trinity" of specialized dashboards, provisioned via `modules/observability.nix` and maintained as Jsonnet sources in `config/grafana/src/`. This setup provides high-density telemetry without metric overlap.
+
+### The Trinity Dashboards
+
+1. **NixOS Metrics (Engine)**: The primary performance cockpit focused on system vitals.
+    - **Capacity**: 9 Gauges, 5 Graphs.
+    - **Scope**: CPU utilization, Memory pressure, Load averages, and Thermal/GPU telemetry.
+    - **Signal**: `nix_pressure_*`, `node_cpu_seconds_total`, `nvidia_gpu_temperature`.
+
+2. **Nix Efficiency (Forge)**: Focused on the health and growth of the Nix store and the rebuild lifecycle.
+    - **Capacity**: 8 Gauges, 5 Graphs.
+    - **Scope**: Closure growth, Store path retention, Rebuild duration, and Flake lock freshness.
+    - **Signal**: `nix_store_bytes`, `nix_rebuild_duration_ms`, `nix_flake_lock_age_seconds`.
+
+3. **Incident Correlation (Black Box)**: The diagnostic tool for matching resource spikes to system events.
+    - **Capacity**: 8 Gauges, 5 Graphs.
+    - **Scope**: Journald logs (Loki), I/O latency, Network faults, and specific critical unit status.
+    - **Signal**: `{job="systemd-journal"}`, `node_disk_read_time_seconds_total`, `node_network_transmit_errs_total`.
+
+### Automated Documentation Pipeline
+
+The wiki documentation for these metrics is continuously synchronized with the live system.
+1. **Provisioning**: Dashboards are generated from Jsonnet into `/etc/nixos/config/grafana/*.json`.
+2. **Collection**: Prometheus pulls metrics from Node Exporter and custom textfile collectors; Loki ingests journal logs via Promtail.
+3. **Capture**: A systemd timer (`grafana-snapshot-sync.timer`) triggers a headless browser every 15 minutes.
+4. **Publication**: If the visual delta of a dashboard exceeds 0.3%, a new PNG is rendered, committed, and published to the `main` branch, ensuring the wiki diagrams are always reflective of the current system state.
+
+---
+
 ## Repository Tree
 
 ```

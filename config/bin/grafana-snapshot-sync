@@ -8,7 +8,7 @@ OUT_DIR="${REPO_DIR}/docs/assets/live"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-GRAFANA_URL="${GRAFANA_URL:-http://127.0.0.1:3000}"
+GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
 SINCE="${SINCE:-now-3h}"
 UNTIL="${UNTIL:-now}"
 MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.3}"
@@ -62,16 +62,38 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
   const browser = await chromium.launch({
     executablePath: process.env.CHROME_BIN,
     headless: true,
-    args: ['--no-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none'],
   });
 
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1200 } });
-  await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(5000);
-  await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
+  const page = await browser.newPage({ 
+    viewport: { width: 1920, height: 1200 },
+    deviceScaleFactor: 2, // Better resolution for documentation
+  });
+
+  console.log(`snapshot-sync: navigating to ${process.env.DASHBOARD_URL}`);
+  try {
+    await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'load', timeout: 60000 });
+    
+    // Wait for network to settle
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => console.log('snapshot-sync: networkidle timeout, proceeding anyway'));
+
+    // Wait for any element that looks like a panel or dashboard
+    await page.waitForSelector('.panel-title, .panel-title-text, [data-testid="panel-header"]', { timeout: 15000 })
+      .catch(() => console.log('snapshot-sync: panel title not found, checking body...'));
+
+    // Give extra time for ECharts and data fetching
+    console.log(`snapshot-sync: waiting for stabilization...`);
+    await page.waitForTimeout(10000); 
+
+    await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
+    console.log(`snapshot-sync: ${process.env.OUTPUT_FILE} captured`);
+  } catch (e) {
+    console.error(`snapshot-sync: rendering failed: ${e.message}`);
+    process.exit(1);
+  }
   await browser.close();
 })().catch((error) => {
-  console.error(error);
+  console.error(`snapshot-sync: fatal error: ${error.message}`);
   process.exit(1);
 });
 NODE

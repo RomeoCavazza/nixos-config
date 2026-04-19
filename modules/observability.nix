@@ -255,6 +255,7 @@ in
       enable = true;
       datasources.settings.datasources = [
         {
+          uid = "PBFA97CFB590B2093";
           name = "Prometheus";
           type = "prometheus";
           access = "proxy";
@@ -263,6 +264,7 @@ in
           editable = false;
         }
         {
+          uid = "P8E80F9AEF21F6940";
           name = "Loki";
           type = "loki";
           access = "proxy";

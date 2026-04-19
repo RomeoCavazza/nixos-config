@@ -52,7 +52,10 @@ g.dashboard(
   'NixOS Incident Diagnostics',
   'incident-correlation',
   '10s',
-  'Incident diagnostics view for journal events, thermal detail, disk latency, and network faults.'
+  'Incident diagnostics view for journal events, thermal detail, disk latency, and network faults.',
+  variables=[
+    g.intervalVar('window', 'Growth window', ['3h', '12h', '24h', '7d'], '3h'),
+  ],
 ) {
   timezone: 'browser',
   time: { from: 'now-3h', to: 'now' },

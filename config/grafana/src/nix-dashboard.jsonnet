@@ -53,7 +53,10 @@ g.dashboard(
   'NixOS Metrics',
   'nixos-metrics',
   '10s',
-  'Host performance view for CPU, memory, load, pressure, thermals, and GPU telemetry.'
+  'Host performance view for CPU, memory, load, pressure, thermals, and GPU telemetry.',
+  variables=[
+    g.intervalVar('window', 'Growth window', ['3h', '12h', '24h', '7d'], '3h'),
+  ],
 ) {
   timezone: 'browser',
   time: { from: 'now-3h', to: 'now' },

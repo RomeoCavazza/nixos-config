@@ -136,8 +136,8 @@ local lerpColor = function(h1, h2, t)
 {
   colors:: colors,
 
-  prometheusDatasource:: { type: 'prometheus', uid: 'Prometheus' },
-  lokiDatasource:: { type: 'loki', uid: 'Loki' },
+  prometheusDatasource:: { type: 'prometheus', uid: 'PBFA97CFB590B2093' },
+  lokiDatasource:: { type: 'loki', uid: 'P8E80F9AEF21F6940' },
   mixedDatasource:: { type: 'datasource', uid: '-- Mixed --' },
 
   datasourceRef(ds)::
