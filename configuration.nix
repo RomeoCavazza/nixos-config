@@ -66,7 +66,6 @@
     options = "--delete-older-than 7d";
   };
 
-
   systemd.tmpfiles.rules = [
     "d ${config.users.users.tco.home}/.cache/wal 0755 tco users -"
     "d /home/nix-build 2775 root nixbld - -"
@@ -252,6 +251,7 @@
     mesa
     libglvnd
     libdrm
+    sigrok-cli
   ];
 
   services.flatpak.enable = true;
@@ -261,6 +261,11 @@
     NIXOS_OZONE_WL = "1";
     EDITOR = "vim";
   };
+
+  # --- Ajoute ce bloc juste avant la dernière accolade ---
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="04b5", ATTRS{idProduct}=="6cde", MODE="0666"
+  '';
 
   system.stateVersion = "26.05";
 }

@@ -331,6 +331,8 @@ in
     rustfmt
     black
     isort
+    nmap
+    pulseview
     (python3.withPackages (
       ps: with ps; [
         pip
