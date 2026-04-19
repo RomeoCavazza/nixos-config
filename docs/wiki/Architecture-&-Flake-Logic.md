@@ -1,6 +1,6 @@
 This page documents the structural decisions behind the flake and explains how the system and user configurations compose into a single atomic build.
 
-![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/scheme.png)
+---
 
 ---
 
