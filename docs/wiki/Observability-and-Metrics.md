@@ -37,12 +37,13 @@ The primary view for overall system health and real-time monitoring.
 
 ![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
 
+<sub>Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-dashboard.jsonnet)</sub>
+
 - **Operational Rail (25 Gauges)**: CPU/RAM/PSI, Thermal sensors, Store Fill, Journal Incidents, hyprland status.
 - **Resource Pressure Heatmap**: Multi-dimensional view of CPU/Mem/IO pressure with sharpened raw spikes.
 - **Resource Pressure Timeline**: Historical PSI trends for identifying bottlenecks.
 - **Temperature Sensors**: Detailed chip and thermal zone monitoring (CPU, NVMe, etc.).
 - **NVIDIA GPU Metrics**: VRAM occupancy and real-time Power Draw (Watts).
-- 🧬 **Source**: `config/grafana/src/nix-dashboard.jsonnet`
 
 ### 2. Nix Efficiency & Store Health
 
@@ -50,11 +51,12 @@ Tracking drift, generation debt, and the cost of system rebuilds.
 
 ![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
 
+<sub>Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)</sub>
+
 - **Generation Debt**: `nix_generations_count` and `nix_flake_lock_age_seconds`.
 - **Closure Shape**: `nix_closure_bytes` vs `nix_store_bytes` ratio.
 - **Store Performance**: Rebuild activity calendar and scheduler pulse.
 - **System stress context**: Includes Pressure Timeline and Thermal sensors to monitor impact of heavy builds.
-- 🧬 **Source**: `config/grafana/src/nix-efficiency-dashboard.jsonnet`
 
 ### 3. Incident Diagnostics
 
@@ -62,11 +64,12 @@ Log correlation matched with hardware risk signals for fast root-cause analysis.
 
 ![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
 
+<sub>Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)</sub>
+
 - **Incident Risk River**: Stream graph of disk/net risk signals vs log volume.
 - **Journal Logs**: Filtered incident feed (`failed`, `panic`, `segfault`, etc.).
 - **Network & Disk Faults**: I/O throughput vs latency and network error rates.
 - **Correlation Context**: Includes Pressure Timeline and GPU metrics to match log events with hardware stress.
-- 🧬 **Source**: `config/grafana/src/incident-correlation-dashboard.jsonnet`
 
 ---
 
