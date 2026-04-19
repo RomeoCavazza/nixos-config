@@ -1,6 +1,7 @@
-// Grafonnet-style helpers, Mocha palette with Waybar blue as primary accent.
-// Dark neutral background + vivid blue for key series, semantic thresholds
-// follow the Catppuccin Mocha triad (green / yellow / red).
+// Grafonnet-style helpers, tuned to the Hyprland / Waybar / Rofi / Foot
+// seaglass desktop. Graph colors stay in the wallpaper's cyan -> blue ->
+// violet range; semantic states use brightness and hue shift instead of the
+// default green / yellow / orange / red traffic-light palette.
 
 // --------------------------------------------------------------------------
 // PALETTE (Catppuccin Mocha, Waybar-aligned)
@@ -39,22 +40,72 @@ local mocha = {
   red: '#f38ba8',
 };
 
-local colors = {
-  // semantic
-  ok: mocha.green,
-  warn: mocha.yellow,
-  hot: mocha.peach,
-  crit: mocha.red,
-  info: mocha.blue,
-  accent: mocha.teal,
+local seaglassTheme = mocha + {
+  // background family sampled from docs/assets/background.png
+  base: '#050513',
+  mantle: '#0d0f2e',
+  crust: '#050513',
+  surface0: '#0e184a',
+  surface1: '#202b60',
+  surface2: '#2b529e',
 
-  // series palette aligned to the desktop: Hyprland/Waybar teal first, then
-  // the Mocha blues and warm diagnostic accents. Dashboard overrides should
-  // use these colors directly instead of relying on Grafana CSS injection.
-  series: [mocha.teal, mocha.blue, mocha.sky, mocha.sapphire, mocha.lavender, mocha.mauve, mocha.peach, mocha.green, mocha.yellow, mocha.red],
+  // text
+  text: '#f6fbff',
+  subtext1: '#d8f7fb',
+  subtext0: '#96cbd2',
+  overlay2: '#73d9f7',
+
+  // accent family shared with rofi/waybar/hypr/foot
+  teal: '#94e2d5',
+  sky: '#73d9f7',
+  sapphire: '#2f9de5',
+  blue: '#5d9ae1',
+  cyan: '#8df4ec',
+  pink: '#f5c2e7',
+  lavender: '#b48efa',
+  mauve: '#a56c89',
+
+  // cold semantic aliases, kept under familiar names for existing dashboards
+  green: '#94e2d5',
+  yellow: '#73d9f7',
+  peach: '#b48efa',
+  maroon: '#a56c89',
+  red: '#f5c2e7',
+};
+
+local colors = {
+  // Seaglass / Hyprchroma primary accents
+  seaglass: {
+    primary: '#94e2d5',    // Glowing Teal
+    secondary: '#73d9f7',  // Sky Blue
+    tertiary: '#5d9ae1',   // Sapphire Blue
+    quaternary: '#b48efa', // Violet
+    glow: '#8df4ec',       // Neon Cyan
+  },
+
+  // semantic
+  ok: seaglassTheme.teal,
+  warn: seaglassTheme.sky,
+  hot: seaglassTheme.lavender,
+  crit: seaglassTheme.pink,
+  info: seaglassTheme.blue,
+  accent: seaglassTheme.teal,
+
+  // series palette: cold neon spread from the wallpaper, without traffic-light warmth.
+  series: [
+    seaglassTheme.teal,
+    seaglassTheme.blue,
+    seaglassTheme.lavender,
+    seaglassTheme.pink,
+    seaglassTheme.sky,
+    seaglassTheme.mauve,
+    seaglassTheme.cyan,
+    '#6aa6ff',
+  ],
 
   // full palette exposed so dashboards can reach for any Mocha tone
   mocha: mocha,
+  theme: seaglassTheme,
 };
 
 // --------------------------------------------------------------------------
@@ -171,6 +222,20 @@ local lerpColor = function(h1, h2, t)
     { color: colors.crit, value: s4 },
   ]),
 
+  // Seaglass monochromatic thresholds (for a calm, one-piece look)
+  seaglassScale(warn, crit):: $.thresholds([
+    { color: colors.seaglass.primary, value: null },
+    { color: colors.seaglass.tertiary, value: warn },
+    { color: colors.crit, value: crit },
+  ]),
+
+  // BarGauge specific Seaglass scale (strictly cold)
+  seaglassBarScale(warn, crit):: $.thresholds([
+    { color: colors.seaglass.glow, value: null },
+    { color: colors.seaglass.quaternary, value: warn },
+    { color: colors.crit, value: crit },
+  ]),
+
   // Continuous heat gradient — N threshold steps interpolated through 3 color stops.
   // Mirrors Forecast's 101-step temperature palette.
   heatGradient(startHex, midHex, endHex, minValue, maxValue, steps=101)::
@@ -185,9 +250,9 @@ local lerpColor = function(h1, h2, t)
       )
     ),
 
-  // Mocha cool→hot gradient: blue → teal → green → yellow → peach → red
+  // Cold pressure gradient: background blue -> electric cyan -> violet.
   mochaHeat(minValue, maxValue, steps=101)::
-    $.heatGradient(mocha.blue, mocha.green, mocha.red, minValue, maxValue, steps),
+    $.heatGradient(seaglassTheme.blue, seaglassTheme.teal, seaglassTheme.lavender, minValue, maxValue, steps),
 
   // ---------------------------------------------------------------------
   // MAPPINGS
@@ -197,7 +262,7 @@ local lerpColor = function(h1, h2, t)
     type: 'special',
     options: {
       match: 'null',
-      result: { text: 'No data', color: mocha.overlay2, index: 0 },
+      result: { text: 'No data', color: seaglassTheme.overlay2, index: 0 },
     },
   },
 
@@ -394,7 +459,7 @@ local lerpColor = function(h1, h2, t)
           datasource: { type: 'grafana', uid: '-- Grafana --' },
           enable: true,
           hide: true,
-          iconColor: mocha.overlay2,
+          iconColor: seaglassTheme.overlay2,
           name: 'Annotations & Alerts',
           type: 'dashboard',
         },
@@ -447,6 +512,7 @@ local lerpColor = function(h1, h2, t)
     colorMode='value',
     graphMode='area',
     textMode='auto',
+    justifyMode='auto',
     overrides=[]
   ):: {
     id: id,
@@ -461,7 +527,7 @@ local lerpColor = function(h1, h2, t)
       textMode: textMode,
       colorMode: colorMode,
       graphMode: graphMode,
-      justifyMode: 'auto',
+      justifyMode: justifyMode,
       percentChangeColorMode: 'standard',
     },
     fieldConfig: {
@@ -583,7 +649,8 @@ local lerpColor = function(h1, h2, t)
     mappings=[],
     thresholds=null,
     unit='none',
-    showLegend=false,
+    showLegend=true,
+    legendPlacement='right',
     showValue='never',
     rowHeight=0.9
   ):: {
@@ -602,7 +669,7 @@ local lerpColor = function(h1, h2, t)
       mergeValues: true,
       rowHeight: rowHeight,
       showValue: showValue,
-      legend: { displayMode: 'list', placement: 'bottom', showLegend: showLegend },
+      legend: { displayMode: 'list', placement: legendPlacement, showLegend: showLegend },
       tooltip: { mode: 'multi', sort: 'desc' },
     },
     fieldConfig: {
@@ -642,18 +709,20 @@ local lerpColor = function(h1, h2, t)
     targets: [$.prometheusTarget(expr, legend) + { format: 'time_series' }],
     options: {
       calculate: true,
-      calculation: {},
-      cellGap: 1,
-      cellValues: { unit: unit },
+      calculation: {
+        xBuckets: { mode: 'auto' },
+        yBuckets: { mode: 'count', value: 20 },
+      },
+      cellGap: 2,
       color: {
         mode: 'scheme',
-        scheme: 'Turbo',
-        fill: mocha.blue,
+        scheme: 'Blues',
+        fill: seaglassTheme.blue,
         exponent: 0.5,
-        steps: 64,
+        steps: 128,
         reverse: false,
       },
-      exemplars: { color: mocha.red },
+      exemplars: { color: seaglassTheme.lavender },
       filterValues: { le: 1e-9 },
       legend: { show: true },
       rowsFrame: { layout: 'auto' },
@@ -699,7 +768,7 @@ local lerpColor = function(h1, h2, t)
           inspect: false,
         },
         color: { mode: 'thresholds' },
-        thresholds: $.thresholds([{ color: mocha.text, value: null }]),
+        thresholds: $.thresholds([{ color: seaglassTheme.text, value: null }]),
       },
       overrides: overrides,
     },
@@ -716,7 +785,7 @@ local lerpColor = function(h1, h2, t)
     unit=null,
     axisLabel='',
     overrides=[],
-    fillOpacity=14,
+    fillOpacity=8,
     gradientMode='opacity',
     thresholdsStyle='off',
     stackingMode='none',
@@ -729,12 +798,12 @@ local lerpColor = function(h1, h2, t)
     showPoints='never',
     barAlignment=0,
     legendDisplayMode='table',
-    legendPlacement='bottom',
+    legendPlacement='right',
     legendCalcs=['lastNotNull', 'mean', 'max'],
     tooltipSort='desc',
     axisPlacement='auto',
     showLegend=true,
-    colorMode='palette-classic'
+    colorMode='fixed'
   ):: {
     id: id,
     gridPos: { x: x, y: y, w: w, h: h },
@@ -753,7 +822,7 @@ local lerpColor = function(h1, h2, t)
     fieldConfig: {
       defaults:
         {
-          color: { mode: colorMode },
+          color: if colorMode == 'fixed' then { mode: 'fixed', fixedColor: colors.accent } else { mode: colorMode },
           custom: {
             axisCenteredZero: false,
             axisColorMode: 'text',
@@ -784,10 +853,10 @@ local lerpColor = function(h1, h2, t)
   // of already-built target objects).
   multiTargetTimeseries(
     id, title, builtTargets, x, y, w, h=8,
-    unit=null, axisLabel='', overrides=[], fillOpacity=14,
+    unit=null, axisLabel='', overrides=[], fillOpacity=8,
     gradientMode='opacity', thresholdsStyle='off', thresholds=null,
-    legendDisplayMode='table', legendPlacement='bottom',
-    legendCalcs=['lastNotNull', 'mean', 'max'], colorMode='palette-classic',
+    legendDisplayMode='table', legendPlacement='right',
+    legendCalcs=['lastNotNull', 'mean', 'max'], colorMode='fixed',
     lineWidth=2
   ):: {
     id: id,
@@ -803,7 +872,7 @@ local lerpColor = function(h1, h2, t)
     fieldConfig: {
       defaults:
         {
-          color: { mode: colorMode },
+          color: if colorMode == 'fixed' then { mode: 'fixed', fixedColor: colors.accent } else { mode: colorMode },
           custom: {
             axisCenteredZero: false,
             axisColorMode: 'text',

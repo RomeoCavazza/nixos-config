@@ -17,6 +17,12 @@ let
     '' + builtins.readFile ../config/bin/grafana-snapshot-sync;
   };
 
+  hyprMetricsScript = pkgs.writeShellApplication {
+    name = "hypr-metrics";
+    runtimeInputs = [ pkgs.hyprland pkgs.coreutils pkgs.jq ];
+    text = builtins.readFile ../config/bin/hypr-metrics;
+  };
+
   promtailConfig = pkgs.writeText "promtail.yaml" (builtins.toJSON {
     server = {
       http_listen_port = 9080;
@@ -96,6 +102,24 @@ in
     };
   };
 
+  systemd.services.hypr-metrics = {
+    description = "Collect Hyprland workspace and window metrics";
+    serviceConfig = {
+      Type = "oneshot";
+      User = "tco";
+      ExecStart = "${hyprMetricsScript}/bin/hypr-metrics";
+    };
+  };
+
+  systemd.timers.hypr-metrics = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "1min";
+      OnUnitActiveSec = "30s";
+      Unit = "hypr-metrics.service";
+    };
+  };
+
   systemd.services.grafana-snapshot-sync = {
     description = "Render Grafana dashboards and sync changed PNGs to git";
     after = [ "grafana.service" "nginx.service" "network-online.target" ];
@@ -133,16 +157,25 @@ in
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9100;
+    enabledCollectors = [ "hwmon" "thermal_zone" "pressure" "systemd" ];
     extraFlags = [ "--collector.textfile.directory=${textfileDir}" ];
+  };
+
+  services.prometheus.exporters.nvidia-gpu = {
+    enable = true;
+    listenAddress = "127.0.0.1";
+    port = 9835;
   };
 
   services.prometheus = {
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9090;
+    extraFlags = [ "--storage.tsdb.retention.time=15d" ];
     scrapeConfigs = [
       { job_name = "prometheus"; static_configs = [{ targets = [ "127.0.0.1:9090" ]; }]; }
       { job_name = "node"; static_configs = [{ targets = [ "127.0.0.1:9100" ]; }]; }
+      { job_name = "nvidia"; static_configs = [{ targets = [ "127.0.0.1:9835" ]; }]; }
       { job_name = "loki"; static_configs = [{ targets = [ "127.0.0.1:3100" ]; }]; }
     ];
   };
@@ -168,6 +201,18 @@ in
         schema = "v13";
         index = { prefix = "index_"; period = "24h"; };
       }];
+      limits_config = {
+        retention_period = "15d";
+      };
+      compactor = {
+        working_directory = "/var/lib/loki/compactor";
+        compaction_interval = "10m";
+        retention_enabled = true;
+        retention_delete_delay = "2h";
+        retention_delete_worker_count = 150;
+        delete_request_store = "filesystem";
+        delete_request_cancel_period = "24h";
+      };
     };
   };
 
@@ -203,6 +248,7 @@ in
         enabled = true;
         org_role = "Viewer";
       };
+      feature_toggles.enable = "newGauge";
     };
 
     provision = {

@@ -4,18 +4,18 @@
 // colors live in Jsonnet fieldConfig/overrides so graphs stay aligned with the
 // Hyprland / Waybar / Foot / Wal palette without modifying the HTML shell.
 
-$m-blue:   #89b4fa;
+$m-blue:   #5d9ae1;
 $m-teal:   #94e2d5;
-$m-red:    #f38ba8;
-$m-yellow: #f9e2af;
+$m-violet: #b48efa;
+$m-sky:    #73d9f7;
 
 :root,
 html[data-theme='dark'],
 body {
   --color-primary-main:  #{$m-blue} !important;
   --color-primary-shade: #{$m-teal} !important;
-  --color-warning-main:  #{$m-yellow} !important;
-  --color-error-main:    #{$m-red} !important;
+  --color-warning-main:  #{$m-sky} !important;
+  --color-error-main:    #{$m-violet} !important;
 }
 
 a,

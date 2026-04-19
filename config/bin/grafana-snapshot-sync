@@ -25,7 +25,7 @@ export GIT_SSH_COMMAND
 DASHBOARDS=(
   "nixos-engine:nixos-engine:live-dashboard.png:1200:full:"
   "nixos-forge:nixos-forge:nix-efficiency.png:1200:full:"
-  "nixos-black-box:nixos-black-box:incident-dashboard.png:900:viewport:Journald Incident Feed"
+  "nixos-black-box:nixos-black-box:incident-dashboard.png:1200:full:Journald Incident Feed"
 )
 
 if [[ -e "$PUBLISH_REPO_DIR" && ! -d "${PUBLISH_REPO_DIR}/.git" ]]; then
@@ -65,7 +65,7 @@ selected_files=()
 
 for item in "${DASHBOARDS[@]}"; do
   IFS=":" read -r uid slug filename viewport_height capture_mode hide_panel_title <<< "$item"
-  viewport_height="${viewport_height:-1200}"
+  viewport_height="${viewport_height:-1400}"
   capture_mode="${capture_mode:-full}"
   hide_panel_title="${hide_panel_title:-}"
   new_file="${TMP_DIR}/${filename}"
@@ -95,11 +95,11 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     args: ['--no-sandbox'],
   });
 
-  const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || 1200);
+  const viewportHeight = Number(process.env.VIEWPORT_HEIGHT || 1400);
   const fullPage = process.env.SNAPSHOT_FULL_PAGE !== 'false';
 
   const page = await browser.newPage({
-    viewport: { width: 2200, height: viewportHeight },
+    viewport: { width: 1920, height: viewportHeight },
     deviceScaleFactor: 1,
   });
 

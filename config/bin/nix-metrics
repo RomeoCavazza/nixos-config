@@ -21,12 +21,11 @@ store_paths=$(find /nix/store -mindepth 1 -maxdepth 1 -printf '.' 2>/dev/null | 
 closure_paths=$(nix-store -q --requisites /run/current-system 2>/dev/null | wc -l || echo 0)
 closure_bytes=$(nix path-info -rS /run/current-system 2>/dev/null \
   | awk '{sum += $2} END { print (sum ? sum : 0) }')
-set +o pipefail
+# Get top 10 closures safely without triggering SIGPIPE errors in sort/head
 top_closures=$(nix path-info -rS /run/current-system 2>/dev/null \
   | awk 'NF >= 2 { print $1, $2 }' \
-  | sort -k2,2nr \
+  | sort -k2,2nr 2>/dev/null \
   | head -10 || true)
-set -o pipefail
 
 # --- Current NixOS generation ------------------------------------------------
 generations=$(nix-env --list-generations -p /nix/var/nix/profiles/system 2>/dev/null || true)

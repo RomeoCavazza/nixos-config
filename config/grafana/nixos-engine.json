@@ -9,29 +9,34 @@
         },
         "enable": true,
         "hide": true,
-        "iconColor": "#9399b2",
+        "iconColor": "#73d9f7",
         "name": "Annotations & Alerts",
         "type": "dashboard"
       }
     ]
   },
-  "description": "Immediate host pulse: CPU, RAM, load, thermals, and PSI pressure.",
+  "description": "Host performance view for CPU, memory, load, pressure, thermals, and GPU telemetry.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
       "gridPos": {
-        "h": 1,
-        "w": 24,
+        "h": 12,
+        "w": 5,
         "x": 0,
         "y": 0
       },
-      "id": 1,
-      "title": "Pulse",
-      "type": "row"
+      "id": 1000,
+      "options": {
+        "content": "Small local observability stack for NixOS health, rebuilds, pressure, logs, and desktop signals.\n\n| Component | Endpoint | Role |\n| --- | --- | --- |\n| ![Prometheus](https://img.shields.io/badge/Prometheus-metrics-b48efa?style=flat-square&logo=prometheus&logoColor=white&labelColor=101216) | `localhost:9090` | Metrics TSDB and query engine |\n| ![Node Exporter](https://img.shields.io/badge/Node_Exporter-host-70efe5?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | `localhost:9100` | Host metrics plus textfile collector |\n| ![Loki](https://img.shields.io/badge/Loki-logs-8df4ec?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3100` | Centralized logs |\n| ![Promtail](https://img.shields.io/badge/Promtail-journald-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `systemd service` | Journald scraping and labeling |\n| ![Grafana](https://img.shields.io/badge/Grafana-ui-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3000` | Dashboards and correlation UI |\n\n[GitHub](https://github.com/RomeoCavazza/setup-os) · [Observability wiki](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)\n",
+        "contentType": "markdown",
+        "mode": "markdown"
+      },
+      "title": "System Summary",
+      "transparent": true,
+      "type": "text"
     },
     {
       "datasource": {
@@ -44,21 +49,30 @@
             "mode": "thresholds"
           },
           "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5d9ae1",
+                "value": null
+              }
+            ]
+          },
           "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 5,
         "x": 0,
-        "y": 1
+        "y": 12
       },
-      "id": 2,
+      "id": 1101,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -68,7 +82,7 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "value"
       },
       "targets": [
         {
@@ -104,15 +118,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 70
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 90
               }
             ]
@@ -122,18 +136,13 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 17
       },
-      "id": 3,
+      "id": 1102,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -141,8 +150,13 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -152,13 +166,13 @@
           "editorMode": "code",
           "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node\",mode=\"idle\"}[5m])))",
           "instant": false,
-          "legendFormat": "value",
+          "legendFormat": "CPU Utilization",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU Busy",
-      "type": "stat"
+      "title": "CPU Utilization",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -177,15 +191,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 75
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 90
               }
             ]
@@ -195,18 +209,13 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 1
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 22
       },
-      "id": 4,
+      "id": 1103,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -214,8 +223,13 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -225,13 +239,13 @@
           "editorMode": "code",
           "expr": "100 * (1 - node_memory_MemAvailable_bytes{job=\"node\"} / node_memory_MemTotal_bytes{job=\"node\"})",
           "instant": false,
-          "legendFormat": "value",
+          "legendFormat": "Memory Used",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "RAM Used",
-      "type": "stat"
+      "title": "Memory Used",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -244,19 +258,21 @@
             "mode": "thresholds"
           },
           "decimals": 2,
+          "max": 2,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 0.80000000000000004
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 1.5
               }
             ]
@@ -266,18 +282,13 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 27
       },
-      "id": 5,
+      "id": 1104,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -285,8 +296,13 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -296,13 +312,13 @@
           "editorMode": "code",
           "expr": "node_load1{job=\"node\"} / scalar(count(count by (cpu) (node_cpu_seconds_total{job=\"node\",mode=\"idle\"})))",
           "instant": false,
-          "legendFormat": "value",
+          "legendFormat": "Load/Core",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "Load/Core",
-      "type": "stat"
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -321,7 +337,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
@@ -329,15 +345,15 @@
                 "value": 2
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 5
               },
               {
-                "color": "#fab387",
+                "color": "#b48efa",
                 "value": 15
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 30
               }
             ]
@@ -347,18 +363,13 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 32
       },
-      "id": 6,
+      "id": 1105,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -366,8 +377,13 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -377,13 +393,13 @@
           "editorMode": "code",
           "expr": "nix_pressure_cpu_avg10",
           "instant": false,
-          "legendFormat": "value",
+          "legendFormat": "CPU Pressure",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU PSI",
-      "type": "stat"
+      "title": "CPU Pressure",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -402,7 +418,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
@@ -410,15 +426,15 @@
                 "value": 1
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 3
               },
               {
-                "color": "#fab387",
+                "color": "#b48efa",
                 "value": 10
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 25
               }
             ]
@@ -428,18 +444,13 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 1
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 37
       },
-      "id": 7,
+      "id": 1106,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -447,8 +458,13 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
       },
+      "pluginVersion": "13.0.0",
       "targets": [
         {
           "datasource": {
@@ -458,12 +474,148 @@
           "editorMode": "code",
           "expr": "nix_pressure_mem_some_avg10",
           "instant": false,
+          "legendFormat": "Memory Pressure",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Pressure",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 70
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 42
+      },
+      "id": 1107,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max({__name__=~\"node_hwmon_temp_celsius|node_thermal_zone_temp\",job=\"node\"})",
+          "instant": false,
+          "legendFormat": "Max Temperature",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Max Temperature",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 47
+      },
+      "id": 1108,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_procs_running{job=\"node\"}",
+          "instant": false,
           "legendFormat": "value",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory PSI",
+      "title": "Running",
       "type": "stat"
     },
     {
@@ -474,7 +626,144 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "max": 5,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#94e2d5",
+                "value": null
+              },
+              {
+                "color": "#73d9f7",
+                "value": 1
+              },
+              {
+                "color": "#f5c2e7",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 52
+      },
+      "id": 1109,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sparkline": true,
+        "text": {},
+        "textMode": "value"
+      },
+      "pluginVersion": "13.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_procs_blocked{job=\"node\"}",
+          "instant": false,
+          "legendFormat": "Blocked",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Blocked",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#5d9ae1",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 0,
+        "y": 57
+      },
+      "id": 1110,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(node_context_switches_total{job=\"node\"}[5m]))",
+          "instant": false,
+          "legendFormat": "value",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Context Switches/s",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -483,7 +772,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 30,
+            "fillOpacity": 12,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -510,15 +799,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 70
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 90
               }
             ]
@@ -535,13 +824,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#94e2d5",
+                  "fixedColor": "#8df4ec",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 34
+                "value": 12
               }
             ]
           },
@@ -554,13 +843,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#89b4fa",
+                  "fixedColor": "#5d9ae1",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 26
+                "value": 10
               }
             ]
           },
@@ -573,13 +862,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#fab387",
+                  "fixedColor": "#b48efa",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 34
+                "value": 14
               },
               {
                 "id": "custom.lineWidth",
@@ -596,13 +885,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#f9e2af",
+                  "fixedColor": "#73d9f7",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 18
+                "value": 7
               }
             ]
           },
@@ -615,13 +904,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#cba6f7",
+                  "fixedColor": "#f5c2e7",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 18
+                "value": 7
               }
             ]
           },
@@ -634,13 +923,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#89dceb",
+                  "fixedColor": "#94e2d5",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 12
+                "value": 5
               }
             ]
           },
@@ -653,13 +942,13 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#f38ba8",
+                  "fixedColor": "#a56c89",
                   "mode": "fixed"
                 }
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 28
+                "value": 10
               },
               {
                 "id": "custom.lineWidth",
@@ -682,12 +971,12 @@
         ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 5
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 0
       },
-      "id": 10,
+      "id": 2101,
       "options": {
         "legend": {
           "calcs": [
@@ -716,7 +1005,7 @@
           "refId": "A"
         }
       ],
-      "title": "CPU Saturation by Mode",
+      "title": "CPU Utilization by Mode",
       "type": "timeseries"
     },
     {
@@ -727,7 +1016,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -736,184 +1026,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 28,
+            "fillOpacity": 6,
             "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Used"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#89b4fa",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Available"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#a6e3a1",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 12
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Cache+Buffers"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#94e2d5",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 18
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "time"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "hidden"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 5
-      },
-      "id": 11,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_MemTotal_bytes{job=\"node\"} - node_memory_MemAvailable_bytes{job=\"node\"}",
-          "instant": false,
-          "legendFormat": "Used",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_MemAvailable_bytes{job=\"node\"}",
-          "instant": false,
-          "legendFormat": "Available",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_Cached_bytes{job=\"node\"} + node_memory_Buffers_bytes{job=\"node\"}",
-          "instant": false,
-          "legendFormat": "Cache+Buffers",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "Memory Shape",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 12,
-            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -939,15 +1053,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 4
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 8
               }
             ]
@@ -964,7 +1078,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#94e2d5",
+                  "fixedColor": "#8df4ec",
                   "mode": "fixed"
                 }
               },
@@ -974,7 +1088,7 @@
               },
               {
                 "id": "custom.fillOpacity",
-                "value": 18
+                "value": 7
               }
             ]
           },
@@ -987,7 +1101,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#89b4fa",
+                  "fixedColor": "#5d9ae1",
                   "mode": "fixed"
                 }
               },
@@ -1006,7 +1120,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#b4befe",
+                  "fixedColor": "#b48efa",
                   "mode": "fixed"
                 }
               }
@@ -1021,7 +1135,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#f38ba8",
+                  "fixedColor": "#f5c2e7",
                   "mode": "fixed"
                 }
               },
@@ -1052,12 +1166,12 @@
         ]
       },
       "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 5
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 9
       },
-      "id": 12,
+      "id": 2102,
       "options": {
         "legend": {
           "calcs": [
@@ -1123,20 +1237,8 @@
           "refId": "D"
         }
       ],
-      "title": "Load Envelope",
+      "title": "Load Average vs CPU Capacity",
       "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 12
-      },
-      "id": 20,
-      "title": "Pressure And Thermals",
-      "type": "row"
     },
     {
       "datasource": {
@@ -1146,44 +1248,27 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
           },
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#a6e3a1",
-                "value": null
-              },
-              {
-                "color": "#94e2d5",
-                "value": 1
-              },
-              {
-                "color": "#f9e2af",
-                "value": 3
-              },
-              {
-                "color": "#fab387",
-                "value": 10
-              },
-              {
-                "color": "#f38ba8",
-                "value": 25
-              }
-            ]
+          "custom": {
+            "fillOpacity": 8,
+            "gradientMode": "opacity",
+            "lineWidth": 2
           },
-          "unit": "percent"
+          "unit": "bytes"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU"
+              "options": "VRAM Used"
             },
             "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
               {
                 "id": "color",
                 "value": {
@@ -1196,13 +1281,17 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Memory"
+              "options": "VRAM Total"
             },
             "properties": [
               {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#cba6f7",
+                  "fixedColor": "#b48efa",
                   "mode": "fixed"
                 }
               }
@@ -1211,43 +1300,44 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "IO"
+              "options": "Power Draw"
             },
             "properties": [
               {
+                "id": "unit",
+                "value": "watt"
+              },
+              {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#fab387",
+                  "fixedColor": "#5d9ae1",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 0,
-        "y": 13
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 18
       },
-      "id": 21,
+      "id": 2103,
       "options": {
-        "displayMode": "basic",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
+        "legend": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        }
       },
       "targets": [
         {
@@ -1256,10 +1346,10 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "nix_pressure_cpu_avg10",
-          "instant": true,
-          "legendFormat": "CPU",
-          "range": false,
+          "expr": "nvidia_smi_memory_used_bytes",
+          "instant": false,
+          "legendFormat": "VRAM Used",
+          "range": true,
           "refId": "A"
         },
         {
@@ -1268,10 +1358,10 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "nix_pressure_mem_some_avg10",
-          "instant": true,
-          "legendFormat": "Memory",
-          "range": false,
+          "expr": "nvidia_smi_memory_total_bytes",
+          "instant": false,
+          "legendFormat": "VRAM Total",
+          "range": true,
           "refId": "B"
         },
         {
@@ -1280,15 +1370,15 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "nix_pressure_io_some_avg10",
-          "instant": true,
-          "legendFormat": "IO",
-          "range": false,
+          "expr": "nvidia_smi_power_draw_watts",
+          "instant": false,
+          "legendFormat": "Power Draw",
+          "range": true,
           "refId": "C"
         }
       ],
-      "title": "PSI Avg10",
-      "type": "bargauge"
+      "title": "NVIDIA GPU Metrics",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1298,7 +1388,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1307,7 +1398,184 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 24,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5d9ae1",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Available"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8df4ec",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 6
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cache+Buffers"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#b48efa",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 8
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 27
+      },
+      "id": 2104,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_memory_MemTotal_bytes{job=\"node\"} - node_memory_MemAvailable_bytes{job=\"node\"}",
+          "instant": false,
+          "legendFormat": "Used",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_memory_MemAvailable_bytes{job=\"node\"}",
+          "instant": false,
+          "legendFormat": "Available",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "editorMode": "code",
+          "expr": "node_memory_Cached_bytes{job=\"node\"} + node_memory_Buffers_bytes{job=\"node\"}",
+          "instant": false,
+          "legendFormat": "Cache+Buffers",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Memory Usage Breakdown",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 9,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1334,7 +1602,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
@@ -1342,15 +1610,15 @@
                 "value": 1
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 3
               },
               {
-                "color": "#fab387",
+                "color": "#b48efa",
                 "value": 10
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 25
               }
             ]
@@ -1367,7 +1635,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#94e2d5",
+                  "fixedColor": "#8df4ec",
                   "mode": "fixed"
                 }
               },
@@ -1386,7 +1654,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#cba6f7",
+                  "fixedColor": "#f5c2e7",
                   "mode": "fixed"
                 }
               },
@@ -1405,7 +1673,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#fab387",
+                  "fixedColor": "#b48efa",
                   "mode": "fixed"
                 }
               },
@@ -1430,12 +1698,12 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 7,
+        "h": 9,
+        "w": 19,
         "x": 5,
-        "y": 13
+        "y": 36
       },
-      "id": 22,
+      "id": 2105,
       "options": {
         "legend": {
           "calcs": [
@@ -1489,7 +1757,7 @@
           "refId": "C"
         }
       ],
-      "title": "Pressure Timeline",
+      "title": "Resource Pressure Timeline",
       "type": "timeseries"
     },
     {
@@ -1500,7 +1768,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "fixedColor": "#94e2d5",
+            "mode": "fixed"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1509,8 +1778,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
-            "fillOpacity": 6,
-            "gradientMode": "none",
+            "fillOpacity": 4,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -1536,15 +1805,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "#a6e3a1",
+                "color": "#94e2d5",
                 "value": null
               },
               {
-                "color": "#f9e2af",
+                "color": "#73d9f7",
                 "value": 70
               },
               {
-                "color": "#f38ba8",
+                "color": "#f5c2e7",
                 "value": 85
               }
             ]
@@ -1561,7 +1830,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#fab387",
+                  "fixedColor": "#f5c2e7",
                   "mode": "fixed"
                 }
               },
@@ -1580,7 +1849,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#89dceb",
+                  "fixedColor": "#8df4ec",
                   "mode": "fixed"
                 }
               }
@@ -1595,7 +1864,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#f9e2af",
+                  "fixedColor": "#b48efa",
                   "mode": "fixed"
                 }
               }
@@ -1616,12 +1885,12 @@
         ]
       },
       "gridPos": {
-        "h": 6,
-        "w": 7,
-        "x": 12,
-        "y": 13
+        "h": 9,
+        "w": 19,
+        "x": 5,
+        "y": 45
       },
-      "id": 23,
+      "id": 2106,
       "options": {
         "legend": {
           "calcs": [
@@ -1663,187 +1932,11 @@
           "refId": "B"
         }
       ],
-      "title": "Thermal Sensors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 14,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "running"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#94e2d5",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "blocked"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#f38ba8",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 2
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ctx/s"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#89b4fa",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "time"
-            },
-            "properties": [
-              {
-                "id": "custom.axisPlacement",
-                "value": "hidden"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 5,
-        "x": 19,
-        "y": 13
-      },
-      "id": 24,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_procs_running{job=\"node\"}",
-          "instant": false,
-          "legendFormat": "running",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_procs_blocked{job=\"node\"}",
-          "instant": false,
-          "legendFormat": "blocked",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_context_switches_total{job=\"node\"}[5m])",
-          "instant": false,
-          "legendFormat": "ctx/s",
-          "range": true,
-          "refId": "C"
-        }
-      ],
-      "title": "Scheduler Pulse",
+      "title": "Temperature Sensors",
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
+  "refresh": "10s",
   "schemaVersion": 39,
   "tags": [
     "nixos",
@@ -1853,7 +1946,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -1865,7 +1958,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "NixOS Engine",
+  "title": "NixOS Host Performance",
   "uid": "nixos-engine",
   "version": 1
 }
