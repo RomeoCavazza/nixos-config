@@ -275,7 +275,7 @@ in
       dashboards.settings.providers = [{
         name = "nixos";
         type = "file";
-        options.path = grafanaDashboardsDir;
+        options.path = "/etc/nixos/config/grafana";
       }];
     };
   };
