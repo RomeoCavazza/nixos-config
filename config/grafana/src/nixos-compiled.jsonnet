@@ -222,7 +222,7 @@ local systemSummary =
       | ![Node Exporter](https://img.shields.io/badge/Node_Exporter-host-70efe5?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | `localhost:9100` | Host metrics plus textfile collector |
       | ![Loki](https://img.shields.io/badge/Loki-logs-8df4ec?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3100` | Centralized logs |
       | ![Promtail](https://img.shields.io/badge/Promtail-journald-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `systemd service` | Journald scraping and labeling |
-      | ![Grafana](https://img.shields.io/badge/Grafana-ui-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3000` | Dashboards and correlation UI |
+      | ![Architecture](https://img.shields.io/badge/Architecture-Wiki-b48efa?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | `Wiki` | Dashboards provisioned via Jsonnet. |
 
       [GitHub](https://github.com/RomeoCavazza/setup-os) · [Observability wiki](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
 |||,

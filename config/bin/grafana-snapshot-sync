@@ -66,7 +66,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
   });
 
   const page = await browser.newPage({ 
-    viewport: { width: 1920, height: 1200 },
+    viewport: { width: 1920, height: 3000 },
     deviceScaleFactor: 2, // Better resolution for documentation
   });
 
@@ -85,7 +85,21 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     console.log(`snapshot-sync: waiting for stabilization...`);
     await page.waitForTimeout(10000); 
 
-    await page.screenshot({ path: process.env.OUTPUT_FILE, fullPage: true });
+    // Calculate the bounding box of the actual content to remove the "cushion of air"
+    const clip = await page.evaluate(() => {
+      const panels = document.querySelectorAll('.react-grid-item, .panel-container');
+      let maxBottom = 0;
+      panels.forEach(p => {
+        const rect = p.getBoundingClientRect();
+        if (rect.bottom > maxBottom) maxBottom = rect.bottom;
+      });
+      // Fallback to viewport height if no panels are found or they are tiny
+      const height = maxBottom > 200 ? Math.ceil(maxBottom) + 20 : 1200;
+      return { x: 0, y: 0, width: 1920, height };
+    });
+
+    console.log(`snapshot-sync: cropping to height ${clip.height}px`);
+    await page.screenshot({ path: process.env.OUTPUT_FILE, clip });
     console.log(`snapshot-sync: ${process.env.OUTPUT_FILE} captured`);
   } catch (e) {
     console.error(`snapshot-sync: rendering failed: ${e.message}`);
