@@ -132,20 +132,29 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     }
 
     section[class*='panel-container'],
-    [data-testid^='data-testid Panel header'] {
+    [data-testid^='data-testid Panel header'],
+    [data-testid^='data-testid Panel container'] {
       opacity: 1 !important;
       visibility: visible !important;
       transform: none !important;
-      background: rgba(8, 42, 76, 0.88) !important;
+      /* Remove forced background to allow colorMode="background" panels to render */
+    }
+
+    /* Target the actual inner panel if needed */
+    [data-testid^='data-testid Panel content'] {
+      opacity: 1 !important;
+      visibility: visible !important;
     }
 
     section[class*='panel-container']::before,
-    [data-testid^='data-testid Panel header']::before {
+    [data-testid^='data-testid Panel header']::before,
+    [data-testid^='data-testid Panel container']::before {
       display: none !important;
     }
 
     section[class*='panel-container'] > *,
-    [data-testid^='data-testid Panel header'] > * {
+    [data-testid^='data-testid Panel header'] > *,
+    [data-testid^='data-testid Panel container'] > * {
       opacity: 1 !important;
       visibility: visible !important;
     }
