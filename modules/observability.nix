@@ -120,7 +120,6 @@ in
     };
   };
 
-/*
   systemd.services.grafana-snapshot-sync = {
     description = "Render Grafana dashboards and sync changed PNGs to git";
     after = [ "grafana.service" "nginx.service" "network-online.target" ];
@@ -153,7 +152,6 @@ in
       Unit = "grafana-snapshot-sync.service";
     };
   };
-*/
 
   services.prometheus.exporters.node = {
     enable = true;

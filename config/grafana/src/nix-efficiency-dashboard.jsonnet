@@ -27,6 +27,7 @@ local graphTitles = [
   'Nix Store Growth',
   'Store Path Retention Flamegraph',
   'Process Scheduler Activity',
+  'NVIDIA GPU Metrics',
 ];
 
 local railPanel(title, index) =

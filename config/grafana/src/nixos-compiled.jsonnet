@@ -661,80 +661,6 @@ local rebuildActivityCalendar =
     datasource=g.prometheusDatasource
   );
 
-local hardwareThermal =
-  echartsPanel(
-    'Thermal Sensor Detail',
-    [
-      g.prometheusTarget('node_hwmon_temp_celsius', '{{sensor}}', 'A'),
-    ],
-    echartsPrelude + |||
-      // Filter for main CPU/Package sensors to avoid clutter
-      const thermalPoints = frames.filter(f => {
-        const lbls = labels(f);
-        const name = lbls.sensor || lbls.chip || "";
-        return name.includes('Package') || name.includes('Core') || name.includes('temp') || name.includes('input');
-      }).map(f => ({
-        name: labels(f).sensor || labels(f).chip || "Sensor",
-        data: points(f)
-      }));
-
-      if (thermalPoints.length === 0) return { title: { text: "No Thermal Data", left: 'center', top: 'center', textStyle: { color: muted } } };
-
-      return {
-        color: palette,
-        tooltip: { 
-          trigger: 'axis',
-          formatter: (params) => {
-            const d = new Date(params[0].value[0]);
-            const time = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
-            let res = `<b>${time}</b><br/>`;
-            params.forEach(p => {
-              res += `${p.marker} ${p.seriesName}: ${p.value[1].toFixed(1)}°C<br/>`;
-            });
-            return res;
-          }
-        },
-        legend: {
-          orient: 'vertical',
-          top: 34,
-          right: 10,
-          bottom: 24,
-          type: 'scroll',
-          textStyle: { color: text, fontSize: 10 },
-          pageIconColor: palette[0],
-          pageTextStyle: { color: muted }
-        },
-        grid: { left: 40, right: 160, top: 40, bottom: 30 },
-        xAxis: { 
-          type: 'time', 
-          axisLabel: { 
-            color: muted,
-            formatter: (v) => {
-              const d = new Date(v);
-              return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
-            }
-          } 
-        },
-        yAxis: { type: 'value', axisLabel: { color: muted, formatter: '{value}°C' }, splitLine: { lineStyle: { color: grid, type: 'dashed' } } },
-        series: thermalPoints.map((p, i) => {
-          const isPackage = p.name.includes('Package');
-          return {
-            name: p.name,
-            type: 'line',
-            showSymbol: false,
-            smooth: true,
-            lineStyle: { 
-              width: isPackage ? 3 : 1, 
-              color: isPackage ? palette[0] : (palette[1 + (i % 3)]),
-              opacity: isPackage ? 1 : 0.6
-            },
-            data: p.data
-          };
-        })
-      };
-    |||
-  );
-
 local gpuCockpit = {
   id: 0,
   title: 'NVIDIA GPU Metrics',
@@ -979,7 +905,6 @@ local storeCounters = [
 
 local incidentCounters = [
   railGauge('Journal Incidents', 'sum(count_over_time(' + journal + ' |~ "' + incidentPattern + '" [15m]))', datasource='Loki', unit='none', decimals=0, min=0, max=20, thresholds=g.greenYellowRed(3, 10)),
-  railGauge('Build Log Faults', 'sum(count_over_time({job="systemd-journal",component="build"} |~ "' + incidentPattern + '" [15m]))', datasource='Loki', unit='none', decimals=0, min=0, max=8, thresholds=g.greenYellowRed(1, 4)),
   railGauge('Read Latency', 'max(' + readLatency + ')', unit='s', decimals=4, min=0, max=0.2, thresholds=g.greenYellowRed(0.02, 0.10)),
   railGauge('Write Latency', 'max(' + writeLatency + ')', unit='s', decimals=4, min=0, max=0.2, thresholds=g.greenYellowRed(0.02, 0.10)),
   railGauge('Net Faults/s', 'sum(' + netFaults + ')', unit='ops', decimals=3, min=0, max=0.2, thresholds=g.greenYellowRed(0.01, 0.10)),
@@ -999,7 +924,6 @@ local inspectionPanels = [
   schedulerPulse,
   storeLifecycle,
   rebuildActivityCalendar,
-  hardwareThermal,
   gpuCockpit,
   closureFlamegraph,
   incidentRiskRiver,

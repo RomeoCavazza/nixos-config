@@ -20,18 +20,15 @@ local railTitles = [
   'Memory PSI',
   'Max Temp',
   'Running',
-  'Blocked',
   'Ctx/s',
 ];
 
 local graphTitles = [
   'CPU Utilization by Mode',
-  'Load Average vs CPU Capacity',
-  'NVIDIA GPU Metrics',
   'Memory Usage Breakdown',
+  'Load Average vs CPU Capacity',
   'Resource Pressure Heatmap',
   'Resource Pressure Timeline',
-  'Temperature Sensors',
 ];
 
 local railPanel(title, index) =

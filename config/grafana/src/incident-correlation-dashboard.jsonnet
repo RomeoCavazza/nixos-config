@@ -17,6 +17,7 @@ local railTitles = [
   'Write Latency',
   'Net Faults/s',
   'Critical Units',
+  'Blocked',
   'Fullscreen Active',
   'Window Count',
 ];
@@ -26,7 +27,7 @@ local graphTitles = [
   'Journal Incident Logs',
   'Network Error and Drop Rate',
   'Disk I/O Throughput and Latency',
-  'Thermal Sensor Detail',
+  'Temperature Sensors',
 ];
 
 local railPanel(title, index) =
