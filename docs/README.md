@@ -109,15 +109,8 @@ Rofi is configured in `config/rofi/` with two active launch paths. The sidebar l
 
 ---
 
-## 8. Development Tooling
 
-Development environments are no longer exposed as flake `devShells`. The embedded and AI toolchains are installed directly through Home Manager and the user app modules, making them available in every shell without an explicit `nix develop` invocation. Per-project environments use project-local `flake.nix` files with `direnv` integration (`programs.direnv.enable = true` with `nix-direnv`).
-
-The `rust-overlay` flake input remains active and injects Rust nightly and stable toolchains into `nixpkgs`, available both system-wide and in `home.nix`.
-
----
-
-## 9. Code Metrics
+## 8. Code Metrics
 
 Generated with `cloc`, excluding `.git`, `docs/assets`, and `docs/wiki`. Full report: [`cloc-report.md`](./cloc-report.md).
 

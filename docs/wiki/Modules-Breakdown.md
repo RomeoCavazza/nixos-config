@@ -206,4 +206,3 @@ The three modules in `home/tco/modules/apps/` are Home Manager modules, not NixO
 
 The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line.
 
-[See the diagram reference (Dev Tooling)_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/dev-tooling.png)
