@@ -1,6 +1,26 @@
-// aquamarine.scss — Grafana dark theme (source SCSS)
-//
-// This file is intentionally minimal: dashboards rely on Grafana's
-// built-in dark theme and semantic color palette. The nginx pipeline
-// still injects the compiled CSS so the hook remains available for
-// future tweaks, but no style rules are emitted today.
+// aquamarine.scss — Grafana dark theme overlay.
+// Intentionally minimal: Grafana's stock dark theme handles the canvas
+// and panel backgrounds. Only the primary/link accent is retinted to
+// the Waybar blue (#89b4fa) so interactive elements feel aligned with
+// the rest of the desktop.
+
+$m-blue:   #89b4fa;
+$m-teal:   #94e2d5;
+$m-red:    #f38ba8;
+$m-yellow: #f9e2af;
+
+:root,
+html[data-theme='dark'],
+body {
+  --color-primary-main:  #{$m-blue} !important;
+  --color-primary-shade: #{$m-teal} !important;
+  --color-warning-main:  #{$m-yellow} !important;
+  --color-error-main:    #{$m-red} !important;
+}
+
+a,
+.link,
+[role='tab'][aria-selected='true'],
+button[aria-selected='true'] {
+  color: $m-blue !important;
+}

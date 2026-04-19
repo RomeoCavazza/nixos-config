@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Generate provisioned Grafana dashboards from Jsonnet sources.
+# MINIMAL PIPELINE: "NixOS Minimal" Only.
 
 set -euo pipefail
 
@@ -11,7 +12,6 @@ jq_bin="${JQ:-jq}"
 
 if ! command -v "$jsonnet_bin" >/dev/null 2>&1; then
   echo "grafana-generate: jsonnet is required" >&2
-  echo "hint: nix shell nixpkgs#jsonnet -c config/bin/grafana-generate" >&2
   exit 1
 fi
 
@@ -20,18 +20,10 @@ if ! command -v "$jq_bin" >/dev/null 2>&1; then
   exit 1
 fi
 
-for dashboard in \
-  nix-dashboard \
-  nix-efficiency-dashboard \
-  incident-correlation-dashboard
-do
-  "$jsonnet_bin" "${src_dir}/${dashboard}.jsonnet" | "$jq_bin" . > "${grafana_dir}/${dashboard}.json"
-done
+# The One Minimal Dashboard
+echo "Generating: nixos.json"
+"$jsonnet_bin" "${src_dir}/nixos.jsonnet" | "$jq_bin" . > "${grafana_dir}/nixos.json"
 
-for dashboard in \
-  nix-dashboard \
-  nix-efficiency-dashboard \
-  incident-correlation-dashboard
-do
-  "$jq_bin" -e . "${grafana_dir}/${dashboard}.json" >/dev/null
-done
+# Integrity check
+"$jq_bin" -e . "${grafana_dir}/nixos.json" >/dev/null
+echo "Done."

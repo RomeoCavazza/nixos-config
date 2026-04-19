@@ -60,9 +60,7 @@ let
 
   grafanaDashboardsDir = pkgs.runCommand "grafana-dashboards" {} ''
     mkdir -p $out
-    cp ${../config/grafana/nix-dashboard.json} $out/live-dashboard.json
-    cp ${../config/grafana/nix-efficiency-dashboard.json} $out/nix-efficiency-dashboard.json
-    cp ${../config/grafana/incident-correlation-dashboard.json} $out/incident-correlation-dashboard.json
+    cp ${../config/grafana/nixos.json} $out/nixos.json
   '';
 in
 {
