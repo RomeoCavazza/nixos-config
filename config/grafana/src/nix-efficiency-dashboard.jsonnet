@@ -41,7 +41,7 @@ local railPanel(title, index) =
 local graphPanel(title, index) =
   panelByTitle(title) {
     id: 2201 + index,
-    gridPos: { x: graphX, y: index * graphH, w: graphW, h: graphH },
+    gridPos: { x: graphX, y: summaryH + index * graphH, w: graphW, h: graphH },
   };
 
 local summaryPanel =
@@ -58,7 +58,7 @@ local summaryPanel =
       | ![Rebuild](https://img.shields.io/badge/Rebuild-cost-f5c2e7?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | `systemd` | Build duration and outcome |
       | ![Architecture](https://img.shields.io/badge/Architecture-Wiki-b48efa?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | [Wiki](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics) | Technical documentation mirror |
     |||,
-    0, 0, railW, summaryH
+    0, 0, 24, summaryH
   );
 
 g.dashboard(
