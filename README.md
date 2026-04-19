@@ -32,7 +32,7 @@ Local technical annexes:
 - [docs/cloc-report.md](./docs/cloc-report.md) - raw cloc report
 - [docs/specification.txt](./docs/specification.txt) - dense configuration glossary
 - [docs/diagrams/](./docs/diagrams/) - PlantUML sources and generated PNGs
-- [_See all diagram references (Architecture Index)_](https://github.com/RomeoCavazza/setup-os/tree/main/docs/diagrams)
+- [See all diagram references (Architecture Index)_](https://github.com/RomeoCavazza/setup-os/tree/main/docs/diagrams)
 
 ### Architecture
 

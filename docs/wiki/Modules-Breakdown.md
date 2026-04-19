@@ -1,10 +1,24 @@
 Each module in `modules/` is a self-contained NixOS configuration unit. A module only activates when listed in `configuration.nix`'s `imports` — removing one line disables the entire service, cleanly, with no orphaned options left behind. This page documents what each module does, why it exists as a separate unit, and what engineering decisions shaped its configuration.
 
----
-
-## Design Principle
-
 The goal is to keep `configuration.nix` legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
+
+```bash
+nixos/
+├── home/tco/modules/apps/    # Home Manager modules (User-space apps)
+│   ├── cad.nix               # Obsidian, KiCad, FreeCAD
+│   ├── data.nix              # DBeaver, Grafana, InfluxDB2
+│   └── embedded.nix          # Arduino, ESPTool, Minicom
+└── modules/                  # NixOS modules (System-level services)
+    ├── backup.nix            # Restic + Backblaze B2
+    ├── databases.nix         # PostgreSQL, Redis, Qdrant
+    ├── nvidia-prime.nix      # Hybrid GPU (PRIME Offload)
+    ├── observability.nix     # Prometheus, Loki, Grafana
+    ├── ollama.nix            # Local LLM (AI)
+    ├── virtualisation.nix    # Docker, Libvirt, QEMU
+    └── ...                   # Nginx, Emacs, GDM, etc.
+```
+
+---
 
 ---
 
@@ -191,4 +205,5 @@ The three modules in `home/tco/modules/apps/` are Home Manager modules, not NixO
 `cad.nix` groups Obsidian (notes and knowledge management), KiCad (PCB and schematic design), and FreeCAD (parametric 3D CAD) together. `embedded.nix` provides the Arduino IDE and CLI, esptool for ESP8266/ESP32 firmware flashing, and minicom for serial port monitoring. `data.nix` installs DBeaver (a universal database GUI), Grafana, and InfluxDB2 for time-series data work.
 
 The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line.
-n[_See the diagram reference (Dev Tooling)_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/dev-tooling.png)
+
+[See the diagram reference (Dev Tooling)_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/dev-tooling.png)

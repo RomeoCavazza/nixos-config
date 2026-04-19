@@ -25,7 +25,6 @@ This page documents the structural decisions behind the flake and explains how t
 A Nix Flake is a specification: it declares inputs (external dependencies), their exact revisions, and the outputs derived from them. `flake.lock` records the resolved content-addressed hash for every input, making the entire dependency graph reproducible and auditable. There is no external state. No package manager running silently in the background. No configuration file written by an installer that lives outside version control. The pair of files — `flake.nix` for human-readable intent and `flake.lock` for the machine-generated exact hashes — is the complete description of what this system depends on.
 
 ![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/flake-outputs.png)
-[_See the diagram reference_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/flake-outputs.png)
 
 ---
 
@@ -37,11 +36,7 @@ The base system tracks `nixos-unstable`. This gives access to current kernel ver
 
 Two packages are sourced from `nixos-24.11` via a custom overlay rather than from the unstable channel. Promtail — the log shipping agent — has a module-level option conflict with the current Loki version on unstable, and fixing it would require either forking the module or pinning Loki to an older version. The simpler solution is to use the stable channel's Promtail binary and run it as a raw systemd service, bypassing the NixOS module entirely. Guix, the GNU package manager, also requires a specific build environment that is more reliably available in the stable channel. Both packages are injected into the package set via a custom overlay so that the rest of the configuration sees them as ordinary packages with no special handling.
 
-<<<<<<< HEAD
-Hyprland and all three of its plugins are pinned to the exact same version tag. Hyprland plugin ABI is not stable between compositor versions — a plugin compiled against one commit of the Hyprland source tree will either crash or refuse to load when paired with a different commit. Pinning everything to v0.54.2 and vendoring the plugin sources locally in `home/tco/pkgs/` eliminates this class of failure entirely. The plugins are compiled during `nixos-rebuild` against the pinned Hyprland headers from the flake input — there are no binary downloads, no version assumptions, and no possibility of drift between the compositor and its plugins.
-=======
 Hyprland is pinned to v0.54.2, and the custom plugins are pinned through RomeoCavazza GitHub forks. Hyprland plugin ABI is not stable between compositor versions — a plugin compiled against one commit of the Hyprland source tree will either crash or refuse to load when paired with a different commit. Pinning the forks through Nix inputs or fixed `fetchFromGitHub` revisions eliminates this class of failure while keeping the plugin sources maintained in their own repositories. The plugins are compiled during `nixos-rebuild` against the pinned Hyprland headers from the flake input — there are no binary downloads, no version assumptions, and no hidden local fork copies.
->>>>>>> 4425623 (docs: sync wiki files)
 
 ---
 
@@ -50,7 +45,6 @@ Hyprland is pinned to v0.54.2, and the custom plugins are pinned through RomeoCa
 `configuration.nix` is the NixOS entry point. All optional system behaviors are extracted into discrete modules under `modules/` and activated via the `imports` list — adding or removing a service is a single line change.
 
 ![System architecture](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/system-architecture.png)
-[_See the diagram reference_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/system-architecture.png)
 
 ---
 
@@ -69,7 +63,8 @@ Home Manager is embedded directly inside `nixosConfigurations` rather than being
 If the system module fails to build, the user module does not activate. If the user module fails, the system does not switch. The two halves are either both applied or neither is — there is no intermediate state where the system is on generation N+1 and the user environment is still on generation N. This matters in practice because many configuration dependencies cross the system/user boundary: a system service might write a socket file that a user-space application connects to, or a system package might need to match the version expected by a user-space LSP client.
 
 The `useGlobalPkgs = true` option makes Home Manager and the system share the same evaluated `nixpkgs` instance rather than evaluating it independently. This halves evaluation time on a rebuild and eliminates any possibility of package version divergence between what the system layer and the user layer consider to be, say, `pkgs.git`.
-n[_See the diagram reference (User Layer)_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/user-layer.png)
+
+[See the diagram reference (User Layer)_](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/diagrams/user-layer.png)
 
 ---
 
@@ -129,13 +124,6 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 ├── home/tco/
 │   ├── home.nix                     # Home Manager entry: packages, dotfile symlinks, shell, GTK, Starship
 │   ├── modules/apps/                # Optional HM modules: cad.nix, data.nix, embedded.nix
-<<<<<<< HEAD
-│   └── pkgs/                        # Hyprland plugins compiled against pinned v0.54.2 headers
-│       ├── Hyprchroma-fork/         # Inactive-window tinting + workspace transitions
-│       ├── hypr-canvas-fork/        # Infinite canvas workspace grouping
-│       └── hyprspace-fork/          # Exposé-style workspace overview (SUPER+Tab)
-=======
->>>>>>> 4425623 (docs: sync wiki files)
 │
 ├── config/                          # Dotfiles symlinked into ~/.config/ by Home Manager
 │   ├── bin/                         # User scripts on $PATH (hypr-layout-toggle, legion-pulse, waybar-toggle, …)
@@ -149,11 +137,7 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 │   │   ├── hypridle.conf            # Idle timeout and lock triggers
 │   │   ├── hyprlock.conf            # Lock screen appearance
 │   │   ├── theme/                   # seaglass.conf, hyprchroma.conf, rules.conf
-<<<<<<< HEAD
-│   │   └── waybar/                  # config.jsonc, modules.json, style.css, WaybarCava.sh, activeapp.sh
-=======
 │   │   └── waybar/                  # config.jsonc, modules.json, style.scss, mocha.css, WaybarCava.sh, activeapp.sh
->>>>>>> 4425623 (docs: sync wiki files)
 │   ├── rofi/                        # config.rasi, theme.rasi, tokens.rasi + custom themes and launch scripts
 │   ├── swappy/config                # Screenshot annotation tool config
 │   └── wal/templates/               # Pywal palette templates for Hyprland and Foot
@@ -176,8 +160,4 @@ The build sandbox is enabled with a custom build directory pointing to `/build`,
 └── README.md                        # Project overview and quick-start
 ```
 
-<<<<<<< HEAD
 The ownership split is strict: `modules/` is system-only, `home/tco/` is user-only, `config/` is dotfiles-only, `docs/` is never imported by any Nix file. You can read any subtree in isolation without needing to understand the whole.
-=======
-The ownership split is strict: `modules/` is system-only, `home/tco/` is user-only, `config/` is dotfiles-only, `docs/` is never imported by any Nix file. You can read any subtree in isolation without needing to understand the whole.
->>>>>>> 4425623 (docs: sync wiki files)
