@@ -130,8 +130,8 @@ flowchart TB
 
 Prometheus, Loki, Grafana, and Promtail provide local observability. The
 snapshots committed under `docs/assets/live/` are documentation artifacts only:
-they are refreshed by a 15-minute systemd timer when the visual delta is over
-0.5%. Live operations stay in Grafana.
+they are refreshed by a 15-minute systemd timer when the visual delta exceeds
+0.3% (`MIN_CHANGE_PERCENT=0.3`). Live operations stay in Grafana.
 
 Dashboard snapshots:
 

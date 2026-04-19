@@ -12,6 +12,7 @@ The stack is intentionally small: Prometheus and Node Exporter handle metrics, L
 |---|---|---|
 | Prometheus | `localhost:9090` | Metrics TSDB and query engine |
 | Node Exporter | `localhost:9100` | Host metrics plus textfile collector |
+| NVIDIA GPU Exporter | `localhost:9835` | GPU metrics (VRAM, power, utilization) |
 | Loki | `localhost:3100` | Centralized logs |
 | Promtail | systemd service | Journald scraping and labeling |
 | Grafana | `localhost:3000` | Dashboards and correlation UI |
@@ -23,7 +24,7 @@ All services are Nix-declared in [`modules/observability.nix`](https://github.co
 
 The monitoring suite consists of three specialized views sharing a **unified 25-gauge operational rail** on the left. This rail provides a constant heartbeat of the system (Uptime, PSI, Temp, Store, Incidents).
 
-Snapshots are checked every 15 minutes and published when visual delta exceeds 0.3%. The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON.
+Snapshots are captured every 15 minutes (`grafana-snapshot-sync.timer`) and pushed to the repository when the visual delta exceeds **0.3%** (`MIN_CHANGE_PERCENT=0.3` in the service environment). The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON.
 
 Regeneration command:
 ```bash
