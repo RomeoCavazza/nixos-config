@@ -6,7 +6,7 @@ local graphX = railW;
 local graphW = 24 - railW;
 local graphH = 9;
 local counterH = 5;
-local summaryH = 12;
+local summaryH = 6;
 
 local panelByTitle(title) =
   std.filter(function(panel) std.get(panel, 'title', '') == title, canonical.panels)[0];

@@ -7,7 +7,7 @@ local graphX = railW;
 local graphW = 24 - railW;
 local graphH = 9;
 local counterH = 5;
-local summaryH = 12;
+local summaryH = 6;
 
 local rateWindow = '5m';
 local cpuCores = 'scalar(count(count by (cpu) (node_cpu_seconds_total{job="node",mode="idle"})))';
