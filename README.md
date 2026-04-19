@@ -67,7 +67,7 @@ nixos/
 #### Session at login
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1e293b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#0f172a', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#e2e8f0', 'clusterBkg': '#0f172a', 'clusterBorder': '#475569' }}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#181825', 'secondaryColor': '#1e1e2e', 'tertiaryColor': '#1e1e2e', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#cdd6f4', 'mainBkg': '#1e1e2e', 'clusterBkg': '#181825', 'clusterBorder': '#45475a' }}}%%
 flowchart TB
   Boot["Boot"]
   GDM["GDM"]
