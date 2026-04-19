@@ -27,7 +27,9 @@ local graphTitles = [
   'Journal Incident Logs',
   'Network Error and Drop Rate',
   'Disk I/O Throughput and Latency',
+  'Resource Pressure Timeline',
   'Temperature Sensors',
+  'NVIDIA GPU Metrics',
 ];
 
 local railPanel(title, index) =
@@ -43,10 +45,21 @@ local graphPanel(title, index) =
   };
 
 local summaryPanel =
-  panelByTitle('System Summary') {
-    id: 1000,
-    gridPos: { x: 0, y: 0, w: railW, h: summaryH },
-  };
+  g.textPanel(
+    1000,
+    'Incident Diagnostics Summary',
+    |||
+      Diagnostic view correlating system logs with hardware signals for rapid root-cause analysis.
+
+      | Signal | Source | Role |
+      | --- | --- | --- |
+      | ![Loki](https://img.shields.io/badge/Loki-logs-8df4ec?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `localhost:3100` | Centralized log ingestion |
+      | ![Promtail](https://img.shields.io/badge/Promtail-journal-f6fbff?style=flat-square&logo=grafana&logoColor=white&labelColor=101216) | `journald` | Log labeling and shipping |
+      | ![PSI](https://img.shields.io/badge/PSI-pressure-b48efa?style=flat-square&logo=prometheus&logoColor=white&labelColor=101216) | `/proc/pressure` | Kernel stall correlation |
+      | ![Architecture](https://img.shields.io/badge/Architecture-Wiki-b48efa?style=flat-square&logo=nixos&logoColor=white&labelColor=101216) | [Wiki](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics) | Technical documentation mirror |
+    |||,
+    0, 0, railW, summaryH
+  );
 
 g.dashboard(
   'NixOS Incident Diagnostics',

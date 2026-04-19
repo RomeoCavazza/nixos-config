@@ -419,8 +419,8 @@ local pressureHeatmap =
           })
           .sort((a, b) => a.time - b.time);
 
-        smoothPoints(framePoints).forEach((pt, index, smoothedPoints) => {
-          const next = smoothedPoints[index + 1];
+        framePoints.forEach((pt, index, allPoints) => {
+          const next = allPoints[index + 1];
           if (!next) return;
           heatmapData.push([pt.time, yIndex, pt.raw, pt.shade, next.time, next.raw, next.shade]);
         });
