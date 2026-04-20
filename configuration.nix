@@ -3,12 +3,12 @@
   imports = [
     ./hardware-configuration.nix
     ./modules/nvidia-prime.nix
-    ./modules/virtualisation.nix
+#   ./modules/virtualisation.nix
     ./modules/emacs.nix
     ./modules/launcher.nix
     ./modules/databases.nix
     ./modules/ollama.nix
-    ./modules/nginx.nix
+#   ./modules/nginx.nix
     ./modules/observability.nix
     ./modules/gdm-wallpaper.nix
   ];
@@ -253,9 +253,6 @@
     libdrm
     sigrok-cli
   ];
-
-  services.flatpak.enable = true;
-  services.snap.enable = true;
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
