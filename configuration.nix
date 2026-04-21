@@ -8,7 +8,7 @@
     ./modules/launcher.nix
     ./modules/databases.nix
     ./modules/ollama.nix
-#   ./modules/nginx.nix
+    ./modules/nginx.nix
     ./modules/observability.nix
     ./modules/gdm-wallpaper.nix
   ];
