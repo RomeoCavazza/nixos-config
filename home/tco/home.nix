@@ -183,10 +183,11 @@ in
   xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source =
     ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
 
-  xdg.configFile."hypr/theme/seaglass.conf".source = ../../config/hypr/theme/seaglass.conf;
-  xdg.configFile."hypr/theme/hyprchroma.conf".source = ../../config/hypr/theme/hyprchroma.conf;
-  xdg.configFile."hypr/theme/rules.conf".source = ../../config/hypr/theme/rules.conf;
-  home.file.".config/hypr".source = ../../config/hypr;
+  home.file.".config/hypr" = {
+    source = ../../config/hypr;
+    recursive = true;
+    force = true;
+  };
   home.file.".config/waybar".source = waybarConfig;
   home.file.".config/rofi".source = ../../config/rofi;
   home.file.".config/foot".source = ../../config/foot;
