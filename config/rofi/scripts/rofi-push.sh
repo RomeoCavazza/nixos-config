@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
+# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+source "$GAP_HELPER"
+
 WIDTH=110
 ROFI_CMD=(rofi -show drun -theme "$HOME/.config/rofi/custom/column-tco.rasi" -normal-window)
 CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
@@ -80,9 +84,7 @@ stop_conky_rails() {
   pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
 
   if [[ -f "$CONKY_STATE_FILE" ]]; then
-    local base_gap; base_gap="$(cat "$CONKY_STATE_FILE" 2>/dev/null || echo "16")"
-    hyprctl keyword general:gaps_out "$base_gap" >/dev/null 2>&1 || true
-    rm -f "$CONKY_STATE_FILE"
+    hypr_restore_workspace_state "$CONKY_STATE_FILE" "$(get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
   fi
 }
 
@@ -94,6 +96,7 @@ if pgrep -x rofi >/dev/null 2>&1; then
 fi
 
 stop_conky_rails
+hyprctl dispatch overview:close all >/dev/null 2>&1 || true
 
 # Calculate and apply new gaps
 ACTIVE_WS="$(hyprctl activeworkspace -j | jq -r '.name // (.id | tostring)')"

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
+# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+source "$GAP_HELPER"
+
 THEME="$HOME/.config/rofi/themes/apps-grid.rasi"
 WAYBAR_CFG="$HOME/.config/waybar/config.jsonc"
 WAYBAR_CSS="$HOME/.config/waybar/style.css"
@@ -11,8 +15,6 @@ getopt_int() { hyprctl getoption "$1" | awk '/int:/ {print $2; exit}'; }
 OLD_SIZE="$(getopt_int decoration:blur:size)"
 OLD_PASSES="$(getopt_int decoration:blur:passes)"
 OLD_IGNORE="$(getopt_int decoration:blur:ignore_opacity)"
-BASE_GAP="$(hyprctl getoption general:gaps_out -j | jq -r '.int' 2>/dev/null || echo 16)"
-[[ "$BASE_GAP" =~ ^[0-9]+$ ]] || BASE_GAP=16
 
 stop_conky_rails() {
   # Kill all conky variants (left, right, legacy)
@@ -23,8 +25,7 @@ stop_conky_rails() {
   pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
 
   if [[ -f "$CONKY_STATE_FILE" ]]; then
-    hyprctl keyword general:gaps_out "$(cat "$CONKY_STATE_FILE" 2>/dev/null || echo "$BASE_GAP")" >/dev/null 2>&1 || true
-    rm -f "$CONKY_STATE_FILE"
+    hypr_restore_workspace_state "$CONKY_STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
   fi
 }
 

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
+# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+source "$GAP_HELPER"
+
 REPO_LAUNCHER="/etc/nixos/config/conky/start_edex_conky_compact.sh"
 USER_LAUNCHER="${XDG_CONFIG_HOME:-$HOME/.config}/conky/start_edex_conky_compact.sh"
 CONKY_LAUNCHER="$REPO_LAUNCHER"
@@ -9,28 +13,23 @@ PANEL_WIDTH=296
 LEFT_PANEL_MARGIN=8
 RIGHT_PANEL_MARGIN=28
 
-BASE_GAP="$(hyprctl getoption general:gaps_out -j | jq -r '.int' 2>/dev/null || echo 16)"
-[[ "$BASE_GAP" =~ ^[0-9]+$ ]] || BASE_GAP=16
+apply_conky_workspace_gaps() {
+  local workspace="$1"
+  local gaps_in="$2"
+  local gaps_out="$3"
+  local top right bottom left _
 
-apply_side_gaps() {
-  local left="$1"
-  local right="$2"
-  local base="$3"
+  read -r top right bottom left _ <<<"$gaps_out"
+  top=${top:-16}
+  right=${right:-16}
+  bottom=${bottom:-16}
+  left=${left:-16}
 
-  if hyprctl keyword general:gaps_out "${base},${right},${base},${left}" >/dev/null 2>&1; then
-    return 0
-  fi
+  local new_left=$((left + PANEL_WIDTH + LEFT_PANEL_MARGIN))
+  local new_right=$((right + PANEL_WIDTH + RIGHT_PANEL_MARGIN))
+  local new_gaps_out="${top} ${new_right} ${bottom} ${new_left}"
 
-  if hyprctl keyword general:gaps_out "${base} ${right} ${base} ${left}" >/dev/null 2>&1; then
-    return 0
-  fi
-
-  return 1
-}
-
-restore_gap() {
-  local base="${1:-$BASE_GAP}"
-  hyprctl keyword general:gaps_out "$base" >/dev/null 2>&1 || true
+  hypr_apply_workspace_gaps "$workspace" "$gaps_in" "$new_gaps_out"
 }
 
 if pgrep -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || \
@@ -43,12 +42,7 @@ if pgrep -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || \
   pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
   pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
   
-  if [[ -f "$STATE_FILE" ]]; then
-    restore_gap "$(cat "$STATE_FILE" 2>/dev/null || echo "$BASE_GAP")"
-    rm -f "$STATE_FILE"
-  else
-    restore_gap "$BASE_GAP"
-  fi
+  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
   exit 0
 fi
 
@@ -61,18 +55,29 @@ if [[ ! -r "$CONKY_LAUNCHER" ]]; then
   exit 1
 fi
 
-# Conky and Rofi sidebar are mutually exclusive.
+# Conky, Rofi sidebar and Hyprspace Overview are mutually exclusive.
 pkill -x rofi >/dev/null 2>&1 || true
+hyprctl dispatch overview:close all >/dev/null 2>&1 || true
 
-printf '%s\n' "$BASE_GAP" > "$STATE_FILE"
+mapfile -t TARGET_WORKSPACES < <(hypr_list_target_workspaces)
+if [[ ${#TARGET_WORKSPACES[@]} -eq 0 ]]; then
+  ACTIVE_WS="$(hyprctl activeworkspace -j | jq -r '.name // (.id | tostring)')"
+  TARGET_WORKSPACES=("$ACTIVE_WS")
+fi
 
-LEFT_GAP=$((BASE_GAP + PANEL_WIDTH + LEFT_PANEL_MARGIN))
-RIGHT_GAP=$((BASE_GAP + PANEL_WIDTH + RIGHT_PANEL_MARGIN))
-apply_side_gaps "$LEFT_GAP" "$RIGHT_GAP" "$BASE_GAP" || true
+hypr_capture_workspace_state "$STATE_FILE" "${TARGET_WORKSPACES[@]}"
+
+for workspace in "${TARGET_WORKSPACES[@]}"; do
+  gaps_in="$(hypr_get_workspace_gaps "$workspace" in)"
+  gaps_out="$(hypr_get_workspace_gaps "$workspace" out)"
+  if ! apply_conky_workspace_gaps "$workspace" "$gaps_in" "$gaps_out"; then
+    hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+    exit 1
+  fi
+done
 
 if ! bash "$CONKY_LAUNCHER"; then
-  restore_gap "$BASE_GAP"
-  rm -f "$STATE_FILE"
+  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
   exit 1
 fi
 
@@ -83,8 +88,5 @@ fi
     sleep 1
   done
 
-  if [[ -f "$STATE_FILE" ]]; then
-    restore_gap "$(cat "$STATE_FILE" 2>/dev/null || echo "$BASE_GAP")"
-    rm -f "$STATE_FILE"
-  fi
+  hypr_restore_workspace_state "$STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
 ) >/dev/null 2>&1 &

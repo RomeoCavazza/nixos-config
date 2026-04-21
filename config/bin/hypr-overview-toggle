@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# HYPR-OVERVIEW-TOGGLE (Mutual Exclusion Edition)
+# ==============================================================================
+# This script toggles the Hyprspace overview while ensuring that other
+# conflicting UI components (Rofi Sidebar and Conky Dashboard) are closed.
+
+set -euo pipefail
+
+GAP_HELPER="/etc/nixos/config/bin/hypr-gap-state.sh"
+# shellcheck source=/etc/nixos/config/bin/hypr-gap-state.sh
+source "$GAP_HELPER"
+
+# 1. Close Rofi Sidebar
+if pgrep -x rofi >/dev/null 2>&1; then
+    pkill -x rofi
+fi
+
+# 2. Close Conky Dashboard
+# Simplified pkill logic from edex-conky-toggle / rofi-push
+pkill -f 'conky -q -c.*conky-left' >/dev/null 2>&1 || true
+pkill -f 'conky -q -c.*conky-right' >/dev/null 2>&1 || true
+pkill -f 'conky -q -c.*conky\.txt' >/dev/null 2>&1 || true
+pkill -f 'conky .*system_panel' >/dev/null 2>&1 || true
+pkill -f 'conky .*network_panel' >/dev/null 2>&1 || true
+
+# Restore gaps if Conky state exists (to avoid dead margins)
+CONKY_STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/conky-left-gap.base"
+if [[ -f "$CONKY_STATE_FILE" ]]; then
+    hypr_restore_workspace_state "$CONKY_STATE_FILE" "$(hypr_get_global_gap_fallback "general:gaps_out" "16 16 16 16")"
+fi
+
+# 3. Toggle Hyprspace Overview
+hyprctl dispatch overview:toggle all
