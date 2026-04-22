@@ -123,6 +123,22 @@
         "type": "github"
       }
     },
+    "hyprchroma": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1776896715,
+        "narHash": "sha256-wZxJRcC62VRpH2Sd5nbx0uPGsgxS2jB0dVVfffstJnY=",
+        "owner": "RomeoCavazza",
+        "repo": "Hyprchroma",
+        "rev": "a6abba10c542f36a8d1c04797cfdfd0ccfa74327",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "Hyprchroma",
+        "type": "github"
+      }
+    },
     "hyprcursor": {
       "inputs": {
         "hyprlang": [
@@ -631,6 +647,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
+        "hyprchroma": "hyprchroma",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "hyprspace": "hyprspace",

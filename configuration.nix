@@ -3,7 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ./modules/nvidia-prime.nix
-#   ./modules/virtualisation.nix
+    ./modules/virtualisation.nix
     ./modules/emacs.nix
     ./modules/launcher.nix
     ./modules/databases.nix

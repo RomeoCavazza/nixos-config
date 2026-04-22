@@ -11,6 +11,10 @@
     hyprland.url = "github:hyprwm/Hyprland/v0.54.2";
     hyprspace.url = "github:RomeoCavazza/Hyprspace";
     hyprspace.inputs.hyprland.follows = "hyprland";
+    hyprchroma = {
+      url = "github:RomeoCavazza/Hyprchroma";
+      flake = false;
+    };
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
     hyprland-plugins.inputs.hyprland.follows = "hyprland";
     hyprtasking.url = "github:raybbian/hyprtasking";

@@ -32,12 +32,7 @@ let
       '';
 
   # Hyprchroma v3.3 — grouped adaptive chromakey tint
-  hyprchroma-src = pkgs.fetchFromGitHub {
-    owner = "RomeoCavazza";
-    repo = "Hyprchroma";
-    rev = "a0241fd4c25e2a4d40a4cbfe8db2e30fc8e98233";
-    hash = "sha256-PYBD6lhPdVsf1iPpM1+ikRSE7ce+LKevVwsyDFfFzKA=";
-  };
+  hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
   hypr-darkwindow = pkgs.stdenv.mkDerivation {
     pname = "hypr-darkwindow";
     version = "3.3.1-v054";
