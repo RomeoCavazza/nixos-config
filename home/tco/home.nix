@@ -31,11 +31,11 @@ let
           $out/style.css
       '';
 
-  # Hyprchroma v3.3 — grouped adaptive chromakey tint
+  # Hyprchroma v3.4.0-v054 — unified adaptive tint release
   hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
   hypr-darkwindow = pkgs.stdenv.mkDerivation {
     pname = "hypr-darkwindow";
-    version = "3.3.1-v054";
+    version = "3.4.0-v054";
     srcs = [ ];
     dontUnpack = true;
     nativeBuildInputs = [ pkgs.pkg-config ];
@@ -51,7 +51,7 @@ let
       mkdir -p $out/lib
       cp libhypr-darkwindow.so $out/lib/
     '';
-    meta.description = "Hyprchroma v3.3 — grouped adaptive chromakey tint";
+    meta.description = "Hyprchroma v3.4.0-v054 — unified adaptive tint release";
   };
   hypr-canvas-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";

@@ -12,7 +12,7 @@
     hyprspace.url = "github:RomeoCavazza/Hyprspace";
     hyprspace.inputs.hyprland.follows = "hyprland";
     hyprchroma = {
-      url = "github:RomeoCavazza/Hyprchroma";
+      url = "github:RomeoCavazza/Hyprchroma/v3.4.0-v054";
       flake = false;
     };
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";

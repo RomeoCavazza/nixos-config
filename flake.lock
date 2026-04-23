@@ -126,15 +126,16 @@
     "hyprchroma": {
       "flake": false,
       "locked": {
-        "lastModified": 1776904372,
-        "narHash": "sha256-7SCktM81zFPxkd82uxSU6/n6I8pu51h1y+kpqrHLjDE=",
+        "lastModified": 1776984940,
+        "narHash": "sha256-m6IRQEckwXwGJDoIHxISd9AVc+PZke2kt9VFvL2l2nA=",
         "owner": "RomeoCavazza",
         "repo": "Hyprchroma",
-        "rev": "5b1bdec9dc5269cdc7fce87166018b8b63b687c1",
+        "rev": "958153acb1ddfee0a425b4fcd145e1fd05500541",
         "type": "github"
       },
       "original": {
         "owner": "RomeoCavazza",
+        "ref": "v3.4.0-v054",
         "repo": "Hyprchroma",
         "type": "github"
       }
