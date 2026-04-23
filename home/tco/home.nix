@@ -131,6 +131,7 @@ in
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_STYLE_OVERRIDE = "kvantum";
+    PATH = "$HOME/.local/bin:$PATH";
     XDG_DATA_DIRS = "$HOME/.local/share:$XDG_DATA_DIRS";
     ELECTRON_OZONE_PLATFORM_HINT = "x11";
   };
@@ -138,12 +139,13 @@ in
   home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
 
   xdg.enable = true;
+  xdg.mime.enable = true;
   xdg.desktopEntries = {
     cursor = {
       name = "Cursor";
       genericName = "AI Code Editor";
       comment = "Built for AI coding";
-      exec = "cursor %U";
+      exec = "/home/tco/.local/bin/cursor %U";
       icon = "cursor-icon";
       terminal = false;
       startupNotify = true;
@@ -158,7 +160,7 @@ in
       name = "Antigravity";
       genericName = "IDE";
       comment = "Antigravity IDE";
-      exec = "antigravity %U";
+      exec = "/home/tco/.local/bin/antigravity %U";
       icon = "antigravity-icon";
       terminal = false;
       startupNotify = true;
@@ -205,6 +207,8 @@ in
     source = ../../config/bin/hypr-plugins-init;
     executable = true;
   };
+
+
 
   home.file.".local/bin/hypr-layout-toggle" = {
     source = ../../config/bin/hypr-layout-toggle;

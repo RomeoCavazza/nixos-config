@@ -10,7 +10,7 @@
   "disableFeedbackAudio": false,
   "clockHours": 24,
   "pingAddr": "1.1.1.1",
-  "port": 3000,
+  "port": 3005,
   "allowWindowed": true,
   "forceFullscreen": false,
   "keepGeometry": true,
