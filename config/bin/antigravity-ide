@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export LD_LIBRARY_PATH="/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
+export NIX_LD_LIBRARY_PATH="/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
+
+BIN_TAR="$HOME/.local/opt/antigravity-ide/Antigravity IDE/antigravity-ide"
+
+if [ -f "$BIN_TAR" ]; then
+  chmod +x "$BIN_TAR" 2>/dev/null || true
+  exec "$BIN_TAR" "$@"
+fi
+
+echo "Antigravity IDE introuvable." >&2
+echo "Attendu binaire tar: $BIN_TAR" >&2
+exit 1

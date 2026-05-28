@@ -92,7 +92,7 @@ let
       owner = "rmaake1";
       repo = "terminal-rain-lightning";
       rev = "master";
-      hash = "sha256-ghMqdEff2VLisCBG+GMZBxw7Ka7Y6KjLsDxwnm1njOQ=";
+      hash = "sha256-GJvGnvo78l4RK2Y9ACbqOXHLQkNtIwIktbm/FK1vOcc=";
     };
 
     format = "pyproject";
@@ -157,10 +157,23 @@ in
     };
 
     antigravity = {
-      name = "Antigravity";
-      genericName = "IDE";
-      comment = "Antigravity IDE";
+      name = "Antigravity 2.0";
+      genericName = "AI Assistant";
+      comment = "Antigravity v2";
       exec = "/home/tco/.local/bin/antigravity %U";
+      icon = "antigravity-icon";
+      terminal = false;
+      startupNotify = true;
+      categories = [
+        "Development"
+      ];
+    };
+
+    antigravity-ide = {
+      name = "Antigravity IDE";
+      genericName = "IDE";
+      comment = "Antigravity IDE Application";
+      exec = "/home/tco/.local/bin/antigravity-ide %U";
       icon = "antigravity-icon";
       terminal = false;
       startupNotify = true;
@@ -200,6 +213,11 @@ in
 
   home.file.".local/bin/antigravity" = {
     source = ../../config/bin/antigravity;
+    executable = true;
+  };
+
+  home.file.".local/bin/antigravity-ide" = {
+    source = ../../config/bin/antigravity-ide;
     executable = true;
   };
 
@@ -441,6 +459,7 @@ in
         esbenp.prettier-vscode
         jnoortheen.nix-ide
         mkhl.direnv
+        jebbs.plantuml
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
           name = "appmap";
@@ -467,6 +486,8 @@ in
         "sourcetrail.port" = 6667;
         "editor.minimap.enabled" = false; # Cleaner "Pro" look
         "workbench.sideBar.location" = "left";
+        # PlantUML Local Configuration
+        "plantuml.render" = "Local";
       };
     };
   };
