@@ -100,7 +100,7 @@ observability.nix:
   - Four dashboards provisioned from /etc/nixos/config/grafana/ (hot-reload
     mutable path): nixos-metrics.json, nix-efficiency.json,
     incident-correlation.json, nixos-compiled.json.
-  - Local Continuous Documentation: `grafana-snapshot-sync.timer` (every 15min)
+  - Local Continuous Documentation: `grafana-snapshot-sync.timer` (every 6h)
     captures dashboards via headless Playwright/Chrome, writes PNGs to
     docs/assets/live, publishes via git push when image delta > 0.3%
     (MIN_CHANGE_PERCENT=0.3 in service environment).
