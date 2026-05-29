@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# NixOS: expose system libraries to the loader (dlopen).
-export LD_LIBRARY_PATH="/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
-export NIX_LD_LIBRARY_PATH="/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
+export NIX_LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
 
-BIN_TAR="$HOME/.local/opt/antigravity-v2/Antigravity-x64/antigravity"
-APPIMAGE="$HOME/.local/bin/appimages/Antigravity.AppImage"
+export NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+export SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 
-if [ -f "$BIN_TAR" ]; then
-  chmod +x "$BIN_TAR" 2>/dev/null || true
-  exec "$BIN_TAR" "$@"
+BIN="$HOME/.local/opt/antigravity-v2/Antigravity-x64/antigravity"
+
+if [ ! -x "$BIN" ]; then
+  echo "Antigravity v2 introuvable ou non exécutable: $BIN" >&2
+  exit 1
 fi
 
-if [ -f "$APPIMAGE" ]; then
-  chmod +x "$APPIMAGE" 2>/dev/null || true
-  exec appimage-run "$APPIMAGE" "$@"
-fi
-
-echo "Antigravity introuvable." >&2
-echo "Attendu soit:" >&2
-echo "  - binaire tar: $BIN_TAR" >&2
-echo "  - appimage:   $APPIMAGE" >&2
-echo "Hint: extraire Antigravity.tar.gz dans ~/.local/opt/antigravity-v2" >&2
-exit 1
+exec "$BIN" \
+  --password-store=basic \
+  --no-sandbox \
+  --disable-gpu-sandbox \
+  "$@"
