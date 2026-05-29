@@ -3,3 +3,6 @@ config/bin/cursor-app
 config/bin/*.AppImage
 config/bin/*.png
 *.prom.tmp.*
+
+# Brouillons locaux
+docs/idées
