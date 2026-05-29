@@ -24,7 +24,7 @@ All services are Nix-declared in [`modules/observability.nix`](https://github.co
 
 The monitoring suite consists of three specialized views sharing a **unified 25-gauge operational rail** on the left. This rail provides a constant heartbeat of the system (Uptime, PSI, Temp, Store, Incidents).
 
-Snapshots are captured every 15 minutes (`grafana-snapshot-sync.timer`) and pushed to the repository when the visual delta exceeds **0.3%** (`MIN_CHANGE_PERCENT=0.3` in the service environment). The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON.
+Snapshots are captured every 6 hours (`grafana-snapshot-sync.timer`) and pushed to the repository when the visual delta exceeds **0.3%** (`MIN_CHANGE_PERCENT=0.3` in the service environment). The dashboards are maintained as Jsonnet sources and rendered into committed Grafana JSON.
 
 Regeneration command:
 ```bash
@@ -93,7 +93,7 @@ Promtail adds a `component` label for targeted LogQL queries:
 
 1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/).
 2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate) produces the provisioned JSON in [`config/grafana/dashboards/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/dashboards/).
-3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 15m.
+3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 6h.
 4. **Publish**: PNGs reaching >0.5% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
 
 Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
