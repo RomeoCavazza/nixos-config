@@ -146,7 +146,7 @@ in
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "5min";
-      OnUnitActiveSec = "15min";
+      OnUnitActiveSec = "6h";
       AccuracySec = "1min";
       Persistent = true;
       Unit = "grafana-snapshot-sync.service";
