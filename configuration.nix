@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -27,9 +27,6 @@
     efi /EFI/Microsoft/Boot/bootmgfw.efi
   '';
 
-  # Force systemd-boot menu to always show and wait indefinitely (menu-force).
-  # NixOS doesn't support "menu-force" natively (timeout only accepts null|int),
-  # so we patch loader.conf after the installer writes it.
   boot.loader.systemd-boot.extraInstallCommands = ''
     conf=/boot/loader/loader.conf
     ${pkgs.gnused}/bin/sed -i '/^timeout /d; /^auto-entries /d' "$conf"
@@ -38,6 +35,7 @@
   '';
 
   boot.kernelModules = [ "i2c-dev" "i2c-i801" ];
+
   boot.kernelParams = [
     "nvidia-drm.modeset=1"
     "pcie_aspm=off"
@@ -85,6 +83,7 @@
   };
 
   programs.nix-ld.enable = true;
+
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc.lib
     zlib
@@ -133,7 +132,16 @@
   users.users.tco = {
     isNormalUser = true;
     shell = pkgs.bash;
-    extraGroups = [ "wheel" "networkmanager" "video" "docker" "libvirtd" "dialout" "i2c" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "docker"
+      "libvirtd"
+      "dialout"
+      "i2c"
+      "plugdev"
+    ];
   };
 
   services.xserver = {
@@ -142,10 +150,12 @@
   };
 
   services.displayManager.gdm.enable = true;
+
   services.displayManager.gdm.customWallpaper = {
     enable = true;
     path = ./docs/assets/gdm-background.png;
   };
+
   services.desktopManager.gnome.enable = true;
 
   programs.hyprland = {
@@ -153,20 +163,42 @@
     xwayland.enable = true;
   };
 
+  security.wrappers.Hyprland.capabilities = lib.mkForce "";
+
   services.gnome.gnome-keyring.enable = true;
 
   xdg.portal = {
     enable = true;
-    xdgOpenUsePortal = true;
+    xdgOpenUsePortal = false;
+
     extraPortals = with pkgs; [
       xdg-desktop-portal-hyprland
       xdg-desktop-portal-gtk
     ];
+
+    config = {
+      common = {
+        default = [ "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+      };
+
+      hyprland = {
+        default = [ "hyprland" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+      };
+
+      Hyprland = {
+        default = [ "hyprland" "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+      };
+    };
   };
 
   home-manager.backupFileExtension = "backup";
 
   hardware.enableRedistributableFirmware = true;
+
+  hardware.i2c.enable = true;
 
   services.pipewire = {
     enable = true;
@@ -211,7 +243,12 @@
     (python313.withPackages (ps: with ps; [
       pydantic
       anyio
+      smbus2
+      pyserial
     ]))
+
+    i2c-tools
+
     adwaita-icon-theme
     papirus-icon-theme
     bibata-cursors
@@ -251,12 +288,26 @@
     mesa
     libglvnd
     libdrm
-    sigrok-cli
+    steam-run
+    wineWow64Packages.stable
+    winetricks
+    just
+    eza
+    openhantek6022
   ];
+
+  environment.shellAliases = {
+    scope = "bash ~/Applications/launch-hantek.sh";
+    tinysa = "bash ~/Applications/launch-tinysa.sh";
+  };
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     EDITOR = "vim";
+
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
+    XDG_SESSION_TYPE = "wayland";
   };
 
   programs.appimage = {
@@ -264,9 +315,13 @@
     binfmt = true;
   };
 
-  # Local USB device access rule.
   services.udev.extraRules = ''
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="04b5", ATTRS{idProduct}=="6cde", MODE="0666"
+    # Hantek 6074BC USB Raw
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="04b5", ATTRS{idProduct}=="6cde", MODE="0666", TAG+="uaccess"
+
+    # TinySA Ultra TTY/ACM
+    KERNEL=="ttyACM*", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0666", TAG+="uaccess"
   '';
 
   system.stateVersion = "26.05";
