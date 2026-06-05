@@ -2,13 +2,11 @@
   description = "NixOS Workstation - Secure & Full Config";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
-
-    # Dedicated pin for xdg-desktop-portal workaround.
-    # 24.11 is too old because it provides xdg-desktop-portal 1.18.4,
-    # while GNOME 50 needs >= 1.19.1.
-    nixpkgs-portal.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs-portal.url = "github:NixOS/nixpkgs/nixos-26.05";
+    
+    nixpkgs-legacy.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -44,6 +42,7 @@
     nixpkgs,
     nixpkgs-stable,
     nixpkgs-portal,
+    nixpkgs-legacy,
     home-manager,
     ...
   }@inputs:
@@ -56,6 +55,12 @@
       };
 
       pkgs-portal = import nixpkgs-portal {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      # Création du channel legacy
+      pkgs-legacy = import nixpkgs-legacy {
         inherit system;
         config.allowUnfree = true;
       };
@@ -87,15 +92,9 @@
               inputs.hyprland.overlays.default
 
               (final: prev: {
-                promtail-bin = pkgs-stable.promtail;
+                promtail-bin = pkgs-legacy.promtail;
+                
                 guix = pkgs-stable.guix;
-
-                # Workaround for xdg-desktop-portal 1.20.4:
-                # File chooser breaks with:
-                # "Portal operation not allowed: Unable to open /proc/<pid>/root"
-                #
-                # nixos-24.11 is too old here: xdg-desktop-portal 1.18.4
-                # breaks GNOME 50 builds. Use nixos-25.05 instead.
                 xdg-desktop-portal = pkgs-portal.xdg-desktop-portal;
                 xdg-desktop-portal-gtk = pkgs-portal.xdg-desktop-portal-gtk;
                 xdg-desktop-portal-gnome = pkgs-portal.xdg-desktop-portal-gnome;

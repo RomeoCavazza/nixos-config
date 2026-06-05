@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEVIN_DIR="$HOME/.local/opt/devin"
+if [ ! -d "$DEVIN_DIR" ]; then
+  echo "Devin introuvable: $DEVIN_DIR" >&2
+  exit 1
+fi
+
+export LD_LIBRARY_PATH="/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
+export NIX_LD_LIBRARY_PATH="/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
+
+exec "$DEVIN_DIR/bin/devin-desktop-next" "$@"

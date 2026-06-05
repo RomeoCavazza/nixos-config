@@ -125,6 +125,12 @@
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
 
+  # Démo Bernstein (seminar-dop) : résolution locale vers un nœud du cluster DOKS.
+  # /!\ IP éphémère — à retirer/mettre à jour si le cluster est recréé.
+  networking.extraHosts = ''
+    157.230.26.170 poll.dop.io result.dop.io
+  '';
+
   time.timeZone = "Europe/Paris";
   i18n.defaultLocale = "fr_FR.UTF-8";
   console.keyMap = "fr";

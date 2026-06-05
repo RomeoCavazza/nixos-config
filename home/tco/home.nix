@@ -156,6 +156,21 @@ in
       ];
     };
 
+    devin = {
+      name = "Devin";
+      genericName = "AI Code Editor";
+      comment = "Devin AI Desktop";
+      exec = "/home/tco/.local/bin/devin %U";
+      icon = "text-editor";
+      terminal = false;
+      startupNotify = true;
+      categories = [
+        "Development"
+        "TextEditor"
+        "IDE"
+      ];
+    };
+
     antigravity = {
       name = "Antigravity 2.0";
       genericName = "AI Assistant";
@@ -208,6 +223,11 @@ in
 
   home.file.".local/bin/cursor" = {
     source = ../../config/bin/cursor;
+    executable = true;
+  };
+
+  home.file.".local/bin/devin" = {
+    source = ../../config/bin/devin;
     executable = true;
   };
 
@@ -450,46 +470,6 @@ in
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
-    profiles.default = {
-      extensions = with pkgs.vscode-extensions; [
-        ms-python.python
-        ms-toolsai.jupyter
-        ms-vscode.cpptools
-        rust-lang.rust-analyzer
-        esbenp.prettier-vscode
-        jnoortheen.nix-ide
-        mkhl.direnv
-        jebbs.plantuml
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-        {
-          name = "appmap";
-          publisher = "appland";
-          version = "0.140.0";
-          sha256 = "1zqjyaw1k2n3v8qisy1yd2cdrzycigfpb8acv9vhxa295qsvr6cx";
-        }
-        {
-          name = "sourcetrail";
-          publisher = "astallinger";
-          version = "0.0.1";
-          sha256 = "0dpzs5azs3ygxvmsqmxx6d5vi2wvhzpf8p9bp580qyafv34ww6wx";
-        }
-      ];
-      userSettings = {
-        "editor.fontFamily" = "'JetBrainsMono Nerd Font', 'Droid Sans Mono', 'monospace'";
-        "editor.fontLigatures" = true;
-        "nix.enableLanguageServer" = true;
-        "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-        "window.titleBarStyle" = "custom";
-        # Architectural & Reverse Engineering Settings
-        "appmap.view.codeObjects" = true;
-        "appmap.view.dependencyMap" = true;
-        "sourcetrail.port" = 6667;
-        "editor.minimap.enabled" = false; # Cleaner "Pro" look
-        "workbench.sideBar.location" = "left";
-        # PlantUML Local Configuration
-        "plantuml.render" = "Local";
-      };
-    };
   };
 
 
