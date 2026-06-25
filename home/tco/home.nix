@@ -221,6 +221,7 @@ in
   home.file.".config/swappy/config".source = ../../config/swappy/config;
   home.file.".config/conky".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/conky";
   home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/nvim";
+  home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/doom";
   xdg.configFile."eDEX-UI/settings.json".source = ../../config/edex/settings.json;
 
   home.file.".local/bin/cursor" = {

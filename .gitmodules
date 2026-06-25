@@ -10,3 +10,6 @@
 [submodule "config/grafana"]
 	path = config/grafana
 	url = git@github.com:RomeoCavazza/grafana-observability.git
+[submodule "config/doom"]
+	path = config/doom
+	url = git@github.com:RomeoCavazza/emacs-config.git
