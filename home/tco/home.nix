@@ -15,12 +15,12 @@ let
       ''
             mkdir -p $out source/config/hypr/waybar source/config/scss
 
-            cp -R ${../../config/hypr/waybar}/. $out/
+            cp -R ${builtins.path { path = /etc/nixos/config/hypr/waybar; name = "waybar"; }}/. $out/
             chmod -R u+w $out
             rm -f $out/style.css
 
-            cp ${../../config/hypr/waybar/style.scss} source/config/hypr/waybar/style.scss
-            cp -R ${../../config/scss}/. source/config/scss/
+            cp ${builtins.path { path = /etc/nixos/config/hypr/waybar/style.scss; name = "style.scss"; }} source/config/hypr/waybar/style.scss
+            cp -R ${builtins.path { path = /etc/nixos/config/scss; name = "scss"; }}/. source/config/scss/
 
         sass \
           --no-source-map \
@@ -210,7 +210,7 @@ in
     ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
 
   home.file.".config/hypr" = {
-    source = ../../config/hypr;
+    source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/hypr";
     recursive = true;
     force = true;
   };
@@ -218,7 +218,7 @@ in
   home.file.".config/rofi".source = ../../config/rofi;
   home.file.".config/foot".source = ../../config/foot;
   home.file.".config/swappy/config".source = ../../config/swappy/config;
-  home.file.".config/conky".source = ../../config/conky;
+  home.file.".config/conky".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/conky";
   home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/nvim";
   xdg.configFile."eDEX-UI/settings.json".source = ../../config/edex/settings.json;
 

@@ -66,10 +66,10 @@ let
 
   grafanaDashboardsDir = pkgs.runCommand "grafana-dashboards" {} ''
     mkdir -p $out
-    cp ${../config/grafana/nixos-metrics.json} $out/nixos-metrics.json
-    cp ${../config/grafana/nix-efficiency.json} $out/nix-efficiency.json
-    cp ${../config/grafana/incident-correlation.json} $out/incident-correlation.json
-    cp ${../config/grafana/nixos-compiled.json} $out/nixos-compiled.json
+    cp ${builtins.path { path = /etc/nixos/config/grafana/nixos-metrics.json; name = "nixos-metrics.json"; }} $out/nixos-metrics.json
+    cp ${builtins.path { path = /etc/nixos/config/grafana/nix-efficiency.json; name = "nix-efficiency.json"; }} $out/nix-efficiency.json
+    cp ${builtins.path { path = /etc/nixos/config/grafana/incident-correlation.json; name = "incident-correlation.json"; }} $out/incident-correlation.json
+    cp ${builtins.path { path = /etc/nixos/config/grafana/nixos-compiled.json; name = "nixos-compiled.json"; }} $out/nixos-compiled.json
   '';
 in
 {
