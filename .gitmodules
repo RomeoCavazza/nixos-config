@@ -1,3 +1,12 @@
 [submodule "config/nvim"]
 	path = config/nvim
 	url = git@github.com:RomeoCavazza/nvim-config.git
+[submodule "config/hypr"]
+	path = config/hypr
+	url = git@github.com:RomeoCavazza/hyprland-config.git
+[submodule "config/conky"]
+	path = config/conky
+	url = git@github.com:RomeoCavazza/conky-config.git
+[submodule "config/grafana"]
+	path = config/grafana
+	url = git@github.com:RomeoCavazza/grafana-observability.git
