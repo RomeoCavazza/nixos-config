@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, flakeSelf, ... }:
 
 let
   textfileDir = "/var/lib/node_exporter/textfile_collector";
@@ -66,10 +66,10 @@ let
 
   grafanaDashboardsDir = pkgs.runCommand "grafana-dashboards" {} ''
     mkdir -p $out
-    cp ${builtins.path { path = /etc/nixos/config/grafana/nixos-metrics.json; name = "nixos-metrics.json"; }} $out/nixos-metrics.json
-    cp ${builtins.path { path = /etc/nixos/config/grafana/nix-efficiency.json; name = "nix-efficiency.json"; }} $out/nix-efficiency.json
-    cp ${builtins.path { path = /etc/nixos/config/grafana/incident-correlation.json; name = "incident-correlation.json"; }} $out/incident-correlation.json
-    cp ${builtins.path { path = /etc/nixos/config/grafana/nixos-compiled.json; name = "nixos-compiled.json"; }} $out/nixos-compiled.json
+    cp ${flakeSelf}/config/grafana/nixos-metrics.json $out/nixos-metrics.json
+    cp ${flakeSelf}/config/grafana/nix-efficiency.json $out/nix-efficiency.json
+    cp ${flakeSelf}/config/grafana/incident-correlation.json $out/incident-correlation.json
+    cp ${flakeSelf}/config/grafana/nixos-compiled.json $out/nixos-compiled.json
   '';
 in
 {

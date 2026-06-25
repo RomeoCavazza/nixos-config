@@ -1,11 +1,6 @@
 {
   description = "NixOS Workstation - Secure & Full Config";
 
-  nixConfig = {
-    # Allow Nix to resolve git submodule paths (config/hypr, config/conky, config/grafana…)
-    submodules = true;
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -75,6 +70,7 @@
 
         specialArgs = {
           inherit inputs;
+          flakeSelf = self;
         };
 
         modules = [
@@ -126,6 +122,7 @@
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
               inherit inputs;
+              flakeSelf = self;
             };
 
             home-manager.users.tco = import ./home/tco/home.nix;

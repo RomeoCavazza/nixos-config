@@ -3,6 +3,7 @@
   pkgs,
   lib,
   inputs,
+  flakeSelf,
   ...
 }:
 let
@@ -15,12 +16,12 @@ let
       ''
             mkdir -p $out source/config/hypr/waybar source/config/scss
 
-            cp -R ${builtins.path { path = /etc/nixos/config/hypr/waybar; name = "waybar"; }}/. $out/
+            cp -R ${flakeSelf}/config/hypr/waybar/. $out/
             chmod -R u+w $out
             rm -f $out/style.css
 
-            cp ${builtins.path { path = /etc/nixos/config/hypr/waybar/style.scss; name = "style.scss"; }} source/config/hypr/waybar/style.scss
-            cp -R ${builtins.path { path = /etc/nixos/config/scss; name = "scss"; }}/. source/config/scss/
+            cp ${flakeSelf}/config/hypr/waybar/style.scss source/config/hypr/waybar/style.scss
+            cp -R ${flakeSelf}/config/scss/. source/config/scss/
 
         sass \
           --no-source-map \
