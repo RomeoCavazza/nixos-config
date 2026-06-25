@@ -16,11 +16,11 @@
 
     hyprland.url = "github:hyprwm/Hyprland/v0.55.4";
 
-    hyprspace.url = "github:RomeoCavazza/Hyprspace/fix/hyprland-055";
+    hyprspace.url = "github:RomeoCavazza/hyprspace/fix/hyprland-055";
     hyprspace.inputs.hyprland.follows = "hyprland";
 
     hyprchroma = {
-      url = "github:RomeoCavazza/Hyprchroma/fix/hyprland-055";
+      url = "github:RomeoCavazza/hyprchroma/fix/hyprland-055";
       flake = false;
     };
 
