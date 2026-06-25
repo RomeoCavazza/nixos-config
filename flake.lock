@@ -129,14 +129,14 @@
         "lastModified": 1782417054,
         "narHash": "sha256-LLwONtlMLZqX6MjbqxknD5sw4/Zf0298oR51Y9apS8c=",
         "owner": "RomeoCavazza",
-        "repo": "Hyprchroma",
+        "repo": "hyprchroma",
         "rev": "523711d312f22d8af550e1a4f2cdfe4322f716aa",
         "type": "github"
       },
       "original": {
         "owner": "RomeoCavazza",
         "ref": "fix/hyprland-055",
-        "repo": "Hyprchroma",
+        "repo": "hyprchroma",
         "type": "github"
       }
     },
@@ -370,14 +370,14 @@
         "lastModified": 1782415745,
         "narHash": "sha256-E0xSKVbIvoJJZvyH31StTq7rJOZl1Y1ScFCNTgNyCYQ=",
         "owner": "RomeoCavazza",
-        "repo": "Hyprspace",
+        "repo": "hyprspace",
         "rev": "250ee10ebd5db6dcac3cabf9bdd66e2e32e0fe2f",
         "type": "github"
       },
       "original": {
         "owner": "RomeoCavazza",
         "ref": "fix/hyprland-055",
-        "repo": "Hyprspace",
+        "repo": "hyprspace",
         "type": "github"
       }
     },
