@@ -14,7 +14,7 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    hyprland.url = "github:hyprwm/Hyprland/v0.54.2";
+    hyprland.url = "github:hyprwm/Hyprland/v0.55.4";
 
     hyprspace.url = "github:RomeoCavazza/Hyprspace";
     hyprspace.inputs.hyprland.follows = "hyprland";
@@ -89,9 +89,12 @@
 
             nixpkgs.overlays = [
               (import inputs.rust-overlay)
-              inputs.hyprland.overlays.default
 
               (final: prev: {
+                hyprland = inputs.hyprland.packages.${system}.hyprland;
+                hyprland-unwrapped = inputs.hyprland.packages.${system}.hyprland-unwrapped;
+                xdg-desktop-portal-hyprland = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+
                 promtail-bin = pkgs-legacy.promtail;
                 
                 guix = pkgs-stable.guix;

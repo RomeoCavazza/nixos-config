@@ -7,7 +7,6 @@
 }:
 let
   hyprland-pkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-  hyprspacePkg = inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace;
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {
@@ -305,20 +304,14 @@ in
     executable = true;
   };
 
-  home.file.".local/lib/libhypr-darkwindow.so" = {
-    source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
-    executable = true;
-  };
+  # Hyprchroma / hypr-darkwindow is disabled for Hyprland 0.55.x: its render
+  # hooks and custom pass element still target the 0.54-era internals.
 
-  home.file.".local/lib/hypr-canvas.so" = {
-    source = "${hypr-canvas}/lib/hypr-canvas.so";
-    executable = true;
-  };
+  # Hypr-canvas is disabled for Hyprland 0.55.x: it compiles, but its input
+  # hooks crash Hyprland on pointer button events.
 
-  home.file.".local/lib/hyprspace.so" = {
-    source = "${hyprspacePkg}/lib/libHyprspace.so";
-    executable = true;
-  };
+  # Hyprspace is disabled while upgrading to Hyprland 0.55.x: the current fork
+  # still targets older Hyprland render/config APIs and fails to build.
 
   home.file.".local/bin/legion-pulse" = {
     source = ../../config/bin/legion-pulse;
