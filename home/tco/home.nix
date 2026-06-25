@@ -30,11 +30,11 @@ let
           $out/style.css
       '';
 
-  # Hyprchroma v3.4.0-v054 — unified adaptive tint release
+  # Hyprchroma v3.4.1-v055 — unified adaptive tint release
   hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
   hypr-darkwindow = pkgs.stdenv.mkDerivation {
     pname = "hypr-darkwindow";
-    version = "3.4.0-v054";
+    version = "3.4.1-v055";
     srcs = [ ];
     dontUnpack = true;
     nativeBuildInputs = [ pkgs.pkg-config ];
@@ -50,7 +50,7 @@ let
       mkdir -p $out/lib
       cp libhypr-darkwindow.so $out/lib/
     '';
-    meta.description = "Hyprchroma v3.4.0-v054 — unified adaptive tint release";
+    meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
   };
   hypr-canvas-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";
@@ -305,8 +305,10 @@ in
     executable = true;
   };
 
-  # Hyprchroma / hypr-darkwindow is disabled for Hyprland 0.55.x: its render
-  # hooks and custom pass element still target the 0.54-era internals.
+  home.file.".local/lib/libhypr-darkwindow.so" = {
+    source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
+    executable = true;
+  };
 
   home.file.".local/lib/hypr-canvas.so" = {
     source = "${hypr-canvas}/lib/hypr-canvas.so";
