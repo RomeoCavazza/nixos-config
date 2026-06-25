@@ -6,8 +6,8 @@
   ...
 }:
 let
-  hyprland-pkg = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  hyprspacePkg = inputs.hyprspace.packages.${pkgs.system}.Hyprspace;
+  hyprland-pkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+  hyprspacePkg = inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace;
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {
@@ -120,6 +120,7 @@ in
   home.username = "tco";
   home.homeDirectory = "/home/tco";
   home.stateVersion = "25.05";
+  home.enableNixpkgsReleaseCheck = false;
 
   home.sessionPath = [
     "${config.home.homeDirectory}/.lmstudio/bin"
@@ -376,8 +377,14 @@ in
       ps: with ps; [
         pip
         pyglet
+        pdfplumber
       ]
     ))
+    terraform
+    kubeconform
+    minikube
+    (lib.hiPrio kubectl)
+    (lib.lowPrio k3s)
     typescript-language-server
     vscode-langservers-extracted
     tailwindcss-language-server
