@@ -136,9 +136,9 @@ in
       HOME = "/home/tco";
       SNAPSHOT_GIT_NAME = "Romeo Cavazza";
       SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
-      SNAPSHOT_REPO_URL = "git@github.com:RomeoCavazza/setup-os.git";
+      SNAPSHOT_REPO_URL = "git@github.com:RomeoCavazza/nixos-config.git";
       SNAPSHOT_BRANCH = "main";
-      PUBLISH_REPO_DIR = "/var/lib/grafana-snapshot-sync/setup-os";
+      PUBLISH_REPO_DIR = "/var/lib/grafana-snapshot-sync/nixos-config";
     };
   };
 

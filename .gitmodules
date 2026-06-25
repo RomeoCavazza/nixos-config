@@ -9,7 +9,7 @@
 	url = git@github.com:RomeoCavazza/conky-config.git
 [submodule "config/grafana"]
 	path = config/grafana
-	url = git@github.com:RomeoCavazza/grafana-observability.git
+	url = git@github.com:RomeoCavazza/grafana-config.git
 [submodule "config/doom"]
 	path = config/doom
 	url = git@github.com:RomeoCavazza/emacs-config.git
