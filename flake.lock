@@ -367,15 +367,16 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1776792099,
-        "narHash": "sha256-bqmq2dKQNdKUqG80OpjQSUMRIgFVFEUcau6SxtXrkUU=",
+        "lastModified": 1782415745,
+        "narHash": "sha256-E0xSKVbIvoJJZvyH31StTq7rJOZl1Y1ScFCNTgNyCYQ=",
         "owner": "RomeoCavazza",
         "repo": "Hyprspace",
-        "rev": "19e789cd575dd9b924b22c2121f24fa9885a26e9",
+        "rev": "250ee10ebd5db6dcac3cabf9bdd66e2e32e0fe2f",
         "type": "github"
       },
       "original": {
         "owner": "RomeoCavazza",
+        "ref": "fix/hyprland-055",
         "repo": "Hyprspace",
         "type": "github"
       }

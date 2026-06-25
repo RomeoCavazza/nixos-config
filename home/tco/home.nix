@@ -55,12 +55,12 @@ let
   hypr-canvas-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";
     repo = "hypr-canvas";
-    rev = "08358afacbac9f9a7ac45dc59a1a55188717b55c";
-    hash = "sha256-pA6NSjk7SX+tdSY1aWlaI+ygXUl+K/dk1xGB7ok8CIs=";
+    rev = "e245d426d4b34f321f6dfc58d155fcb551ae40fd";
+    hash = "sha256-h2qz/AYxXZmctL2orVbQR2k5wD0fIEl/x073SYSG2j4=";
   };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
-    version = "0.2.0-patched";
+    version = "0.3.0";
 
     srcs = [ ];
     dontUnpack = true;
@@ -82,6 +82,7 @@ let
 
     meta.description = "Infinite canvas plugin for Hyprland";
   };
+  hyprspace = inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace;
 
   terminal-rain-lightning = pkgs.python3Packages.buildPythonApplication {
     pname = "terminal-rain-lightning";
@@ -307,11 +308,15 @@ in
   # Hyprchroma / hypr-darkwindow is disabled for Hyprland 0.55.x: its render
   # hooks and custom pass element still target the 0.54-era internals.
 
-  # Hypr-canvas is disabled for Hyprland 0.55.x: it compiles, but its input
-  # hooks crash Hyprland on pointer button events.
+  home.file.".local/lib/hypr-canvas.so" = {
+    source = "${hypr-canvas}/lib/hypr-canvas.so";
+    executable = true;
+  };
 
-  # Hyprspace is disabled while upgrading to Hyprland 0.55.x: the current fork
-  # still targets older Hyprland render/config APIs and fails to build.
+  home.file.".local/lib/hyprspace.so" = {
+    source = "${hyprspace}/lib/libHyprspace.so";
+    executable = true;
+  };
 
   home.file.".local/bin/legion-pulse" = {
     source = ../../config/bin/legion-pulse;
