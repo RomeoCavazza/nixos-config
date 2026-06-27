@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-# Reserved for future Hyprland plugin bootstrap hooks.
-# DarkWindow / Hyprchroma is loaded directly through Hyprland config.
-
-exit 0

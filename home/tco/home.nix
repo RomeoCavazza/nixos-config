@@ -14,20 +14,20 @@ let
         nativeBuildInputs = [ pkgs.dart-sass ];
       }
       ''
-            mkdir -p $out source/config/hypr/waybar source/config/scss
+            mkdir -p $out source/waybar source/scss
 
             cp -R ${inputs.hypr-config}/waybar/. $out/
             chmod -R u+w $out
             rm -f $out/style.css
 
-            cp ${inputs.hypr-config}/waybar/style.scss source/config/hypr/waybar/style.scss
-            cp -R ${flakeSelf}/config/scss/. source/config/scss/
+            cp ${inputs.hypr-config}/waybar/style.scss source/waybar/style.scss
+            cp -R ${inputs.hypr-config}/scss/. source/scss/
 
         sass \
           --no-source-map \
           --no-charset \
           --style=expanded \
-          source/config/hypr/waybar/style.scss \
+          source/waybar/style.scss \
           $out/style.css
       '';
 
@@ -211,17 +211,17 @@ in
     ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
 
   home.file.".config/hypr" = {
-    source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/hypr";
+    source = inputs.hypr-config;
     force = true;
   };
   home.file.".config/waybar".source = waybarConfig;
-  home.file.".config/rofi".source = ../../config/rofi;
-  home.file.".config/foot".source = ../../config/foot;
-  home.file.".config/swappy/config".source = ../../config/swappy/config;
+  home.file.".config/rofi".source = "${inputs.hypr-config}/rofi";
+  home.file.".config/foot".source = "${inputs.hypr-config}/foot";
+  home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
   home.file.".config/conky".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/conky";
   home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/nvim";
   home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/doom";
-  xdg.configFile."eDEX-UI/settings.json".source = ../../config/edex/settings.json;
+  xdg.configFile."eDEX-UI/settings.json".source = "${inputs.hypr-config}/edex/settings.json";
 
   home.file.".local/bin/cursor" = {
     source = ../../config/bin/cursor;
@@ -244,34 +244,34 @@ in
   };
 
   home.file.".local/bin/hypr-plugins-init" = {
-    source = ../../config/bin/hypr-plugins-init;
+    source = "${inputs.hypr-config}/bin/hypr-plugins-init";
     executable = true;
   };
 
 
 
   home.file.".local/bin/hypr-layout-toggle" = {
-    source = ../../config/bin/hypr-layout-toggle;
+    source = "${inputs.hypr-config}/bin/hypr-layout-toggle";
     executable = true;
   };
 
   home.file.".local/bin/hypr-close-all" = {
-    source = ../../config/bin/hypr-close-all;
+    source = "${inputs.hypr-config}/bin/hypr-close-all";
     executable = true;
   };
 
   home.file.".local/bin/edex-conky-toggle" = {
-    source = ../../config/bin/edex-conky-toggle;
+    source = "${inputs.hypr-config}/bin/edex-conky-toggle";
     executable = true;
   };
 
   home.file.".local/bin/edex-toggle" = {
-    source = ../../config/bin/edex-toggle;
+    source = "${inputs.hypr-config}/bin/edex-toggle";
     executable = true;
   };
 
   home.file.".local/bin/edex-ui-toggle" = {
-    source = ../../config/bin/edex-toggle;
+    source = "${inputs.hypr-config}/bin/edex-toggle";
     executable = true;
   };
 
@@ -292,7 +292,7 @@ in
   };
 
   home.file.".local/bin/waybar-toggle" = {
-    source = ../../config/bin/waybar-toggle;
+    source = "${inputs.hypr-config}/bin/waybar-toggle";
     executable = true;
   };
 
@@ -302,7 +302,7 @@ in
   };
 
   home.file.".local/bin/scss-compile" = {
-    source = ../../config/bin/scss-compile;
+    source = "${inputs.hypr-config}/bin/scss-compile";
     executable = true;
   };
 
@@ -547,7 +547,7 @@ in
     };
   };
 
-  xdg.configFile."wal/templates/colors-foot.ini".source = ../../config/wal/templates/colors-foot.ini;
+  xdg.configFile."wal/templates/colors-foot.ini".source = "${inputs.hypr-config}/wal/templates/colors-foot.ini";
   xdg.configFile."wal/templates/colors-hyprland.conf".source =
-    ../../config/wal/templates/colors-hyprland.conf;
+    "${inputs.hypr-config}/wal/templates/colors-hyprland.conf";
 }
