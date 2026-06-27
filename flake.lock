@@ -383,16 +383,16 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782415745,
-        "narHash": "sha256-E0xSKVbIvoJJZvyH31StTq7rJOZl1Y1ScFCNTgNyCYQ=",
+        "lastModified": 1782585816,
+        "narHash": "sha256-wnJDI9SbQW1jmZdFjzNOYTkmhZzmkPvTa9pnCLv1SBY=",
         "owner": "RomeoCavazza",
         "repo": "hyprspace",
-        "rev": "250ee10ebd5db6dcac3cabf9bdd66e2e32e0fe2f",
+        "rev": "a7d3c96affbc8550a4e01be70381bae632090cc3",
         "type": "github"
       },
       "original": {
         "owner": "RomeoCavazza",
-        "ref": "fix/hyprland-055",
+        "ref": "rewrite/native-surface-055",
         "repo": "hyprspace",
         "type": "github"
       }
