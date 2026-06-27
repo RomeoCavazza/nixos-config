@@ -151,7 +151,6 @@
       },
       "original": {
         "owner": "RomeoCavazza",
-        "ref": "fix/hyprland-055",
         "repo": "hyprchroma",
         "type": "github"
       }
