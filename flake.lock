@@ -383,11 +383,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782588053,
-        "narHash": "sha256-ASQgSMz9SsFoaff3UzVfWOgrDfQ5GR3fYvhJti1RCvA=",
+        "lastModified": 1782588495,
+        "narHash": "sha256-v2a8L3MJU2Q+BNwmVUfSnI3dRR9hztiQUs9Gr4Me2H0=",
         "owner": "RomeoCavazza",
         "repo": "hyprspace",
-        "rev": "bdbccad57cde3ec181e3c93a5f32eb5c7167b66a",
+        "rev": "4939c41c09a925b76db2ba716d7c0a2bfba5d1df",
         "type": "github"
       },
       "original": {
