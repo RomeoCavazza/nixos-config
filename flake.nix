@@ -16,6 +16,11 @@
 
     hyprland.url = "github:hyprwm/Hyprland/v0.55.4";
 
+    hypr-config = {
+      url = "github:RomeoCavazza/hyprland-config";
+      flake = false;
+    };
+
     hyprspace.url = "github:RomeoCavazza/hyprspace/fix/hyprland-055";
     hyprspace.inputs.hyprland.follows = "hyprland";
 

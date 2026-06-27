@@ -1,5 +1,50 @@
 { ... }:
 
+let
+  loopback = "127.0.0.1";
+
+  listenOn = port: [
+    {
+      addr = loopback;
+      inherit port;
+      ssl = false;
+    }
+  ];
+
+  okResponse = {
+    return = "200 'ok'\n";
+    extraConfig = "add_header Content-Type text/plain;";
+  };
+
+  mkLocalProxy = {
+    serverName,
+    port,
+    upstream,
+    forwardedHost ? serverName,
+  }: {
+    inherit serverName;
+    listen = listenOn port;
+    locations = {
+      "/" = {
+        proxyPass = upstream;
+        proxyWebsockets = true;
+        extraConfig = ''
+          proxy_set_header Host              ${forwardedHost};
+          proxy_set_header X-Forwarded-Host  ${forwardedHost};
+
+          proxy_set_header X-Real-IP         $remote_addr;
+          proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        '';
+      };
+
+      # Cheap local smoke checks for these helper proxies. The actual upstream
+      # can still be down; app-specific health checks should target real routes.
+      "=/" = okResponse;
+      "/health" = okResponse;
+    };
+  };
+in
 {
   services.nginx = {
     enable = true;
@@ -8,130 +53,44 @@
     recommendedGzipSettings = true;
 
     virtualHosts = {
+      # Grafana helper: keeps localhost:3000 pointing at the real Grafana port.
       "grafana.localhost-proxy" = {
         serverName = "localhost";
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = 3000;
-            ssl = false;
-          }
-        ];
-        locations = {
-          "/" = {
-            proxyPass = "http://127.0.0.1:3001";
-            proxyWebsockets = true;
-          };
+        listen = listenOn 3000;
+        locations."/" = {
+          proxyPass = "http://${loopback}:3001";
+          proxyWebsockets = true;
         };
       };
 
-      "localhost-proxy" = {
-        serverName = "localhost";
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = 8081;
-            ssl = false;
-          }
-        ];
-        locations = {
-          "/" = {
-            proxyPass = "http://127.0.0.1:80";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header Host              localhost;
-              proxy_set_header X-Forwarded-Host  localhost;
-
-              proxy_set_header X-Real-IP         $remote_addr;
-              proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-            '';
-          };
-
-          "=/" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-          "/health" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-        };
-      };
-
-      "dev.localhost-proxy" = {
+      # 8081 is intentionally free for OpsWarden's `client_web` Docker Compose
+      # service. VIGIL expects the web client at http://localhost:8081.
+      "dev.localhost-proxy" = mkLocalProxy {
         serverName = "dev.localhost";
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = 8082;
-            ssl = false;
-          }
-        ];
-        locations = {
-          "/" = {
-            proxyPass = "http://127.0.0.1:80";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header Host              dev.localhost;
-              proxy_set_header X-Forwarded-Host  dev.localhost;
-
-              proxy_set_header X-Real-IP         $remote_addr;
-              proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-            '';
-          };
-
-          "=/" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-          "/health" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-        };
+        port = 8082;
+        upstream = "http://${loopback}:80";
       };
 
-      "streamlit.localhost-proxy" = {
+      "streamlit.localhost-proxy" = mkLocalProxy {
         serverName = "streamlit.localhost";
-        listen = [
-          {
-            addr = "127.0.0.1";
-            port = 8083;
-            ssl = false;
-          }
-        ];
-        locations = {
-          "/" = {
-            proxyPass = "http://127.0.0.1:8501";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header Host              streamlit.localhost;
-              proxy_set_header X-Forwarded-Host  streamlit.localhost;
+        port = 8083;
+        upstream = "http://${loopback}:8501";
+      };
 
-              proxy_set_header X-Real-IP         $remote_addr;
-              proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-            '';
-          };
-
-          "=/" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-          "/health" = {
-            return = "200 'ok'\n";
-            extraConfig = "add_header Content-Type text/plain;";
-          };
-        };
+      # Legacy localhost -> :80 proxy, moved away from 8081 so it no longer
+      # shadows OpsWarden's jury-facing Compose port.
+      "legacy-localhost-proxy" = mkLocalProxy {
+        serverName = "localhost";
+        port = 8084;
+        upstream = "http://${loopback}:80";
+        forwardedHost = "localhost";
       };
     };
   };
 
   networking.firewall.allowedTCPPorts = [
-    8081
     8082
     8083
+    8084
   ];
 }

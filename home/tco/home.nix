@@ -16,11 +16,11 @@ let
       ''
             mkdir -p $out source/config/hypr/waybar source/config/scss
 
-            cp -R ${flakeSelf}/config/hypr/waybar/. $out/
+            cp -R ${inputs.hypr-config}/waybar/. $out/
             chmod -R u+w $out
             rm -f $out/style.css
 
-            cp ${flakeSelf}/config/hypr/waybar/style.scss source/config/hypr/waybar/style.scss
+            cp ${inputs.hypr-config}/waybar/style.scss source/config/hypr/waybar/style.scss
             cp -R ${flakeSelf}/config/scss/. source/config/scss/
 
         sass \
@@ -212,7 +212,6 @@ in
 
   home.file.".config/hypr" = {
     source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/hypr";
-    recursive = true;
     force = true;
   };
   home.file.".config/waybar".source = waybarConfig;

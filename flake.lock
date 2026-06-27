@@ -123,6 +123,22 @@
         "type": "github"
       }
     },
+    "hypr-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782418217,
+        "narHash": "sha256-o7JNGmUq42wv6gT/nq1LjTjDIGgodPg9gOXIeiAt1WA=",
+        "owner": "RomeoCavazza",
+        "repo": "hyprland-config",
+        "rev": "510b5a53f1d51c0d28e0eb5a8f64de26041c26e2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "hyprland-config",
+        "type": "github"
+      }
+    },
     "hyprchroma": {
       "flake": false,
       "locked": {
@@ -681,6 +697,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
+        "hypr-config": "hypr-config",
         "hyprchroma": "hyprchroma",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
