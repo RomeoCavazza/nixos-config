@@ -392,7 +392,7 @@
       },
       "original": {
         "owner": "RomeoCavazza",
-        "ref": "fix/hyprland-055-from-romeo-main",
+        "ref": "main",
         "repo": "hyprspace",
         "type": "github"
       }

@@ -21,7 +21,7 @@
       flake = false;
     };
 
-    hyprspace.url = "github:RomeoCavazza/hyprspace/fix/hyprland-055-from-romeo-main";
+    hyprspace.url = "github:RomeoCavazza/hyprspace/main";
     hyprspace.inputs.hyprland.follows = "hyprland";
 
     hyprchroma = {
