@@ -228,6 +228,11 @@ in
     executable = true;
   };
 
+  home.file.".local/bin/cursor-toggle" = {
+    source = ../../config/bin/cursor-toggle;
+    executable = true;
+  };
+
   home.file.".local/bin/devin" = {
     source = ../../config/bin/devin;
     executable = true;
@@ -248,7 +253,15 @@ in
     executable = true;
   };
 
+  home.file.".local/bin/hypr-gap-state.sh" = {
+    source = "${inputs.hypr-config}/bin/hypr-gap-state.sh";
+    executable = true;
+  };
 
+  home.file.".local/bin/hypr-overview-toggle" = {
+    source = "${inputs.hypr-config}/bin/hypr-overview-toggle";
+    executable = true;
+  };
 
   home.file.".local/bin/hypr-layout-toggle" = {
     source = "${inputs.hypr-config}/bin/hypr-layout-toggle";
