@@ -383,17 +383,17 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782585816,
-        "narHash": "sha256-wnJDI9SbQW1jmZdFjzNOYTkmhZzmkPvTa9pnCLv1SBY=",
-        "owner": "RomeoCavazza",
-        "repo": "hyprspace",
-        "rev": "a7d3c96affbc8550a4e01be70381bae632090cc3",
+        "lastModified": 1779971083,
+        "narHash": "sha256-q+5ETwj+oiZBT9j6/huwB8nwV4nbZdZmCrchL2E7tDQ=",
+        "owner": "KZDKM",
+        "repo": "Hyprspace",
+        "rev": "c109256f5a79a8694acd6176971c4a273d32264c",
         "type": "github"
       },
       "original": {
-        "owner": "RomeoCavazza",
-        "ref": "rewrite/native-surface-055",
-        "repo": "hyprspace",
+        "owner": "KZDKM",
+        "ref": "main",
+        "repo": "Hyprspace",
         "type": "github"
       }
     },
