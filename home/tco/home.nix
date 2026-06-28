@@ -113,7 +113,7 @@ bind = $mod, P, canvas:pin'
     owner = "RomeoCavazza";
     repo = "hypr-canvas";
     rev = "v0.1.0-alpha";
-    hash = "sha256-nyxy9G8TwEuxDPqFDNRHQ28xjqdlgKAodtgNGZn2Br4=";
+    hash = "sha256-I9OxKFnTRoUOSRUSaKZhOnhH0fl7kOWFzALuAuwmyyg=";
   };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
