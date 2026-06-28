@@ -59,6 +59,7 @@ bind = $mod ALT SHIFT, down,  canvas:pan, down
 bind = $mod, minus,           canvas:zoom, out
 bind = $mod, equal,           canvas:zoom, in' '# Canvas mode
 bind = $mod, Z, canvas:toggle
+bind = $mod, R, canvas:home
 bind = $mod, X, canvas:center
 bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle
 bind = $mod, M, exec, $HOME/.local/bin/cursor-toggle
