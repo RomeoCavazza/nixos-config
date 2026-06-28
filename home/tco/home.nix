@@ -46,14 +46,6 @@ bind = $mod, left,  canvas:nav, left
 bind = $mod, right, canvas:nav, right
 bind = $mod, up,    canvas:nav, up
 bind = $mod, down,  canvas:nav, down' \
-        --replace-fail 'bind = $mod SHIFT, left,  swapwindow, l
-bind = $mod SHIFT, right, swapwindow, r
-bind = $mod SHIFT, up,    swapwindow, u
-bind = $mod SHIFT, down,  swapwindow, d' '# Canvas swap
-bind = $mod SHIFT, left,  canvas:swap, left
-bind = $mod SHIFT, right, canvas:swap, right
-bind = $mod SHIFT, up,    canvas:swap, up
-bind = $mod SHIFT, down,  canvas:swap, down' \
         --replace-fail '# Layout toggle (Simple, decoupled)
 bind = $mod, Z, exec, $HOME/.local/bin/hypr-layout-toggle
 bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle

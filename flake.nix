@@ -25,7 +25,7 @@
     hyprspace.inputs.hyprland.follows = "hyprland";
 
     hyprchroma = {
-      url = "github:RomeoCavazza/hyprchroma/v0.55.4";
+      url = "github:RomeoCavazza/hyprchroma/main";
       flake = false;
     };
 
