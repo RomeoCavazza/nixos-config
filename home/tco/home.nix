@@ -100,17 +100,12 @@ bind = $mod, equal, canvas:zoom, in
     '';
     meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
   };
-  hypr-canvas-local-src = /etc/nixos/.scratch/repos/romeo-hypr-canvas;
-  hypr-canvas-src =
-    if builtins.pathExists hypr-canvas-local-src then
-      pkgs.lib.cleanSource hypr-canvas-local-src
-    else
-      pkgs.fetchFromGitHub {
-        owner = "RomeoCavazza";
-        repo = "hypr-canvas";
-        rev = "46a694506130ae1883f832f9e54e876227470d0d";
-        hash = "sha256-Ees9PepYftkNXf0gSd0zzRDFXFzu8QOBGo0wQN7GOm4=";
-      };
+  hypr-canvas-src = pkgs.fetchFromGitHub {
+    owner = "RomeoCavazza";
+    repo = "hypr-canvas";
+    rev = "46a694506130ae1883f832f9e54e876227470d0d";
+    hash = "sha256-Ees9PepYftkNXf0gSd0zzRDFXFzu8QOBGo0wQN7GOm4=";
+  };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
     version = "0.3.0";
