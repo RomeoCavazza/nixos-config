@@ -108,8 +108,8 @@ bind = $mod, equal, canvas:zoom, in
       pkgs.fetchFromGitHub {
         owner = "RomeoCavazza";
         repo = "hypr-canvas";
-        rev = "202b535578e172c1f966582cac1b08ce5be27eb4";
-        hash = "sha256-UtCjXgEjN7N7WFqJI8hk5cI+FRyAtoeajdqvWmtYbOA=";
+        rev = "46a694506130ae1883f832f9e54e876227470d0d";
+        hash = "sha256-Ees9PepYftkNXf0gSd0zzRDFXFzu8QOBGo0wQN7GOm4=";
       };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
