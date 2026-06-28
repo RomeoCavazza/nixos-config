@@ -75,7 +75,8 @@ bind = $mod, minus, canvas:zoom, out
 bind = $mod, equal, canvas:zoom, in
 
 # Canvas extras
-# canvas:pin is exposed by the plugin but not bound until runtime behavior is polished.'
+bind = $mod, W, canvas:overview
+bind = $mod, P, canvas:pin'
     '';
 
   # Hyprchroma v3.4.1-v055 — unified adaptive tint release
@@ -100,15 +101,10 @@ bind = $mod, equal, canvas:zoom, in
     '';
     meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
   };
-  hypr-canvas-src = pkgs.fetchFromGitHub {
-    owner = "RomeoCavazza";
-    repo = "hypr-canvas";
-    rev = "46a694506130ae1883f832f9e54e876227470d0d";
-    hash = "sha256-Ees9PepYftkNXf0gSd0zzRDFXFzu8QOBGo0wQN7GOm4=";
-  };
+  hypr-canvas-src = pkgs.lib.cleanSource /etc/nixos/.scratch/repos/hypr-canvas;
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
-    version = "0.3.0";
+    version = "0.4.2";
 
     srcs = [ ];
     dontUnpack = true;
