@@ -5,4 +5,4 @@ config/bin/*.png
 *.prom.tmp.*
 
 # Brouillons locaux
-docs/idées
+.scratch/
