@@ -46,6 +46,14 @@ bind = $mod, left,  canvas:nav, left
 bind = $mod, right, canvas:nav, right
 bind = $mod, up,    canvas:nav, up
 bind = $mod, down,  canvas:nav, down' \
+        --replace-fail 'bind = $mod SHIFT, left,  swapwindow, l
+bind = $mod SHIFT, right, swapwindow, r
+bind = $mod SHIFT, up,    swapwindow, u
+bind = $mod SHIFT, down,  swapwindow, d' '# Canvas swap
+bind = $mod SHIFT, left,  canvas:swap, left
+bind = $mod SHIFT, right, canvas:swap, right
+bind = $mod SHIFT, up,    canvas:swap, up
+bind = $mod SHIFT, down,  canvas:swap, down' \
         --replace-fail '# Layout toggle (Simple, decoupled)
 bind = $mod, Z, exec, $HOME/.local/bin/hypr-layout-toggle
 bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle
@@ -60,6 +68,7 @@ bind = $mod, minus,           canvas:zoom, out
 bind = $mod, equal,           canvas:zoom, in' '# Canvas mode
 bind = $mod, Z, canvas:toggle
 bind = $mod, X, canvas:center
+bind = $mod, R, canvas:home
 bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle
 bind = $mod, M, exec, $HOME/.local/bin/cursor-toggle
 
@@ -100,10 +109,15 @@ bind = $mod, P, canvas:pin'
     '';
     meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
   };
-  hypr-canvas-src = pkgs.lib.cleanSource /etc/nixos/.scratch/repos/hypr-canvas;
+  hypr-canvas-src = pkgs.fetchFromGitHub {
+    owner = "RomeoCavazza";
+    repo = "hypr-canvas";
+    rev = "19c1036c2b5d76285f50c8367282cfe72413a08b";
+    hash = "sha256-lWVWOJ9hws7IFmfS4e9L9XA5bDQcZ32fiz7Kar2VKlg=";
+  };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
-    version = "0.4.2";
+    version = "0.4.3";
 
     srcs = [ ];
     dontUnpack = true;
