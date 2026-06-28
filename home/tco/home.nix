@@ -30,6 +30,53 @@ let
           source/waybar/style.scss \
           $out/style.css
       '';
+  hyprConfig = pkgs.runCommand "hypr-config-canvas"
+    { }
+    ''
+      cp -R ${inputs.hypr-config}/. $out/
+      chmod -R u+w $out
+
+      substituteInPlace $out/hyprland.conf \
+        --replace-fail 'bind = $mod, F, togglefloating' 'bind = $mod, F, canvas:float' \
+        --replace-fail 'bind = $mod, left,  movefocus, l
+bind = $mod, right, movefocus, r
+bind = $mod, up,    movefocus, u
+bind = $mod, down,  movefocus, d' '# Canvas navigation
+bind = $mod, left,  canvas:nav, left
+bind = $mod, right, canvas:nav, right
+bind = $mod, up,    canvas:nav, up
+bind = $mod, down,  canvas:nav, down' \
+        --replace-fail '# Layout toggle (Simple, decoupled)
+bind = $mod, Z, exec, $HOME/.local/bin/hypr-layout-toggle
+bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle
+bind = $mod, M, exec, $HOME/.local/bin/cursor-toggle
+# Hypr-canvas binds
+bind = $mod, R, canvas:reset,
+bind = $mod ALT SHIFT, left,  canvas:pan, left
+bind = $mod ALT SHIFT, right, canvas:pan, right
+bind = $mod ALT SHIFT, up,    canvas:pan, up
+bind = $mod ALT SHIFT, down,  canvas:pan, down
+bind = $mod, minus,           canvas:zoom, out
+bind = $mod, equal,           canvas:zoom, in' '# Canvas mode
+bind = $mod, Z, canvas:toggle
+bind = $mod, R, canvas:home
+bind = $mod, X, canvas:center
+bind = $mod, B, exec, $HOME/.local/bin/waybar-toggle
+bind = $mod, M, exec, $HOME/.local/bin/cursor-toggle
+
+# Manual viewport nudge
+bind = $mod ALT SHIFT, left,  canvas:pan, left
+bind = $mod ALT SHIFT, right, canvas:pan, right
+bind = $mod ALT SHIFT, up,    canvas:pan, up
+bind = $mod ALT SHIFT, down,  canvas:pan, down
+
+# Zoom
+bind = $mod, minus, canvas:zoom, out
+bind = $mod, equal, canvas:zoom, in
+
+# Canvas extras
+# canvas:pin is exposed by the plugin but not bound until runtime behavior is polished.'
+    '';
 
   # Hyprchroma v3.4.1-v055 — unified adaptive tint release
   hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
@@ -53,12 +100,17 @@ let
     '';
     meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
   };
-  hypr-canvas-src = pkgs.fetchFromGitHub {
-    owner = "RomeoCavazza";
-    repo = "hypr-canvas";
-    rev = "e245d426d4b34f321f6dfc58d155fcb551ae40fd";
-    hash = "sha256-h2qz/AYxXZmctL2orVbQR2k5wD0fIEl/x073SYSG2j4=";
-  };
+  hypr-canvas-local-src = /etc/nixos/.scratch/repos/romeo-hypr-canvas;
+  hypr-canvas-src =
+    if builtins.pathExists hypr-canvas-local-src then
+      pkgs.lib.cleanSource hypr-canvas-local-src
+    else
+      pkgs.fetchFromGitHub {
+        owner = "RomeoCavazza";
+        repo = "hypr-canvas";
+        rev = "202b535578e172c1f966582cac1b08ce5be27eb4";
+        hash = "sha256-UtCjXgEjN7N7WFqJI8hk5cI+FRyAtoeajdqvWmtYbOA=";
+      };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
     version = "0.3.0";
@@ -211,7 +263,7 @@ in
     ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
 
   home.file.".config/hypr" = {
-    source = inputs.hypr-config;
+    source = hyprConfig;
     force = true;
   };
   home.file.".config/waybar".source = waybarConfig;
@@ -264,8 +316,12 @@ in
   };
 
   home.file.".local/bin/hypr-layout-toggle" = {
-    source = "${inputs.hypr-config}/bin/hypr-layout-toggle";
     executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      exec hyprctl dispatch canvas:toggle
+    '';
   };
 
   home.file.".local/bin/hypr-close-all" = {
