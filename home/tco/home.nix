@@ -112,12 +112,12 @@ bind = $mod, P, canvas:pin'
   hypr-canvas-src = pkgs.fetchFromGitHub {
     owner = "RomeoCavazza";
     repo = "hypr-canvas";
-    rev = "47e02dc176174211a03be7fe26e2e4fe5f0f7bee";
-    hash = "sha256-kRT2b6/hSdfNSNq0hEedpWj5O3f4G73MNOYFbtqQFwE=";
+    rev = "1113892240a921933f353d269d400dd6412130b2";
+    hash = "sha256-4vxvlS1yhBv/S6YsZCoXh/vRUl2Jn9+8X3OLBgst9mU=";
   };
   hypr-canvas = pkgs.stdenv.mkDerivation {
     pname = "hypr-canvas";
-    version = "0.4.4";
+    version = "0.4.5";
 
     srcs = [ ];
     dontUnpack = true;
