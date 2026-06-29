@@ -38,8 +38,8 @@
     ../../modules/desktop/polkit.nix
     ../../modules/desktop/keyring.nix
 
-    ../../modules/emacs.nix
-    ../../modules/launcher.nix
+    ../../modules/dev/emacs.nix
+    ../../modules/desktop/launcher
     ../../modules/observability
   ];
 
