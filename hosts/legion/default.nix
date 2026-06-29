@@ -9,6 +9,10 @@
     ../../modules/core/nix-ld.nix
     ../../modules/core/packages.nix
 
+    ../../modules/boot/loader.nix
+    ../../modules/boot/kernel.nix
+    ../../modules/boot/windows-entry.nix
+
     ../../modules/hardware/nvidia-prime.nix
     ../../modules/hardware/audio.nix
     ../../modules/hardware/bluetooth.nix
@@ -26,37 +30,6 @@
   ];
 
   services.guix.enable = true;
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.editor = false;
-  boot.loader.systemd-boot.configurationLimit = 1;
-  boot.loader.timeout = null;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  boot.loader.systemd-boot.extraEntries."windows.conf" = ''
-    title Windows 11
-    sort-key windows
-    efi /EFI/Microsoft/Boot/bootmgfw.efi
-  '';
-
-  boot.loader.systemd-boot.extraInstallCommands = ''
-    conf=/boot/loader/loader.conf
-    ${pkgs.gnused}/bin/sed -i '/^timeout /d; /^auto-entries /d' "$conf"
-    echo "timeout menu-force" >> "$conf"
-    echo "auto-entries no" >> "$conf"
-  '';
-
-  boot.kernelModules = [ "i2c-dev" "i2c-i801" ];
-
-  boot.kernelParams = [
-    "nvidia-drm.modeset=1"
-    "pcie_aspm=off"
-  ];
-
-  boot.blacklistedKernelModules = [
-    "iTCO_wdt"
-    "iTCO_vendor_support"
-  ];
 
   nixpkgs.config.allowUnfree = true;
 
