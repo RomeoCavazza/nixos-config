@@ -12,6 +12,7 @@
     ../../modules/core/session.nix
     ../../modules/core/logging.nix
     ../../modules/core/build-sandbox.nix
+    ../../modules/core/programs.nix
 
     ../../modules/boot/loader.nix
     ../../modules/boot/kernel.nix
@@ -52,10 +53,6 @@
   ];
 
   home-manager.backupFileExtension = "backup";
-
-  programs.zoxide.enable = true;
-  programs.direnv.enable = true;
-  programs.direnv.nix-direnv.enable = true;
 
   environment.systemPackages = with pkgs; [
     (python313.withPackages (ps: with ps; [
@@ -126,11 +123,6 @@
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
-  };
-
-  programs.appimage = {
-    enable = true;
-    binfmt = true;
   };
 
   system.stateVersion = "26.05";
