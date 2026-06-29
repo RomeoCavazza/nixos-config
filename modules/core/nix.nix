@@ -1,7 +1,8 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
-  # nix.package is still set in the flake's inline module; it moves here in Run 2B.
+  nix.package = pkgs.nixVersions.latest;
+
   nix.settings = {
     allowed-users = [ "@wheel" "tco" ];
     experimental-features = [ "nix-command" "flakes" ];

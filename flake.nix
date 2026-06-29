@@ -45,30 +45,11 @@
   outputs = {
     self,
     nixpkgs,
-    nixpkgs-stable,
-    nixpkgs-portal,
-    nixpkgs-legacy,
     home-manager,
     ...
   }@inputs:
     let
       system = "x86_64-linux";
-
-      pkgs-stable = import nixpkgs-stable {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
-      pkgs-portal = import nixpkgs-portal {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
-      # Création du channel legacy
-      pkgs-legacy = import nixpkgs-legacy {
-        inherit system;
-        config.allowUnfree = true;
-      };
     in {
       nixosConfigurations.legion = nixpkgs.lib.nixosSystem {
         inherit system;
@@ -86,39 +67,17 @@
           home-manager.nixosModules.home-manager
 
           ({ pkgs, lib, ... }: {
-            nix.package = pkgs.nixVersions.latest;
-
             nixpkgs.config.allowUnfreePredicate = pkg:
               builtins.elem (lib.getName pkg) [
                 "unrar"
               ];
 
-            nixpkgs.overlays = [
-              (import inputs.rust-overlay)
-
-              (final: prev: {
-                hyprland = inputs.hyprland.packages.${system}.hyprland;
-                hyprland-unwrapped = inputs.hyprland.packages.${system}.hyprland-unwrapped;
-                xdg-desktop-portal-hyprland = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-
-                promtail-bin = pkgs-legacy.promtail;
-                
-                guix = pkgs-stable.guix;
-                xdg-desktop-portal = pkgs-portal.xdg-desktop-portal;
-                xdg-desktop-portal-gtk = pkgs-portal.xdg-desktop-portal-gtk;
-                xdg-desktop-portal-gnome = pkgs-portal.xdg-desktop-portal-gnome;
-              })
-            ];
+            nixpkgs.overlays = import ./overlays { inherit inputs system; };
 
             environment.systemPackages = with pkgs; [
               unrar
               usbutils
               pciutils
-            ];
-
-            users.users.tco.extraGroups = [
-              "dialout"
-              "plugdev"
             ];
 
             services.udev.packages = [ ];
