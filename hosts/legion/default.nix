@@ -2,15 +2,15 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/nvidia-prime.nix
-    ./modules/virtualisation.nix
-    ./modules/emacs.nix
-    ./modules/launcher.nix
-    ./modules/databases.nix
-    ./modules/ollama.nix
-    ./modules/nginx.nix
-    ./modules/observability.nix
-    ./modules/gdm-wallpaper.nix
+    ../../modules/nvidia-prime.nix
+    ../../modules/virtualisation.nix
+    ../../modules/emacs.nix
+    ../../modules/launcher.nix
+    ../../modules/databases.nix
+    ../../modules/ollama.nix
+    ../../modules/nginx.nix
+    ../../modules/observability.nix
+    ../../modules/gdm-wallpaper.nix
   ];
 
   services.guix.enable = true;
@@ -159,7 +159,7 @@
 
   services.displayManager.gdm.customWallpaper = {
     enable = true;
-    path = ./docs/assets/gdm-background.png;
+    path = ../../docs/assets/gdm-background.png;
   };
 
   services.desktopManager.gnome.enable = true;

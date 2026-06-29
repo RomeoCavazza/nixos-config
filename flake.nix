@@ -70,7 +70,7 @@
         config.allowUnfree = true;
       };
     in {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.legion = nixpkgs.lib.nixosSystem {
         inherit system;
 
         specialArgs = {
@@ -79,7 +79,7 @@
         };
 
         modules = [
-          ./configuration.nix
+          ./hosts/legion/default.nix
           inputs.nix-snapd.nixosModules.default
           inputs.sops-nix.nixosModules.sops
           ./modules/backup.nix
@@ -134,5 +134,9 @@
           })
         ];
       };
+
+      # Compat alias for the nixos -> legion rename (rebuild wrapper, muscle memory).
+      # Remove in a dedicated run once nothing references #nixos.
+      nixosConfigurations.nixos = self.nixosConfigurations.legion;
     };
 }

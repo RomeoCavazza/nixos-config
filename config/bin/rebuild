@@ -9,7 +9,7 @@ OUTFILE="/var/lib/node_exporter/textfile_collector/nix-rebuild.prom"
 
 # Use the nixos-rebuild from the running system to avoid sudo PATH issues.
 NIXOS_REBUILD=/run/current-system/sw/bin/nixos-rebuild
-FLAKE_REF=/etc/nixos#nixos
+FLAKE_REF=/etc/nixos#legion
 
 start_ns=$(date +%s%N)
 start_ts=$(date +%s)
