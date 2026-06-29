@@ -14,6 +14,6 @@
     ../modules/core/logging.nix
     ../modules/core/build-sandbox.nix
     ../modules/core/programs.nix
-    ../modules/core/packages-extra.nix
+    ../modules/core/packages-extra
   ];
 }

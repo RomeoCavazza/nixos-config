@@ -6,7 +6,7 @@
     ./modules/apps/embedded.nix
     ./modules/apps/data.nix
     ./scripts
-    ./packages.nix
+    ./packages
     ./shell.nix
     ./gtk.nix
     ./apps.nix
