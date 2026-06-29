@@ -1,0 +1,15 @@
+{
+  imports = [
+    ../modules/core/nix.nix
+    ../modules/core/locale.nix
+    ../modules/core/users.nix
+    ../modules/core/nix-ld.nix
+    ../modules/core/packages.nix
+    ../modules/core/networking.nix
+    ../modules/core/session.nix
+    ../modules/core/logging.nix
+    ../modules/core/build-sandbox.nix
+    ../modules/core/programs.nix
+    ../modules/core/packages-extra.nix
+  ];
+}
