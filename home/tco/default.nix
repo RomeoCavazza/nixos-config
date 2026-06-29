@@ -10,8 +10,7 @@
     ./shell.nix
     ./gtk.nix
     ./apps.nix
-    ./hyprland.nix
-    ./waybar.nix
+    ./hyprland
     ./dotfiles.nix
   ];
 

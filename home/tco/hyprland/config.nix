@@ -1,9 +1,4 @@
-{
-  pkgs,
-  inputs,
-  customPkgs,
-  ...
-}:
+{ pkgs, inputs, ... }:
 
 let
   hyprConfig = pkgs.runCommand "hypr-config-canvas" { } ''
@@ -57,20 +52,5 @@ in
   home.file.".config/hypr" = {
     source = hyprConfig;
     force = true;
-  };
-
-  home.file.".local/lib/libhypr-darkwindow.so" = {
-    source = "${customPkgs.hypr-darkwindow}/lib/libhypr-darkwindow.so";
-    executable = true;
-  };
-
-  home.file.".local/lib/hypr-canvas.so" = {
-    source = "${customPkgs.hypr-canvas}/lib/hypr-canvas.so";
-    executable = true;
-  };
-
-  home.file.".local/lib/hyprspace.so" = {
-    source = "${customPkgs.hyprspace}/lib/libHyprspace.so";
-    executable = true;
   };
 }
