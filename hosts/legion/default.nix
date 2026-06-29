@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -13,6 +13,7 @@
     ../../modules/core/logging.nix
     ../../modules/core/build-sandbox.nix
     ../../modules/core/programs.nix
+    ../../modules/core/packages-extra.nix
 
     ../../modules/boot/loader.nix
     ../../modules/boot/kernel.nix
@@ -53,63 +54,6 @@
   ];
 
   home-manager.backupFileExtension = "backup";
-
-  environment.systemPackages = with pkgs; [
-    (python313.withPackages (ps: with ps; [
-      pydantic
-      anyio
-      smbus2
-      pyserial
-    ]))
-
-    i2c-tools
-
-    adwaita-icon-theme
-    papirus-icon-theme
-    bibata-cursors
-    brightnessctl
-    appimage-run
-    fuse2
-    fuse3
-    libxshmfence
-    bash
-    vim
-    neovim
-    git
-    wget
-    curl
-    jq
-    lsof
-    iw
-    ethtool
-    pciutils
-    usbutils
-    tree
-    ripgrep
-    fd
-    fzf
-    fastfetch
-    btop
-    htop
-    kitty
-    foot
-    firefox
-    google-chrome
-    wl-clipboard
-    pavucontrol
-    networkmanager
-    polkit_gnome
-    nix-ld
-    mesa
-    libglvnd
-    libdrm
-    steam-run
-    wineWow64Packages.stable
-    winetricks
-    just
-    eza
-    openhantek6022
-  ];
 
   environment.shellAliases = {
     scope = "bash ~/Applications/launch-hantek.sh";
