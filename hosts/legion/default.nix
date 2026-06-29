@@ -2,6 +2,12 @@
 {
   imports = [
     ./hardware-configuration.nix
+
+    ../../modules/core/nix.nix
+    ../../modules/core/locale.nix
+    ../../modules/core/users.nix
+    ../../modules/core/nix-ld.nix
+
     ../../modules/nvidia-prime.nix
     ../../modules/virtualisation.nix
     ../../modules/emacs.nix
@@ -48,22 +54,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  nix.settings = {
-    allowed-users = [ "@wheel" "tco" ];
-    experimental-features = [ "nix-command" "flakes" ];
-    auto-optimise-store = true;
-    warn-dirty = false;
-    download-buffer-size = 268435456;
-    sandbox = true;
-    sandbox-build-dir = "/build";
-  };
-
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
-
   systemd.tmpfiles.rules = [
     "d ${config.users.users.tco.home}/.cache/wal 0755 tco users -"
     "d /home/nix-build 2775 root nixbld - -"
@@ -82,45 +72,6 @@
     neededForBoot = false;
   };
 
-  programs.nix-ld.enable = true;
-
-  programs.nix-ld.libraries = with pkgs; [
-    stdenv.cc.cc.lib
-    zlib
-    openssl
-    curl
-    glib
-    gtk3
-    pango
-    cairo
-    atk
-    at-spi2-atk
-    at-spi2-core
-    gdk-pixbuf
-    dbus
-    expat
-    udev
-    alsa-lib
-    cups
-    nspr
-    nss
-    libxshmfence
-    libx11
-    libxcb
-    libxcomposite
-    libxdamage
-    libxext
-    libxfixes
-    libxrandr
-    libxtst
-    libxkbfile
-    libxkbcommon
-    mesa
-    libgbm
-    libglvnd
-    libdrm
-  ];
-
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
@@ -130,25 +81,6 @@
   networking.extraHosts = ''
     157.230.26.170 poll.dop.io result.dop.io
   '';
-
-  time.timeZone = "Europe/Paris";
-  i18n.defaultLocale = "fr_FR.UTF-8";
-  console.keyMap = "fr";
-
-  users.users.tco = {
-    isNormalUser = true;
-    shell = pkgs.bash;
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "docker"
-      "libvirtd"
-      "dialout"
-      "i2c"
-      "plugdev"
-    ];
-  };
 
   services.xserver = {
     enable = true;
