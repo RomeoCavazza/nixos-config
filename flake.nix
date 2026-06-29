@@ -84,7 +84,7 @@
               flakeSelf = self;
             };
 
-            home-manager.users.tco = import ./home/tco/home.nix;
+            home-manager.users.tco = import ./home/tco;
           })
         ];
       };
