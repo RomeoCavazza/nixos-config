@@ -86,6 +86,7 @@ in
     ./modules/apps/cad.nix
     ./modules/apps/embedded.nix
     ./modules/apps/data.nix
+    ./scripts
   ];
 
   home.username = "tco";
@@ -193,106 +194,6 @@ in
   home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/doom";
   xdg.configFile."eDEX-UI/settings.json".source = "${inputs.hypr-config}/edex/settings.json";
 
-  home.file.".local/bin/cursor" = {
-    source = ../../config/bin/cursor;
-    executable = true;
-  };
-
-  home.file.".local/bin/cursor-toggle" = {
-    source = ../../config/bin/cursor-toggle;
-    executable = true;
-  };
-
-  home.file.".local/bin/devin" = {
-    source = ../../config/bin/devin;
-    executable = true;
-  };
-
-  home.file.".local/bin/antigravity" = {
-    source = ../../config/bin/antigravity;
-    executable = true;
-  };
-
-  home.file.".local/bin/antigravity-ide" = {
-    source = ../../config/bin/antigravity-ide;
-    executable = true;
-  };
-
-  home.file.".local/bin/hypr-plugins-init" = {
-    source = "${inputs.hypr-config}/bin/hypr-plugins-init";
-    executable = true;
-  };
-
-  home.file.".local/bin/hypr-gap-state.sh" = {
-    source = "${inputs.hypr-config}/bin/hypr-gap-state.sh";
-    executable = true;
-  };
-
-  home.file.".local/bin/hypr-overview-toggle" = {
-    source = "${inputs.hypr-config}/bin/hypr-overview-toggle";
-    executable = true;
-  };
-
-  home.file.".local/bin/hypr-layout-toggle" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      exec hyprctl dispatch canvas:toggle
-    '';
-  };
-
-  home.file.".local/bin/hypr-close-all" = {
-    source = "${inputs.hypr-config}/bin/hypr-close-all";
-    executable = true;
-  };
-
-  home.file.".local/bin/edex-conky-toggle" = {
-    source = "${inputs.hypr-config}/bin/edex-conky-toggle";
-    executable = true;
-  };
-
-  home.file.".local/bin/edex-toggle" = {
-    source = "${inputs.hypr-config}/bin/edex-toggle";
-    executable = true;
-  };
-
-  home.file.".local/bin/edex-ui-toggle" = {
-    source = "${inputs.hypr-config}/bin/edex-toggle";
-    executable = true;
-  };
-
-  home.file.".local/bin/edex-ui-run" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      export SHELL="''${SHELL:-${pkgs.bashInteractive}/bin/bash}"
-      export TERM="''${TERM:-xterm-256color}"
-      export COLORTERM="''${COLORTERM:-truecolor}"
-      export PATH="''${PATH:-${config.home.profileDirectory}/bin:/run/current-system/sw/bin}"
-      export LD_LIBRARY_PATH="${pkgs.libxshmfence}/lib:''${LD_LIBRARY_PATH:-}"
-      exec ${pkgs.appimage-run}/bin/appimage-run ${customPkgs.edex-ui-appimage} \
-        --no-sandbox --disable-gpu-sandbox \
-        --ozone-platform=x11 --disable-features=UseOzonePlatform "$@"
-    '';
-  };
-
-  home.file.".local/bin/waybar-toggle" = {
-    source = "${inputs.hypr-config}/bin/waybar-toggle";
-    executable = true;
-  };
-
-  home.file.".local/bin/rebuild" = {
-    source = ../../config/bin/rebuild;
-    executable = true;
-  };
-
-  home.file.".local/bin/scss-compile" = {
-    source = "${inputs.hypr-config}/bin/scss-compile";
-    executable = true;
-  };
-
   home.file.".local/lib/libhypr-darkwindow.so" = {
     source = "${customPkgs.hypr-darkwindow}/lib/libhypr-darkwindow.so";
     executable = true;
@@ -305,16 +206,6 @@ in
 
   home.file.".local/lib/hyprspace.so" = {
     source = "${customPkgs.hyprspace}/lib/libHyprspace.so";
-    executable = true;
-  };
-
-  home.file.".local/bin/legion-pulse" = {
-    source = ../../config/bin/legion-pulse;
-    executable = true;
-  };
-
-  home.file.".local/bin/legion-toggle" = {
-    source = ../../config/bin/legion-toggle;
     executable = true;
   };
 
