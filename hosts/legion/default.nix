@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -25,10 +25,16 @@
     ../../modules/services/ollama.nix
     ../../modules/services/virtualisation.nix
 
+    ../../modules/desktop/display-manager.nix
+    ../../modules/desktop/gnome.nix
+    ../../modules/desktop/hyprland
+    ../../modules/desktop/portals.nix
+    ../../modules/desktop/polkit.nix
+    ../../modules/desktop/keyring.nix
+
     ../../modules/emacs.nix
     ../../modules/launcher.nix
     ../../modules/observability.nix
-    ../../modules/gdm-wallpaper.nix
   ];
 
   services.guix.enable = true;
@@ -63,70 +69,7 @@
     157.230.26.170 poll.dop.io result.dop.io
   '';
 
-  services.xserver = {
-    enable = true;
-    xkb.layout = "fr";
-  };
-
-  services.displayManager.gdm.enable = true;
-
-  services.displayManager.gdm.customWallpaper = {
-    enable = true;
-    path = ../../docs/assets/gdm-background.png;
-  };
-
-  services.desktopManager.gnome.enable = true;
-
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-  };
-
-  security.wrappers.Hyprland.capabilities = lib.mkForce "";
-
-  services.gnome.gnome-keyring.enable = true;
-
-  xdg.portal = {
-    enable = true;
-    xdgOpenUsePortal = false;
-
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-hyprland
-      xdg-desktop-portal-gtk
-    ];
-
-    config = {
-      common = {
-        default = [ "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-      };
-
-      hyprland = {
-        default = [ "hyprland" "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-      };
-
-      Hyprland = {
-        default = [ "hyprland" "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-      };
-    };
-  };
-
   home-manager.backupFileExtension = "backup";
-
-  security.polkit.enable = true;
-
-  systemd.user.services.polkit-gnome-authentication-agent-1 = {
-    description = "polkit-gnome-authentication-agent-1";
-    wantedBy = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
-    };
-  };
 
   services.logind.settings.Login.KillUserProcesses = true;
   systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
