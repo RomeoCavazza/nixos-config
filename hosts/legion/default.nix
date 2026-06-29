@@ -11,6 +11,7 @@
     ../../modules/core/networking.nix
     ../../modules/core/session.nix
     ../../modules/core/logging.nix
+    ../../modules/core/build-sandbox.nix
 
     ../../modules/boot/loader.nix
     ../../modules/boot/kernel.nix
@@ -46,21 +47,9 @@
 
   systemd.tmpfiles.rules = [
     "d ${config.users.users.tco.home}/.cache/wal 0755 tco users -"
-    "d /home/nix-build 2775 root nixbld - -"
     "d /nix/var/nix/profiles/per-user/tco 0755 tco users -"
     "d /nix/var/nix/gcroots/per-user/tco 0755 tco users -"
   ];
-
-  fileSystems."/build" = {
-    device = "/home/nix-build";
-    fsType = "none";
-    options = [
-      "bind"
-      "x-systemd.requires-mounts-for=/home"
-      "x-systemd.mkdir"
-    ];
-    neededForBoot = false;
-  };
 
   home-manager.backupFileExtension = "backup";
 
