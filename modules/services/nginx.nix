@@ -81,9 +81,4 @@ in
       };
     };
   };
-
-  networking.firewall.allowedTCPPorts = [
-    8082
-    8084
-  ];
 }
