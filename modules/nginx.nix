@@ -71,12 +71,6 @@ in
         upstream = "http://${loopback}:80";
       };
 
-      "streamlit.localhost-proxy" = mkLocalProxy {
-        serverName = "streamlit.localhost";
-        port = 8083;
-        upstream = "http://${loopback}:8501";
-      };
-
       # Legacy localhost -> :80 proxy, moved away from 8081 so it no longer
       # shadows OpsWarden's jury-facing Compose port.
       "legacy-localhost-proxy" = mkLocalProxy {
@@ -90,7 +84,6 @@ in
 
   networking.firewall.allowedTCPPorts = [
     8082
-    8083
     8084
   ];
 }
