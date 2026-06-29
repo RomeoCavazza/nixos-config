@@ -1,8 +1,11 @@
 {
   imports = [
     ../modules/core/nix.nix
+    ../modules/core/nixpkgs-policy.nix
     ../modules/core/locale.nix
     ../modules/core/users.nix
+    ../modules/core/user-dirs.nix
+    ../modules/core/home-manager.nix
     ../modules/core/nix-ld.nix
     ../modules/core/packages.nix
     ../modules/core/networking.nix
