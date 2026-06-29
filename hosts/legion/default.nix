@@ -40,7 +40,7 @@
 
     ../../modules/emacs.nix
     ../../modules/launcher.nix
-    ../../modules/observability.nix
+    ../../modules/observability
   ];
 
   services.guix.enable = true;
