@@ -1,9 +1,8 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, customPkgs, ... }:
 
 let
   # home/tco/scripts/ is two levels below the repo root.
   repoRoot = ../../..;
-  customPkgs = import (repoRoot + "/pkgs") { inherit pkgs inputs; };
 in
 {
   # --- Vendored in this repo (config/bin/) ---

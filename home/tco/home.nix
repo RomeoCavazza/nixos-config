@@ -4,11 +4,10 @@
   lib,
   inputs,
   flakeSelf,
+  customPkgs,
   ...
 }:
 let
-  customPkgs = import ../../pkgs { inherit pkgs inputs; };
-
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {

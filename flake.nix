@@ -65,7 +65,11 @@
           inputs.sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
 
-          ({ lib, ... }: {
+          ({ pkgs, lib, ... }:
+          let
+            customPkgs = import ./pkgs { inherit pkgs inputs; };
+          in
+          {
             nixpkgs.config.allowUnfreePredicate = pkg:
               builtins.elem (lib.getName pkg) [
                 "unrar"
@@ -76,7 +80,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {
-              inherit inputs;
+              inherit inputs customPkgs;
               flakeSelf = self;
             };
 
