@@ -8,6 +8,9 @@
     ../../modules/core/users.nix
     ../../modules/core/nix-ld.nix
     ../../modules/core/packages.nix
+    ../../modules/core/networking.nix
+    ../../modules/core/session.nix
+    ../../modules/core/logging.nix
 
     ../../modules/boot/loader.nix
     ../../modules/boot/kernel.nix
@@ -59,26 +62,11 @@
     neededForBoot = false;
   };
 
-  networking.hostName = "nixos";
-  networking.networkmanager.enable = true;
-  networking.networkmanager.wifi.powersave = false;
-
-  # Démo Bernstein (seminar-dop) : résolution locale vers un nœud du cluster DOKS.
-  # /!\ IP éphémère — à retirer/mettre à jour si le cluster est recréé.
-  networking.extraHosts = ''
-    157.230.26.170 poll.dop.io result.dop.io
-  '';
-
   home-manager.backupFileExtension = "backup";
-
-  services.logind.settings.Login.KillUserProcesses = true;
-  systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
 
   programs.zoxide.enable = true;
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
-
-  services.logrotate.enable = true;
 
   environment.systemPackages = with pkgs; [
     (python313.withPackages (ps: with ps; [

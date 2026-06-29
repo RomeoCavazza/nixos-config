@@ -1,0 +1,5 @@
+{ ... }:
+
+{
+  services.logrotate.enable = true;
+}
