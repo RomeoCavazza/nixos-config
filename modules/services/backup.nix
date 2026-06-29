@@ -8,12 +8,6 @@ let
   environmentFile = config.sops.templates."restic-b2.env".path;
 in
 {
-  # The source file is committed encrypted with SOPS.
-  sops.defaultSopsFile = ../../secrets/backup.yaml;
-  # Decrypt with a dedicated machine Age identity kept outside the repo.
-  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
-  sops.age.sshKeyPaths = [ ];
-
   sops.secrets.restic_password = {};
   sops.secrets.b2_key_id = {};
   sops.secrets.b2_app_key = {};

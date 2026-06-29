@@ -1,10 +1,11 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
-  # TODO(security): this Grafana secret_key is committed in plaintext in a public
-  # repo. Migrate to sops-nix in the dedicated security run — do NOT change the
-  # mechanism here (this run is a pure split).
-  environment.etc."grafana-secret-key".text = "SW2YcwTIb9zpOOhoPsMm";
+  sops.secrets.grafana_secret_key = {
+    owner = "grafana";
+    group = "grafana";
+    mode = "0400";
+  };
 
   services.grafana = {
     enable = true;
@@ -22,7 +23,7 @@
         root_url = "http://localhost:3000/";
       };
       security = {
-        secret_key = "$__file{/etc/grafana-secret-key}";
+        secret_key = "$__file{${config.sops.secrets.grafana_secret_key.path}}";
       };
       "auth.anonymous" = {
         enabled = true;

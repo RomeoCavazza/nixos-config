@@ -6,6 +6,7 @@
     ../modules/core/users.nix
     ../modules/core/user-dirs.nix
     ../modules/core/home-manager.nix
+    ../modules/core/secrets.nix
     ../modules/core/nix-ld.nix
     ../modules/core/packages.nix
     ../modules/core/networking.nix
