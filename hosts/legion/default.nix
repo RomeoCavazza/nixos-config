@@ -19,12 +19,14 @@
     ../../modules/hardware/graphics.nix
     ../../modules/hardware/udev-rules.nix
 
-    ../../modules/virtualisation.nix
+    ../../modules/services/backup.nix
+    ../../modules/services/databases.nix
+    ../../modules/services/nginx.nix
+    ../../modules/services/ollama.nix
+    ../../modules/services/virtualisation.nix
+
     ../../modules/emacs.nix
     ../../modules/launcher.nix
-    ../../modules/databases.nix
-    ../../modules/ollama.nix
-    ../../modules/nginx.nix
     ../../modules/observability.nix
     ../../modules/gdm-wallpaper.nix
   ];

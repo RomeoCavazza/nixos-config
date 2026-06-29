@@ -63,7 +63,6 @@
           ./hosts/legion/default.nix
           inputs.nix-snapd.nixosModules.default
           inputs.sops-nix.nixosModules.sops
-          ./modules/backup.nix
           home-manager.nixosModules.home-manager
 
           ({ lib, ... }: {
