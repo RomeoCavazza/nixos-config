@@ -7,7 +7,8 @@
   ...
 }:
 let
-  hyprland-pkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+  customPkgs = import ../../pkgs { inherit pkgs inputs; };
+
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {
@@ -79,85 +80,6 @@ bind = $mod, W, canvas:overview
 bind = $mod, P, canvas:pin'
     '';
 
-  # Hyprchroma v3.4.1-v055 — unified adaptive tint release
-  hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
-  hypr-darkwindow = pkgs.stdenv.mkDerivation {
-    pname = "hypr-darkwindow";
-    version = "3.4.1-v055";
-    srcs = [ ];
-    dontUnpack = true;
-    nativeBuildInputs = [ pkgs.pkg-config ];
-    buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
-    buildPhase = ''
-      g++ -shared -fPIC -std=c++2b -O2 \
-        $(pkg-config --cflags hyprland pixman-1 libdrm) \
-        -DWLR_USE_UNSTABLE \
-        ${hyprchroma-src}/src/main.cpp \
-        -o libhypr-darkwindow.so
-    '';
-    installPhase = ''
-      mkdir -p $out/lib
-      cp libhypr-darkwindow.so $out/lib/
-    '';
-    meta.description = "Hyprchroma v3.4.1-v055 — unified adaptive tint release";
-  };
-  hypr-canvas-src = pkgs.fetchFromGitHub {
-    owner = "RomeoCavazza";
-    repo = "hypr-canvas";
-    rev = "v0.1.0-alpha";
-    hash = "sha256-I9OxKFnTRoUOSRUSaKZhOnhH0fl7kOWFzALuAuwmyyg=";
-  };
-  hypr-canvas = pkgs.stdenv.mkDerivation {
-    pname = "hypr-canvas";
-    version = "0.1.0-alpha";
-
-    srcs = [ ];
-    dontUnpack = true;
-
-    nativeBuildInputs = [ pkgs.pkg-config ];
-    buildInputs = [ hyprland-pkg ] ++ hyprland-pkg.buildInputs;
-
-    buildPhase = ''
-      g++ -shared -fPIC -std=c++2b -O2 \
-        $(pkg-config --cflags hyprland pixman-1 libdrm) \
-        ${hypr-canvas-src}/src/main.cpp ${hypr-canvas-src}/src/canvas.cpp \
-        -o hypr-canvas.so
-    '';
-
-    installPhase = ''
-      mkdir -p $out/lib
-      cp hypr-canvas.so $out/lib/
-    '';
-
-    meta.description = "Infinite canvas plugin for Hyprland";
-  };
-  hyprspace = inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace;
-
-  terminal-rain-lightning = pkgs.python3Packages.buildPythonApplication {
-    pname = "terminal-rain-lightning";
-    version = "master";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "rmaake1";
-      repo = "terminal-rain-lightning";
-      rev = "master";
-      hash = "sha256-GJvGnvo78l4RK2Y9ACbqOXHLQkNtIwIktbm/FK1vOcc=";
-    };
-
-    format = "pyproject";
-
-    nativeBuildInputs = with pkgs.python3Packages; [
-      setuptools
-      wheel
-    ];
-
-    doCheck = false;
-  };
-
-  edexUiAppImage = pkgs.fetchurl {
-    url = "https://github.com/GitSquared/edex-ui/releases/download/v2.2.8/eDEX-UI-Linux-x86_64.AppImage";
-    sha256 = "c8f28cd721ca032ca0c1960b756ca3e64dc441a643c32eafbb79c673b402d681";
-  };
 in
 {
   imports = [
@@ -350,7 +272,7 @@ in
       export COLORTERM="''${COLORTERM:-truecolor}"
       export PATH="''${PATH:-${config.home.profileDirectory}/bin:/run/current-system/sw/bin}"
       export LD_LIBRARY_PATH="${pkgs.libxshmfence}/lib:''${LD_LIBRARY_PATH:-}"
-      exec ${pkgs.appimage-run}/bin/appimage-run ${edexUiAppImage} \
+      exec ${pkgs.appimage-run}/bin/appimage-run ${customPkgs.edex-ui-appimage} \
         --no-sandbox --disable-gpu-sandbox \
         --ozone-platform=x11 --disable-features=UseOzonePlatform "$@"
     '';
@@ -372,17 +294,17 @@ in
   };
 
   home.file.".local/lib/libhypr-darkwindow.so" = {
-    source = "${hypr-darkwindow}/lib/libhypr-darkwindow.so";
+    source = "${customPkgs.hypr-darkwindow}/lib/libhypr-darkwindow.so";
     executable = true;
   };
 
   home.file.".local/lib/hypr-canvas.so" = {
-    source = "${hypr-canvas}/lib/hypr-canvas.so";
+    source = "${customPkgs.hypr-canvas}/lib/hypr-canvas.so";
     executable = true;
   };
 
   home.file.".local/lib/hyprspace.so" = {
-    source = "${hyprspace}/lib/libHyprspace.so";
+    source = "${customPkgs.hyprspace}/lib/libHyprspace.so";
     executable = true;
   };
 
@@ -500,7 +422,7 @@ in
     hollywood
     pipes
     sl
-    terminal-rain-lightning
+    customPkgs.terminal-rain-lightning
     dart-sass
   ];
 
