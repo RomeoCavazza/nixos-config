@@ -4,8 +4,14 @@
   nix.package = pkgs.nixVersions.latest;
 
   nix.settings = {
-    allowed-users = [ "@wheel" "tco" ];
-    experimental-features = [ "nix-command" "flakes" ];
+    allowed-users = [
+      "@wheel"
+      "tco"
+    ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     auto-optimise-store = true;
     warn-dirty = false;
     download-buffer-size = 268435456;

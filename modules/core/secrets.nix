@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 {
   # The source file is committed encrypted with SOPS.

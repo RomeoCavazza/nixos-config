@@ -1,11 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # ============================================================================
   # POSTGRESQL 17 (Local Dev)
   # ============================================================================
   services.postgresql = {
-    enable  = true;
+    enable = true;
     package = pkgs.postgresql_17;
     dataDir = "/var/lib/postgresql/17";
 
@@ -32,12 +32,16 @@
   # ============================================================================
   services.redis.servers.insider = {
     enable = true;
-    port   = 6379;
-    bind   = "127.0.0.1";
+    port = 6379;
+    bind = "127.0.0.1";
 
     settings = {
       appendonly = "yes";
-      save = [ "900 1" "300 10" "60 10000" ];
+      save = [
+        "900 1"
+        "300 10"
+        "60 10000"
+      ];
       maxmemory = "2gb";
       maxmemory-policy = "allkeys-lru";
       loglevel = "notice";

@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 let
   textfileDir = "/var/lib/node_exporter/textfile_collector";
@@ -15,7 +15,12 @@ in
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9100;
-    enabledCollectors = [ "hwmon" "thermal_zone" "pressure" "systemd" ];
+    enabledCollectors = [
+      "hwmon"
+      "thermal_zone"
+      "pressure"
+      "systemd"
+    ];
     extraFlags = [ "--collector.textfile.directory=${textfileDir}" ];
   };
 

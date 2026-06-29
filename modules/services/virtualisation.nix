@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # ============================================================================
@@ -6,11 +6,14 @@
   # ============================================================================
   virtualisation.docker = {
     enable = true;
-    
+
     # Automatic Garbage Collection
     autoPrune = {
       enable = true;
-      flags = [ "--all" "--volumes" ];
+      flags = [
+        "--all"
+        "--volumes"
+      ];
     };
   };
 

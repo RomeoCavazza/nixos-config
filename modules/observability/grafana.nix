@@ -53,11 +53,13 @@
           editable = false;
         }
       ];
-      dashboards.settings.providers = [{
-        name = "nixos";
-        type = "file";
-        options.path = "/etc/nixos/config/grafana";
-      }];
+      dashboards.settings.providers = [
+        {
+          name = "nixos";
+          type = "file";
+          options.path = "/etc/nixos/config/grafana";
+        }
+      ];
     };
   };
 }

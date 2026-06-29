@@ -1,4 +1,10 @@
-{ config, pkgs, inputs, customPkgs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  customPkgs,
+  ...
+}:
 
 let
   # home/tco/scripts/ is two levels below the repo root.

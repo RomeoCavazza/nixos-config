@@ -17,12 +17,18 @@
       };
 
       hyprland = {
-        default = [ "hyprland" "gtk" ];
+        default = [
+          "hyprland"
+          "gtk"
+        ];
         "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
       };
 
       Hyprland = {
-        default = [ "hyprland" "gtk" ];
+        default = [
+          "hyprland"
+          "gtk"
+        ];
         "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
       };
     };

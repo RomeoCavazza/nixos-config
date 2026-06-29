@@ -8,9 +8,9 @@ let
   environmentFile = config.sops.templates."restic-b2.env".path;
 in
 {
-  sops.secrets.restic_password = {};
-  sops.secrets.b2_key_id = {};
-  sops.secrets.b2_app_key = {};
+  sops.secrets.restic_password = { };
+  sops.secrets.b2_key_id = { };
+  sops.secrets.b2_app_key = { };
 
   sops.templates."restic-b2.env" = {
     mode = "0400";

@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 {
   # /build is the Nix sandbox build directory (sandbox-build-dir in core/nix.nix).

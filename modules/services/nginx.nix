@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 let
   loopback = "127.0.0.1";
@@ -16,34 +16,36 @@ let
     extraConfig = "add_header Content-Type text/plain;";
   };
 
-  mkLocalProxy = {
-    serverName,
-    port,
-    upstream,
-    forwardedHost ? serverName,
-  }: {
-    inherit serverName;
-    listen = listenOn port;
-    locations = {
-      "/" = {
-        proxyPass = upstream;
-        proxyWebsockets = true;
-        extraConfig = ''
-          proxy_set_header Host              ${forwardedHost};
-          proxy_set_header X-Forwarded-Host  ${forwardedHost};
+  mkLocalProxy =
+    {
+      serverName,
+      port,
+      upstream,
+      forwardedHost ? serverName,
+    }:
+    {
+      inherit serverName;
+      listen = listenOn port;
+      locations = {
+        "/" = {
+          proxyPass = upstream;
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host              ${forwardedHost};
+            proxy_set_header X-Forwarded-Host  ${forwardedHost};
 
-          proxy_set_header X-Real-IP         $remote_addr;
-          proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-        '';
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+          '';
+        };
+
+        # Cheap local smoke checks for these helper proxies. The actual upstream
+        # can still be down; app-specific health checks should target real routes.
+        "=/" = okResponse;
+        "/health" = okResponse;
       };
-
-      # Cheap local smoke checks for these helper proxies. The actual upstream
-      # can still be down; app-specific health checks should target real routes.
-      "=/" = okResponse;
-      "/health" = okResponse;
     };
-  };
 in
 {
   services.nginx = {

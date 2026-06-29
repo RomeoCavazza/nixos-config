@@ -5,10 +5,21 @@ let
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
-    runtimeInputs = [ pkgs.curl pkgs.git pkgs.nodejs pkgs.openssh pkgs.imagemagick pkgs.coreutils pkgs.gawk pkgs.google-chrome pkgs.playwright-driver ];
+    runtimeInputs = [
+      pkgs.curl
+      pkgs.git
+      pkgs.nodejs
+      pkgs.openssh
+      pkgs.imagemagick
+      pkgs.coreutils
+      pkgs.gawk
+      pkgs.google-chrome
+      pkgs.playwright-driver
+    ];
     text = ''
       export PLAYWRIGHT_CORE_PATH=${pkgs.playwright-driver}
-    '' + builtins.readFile (repoRoot + "/config/bin/grafana-snapshot-sync");
+    ''
+    + builtins.readFile (repoRoot + "/config/bin/grafana-snapshot-sync");
   };
 in
 {
@@ -19,8 +30,15 @@ in
 
   systemd.services.grafana-snapshot-sync = {
     description = "Render Grafana dashboards and sync changed PNGs to git";
-    after = [ "grafana.service" "nginx.service" "network-online.target" ];
-    wants = [ "nginx.service" "network-online.target" ];
+    after = [
+      "grafana.service"
+      "nginx.service"
+      "network-online.target"
+    ];
+    wants = [
+      "nginx.service"
+      "network-online.target"
+    ];
     serviceConfig = {
       Type = "oneshot";
       User = "tco";

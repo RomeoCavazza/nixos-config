@@ -6,3 +6,9 @@ config/bin/*.png
 
 # Brouillons locaux
 .scratch/
+
+# Nix/dev artifacts
+result
+result-*
+.direnv/
+.envrc

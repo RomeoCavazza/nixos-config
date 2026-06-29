@@ -1,4 +1,4 @@
-{ ... }:
+_:
 
 {
   # Kill leftover user processes on logout and cap the unit stop timeout so

@@ -4,12 +4,14 @@
   # Catch-all system package set, moved verbatim from the host (no functional sorting).
   # TODO: split into core CLI / desktop / dev / gaming / media / hardware in a later run.
   environment.systemPackages = with pkgs; [
-    (python313.withPackages (ps: with ps; [
-      pydantic
-      anyio
-      smbus2
-      pyserial
-    ]))
+    (python313.withPackages (
+      ps: with ps; [
+        pydantic
+        anyio
+        smbus2
+        pyserial
+      ]
+    ))
 
     i2c-tools
 

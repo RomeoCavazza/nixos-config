@@ -5,13 +5,23 @@ let
 
   nixMetricsScript = pkgs.writeShellApplication {
     name = "nix-metrics";
-    runtimeInputs = [ pkgs.nix pkgs.coreutils pkgs.findutils pkgs.gawk pkgs.python3 ];
+    runtimeInputs = [
+      pkgs.nix
+      pkgs.coreutils
+      pkgs.findutils
+      pkgs.gawk
+      pkgs.python3
+    ];
     text = builtins.readFile (repoRoot + "/config/bin/nix-metrics");
   };
 
   hyprMetricsScript = pkgs.writeShellApplication {
     name = "hypr-metrics";
-    runtimeInputs = [ pkgs.hyprland pkgs.coreutils pkgs.jq ];
+    runtimeInputs = [
+      pkgs.hyprland
+      pkgs.coreutils
+      pkgs.jq
+    ];
     text = builtins.readFile (repoRoot + "/config/bin/hypr-metrics");
   };
 in

@@ -7,7 +7,7 @@
     # ==========================================================================
     arduino-ide
     arduino-cli
-    esptool  # ESP8266/ESP32 Flasher
-    minicom  # Serial Monitor
+    esptool # ESP8266/ESP32 Flasher
+    minicom # Serial Monitor
   ];
 }

@@ -1,7 +1,10 @@
-{ ... }:
+_:
 
 {
-  boot.kernelModules = [ "i2c-dev" "i2c-i801" ];
+  boot.kernelModules = [
+    "i2c-dev"
+    "i2c-i801"
+  ];
 
   boot.kernelParams = [
     "nvidia-drm.modeset=1"

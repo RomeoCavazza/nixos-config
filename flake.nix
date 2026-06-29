@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-portal.url = "github:NixOS/nixpkgs/nixos-26.05";
-    
+
     nixpkgs-legacy.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     home-manager.url = "github:nix-community/home-manager";
@@ -42,15 +42,137 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
-    in {
+      pkgs = import nixpkgs { inherit system; };
+      mkApp = package: description: {
+        type = "app";
+        program = "${package}/bin/${package.meta.mainProgram}";
+        meta = { inherit description; };
+      };
+      qualityScripts = rec {
+        fmt = pkgs.writeShellApplication {
+          name = "nixos-config-fmt";
+          runtimeInputs = [
+            pkgs.git
+            pkgs.nixfmt
+          ];
+          text = ''
+            git ls-files '*.nix' | xargs nixfmt
+          '';
+        };
+
+        fmt-check = pkgs.writeShellApplication {
+          name = "nixos-config-fmt-check";
+          runtimeInputs = [
+            pkgs.git
+            pkgs.nixfmt
+          ];
+          text = ''
+            git ls-files '*.nix' | xargs nixfmt --check
+          '';
+        };
+
+        deadnix = pkgs.writeShellApplication {
+          name = "nixos-config-deadnix";
+          runtimeInputs = [
+            pkgs.git
+            pkgs.deadnix
+          ];
+          text = ''
+            mapfile -t nix_files < <(git ls-files '*.nix')
+            deadnix --fail "''${nix_files[@]}"
+          '';
+        };
+
+        statix = pkgs.writeShellApplication {
+          name = "nixos-config-statix";
+          runtimeInputs = [ pkgs.statix ];
+          text = ''
+            statix check .
+          '';
+        };
+
+        quality = pkgs.writeShellApplication {
+          name = "nixos-config-quality";
+          runtimeInputs = [ pkgs.nix ];
+          text = ''
+            ${fmt-check}/bin/nixos-config-fmt-check
+            ${deadnix}/bin/nixos-config-deadnix
+            ${statix}/bin/nixos-config-statix
+            nix flake check --no-build
+          '';
+        };
+      };
+    in
+    {
+      formatter.${system} = pkgs.nixfmt;
+
+      devShells.${system}.default = pkgs.mkShell {
+        packages = with pkgs; [
+          deadnix
+          nil
+          nixfmt
+          statix
+        ];
+      };
+
+      apps.${system} = {
+        fmt = mkApp qualityScripts.fmt "Format tracked Nix files with nixfmt.";
+        fmt-check = mkApp qualityScripts.fmt-check "Check tracked Nix formatting.";
+        deadnix = mkApp qualityScripts.deadnix "Fail on unused Nix declarations.";
+        statix = mkApp qualityScripts.statix "Run configured statix lint checks.";
+        quality = mkApp qualityScripts.quality "Run the local quality gate.";
+      };
+
+      checks.${system} = {
+        fmt =
+          pkgs.runCommand "nixos-config-fmt-check"
+            {
+              nativeBuildInputs = [ pkgs.nixfmt ];
+              src = self;
+            }
+            ''
+              cp -R "$src" source
+              chmod -R u+w source
+              cd source
+              find . -name '*.nix' -print0 | xargs -0 nixfmt --check
+              touch "$out"
+            '';
+
+        deadnix =
+          pkgs.runCommand "nixos-config-deadnix-check"
+            {
+              nativeBuildInputs = [ pkgs.deadnix ];
+              src = self;
+            }
+            ''
+              find "$src" -name '*.nix' -print0 | xargs -0 deadnix --fail
+              touch "$out"
+            '';
+
+        statix =
+          pkgs.runCommand "nixos-config-statix-check"
+            {
+              nativeBuildInputs = [ pkgs.statix ];
+              src = self;
+            }
+            ''
+              cp -R "$src" source
+              chmod -R u+w source
+              cd source
+              statix check .
+              touch "$out"
+            '';
+      };
+
       nixosConfigurations.legion = nixpkgs.lib.nixosSystem {
         inherit system;
 
@@ -65,27 +187,30 @@
           inputs.sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
 
-          ({ pkgs, lib, ... }:
-          let
-            customPkgs = import ./pkgs { inherit pkgs inputs; };
-          in
-          {
-            nixpkgs.config.allowUnfreePredicate = pkg:
-              builtins.elem (lib.getName pkg) [
-                "unrar"
-              ];
+          (
+            { pkgs, lib, ... }:
+            let
+              customPkgs = import ./pkgs { inherit pkgs inputs; };
+            in
+            {
+              nixpkgs.config.allowUnfreePredicate =
+                pkg:
+                builtins.elem (lib.getName pkg) [
+                  "unrar"
+                ];
 
-            nixpkgs.overlays = import ./overlays { inherit inputs system; };
+              nixpkgs.overlays = import ./overlays { inherit inputs system; };
 
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit inputs customPkgs;
-              flakeSelf = self;
-            };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = {
+                inherit inputs customPkgs;
+                flakeSelf = self;
+              };
 
-            home-manager.users.tco = import ./home/tco;
-          })
+              home-manager.users.tco = import ./home/tco;
+            }
+          )
         ];
       };
 
