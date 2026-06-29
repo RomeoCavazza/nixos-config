@@ -7,6 +7,7 @@
     ../../modules/core/locale.nix
     ../../modules/core/users.nix
     ../../modules/core/nix-ld.nix
+    ../../modules/core/packages.nix
 
     ../../modules/nvidia-prime.nix
     ../../modules/virtualisation.nix

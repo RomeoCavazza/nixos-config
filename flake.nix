@@ -66,21 +66,13 @@
           ./modules/backup.nix
           home-manager.nixosModules.home-manager
 
-          ({ pkgs, lib, ... }: {
+          ({ lib, ... }: {
             nixpkgs.config.allowUnfreePredicate = pkg:
               builtins.elem (lib.getName pkg) [
                 "unrar"
               ];
 
             nixpkgs.overlays = import ./overlays { inherit inputs system; };
-
-            environment.systemPackages = with pkgs; [
-              unrar
-              usbutils
-              pciutils
-            ];
-
-            services.udev.packages = [ ];
 
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
