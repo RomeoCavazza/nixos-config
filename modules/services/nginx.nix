@@ -73,9 +73,9 @@ in
         upstream = "http://${loopback}:80";
       };
 
-      # Legacy localhost -> :80 proxy, moved away from 8081 so it no longer
+      # Local localhost -> :80 proxy, moved away from 8081 so it no longer
       # shadows OpsWarden's jury-facing Compose port.
-      "legacy-localhost-proxy" = mkLocalProxy {
+      "localhost-8084-proxy" = mkLocalProxy {
         serverName = "localhost";
         port = 8084;
         upstream = "http://${loopback}:80";

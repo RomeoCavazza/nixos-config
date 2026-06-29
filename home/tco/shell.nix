@@ -81,8 +81,6 @@ _:
       g = "git";
       ll = "eza -l --icons";
       ls = "eza --icons";
-      devai = "nix develop /etc/nixos#ai";
-      devemb = "nix develop /etc/nixos#embedded";
       rebuild = "command rebuild";
     };
   };
