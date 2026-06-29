@@ -9,7 +9,12 @@
     ../../modules/core/nix-ld.nix
     ../../modules/core/packages.nix
 
-    ../../modules/nvidia-prime.nix
+    ../../modules/hardware/nvidia-prime.nix
+    ../../modules/hardware/audio.nix
+    ../../modules/hardware/bluetooth.nix
+    ../../modules/hardware/graphics.nix
+    ../../modules/hardware/udev-rules.nix
+
     ../../modules/virtualisation.nix
     ../../modules/emacs.nix
     ../../modules/launcher.nix
@@ -135,27 +140,6 @@
 
   home-manager.backupFileExtension = "backup";
 
-  hardware.enableRedistributableFirmware = true;
-
-  hardware.i2c.enable = true;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
-
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-
-  services.hardware.openrgb.enable = true;
-
   security.polkit.enable = true;
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
@@ -253,15 +237,6 @@
     enable = true;
     binfmt = true;
   };
-
-  services.udev.extraRules = ''
-    # Hantek 6074BC USB Raw
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="04b5", ATTRS{idProduct}=="6cde", MODE="0666", TAG+="uaccess"
-
-    # TinySA Ultra TTY/ACM
-    KERNEL=="ttyACM*", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0666", TAG+="uaccess"
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0666", TAG+="uaccess"
-  '';
 
   system.stateVersion = "26.05";
 }
