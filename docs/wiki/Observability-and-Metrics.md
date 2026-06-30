@@ -36,7 +36,7 @@ sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c [./config/bin/grafana-generate](
 
 The primary view for overall system health and real-time monitoring.
 
-![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/live-dashboard.png)
+![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
 
 Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/nix-dashboard.jsonnet)
 
@@ -50,7 +50,7 @@ Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavaz
 
 Tracking drift, generation debt, and the cost of system rebuilds.
 
-![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/nix-efficiency.png)
+![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/nix-efficiency.png)
 
 Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)
 
@@ -63,7 +63,7 @@ Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com
 
 Log correlation matched with hardware risk signals for fast root-cause analysis.
 
-![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/incident-dashboard.png)
+![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/incident-dashboard.png)
 
 Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)
 
@@ -94,7 +94,7 @@ Promtail adds a `component` label for targeted LogQL queries:
 1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/).
 2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/bin/grafana-generate) produces the provisioned JSON in [`config/grafana/dashboards/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/dashboards/).
 3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 6h.
-4. **Publish**: PNGs reaching >0.5% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/live/).
+4. **Publish**: PNGs reaching >0.3% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/tree/snapshots/docs/assets/live).
 
-Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/live/).
+Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/tree/snapshots/docs/assets/live).
 Publisher checkout: `/var/lib/grafana-snapshot-sync/nixos-config`.
