@@ -12,6 +12,5 @@
     obs-studio
     discord
     spotify
-    dart-sass
   ];
 }

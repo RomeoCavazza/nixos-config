@@ -28,9 +28,7 @@
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_STYLE_OVERRIDE = "kvantum";
-    PATH = "$HOME/.local/bin:$PATH";
     XDG_DATA_DIRS = "$HOME/.local/share:$XDG_DATA_DIRS";
-    ELECTRON_OZONE_PLATFORM_HINT = "x11";
   };
 
   xdg.enable = true;

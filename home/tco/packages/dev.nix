@@ -12,7 +12,6 @@
     shfmt
     zed-editor
     neovim
-    git
     gh
     lua
     lua-language-server

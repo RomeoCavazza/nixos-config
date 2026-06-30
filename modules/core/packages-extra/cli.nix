@@ -6,10 +6,9 @@
   environment.systemPackages = with pkgs; [
     bash
     vim
-    git
+    git # recovery basic: root needs it for flake rebuild + config recovery (tco inherits via system PATH)
     wget
     curl
-    jq
     lsof
     tree
     fastfetch

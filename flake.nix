@@ -212,9 +212,5 @@
           )
         ];
       };
-
-      # Compat alias for the nixos -> legion rename (rebuild wrapper, muscle memory).
-      # Remove in a dedicated run once nothing references #nixos.
-      nixosConfigurations.nixos = self.nixosConfigurations.legion;
     };
 }

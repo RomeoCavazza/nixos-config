@@ -117,12 +117,13 @@ databases.nix:
   - PostgreSQL 17 + PostGIS, Redis (2GB allkeys-lru, AOF+RDB), Qdrant :6333.
 
 nginx.nix:
-  - Four virtual hosts, all on 127.0.0.1, all with WebSocket proxying:
+  - Three virtual hosts, all on 127.0.0.1, all with WebSocket proxying:
     * localhost:3000  → Grafana listener :3001  (grafana.localhost-proxy)
-    * localhost:8081  → localhost:80             (localhost-proxy, generic dev)
     * dev.localhost:8082 → localhost:80          (dev.localhost-proxy)
-    * streamlit.localhost:8083 → localhost:8501  (streamlit.localhost-proxy)
-  - Ports 8081/8082/8083 opened in firewall. Port 3000 is loopback-only.
+    * localhost:8084  → localhost:80             (localhost-8084-proxy)
+  - All loopback-only; the firewall opens no extra ports (allowedTCPPorts = []).
+    Port 8081 is intentionally left free for OpsWarden's `client_web` Compose
+    service. streamlit.nix exists but is not imported, so it has no vhost here.
 
 --------------------------------------------------------------------------------
 4b. HOME MANAGER USER MODULES (home/tco/modules/apps/)

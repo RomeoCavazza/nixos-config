@@ -1,6 +1,7 @@
 _:
 
 let
+  ports = import ../observability/ports.nix;
   loopback = "127.0.0.1";
 
   listenOn = port: [
@@ -63,9 +64,9 @@ in
       # Grafana helper: keeps localhost:3000 pointing at the real Grafana port.
       "grafana.localhost-proxy" = {
         serverName = "localhost";
-        listen = listenOn 3000;
+        listen = listenOn ports.grafanaProxy;
         locations."/" = {
-          proxyPass = "http://${loopback}:3001";
+          proxyPass = "http://${loopback}:${toString ports.grafana}";
           proxyWebsockets = true;
         };
       };

@@ -1,6 +1,7 @@
 { locality, pkgs, ... }:
 
 let
+  inherit (locality) user;
   repoRoot = ../../.;
 
   nixMetricsScript = pkgs.writeShellApplication {
@@ -50,7 +51,7 @@ in
     description = "Collect Hyprland workspace and window metrics";
     serviceConfig = {
       Type = "oneshot";
-      User = "tco";
+      User = user;
       ExecStart = "${hyprMetricsScript}/bin/hypr-metrics";
     };
   };

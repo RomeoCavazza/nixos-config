@@ -4,7 +4,7 @@
     ../../profiles/workstation.nix
   ];
 
-  networking.hostName = "nixos";
+  networking.hostName = "legion";
 
   # Legion-specific PRIME bus IDs. Verify with `lspci` if the motherboard/GPU
   # topology changes.

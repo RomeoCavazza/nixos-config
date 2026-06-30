@@ -5,6 +5,16 @@
   ...
 }:
 
+let
+  ports = import ./ports.nix;
+  # Warn (don't fail) when the config/grafana submodule is uninitialized, so a
+  # missing dashboards dir is visible in the journal instead of silently empty.
+  dashboardsCheck = pkgs.writeShellScript "grafana-dashboards-check" ''
+    if [ -z "$(${pkgs.coreutils}/bin/ls -A ${locality.repoCheckout}/config/grafana 2>/dev/null)" ]; then
+      echo "WARNING: ${locality.repoCheckout}/config/grafana is empty — git submodule not initialized? Run 'git submodule update --init'. Grafana will provision no dashboards." >&2
+    fi
+  '';
+in
 {
   sops.secrets.grafana_secret_key = {
     owner = "grafana";
@@ -24,8 +34,8 @@
     settings = {
       server = {
         http_addr = "127.0.0.1";
-        http_port = 3001;
-        root_url = "http://localhost:3000/";
+        http_port = ports.grafana;
+        root_url = "http://localhost:${toString ports.grafanaProxy}/";
       };
       security = {
         disable_gravatar = true;
@@ -58,7 +68,7 @@
           name = "Prometheus";
           type = "prometheus";
           access = "proxy";
-          url = "http://127.0.0.1:9090";
+          url = "http://127.0.0.1:${toString ports.prometheus}";
           isDefault = true;
           editable = false;
         }
@@ -67,7 +77,7 @@
           name = "Loki";
           type = "loki";
           access = "proxy";
-          url = "http://127.0.0.1:3100";
+          url = "http://127.0.0.1:${toString ports.loki}";
           editable = false;
         }
       ];
@@ -80,4 +90,6 @@
       ];
     };
   };
+
+  systemd.services.grafana.serviceConfig.ExecStartPre = [ "${dashboardsCheck}" ];
 }

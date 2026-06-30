@@ -1,16 +1,17 @@
 { pkgs, ... }:
 
 let
+  ports = import ./ports.nix;
   promtailConfig = pkgs.writeText "promtail.yaml" (
     builtins.toJSON {
       server = {
         http_listen_address = "127.0.0.1";
-        http_listen_port = 9080;
+        http_listen_port = ports.promtail;
         grpc_listen_address = "127.0.0.1";
         grpc_listen_port = 0;
       };
       positions.filename = "/var/lib/promtail/positions.yaml";
-      clients = [ { url = "http://127.0.0.1:3100/loki/api/v1/push"; } ];
+      clients = [ { url = "http://127.0.0.1:${toString ports.loki}/loki/api/v1/push"; } ];
       scrape_configs = [
         {
           job_name = "journal";

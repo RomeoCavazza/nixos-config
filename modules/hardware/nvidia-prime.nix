@@ -32,12 +32,16 @@
     # ==========================================================================
     # PRIME OFFLOAD (Hybrid Graphics)
     # ==========================================================================
+    # NOTE: hosts importing this module MUST set the GPU bus IDs (offload fails
+    # to evaluate without them), e.g. in hosts/<host>/default.nix:
+    #   hardware.nvidia.prime.intelBusId  = "PCI:0:2:0";
+    #   hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
+    # Find the values with `lspci`.
     prime = {
       offload = {
         enable = true;
         enableOffloadCmd = true; # Provides `nvidia-offload` command
       };
-
     };
   };
 }

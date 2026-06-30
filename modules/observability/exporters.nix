@@ -1,20 +1,22 @@
-_:
+{ locality, ... }:
 
 let
+  inherit (locality) user;
+  ports = import ./ports.nix;
   textfileDir = "/var/lib/node_exporter/textfile_collector";
 in
 {
-  # tco owns the dir so the rebuild wrapper can write nix-rebuild.prom without sudo.
+  # The primary user owns the dir so the rebuild wrapper can write nix-rebuild.prom without sudo.
   # nix-metrics runs as root and can write there regardless.
   # node_exporter reads 644 files — no group membership needed.
   systemd.tmpfiles.rules = [
-    "d ${textfileDir} 0755 tco users -"
+    "d ${textfileDir} 0755 ${user} users -"
   ];
 
   services.prometheus.exporters.node = {
     enable = true;
     listenAddress = "127.0.0.1";
-    port = 9100;
+    port = ports.node;
     enabledCollectors = [
       "hwmon"
       "thermal_zone"
@@ -27,6 +29,6 @@ in
   services.prometheus.exporters.nvidia-gpu = {
     enable = true;
     listenAddress = "127.0.0.1";
-    port = 9835;
+    port = ports.nvidia;
   };
 }

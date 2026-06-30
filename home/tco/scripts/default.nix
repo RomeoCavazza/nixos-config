@@ -41,21 +41,12 @@ let
     "waybar-toggle"
     "scss-compile"
   ];
-
-  # Kept as a distinct command name, but intentionally backed by the same
-  # upstream toggle script as edex-toggle.
-  hyprConfigAliases = {
-    "edex-ui-toggle" = "edex-toggle";
-  };
 in
 {
   home.file =
     builtins.listToAttrs (
       map mkLocalBin vendoredBins
       ++ map (name: mkInputBin name name) hyprConfigBins
-      ++ builtins.attrValues (
-        builtins.mapAttrs (name: sourceName: mkInputBin name sourceName) hyprConfigAliases
-      )
     )
     // {
       # --- Inline scripts ---
