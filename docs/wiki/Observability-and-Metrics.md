@@ -1,7 +1,7 @@
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/logo/graphana.png" alt="Grafana" width="26" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/logo/loki.png" alt="Loki" width="26" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/logo/prometheus.png" alt="Prometheus" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/logo/graphana.png" alt="Grafana" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/logo/loki.png" alt="Loki" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/logo/prometheus.png" alt="Prometheus" width="26" />
 </p>
 
 ## Stack Summary
@@ -17,7 +17,7 @@ The stack is intentionally small: Prometheus and Node Exporter handle metrics, L
 | Promtail | systemd service | Journald scraping and labeling |
 | Grafana | `localhost:3000` | Dashboards and correlation UI |
 
-All services are Nix-declared in [`modules/observability.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/observability.nix) and activated with `nixos-rebuild`.
+All services are Nix-declared in [`modules/observability.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/observability.nix) and activated with `nixos-rebuild`.
 
 
 ## Dashboards Overview
@@ -29,16 +29,16 @@ Snapshots are captured every 6 hours (`grafana-snapshot-sync.timer`) and pushed 
 Regeneration command:
 ```bash
 cd /etc/nixos
-sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c [./config/bin/grafana-generate](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate)
+sudo -E nix shell nixpkgs#jsonnet nixpkgs#jq -c [./config/bin/grafana-generate](https://github.com/RomeoCavazza/nixos-config/blob/main/config/bin/grafana-generate)
 ```
 
 ### 1. NixOS System Cockpit
 
 The primary view for overall system health and real-time monitoring.
 
-![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/live-dashboard.png)
+![NixOS Metrics Live](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/live-dashboard.png)
 
-Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-dashboard.jsonnet)
+Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/nix-dashboard.jsonnet)
 
 - **Operational Rail (25 Gauges)**: CPU/RAM/PSI, Thermal sensors, Store Fill, Journal Incidents, hyprland status.
 - **Resource Pressure Heatmap**: Multi-dimensional view of CPU/Mem/IO pressure with sharpened raw spikes.
@@ -50,9 +50,9 @@ Source: [config/grafana/src/nix-dashboard.jsonnet](https://github.com/RomeoCavaz
 
 Tracking drift, generation debt, and the cost of system rebuilds.
 
-![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/nix-efficiency.png)
+![Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/nix-efficiency.png)
 
-Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)
+Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/nix-efficiency-dashboard.jsonnet)
 
 - **Generation Debt**: `nix_generations_count` and `nix_flake_lock_age_seconds`.
 - **Closure Shape**: `nix_closure_bytes` vs `nix_store_bytes` ratio.
@@ -63,9 +63,9 @@ Source: [config/grafana/src/nix-efficiency-dashboard.jsonnet](https://github.com
 
 Log correlation matched with hardware risk signals for fast root-cause analysis.
 
-![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/live/incident-dashboard.png)
+![Incident Dashboard](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/live/incident-dashboard.png)
 
-Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)
+Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/incident-correlation-dashboard.jsonnet)
 
 - **Incident Risk River**: Stream graph of disk/net risk signals vs log volume.
 - **Journal Logs**: Filtered incident feed (`failed`, `panic`, `segfault`, etc.).
@@ -78,7 +78,7 @@ Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://gith
 
 Prometheus is the verification layer. If a dashboard panel looks wrong, this is where raw `nix_*` or `node_*` series are checked first.
 
-![Prometheus query view](https://raw.githubusercontent.com/RomeoCavazza/setup-os/refs/heads/main/docs/assets/prometheus.png)
+![Prometheus query view](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/main/docs/assets/prometheus.png)
 
 ### Log Correlation Labels (Promtail)
 
@@ -91,10 +91,10 @@ Promtail adds a `component` label for targeted LogQL queries:
 
 ## Technical Pipeline
 
-1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/src/).
-2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-generate) produces the provisioned JSON in [`config/grafana/dashboards/`](https://github.com/RomeoCavazza/setup-os/blob/main/config/grafana/dashboards/).
-3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/setup-os/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 6h.
-4. **Publish**: PNGs reaching >0.5% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
+1. **Source**: Dashboards defined in [`config/grafana/src/*.jsonnet`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/src/).
+2. **Compile**: [`grafana-generate`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/bin/grafana-generate) produces the provisioned JSON in [`config/grafana/dashboards/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/grafana/dashboards/).
+3. **Capture**: [`grafana-snapshot-sync.timer`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/bin/grafana-snapshot-sync) captures PNGs every 6h.
+4. **Publish**: PNGs reaching >0.5% delta are pushed to [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/live/).
 
-Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/setup-os/blob/main/docs/assets/live/).
-Publisher checkout: `/var/lib/grafana-snapshot-sync/setup-os`.
+Rendered assets path: [`docs/assets/live/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/live/).
+Publisher checkout: `/var/lib/grafana-snapshot-sync/nixos-config`.

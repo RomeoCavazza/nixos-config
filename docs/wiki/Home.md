@@ -4,23 +4,23 @@
 [![Hyprland](https://img.shields.io/badge/Hyprland-v0.54.2-blue)](https://hyprland.org)
 [![Home Manager](https://img.shields.io/badge/Home%20Manager-Integrated-4E9A06)](https://github.com/nix-community/home-manager)
 [![SOPS-nix](https://img.shields.io/badge/Secrets-SOPS%2FAge-FF6600)](https://github.com/Mic92/sops-nix)
-[![Observability](https://img.shields.io/badge/Observability-Prometheus%20%7C%20Loki%20%7C%20Grafana-0E7490?logo=grafana&logoColor=white)](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
+[![Observability](https://img.shields.io/badge/Observability-Prometheus%20%7C%20Loki%20%7C%20Grafana-0E7490?logo=grafana&logoColor=white)](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics)
 
 > **Declarative workstation infrastructure.**
 > This is a reproducible, auditable NixOS system with pinned inputs, encrypted secrets, and integrated observability.
 
-![](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/htop.png)
+![](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/htop.png)
 
 ---
 
 ## Overview
 
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository.
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary documentation resource for this repository.
 
-- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic) — inputs, overlays, build flow, and rollback strategy.
-- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown) — per-module deep-dive into the engineering decisions.
-- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets) — SOPS/Age cryptographic model and secret lifecycle.
-- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics) — Dashboards, correlation logs, and live snapshots.
+- [Architecture & Flake Logic](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture-&-Flake-Logic) — inputs, overlays, build flow, and rollback strategy.
+- [Modules Breakdown](https://github.com/RomeoCavazza/nixos-config/wiki/Modules-Breakdown) — per-module deep-dive into the engineering decisions.
+- [Security & Secrets](https://github.com/RomeoCavazza/nixos-config/wiki/Security-&-Secrets) — SOPS/Age cryptographic model and secret lifecycle.
+- [Observability and Metrics](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics) — Dashboards, correlation logs, and live snapshots.
 
 ---
 
@@ -32,7 +32,7 @@ The goal is to keep the workstation state explicit. If a tool or service is not 
 
 ### Core Properties
 
-**Reproducibility.** The system state is pinned in [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock). A cold reinstall is a `git clone` followed by a single command, with the lock file acting as the dependency contract.
+**Reproducibility.** The system state is pinned in [`flake.lock`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.lock). A cold reinstall is a `git clone` followed by a single command, with the lock file acting as the dependency contract.
 
 **Security.** Secrets (API keys, backup credentials) are encrypted with **SOPS/Age**. They are decrypted into a `tmpfs` (RAM-only) at activation, leaving no trace on disk. The system identity itself handles decryption, ensuring that secrets never enter the repository in plaintext.
 
@@ -43,8 +43,8 @@ The goal is to keep the workstation state explicit. If a tool or service is not 
 ## Architecture & Logic
 
 The configuration defines a single system output, `nixosConfigurations.nixos`, which applies two layers atomically:
-1.  **NixOS System Layer**: Kernel, drivers, and system services defined in [`configuration.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/configuration.nix).
-2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in [`home/tco/home.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/home/tco/home.nix).
+1.  **NixOS System Layer**: Kernel, drivers, and system services defined in [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix).
+2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in [`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix).
 
 Both layers are versioned in the same flake. It is not possible to apply a system update without syncing the user environment, and a failure in either part prevents activation of the entire rebuild.
 
@@ -81,7 +81,7 @@ nix flake update && sudo nixos-rebuild switch --flake .#nixos
 sudo nixos-rebuild build --flake .#nixos && nvd diff /run/current-system result
 
 # Edit an encrypted secret
-sops [secrets/backup.yaml](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml)
+sops [secrets/backup.yaml](https://github.com/RomeoCavazza/nixos-config/blob/main/secrets/backup.yaml)
 ```
 
 ---

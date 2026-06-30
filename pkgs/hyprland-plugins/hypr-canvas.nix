@@ -2,12 +2,7 @@
 
 let
   hyprland-pkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-  hypr-canvas-src = pkgs.fetchFromGitHub {
-    owner = "RomeoCavazza";
-    repo = "hypr-canvas";
-    rev = "v0.1.0-alpha";
-    hash = "sha256-I9OxKFnTRoUOSRUSaKZhOnhH0fl7kOWFzALuAuwmyyg=";
-  };
+  hypr-canvas-src = pkgs.lib.cleanSource inputs.hypr-canvas;
 in
 pkgs.stdenv.mkDerivation {
   pname = "hypr-canvas";

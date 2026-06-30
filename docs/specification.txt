@@ -1,5 +1,5 @@
 ================================================================================
-setup-os — Dense Technical Specification & Logic Dictionary
+nixos-config — Dense Technical Specification & Logic Dictionary
 ================================================================================
 Documentation Version: 2.0 (Massive Expansion)
 Project Type: Hybrid NixOS Workstation (Hyprland/GNOME)

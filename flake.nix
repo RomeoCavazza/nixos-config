@@ -26,6 +26,11 @@
       flake = false;
     };
 
+    hypr-canvas = {
+      url = "github:RomeoCavazza/hypr-canvas/main";
+      flake = false;
+    };
+
     hyprland-plugins.url = "github:hyprwm/hyprland-plugins";
     hyprland-plugins.inputs.hyprland.follows = "hyprland";
 
@@ -116,6 +121,43 @@
           '';
         };
       };
+
+      mkHost =
+        hostName:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+
+          specialArgs = {
+            inherit inputs locality hostName;
+            flakeSelf = self;
+          };
+
+          modules = [
+            ./hosts/${hostName}/default.nix
+            inputs.nix-snapd.nixosModules.default
+            inputs.sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+
+            (
+              { pkgs, ... }:
+              let
+                customPkgs = import ./pkgs { inherit pkgs inputs; };
+              in
+              {
+                nixpkgs.overlays = import ./overlays { inherit inputs system; };
+
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = {
+                  inherit inputs customPkgs locality;
+                  flakeSelf = self;
+                };
+
+                home-manager.users.${locality.user} = import ./home/tco;
+              }
+            )
+          ];
+        };
     in
     {
       formatter.${system} = pkgs.nixfmt;
@@ -178,39 +220,6 @@
             '';
       };
 
-      nixosConfigurations.legion = nixpkgs.lib.nixosSystem {
-        inherit system;
-
-        specialArgs = {
-          inherit inputs locality;
-          flakeSelf = self;
-        };
-
-        modules = [
-          ./hosts/legion/default.nix
-          inputs.nix-snapd.nixosModules.default
-          inputs.sops-nix.nixosModules.sops
-          home-manager.nixosModules.home-manager
-
-          (
-            { pkgs, ... }:
-            let
-              customPkgs = import ./pkgs { inherit pkgs inputs; };
-            in
-            {
-              nixpkgs.overlays = import ./overlays { inherit inputs system; };
-
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = {
-                inherit inputs customPkgs locality;
-                flakeSelf = self;
-              };
-
-              home-manager.users.${locality.user} = import ./home/tco;
-            }
-          )
-        ];
-      };
+      nixosConfigurations.legion = mkHost "legion";
     };
 }

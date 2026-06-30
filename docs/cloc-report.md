@@ -1,6 +1,6 @@
-# Code Statistics — setup-os
+# Code Statistics — nixos-config
 
-> Generated with `cloc v2.08` — excludes `.git`, `node_modules`, `result`, `.direnv`, `docs/assets/`, `setup-os.wiki/`
+> Generated with `cloc v2.08` — excludes `.git`, `node_modules`, `result`, `.direnv`, `docs/assets/`, `nixos-config.wiki/`
 >
 > Last updated: 2026-04-20
 

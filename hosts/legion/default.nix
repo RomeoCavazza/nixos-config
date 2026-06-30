@@ -1,10 +1,11 @@
+{ hostName, ... }:
 {
   imports = [
     ./hardware-configuration.nix
     ../../profiles/workstation.nix
   ];
 
-  networking.hostName = "legion";
+  networking.hostName = hostName;
 
   # Legion-specific PRIME bus IDs. Verify with `lspci` if the motherboard/GPU
   # topology changes.

@@ -19,12 +19,12 @@
 
 ## Overview
 
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the primary documentation resource for this repository.
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary documentation resource for this repository.
 
-- [Architecture & Flake Logic](https://github.com/RomeoCavazza/setup-os/wiki/Architecture-&-Flake-Logic)
-- [Modules Breakdown](https://github.com/RomeoCavazza/setup-os/wiki/Modules-Breakdown)
-- [Security & Secrets](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
-- [Observability and Metrics](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
+- [Architecture & Flake Logic](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture-&-Flake-Logic)
+- [Modules Breakdown](https://github.com/RomeoCavazza/nixos-config/wiki/Modules-Breakdown)
+- [Security & Secrets](https://github.com/RomeoCavazza/nixos-config/wiki/Security-&-Secrets)
+- [Observability and Metrics](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics)
 
 Local technical annexes:
 
@@ -140,7 +140,7 @@ Dashboard snapshots:
 - [Incident Correlation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/incident-dashboard.png) - pressure spikes mapped to Loki logs
 
 Runbook details live in the
-[Observability wiki page](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics).
+[Observability wiki page](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics).
 
 ---
 
@@ -149,7 +149,7 @@ Runbook details live in the
 Backups use `sops-nix`, `restic`, and Backblaze B2, split into `b2-critical`
 for configuration and secret-adjacent material, and `b2-data` for user files.
 Secrets are committed only in encrypted form under [`secrets/`](./secrets/).
-See the [Security & Secrets wiki page](https://github.com/RomeoCavazza/setup-os/wiki/Security-&-Secrets)
+See the [Security & Secrets wiki page](https://github.com/RomeoCavazza/nixos-config/wiki/Security-&-Secrets)
 for paths, timers, retention, and restore commands.
 
 ---
@@ -179,7 +179,7 @@ with `direnv`.
 
 2. **Clone this repository**:
    ```bash
-   sudo git clone --recurse-submodules https://github.com/RomeoCavazza/setup-os.git /etc/nixos-new
+   sudo git clone --recurse-submodules https://github.com/RomeoCavazza/nixos-config.git /etc/nixos-new
    sudo cp -r /etc/nixos-new/* /etc/nixos/
    ```
 

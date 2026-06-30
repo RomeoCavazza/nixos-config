@@ -2,7 +2,7 @@
   imports = [
     ./core.nix
     ./boot.nix
-    ./hardware-legion.nix
+    ./hardware.nix
     ./services.nix
     ./desktop-hyprland.nix
     ./launcher.nix

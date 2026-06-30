@@ -27,7 +27,7 @@ flowchart LR
 
 ## Cryptographic Stack
 
-The approach uses two tools in combination. SOPS (Secrets OPerationS) is a structured secret editor that encrypts the values of a YAML file while leaving the keys in plaintext. The actual [`secrets/backup.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml) in this repo looks like this once committed:
+The approach uses two tools in combination. SOPS (Secrets OPerationS) is a structured secret editor that encrypts the values of a YAML file while leaving the keys in plaintext. The actual [`secrets/backup.yaml`](https://github.com/RomeoCavazza/nixos-config/blob/main/secrets/backup.yaml) in this repo looks like this once committed:
 
 ```yaml
 restic_password: ENC[AES256_GCM,data:zcUjTsN4AKk=,iv:XsmQm...,type:str]
@@ -43,7 +43,7 @@ Age is the underlying asymmetric encryption primitive, using X25519 key exchange
 
 ## Key Configuration
 
-The [`.sops.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/.sops.yaml) at the repo root registers two Age recipients:
+The [`.sops.yaml`](https://github.com/RomeoCavazza/nixos-config/blob/main/.sops.yaml) at the repo root registers two Age recipients:
 
 ```yaml
 keys:
@@ -60,13 +60,13 @@ creation_rules:
 
 `editor_tco` is the editor key used to update secrets from the development machine. `machine_nixos` is the host key stored at `/var/lib/sops-nix/key.txt` on the NixOS system. SOPS encrypts each secret to both recipients simultaneously: the host does not need the editor key to boot, and the editor does not need the host key to update encrypted files.
 
-See [`modules/backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix) for how these keys are consumed at the system level.
+See [`modules/backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix) for how these keys are consumed at the system level.
 
 ---
 
 ## NixOS Integration
 
-[`backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix) declares how secrets are consumed at the system level:
+[`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix) declares how secrets are consumed at the system level:
 
 ```nix
 sops.defaultSopsFile = ../secrets/backup.yaml;
@@ -86,7 +86,7 @@ sops.templates."restic-b2.env" = {
 };
 ```
 
-During `nixos-rebuild switch`, sops-nix reads the machine Age key, decrypts [`backup.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/secrets/backup.yaml) in memory, and writes the result to `/run/secrets/` — a tmpfs (RAM only, not persisted to disk, cleared on reboot). The rendered `restic-b2.env` lands at `/run/secrets/rendered/restic-b2.env` and is injected into the restic service via `EnvironmentFile`. Restic never sees the credentials as CLI arguments, which would expose them in `ps` output and the systemd journal.
+During `nixos-rebuild switch`, sops-nix reads the machine Age key, decrypts [`backup.yaml`](https://github.com/RomeoCavazza/nixos-config/blob/main/secrets/backup.yaml) in memory, and writes the result to `/run/secrets/` — a tmpfs (RAM only, not persisted to disk, cleared on reboot). The rendered `restic-b2.env` lands at `/run/secrets/rendered/restic-b2.env` and is injected into the restic service via `EnvironmentFile`. Restic never sees the credentials as CLI arguments, which would expose them in `ps` output and the systemd journal.
 
 ---
 
@@ -153,4 +153,4 @@ sudo restic -r s3:s3.eu-central-003.backblazeb2.com/tco-nixos-backup/restic chec
 
 ## Security Properties
 
-Every secret in this repository is encrypted before it is committed and decrypted only in RAM at activation time. Private keys never enter the repository — only public keys appear, in [`.sops.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/.sops.yaml). Backup data is encrypted client-side by restic (AES-256) before leaving the machine, so Backblaze B2 has no access to the content. Revoking a compromised key means removing it from [`.sops.yaml`](https://github.com/RomeoCavazza/setup-os/blob/main/.sops.yaml) and running `sops updatekeys secrets/backup.yaml` — the old key can no longer decrypt after the next commit.
+Every secret in this repository is encrypted before it is committed and decrypted only in RAM at activation time. Private keys never enter the repository — only public keys appear, in [`.sops.yaml`](https://github.com/RomeoCavazza/nixos-config/blob/main/.sops.yaml). Backup data is encrypted client-side by restic (AES-256) before leaving the machine, so Backblaze B2 has no access to the content. Revoking a compromised key means removing it from [`.sops.yaml`](https://github.com/RomeoCavazza/nixos-config/blob/main/.sops.yaml) and running `sops updatekeys secrets/backup.yaml` — the old key can no longer decrypt after the next commit.

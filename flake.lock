@@ -123,14 +123,31 @@
         "type": "github"
       }
     },
+    "hypr-canvas": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782810312,
+        "narHash": "sha256-diH6VIi20k/2hQxJlHJa9/LP2p0g2m6yCf+jUvP5RBU=",
+        "owner": "RomeoCavazza",
+        "repo": "hypr-canvas",
+        "rev": "fcfecff8f07b9223e026d99a85dd37253ab73aa5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "ref": "main",
+        "repo": "hypr-canvas",
+        "type": "github"
+      }
+    },
     "hypr-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782796362,
-        "narHash": "sha256-pPtuzgybmfM5VP8772WXSx8EJBNBH6yLt+Gg0BHyiHo=",
+        "lastModified": 1782842570,
+        "narHash": "sha256-z0emiO6qfLWK1UH/S25wiMWwDFa010w9FG4xJNutoMA=",
         "owner": "RomeoCavazza",
         "repo": "hyprland-config",
-        "rev": "fd23f987536f277c5402e27f004eaa2439d40f8f",
+        "rev": "d9d52563fe1c3e7352788c7a974e535dbcdef52b",
         "type": "github"
       },
       "original": {
@@ -142,11 +159,11 @@
     "hyprchroma": {
       "flake": false,
       "locked": {
-        "lastModified": 1782673383,
-        "narHash": "sha256-X18k7sRY0f/+oS3O2FPvOz67vnjsBGKfH09enizgN7w=",
+        "lastModified": 1782810314,
+        "narHash": "sha256-JxgWV3hFwQ1QergAd1vZagwGRuyaY3fUqABPkmR7sfc=",
         "owner": "RomeoCavazza",
         "repo": "hyprchroma",
-        "rev": "0265c07f398bea7898c1e7fd020478502435cc88",
+        "rev": "75ac33f378a23b1633710ed2d74570cbab4a77f2",
         "type": "github"
       },
       "original": {
@@ -383,11 +400,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782673360,
-        "narHash": "sha256-iHvCLRi8HPjkuj5qfXBcqJlvMDmvNQ0h9mZ24RksUkQ=",
+        "lastModified": 1782810317,
+        "narHash": "sha256-JCoLAFNJz3kIgCr6W1eJrMYgBjD7Oz5+S2a8ji4jGMQ=",
         "owner": "RomeoCavazza",
         "repo": "hyprspace",
-        "rev": "5502cfaecb1c7156034786d5b973ed04ea9f16e4",
+        "rev": "745aa30d098cb7765026d282ab5bb43a5486bb50",
         "type": "github"
       },
       "original": {
@@ -665,6 +682,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
+        "hypr-canvas": "hypr-canvas",
         "hypr-config": "hypr-config",
         "hyprchroma": "hyprchroma",
         "hyprland": "hyprland",
