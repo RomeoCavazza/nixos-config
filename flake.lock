@@ -143,11 +143,11 @@
     "hypr-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782844023,
-        "narHash": "sha256-sTu2t+qn4FOz00wb4UE6YUA06SIh+OQVSbGQgwBGoI4=",
+        "lastModified": 1782845313,
+        "narHash": "sha256-zFHHLwOW4TNEi0Au3aNrmwIvOv8nWbSdg5KhwC66534=",
         "owner": "RomeoCavazza",
         "repo": "hyprland-config",
-        "rev": "a9fecacc43d9e8a54b28fee0b0f39484614e619d",
+        "rev": "07b17d80f120c3a32f57b6ad9c75fc92c2bf7e93",
         "type": "github"
       },
       "original": {
@@ -159,11 +159,11 @@
     "hyprchroma": {
       "flake": false,
       "locked": {
-        "lastModified": 1782810314,
-        "narHash": "sha256-JxgWV3hFwQ1QergAd1vZagwGRuyaY3fUqABPkmR7sfc=",
+        "lastModified": 1782845315,
+        "narHash": "sha256-VRc/3LCIKHBWVgzdL3034Rwo5oRuavQVx+hY/q25g14=",
         "owner": "RomeoCavazza",
         "repo": "hyprchroma",
-        "rev": "75ac33f378a23b1633710ed2d74570cbab4a77f2",
+        "rev": "9a2284d83afe71e748524da232d304be2553b6d5",
         "type": "github"
       },
       "original": {
