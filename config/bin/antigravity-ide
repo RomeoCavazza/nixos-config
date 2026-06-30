@@ -7,7 +7,7 @@ export NIX_LD_LIBRARY_PATH="/run/opengl-driver/lib:/run/current-system/sw/lib:${
 export NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 export SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
 
-# AUTH: portail xdg cassé -> shim xdg-open -> Firefox
+# --- Browser Shim ---
 export NIXOS_XDG_OPEN_USE_PORTAL=0
 export BROWSER=firefox
 SHIM_DIR="$HOME/.cache/antigravity-shim"

@@ -1,8 +1,7 @@
 _:
 
 {
-  # /build is the Nix sandbox build directory (sandbox-build-dir in core/nix.nix).
-  # Bind it onto an on-disk path so large builds use /home space instead of tmpfs/RAM.
+  # --- Build Sandbox ---
   systemd.tmpfiles.rules = [
     "d /home/nix-build 2775 root nixbld - -"
   ];

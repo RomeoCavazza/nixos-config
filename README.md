@@ -162,14 +162,15 @@ for paths, timers, retention, and restore commands.
 
 ### Setup Instructions
 
-> [!IMPORTANT]
-> **Warning**: This configuration is tailored for my hardware. Don't blindly use these settings unless you know what they entail. Use at your own risk!
+### Host Assumptions
 
-> [!NOTE]
-> This repository uses a modular structure, allowing you to easily toggle specific services (databases, AI, monitoring) by importing the corresponding files in `configuration.nix`.
+This configuration targets a specific host. Review hardware IDs, filesystems,
+secrets, and service assumptions before reusing it.
 
-> [!TIP]
-> Development toolchains (Rust, Python, embedded, data) are installed globally via Home Manager. Per-project environments use a local `flake.nix` with `direnv` — `cd` into the project directory and the environment loads automatically.
+The repository is modular: services can be enabled by importing the
+corresponding files in `configuration.nix`. Development toolchains are
+installed globally via Home Manager; per-project environments use local flakes
+with `direnv`.
 
 1. **Backup your current config**:
    ```bash

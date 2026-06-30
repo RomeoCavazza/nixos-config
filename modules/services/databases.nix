@@ -1,24 +1,19 @@
 { pkgs, lib, ... }:
 
 {
-  # ============================================================================
-  # POSTGRESQL 17 (Local Dev)
-  # ============================================================================
+  # --- PostgreSQL ---
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
     dataDir = "/var/lib/postgresql/17";
 
-    # Extensions
     extensions = with pkgs.postgresql_17.pkgs; [ postgis ];
 
-    # Network Security: Bind strictly to localhost IPv4
     settings = {
       listen_addresses = lib.mkForce "127.0.0.1";
       password_encryption = "scram-sha-256";
     };
 
-    # Authentication Configuration
     authentication = pkgs.lib.mkOverride 10 ''
       # type  database  user      address       method
       local   all       postgres                peer
@@ -28,9 +23,7 @@
     '';
   };
 
-  # ============================================================================
-  # REDIS (Cache Service)
-  # ============================================================================
+  # --- Redis ---
   services.redis.servers.insider = {
     enable = true;
     port = 6379;
@@ -52,9 +45,7 @@
     };
   };
 
-  # ============================================================================
-  # Qdrant (RAG Nvim)
-  # ============================================================================
+  # --- Qdrant ---
   services.qdrant = {
     enable = true;
     settings = {

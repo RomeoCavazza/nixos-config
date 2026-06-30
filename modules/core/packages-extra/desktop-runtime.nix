@@ -1,8 +1,7 @@
 { pkgs, ... }:
 
 {
-  # System desktop runtime: libraries and services needed by the graphical
-  # stack. User themes/session helpers live in Home Manager.
+  # --- Desktop Runtime ---
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     fuse2

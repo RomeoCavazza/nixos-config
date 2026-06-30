@@ -20,18 +20,17 @@ in
             workdir=$(mktemp -d)
             resource=$out/share/gnome-shell/gnome-shell-theme.gresource
 
-            # 1. Extract every file from the original gresource.
+            # --- Extract Resources ---
             for r in $(${prev.glib.dev}/bin/gresource list $resource); do
               mkdir -p "$workdir$(dirname $r)"
               filename=$(echo $r | sed 's|^/org/gnome/shell/theme/||')
               ${prev.glib.dev}/bin/gresource extract $resource $r > "$workdir/$filename"
             done
 
-            # 2. Copy the custom image.
+            # --- Custom Image ---
             cp ${cfg.path} "$workdir/custom-background.png"
 
-            # 3. Patch every CSS file found in the theme.
-            # Target #lockDialogGroup, .login-screen, and .login-background.
+            # --- CSS Patch ---
             for css in "$workdir"/*.css; do
               echo "Patching $css..."
               echo "
@@ -58,7 +57,7 @@ in
               }" >> "$css"
             done
 
-            # 4. Generate the full XML file.
+            # --- Resource Manifest ---
             echo '<?xml version="1.0" encoding="UTF-8"?>' > "$workdir/theme.gresource.xml"
             echo '<gresources><gresource prefix="/org/gnome/shell/theme">' >> "$workdir/theme.gresource.xml"
             for f in $(cd "$workdir" && find . -type f -not -name "theme.gresource.xml"); do
@@ -67,10 +66,10 @@ in
             done
             echo '</gresource></gresources>' >> "$workdir/theme.gresource.xml"
 
-            # 5. Recompile everything.
+            # --- Recompile ---
             ${prev.glib.dev}/bin/glib-compile-resources --target="$workdir/new.gresource" --sourcedir="$workdir" "$workdir/theme.gresource.xml"
 
-            # 6. Replace the original file.
+            # --- Replace Resource ---
             cp "$workdir/new.gresource" $resource
             rm -rf $workdir
           '';

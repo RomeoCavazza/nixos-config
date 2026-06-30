@@ -58,7 +58,7 @@ creation_rules:
           - *machine_nixos
 ```
 
-`editor_tco` is the developer's personal key, stored on the development machine and used to edit secrets. `machine_nixos` is the machine's own key, stored at `/var/lib/sops-nix/key.txt` on the NixOS host. SOPS encrypts each secret to both recipients simultaneously — the machine does not need the editor key to boot, and the developer does not need access to the machine key to update secrets.
+`editor_tco` is the editor key used to update secrets from the development machine. `machine_nixos` is the host key stored at `/var/lib/sops-nix/key.txt` on the NixOS system. SOPS encrypts each secret to both recipients simultaneously: the host does not need the editor key to boot, and the editor does not need the host key to update encrypted files.
 
 See [`modules/backup.nix`](https://github.com/RomeoCavazza/setup-os/blob/main/modules/backup.nix) for how these keys are consumed at the system level.
 

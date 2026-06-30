@@ -6,8 +6,8 @@
 [![SOPS-nix](https://img.shields.io/badge/Secrets-SOPS%2FAge-FF6600)](https://github.com/Mic92/sops-nix)
 [![Observability](https://img.shields.io/badge/Observability-Prometheus%20%7C%20Loki%20%7C%20Grafana-0E7490?logo=grafana&logoColor=white)](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics)
 
-> **Infrastructure as Code pushed to its limit, applied to the personal workstation.**  
-> This is a fully declarative, reproducible, and auditable system built on the philosophy of digital sovereignty.
+> **Declarative workstation infrastructure.**
+> This is a reproducible, auditable NixOS system with pinned inputs, encrypted secrets, and integrated observability.
 
 ![](https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/htop.png)
 
@@ -24,15 +24,15 @@ The [**GitHub Wiki**](https://github.com/RomeoCavazza/setup-os/wiki) is the prim
 
 ---
 
-## The Vision: A Desktop for Life
+## Design Goals
 
 Managing a workstation with NixOS is a move from **mutable, opaque environments** to a **declarative state**. It represents the same discipline that production infrastructure demands: every change goes through code, every dependency is pinned, and every secret is encrypted.
 
-The goal is to reclaim **Digital Sovereignty**. On this machine, nothing is "magic." If a tool isn't declared in the configuration, it doesn't exist. This eliminates configuration drift and ensures that the system you run today is the exact system you will run in five years, on any hardware.
+The goal is to keep the workstation state explicit. If a tool or service is not declared in the configuration, it is not part of the supported system. This limits configuration drift and keeps rebuilds reproducible.
 
 ### Core Properties
 
-**Reproducibility.** The entire system state is pinned in [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock). A cold reinstall is a `git clone` followed by a single command. It eliminates the "works on my machine" problem—the `flake.lock` file is the contract.
+**Reproducibility.** The system state is pinned in [`flake.lock`](https://github.com/RomeoCavazza/setup-os/blob/main/flake.lock). A cold reinstall is a `git clone` followed by a single command, with the lock file acting as the dependency contract.
 
 **Security.** Secrets (API keys, backup credentials) are encrypted with **SOPS/Age**. They are decrypted into a `tmpfs` (RAM-only) at activation, leaving no trace on disk. The system identity itself handles decryption, ensuring that secrets never enter the repository in plaintext.
 
@@ -86,4 +86,4 @@ sops [secrets/backup.yaml](https://github.com/RomeoCavazza/setup-os/blob/main/se
 
 ---
 
-*This wiki is the living documentation of a system that defines its own existence. Fork it, improve it, and reclaim your digital sovereignty.*
+*This wiki documents the repository structure, operating model, and recovery paths for the workstation configuration.*

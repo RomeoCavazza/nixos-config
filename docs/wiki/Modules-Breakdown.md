@@ -26,7 +26,7 @@ Applications that need the discrete GPU use the `nvidia-offload` wrapper — for
 
 This is a custom NixOS module with no upstream equivalent in `nixpkgs`. It patches the GDM login screen wallpaper by extracting the existing `gnome-shell-theme.gresource` binary, injecting CSS that overrides the background selectors, recompiling it with `glib-compile-resources`, and replacing the original via a Nix overlay on the `gnome-shell` package.
 
-The approach is more surgical than replacing `gnome-shell` outright. Only the theme resource is modified. GNOME Shell itself is unpatched and continues to update normally with the rest of `nixpkgs`. The CSS targets `#lockDialogGroup` and `.login-screen` to set a custom wallpaper at the login screen and lock screen.
+Only the theme resource is modified. GNOME Shell itself remains unpatched and continues to update with the rest of `nixpkgs`. The CSS targets `#lockDialogGroup` and `.login-screen` to set a custom wallpaper at the login screen and lock screen.
 
 ---
 
@@ -88,7 +88,7 @@ Both timers use `RandomizedDelaySec` to add a random offset to their start time,
 
 The observability stack mirrors what a production SRE environment looks like: Prometheus scrapes metrics from Node Exporter and from itself, Promtail ships the systemd journal to Loki, and Grafana provides a unified dashboard interface pre-wired to both sources.
 
-The motivation for running this on a personal workstation is practical. Understanding what a healthy system looks like at the metrics level — how much CPU steal is normal, what a memory pressure event looks like in the journal, how NVIDIA driver events appear in Loki — is intuition that cannot be built by reading documentation. It requires watching a real system under real workloads.
+Running observability on the workstation provides a baseline for normal host behavior: CPU steal, memory pressure, journal events, and NVIDIA driver activity can be inspected under real workloads.
 
 Promtail runs as a raw systemd service rather than through the NixOS module, because the module version on `nixos-unstable` has an option conflict with the current Loki module. Rather than pinning Loki to an older version, the solution is to run Promtail's binary (sourced from `nixpkgs-stable` via the custom overlay) with its configuration serialized as JSON and inlined directly in the systemd service definition. It is more verbose than the NixOS module abstraction, but it works with the current stack and avoids introducing a second stable-channel Loki alongside the unstable one.
 
@@ -167,7 +167,7 @@ Any of these can be activated by adding the corresponding `./modules/filename.ni
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/setup-os/main/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
 </p>
 
-Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA cuBLAS for matrix operations instead of falling back to CPU. The performance difference is substantial — roughly 5 to 10 times faster inference on GPU, which is the difference between a model feeling responsive and feeling unusable for interactive work.
+Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA cuBLAS for matrix operations instead of falling back to CPU. GPU inference is typically several times faster than CPU-only execution for interactive local models.
 
 Two configuration choices are worth explaining. `OLLAMA_KEEP_ALIVE` is set to 24 hours, which keeps a loaded model in VRAM between requests. Without this, Ollama unloads the model after 5 minutes of inactivity, and the next request pays a cold-start cost of 2 to 10 seconds depending on model size. The tradeoff is 4 to 8 GB of VRAM reserved while a model is loaded. `OLLAMA_KV_CACHE_TYPE` is set to `q8_0`, which quantizes the key-value cache to 8-bit integers, reducing VRAM usage with a negligible quality impact on most tasks.
 

@@ -1,13 +1,10 @@
 { pkgs, ... }:
 
 {
-  # ============================================================================
-  # DOCKER (Container Engine)
-  # ============================================================================
+  # --- Docker ---
   virtualisation.docker = {
     enable = true;
 
-    # Automatic Garbage Collection
     autoPrune = {
       enable = true;
       flags = [
@@ -17,26 +14,18 @@
     };
   };
 
-  # ============================================================================
-  # LIBVIRT / KVM (Virtual Machines)
-  # ============================================================================
+  # --- Libvirt / KVM ---
   virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true; # GUI for KVM
+  programs.virt-manager.enable = true;
 
-  # ============================================================================
-  # BINARY FORMAT EMULATION (ARM Support)
-  # ============================================================================
-  # Allows running Aarch64 binaries/containers natively on x86_64 kernel
-  # Crucial for Raspberry Pi / Jetson SD card building
+  # --- Binary Format Emulation ---
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  # ============================================================================
-  # VIRTUALIZATION TOOLS
-  # ============================================================================
+  # --- Tools ---
   environment.systemPackages = with pkgs; [
     docker-compose
     lazydocker
     qemu
-    quickemu # Simplifies VM creation (Windows/MacOS/Linux)
+    quickemu
   ];
 }

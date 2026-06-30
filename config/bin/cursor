@@ -3,18 +3,18 @@ set -euo pipefail
 
 APPIMAGE="$HOME/.local/bin/appimages/Cursor.AppImage"
 if [ ! -f "$APPIMAGE" ]; then
-  echo "Cursor.AppImage introuvable: $APPIMAGE" >&2
+  echo "Cursor.AppImage not found: $APPIMAGE" >&2
   exit 1
 fi
 
-# IMPORTANT NixOS: expose les libs système Nix au loader (dlopen)
+# --- Runtime Libraries ---
 export LD_LIBRARY_PATH="/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
 export NIX_LD_LIBRARY_PATH="/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
 
-# Force extraction
+# --- AppImage Cache ---
 appimage-run "$APPIMAGE" --version >/dev/null 2>&1 || true
 
-# Patch native-keymap: Debug -> Release
+# --- Native Keymap ---
 for NK in "$HOME"/.cache/appimage-run/*/usr/share/cursor/resources/app/node_modules/native-keymap/build; do
   [ -d "$NK/Release" ] || continue
   mkdir -p "$NK/Debug"

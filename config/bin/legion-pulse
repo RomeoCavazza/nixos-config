@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 DEV="platform::kbd_backlight"
 
-# On nettoie proprement si on tue le script
 trap "brightnessctl -d $DEV set 2; exit" SIGINT SIGTERM
 
 while true; do

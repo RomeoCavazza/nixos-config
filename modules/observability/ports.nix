@@ -1,9 +1,4 @@
-# Single source of truth for observability service ports.
-# Imported (import ./ports.nix) by the observability modules and by the nginx
-# grafana proxy, so each port is declared exactly once.
-#
-# NOTE: this is a plain attrset, not a NixOS module — it is intentionally NOT
-# listed in default.nix's imports.
+# --- Observability Ports ---
 {
   prometheus = 9090;
   node = 9100;
