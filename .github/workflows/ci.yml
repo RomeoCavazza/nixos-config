@@ -23,6 +23,11 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v26
 
+      - name: Hyprland Cachix
+        uses: cachix/cachix-action@v14
+        with:
+          name: hyprland
+
       - name: Format check
         run: nix run .#fmt-check
 
