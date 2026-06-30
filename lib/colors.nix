@@ -96,7 +96,7 @@ rec {
   };
 
   starship = p: {
-    format = "[░▒▓](${p.accent})[  ](bg:${p.accent} fg:${p.crust})[](fg:${p.accent} bg:${p.surface0})$directory[](fg:${p.surface0} bg:none)$character";
+    format = "[░▒▓](${p.accent})[  ](bg:${p.accent} fg:${p.crust})[](fg:${p.accent} bg:${p.surface0})$directory[](fg:${p.surface0} bg:none)$character";
     directory = {
       style = "fg:${p.accent} bg:${p.surface0}";
       format = "[ $path ]($style)";
