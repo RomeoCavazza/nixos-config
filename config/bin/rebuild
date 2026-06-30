@@ -18,7 +18,12 @@ elif [[ -f /etc/nixos/flake.nix ]]; then
 else
   repo_dir="$PWD"
 fi
-FLAKE_REF="${FLAKE_REF:-${repo_dir}#legion}"
+
+if [[ -d "$repo_dir/.git" || -f "$repo_dir/.git" ]]; then
+  FLAKE_REF="${FLAKE_REF:-git+file://${repo_dir}?submodules=1#legion}"
+else
+  FLAKE_REF="${FLAKE_REF:-${repo_dir}#legion}"
+fi
 
 # Self-heal: initialize submodules if any are missing (safe after a plain clone).
 if git -C "$repo_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
