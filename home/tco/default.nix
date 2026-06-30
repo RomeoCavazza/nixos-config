@@ -24,6 +24,7 @@
   ];
 
   home.sessionVariables = {
+    NIXOS_CONFIG_REPO = locality.repoCheckout;
     QT_QPA_PLATFORM = "wayland";
     QT_QPA_PLATFORMTHEME = "qt6ct";
     QT_STYLE_OVERRIDE = "kvantum";

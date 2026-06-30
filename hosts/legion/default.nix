@@ -1,7 +1,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./local-hosts.nix
     ../../profiles/workstation.nix
   ];
 

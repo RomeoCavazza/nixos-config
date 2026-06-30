@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-REPO_DIR="${REPO_DIR:-/etc/nixos}"
+REPO_DIR="${REPO_DIR:-${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
 OUT_DIR="${REPO_DIR}/docs/assets/live"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
