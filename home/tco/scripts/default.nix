@@ -26,6 +26,7 @@ let
     "devin"
     "antigravity"
     "antigravity-ide"
+    "grafana-generate"
     "rebuild"
     "legion-pulse"
     "legion-toggle"
@@ -45,8 +46,7 @@ in
 {
   home.file =
     builtins.listToAttrs (
-      map mkLocalBin vendoredBins
-      ++ map (name: mkInputBin name name) hyprConfigBins
+      map mkLocalBin vendoredBins ++ map (name: mkInputBin name name) hyprConfigBins
     )
     // {
       # --- Inline scripts ---

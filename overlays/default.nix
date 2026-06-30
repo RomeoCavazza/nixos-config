@@ -1,6 +1,8 @@
 { inputs, system }:
 
 let
+  # Promtail was removed from newer nixpkgs with the Loki 3 transition. Keep a
+  # narrow legacy package set until this host migrates to Grafana Alloy.
   pkgs-legacy = import inputs.nixpkgs-legacy {
     inherit system;
     config.allowUnfree = true;

@@ -87,9 +87,10 @@ let
   '';
 
   edexSettings = pkgs.runCommand "edex-settings.json" { } ''
-    sed -e 's|"/home/tco"|"${locality.homeDirectory}"|g' \
-        -e 's|"en-US"|"fr-FR"|g' \
-        ${inputs.hypr-config}/edex/settings.json > $out
+    cp ${inputs.hypr-config}/edex/settings.json "$out"
+    substituteInPlace "$out" \
+      --replace-fail '"/home/tco"' '"${locality.homeDirectory}"' \
+      --replace-fail '"en-US"' '"fr-FR"'
   '';
 in
 {

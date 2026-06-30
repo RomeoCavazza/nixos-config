@@ -1,4 +1,4 @@
-{ config, locality, ... }:
+{ locality, ... }:
 
 {
   systemd.tmpfiles.rules = [

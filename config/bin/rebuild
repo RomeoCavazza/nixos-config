@@ -37,7 +37,7 @@ DEV_OVERRIDES=()
 ARGS=()
 for arg in "$@"; do
   if [[ "$arg" == "--dev" ]]; then
-    for spec in "hypr-config:hyprland-config" "hyprspace:hyprspace" "hyprchroma:hyprchroma" "hypr-canvas:hypr-canvas" "hyprtasking:hyprtasking"; do
+    for spec in "hypr-config:hyprland-config" "hyprspace:hyprspace" "hyprchroma:hyprchroma" "hypr-canvas:hypr-canvas"; do
       input="${spec%%:*}"
       repo="${spec#*:}"
       if [[ -d "$HOME/dev/$repo/.git" || -f "$HOME/dev/$repo/.git" ]]; then

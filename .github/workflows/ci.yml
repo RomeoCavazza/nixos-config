@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize submodules over HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+
+      - name: Format check
+        run: nix run .#fmt-check
+
+      - name: Dead code check
+        run: nix run .#deadnix
+
+      - name: Static lint
+        run: nix run .#statix
+
+      - name: Grafana dashboard check
+        run: nix run .#grafana-check
+
+      - name: Flake check
+        run: nix flake check --no-build "git+file://$PWD?submodules=1"
+
+      - name: Evaluate system build
+        run: nix build "git+file://$PWD?submodules=1#nixosConfigurations.legion.config.system.build.toplevel" --no-link --dry-run

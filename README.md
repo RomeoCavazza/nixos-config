@@ -2,6 +2,12 @@
   <img src="./docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
 
+  <p>
+    <a href="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml">
+      <img src="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml/badge.svg" alt="CI">
+    </a>
+  </p>
+
   <div align="center">
     <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
     <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
