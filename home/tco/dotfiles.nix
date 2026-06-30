@@ -15,32 +15,62 @@ let
   liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${locality.repoCheckout}/config/${name}";
 
   rofiTokens = pkgs.writeText "rofi-tokens.rasi" (colors.rofi palette);
-  rofiConfig = pkgs.runCommand "rofi-config" { nativeBuildInputs = [ pkgs.perl ]; } ''
+  rofiConfig = pkgs.runCommand "rofi-config" { } ''
     mkdir -p "$out"
     cp -R ${inputs.hypr-config}/rofi/. "$out/"
     chmod -R u+w "$out"
 
     cp ${rofiTokens} "$out/tokens.rasi"
-    sed -i '1i@import "~/.config/rofi/tokens.rasi"\n' "$out/custom/column-tco.rasi"
 
-    substituteInPlace "$out/custom/column-tco.rasi" \
-      --replace-fail "#94E2D5" "${palette.accent}" \
-      --replace-fail "rgba(148, 226, 213, 14%)" "rgba(${colors.rgbStr palette.accent}, 14%)"
+    cat >> "$out/custom/column-tco.rasi" <<EOF
 
-    substituteInPlace "$out/themes/apps-grid.rasi" \
-      --replace-fail "rgba(148, 226, 213, 14%)" "rgba(${colors.rgbStr palette.accent}, 14%)" \
-      --replace-fail "rgba(255, 90, 90, 12%)" "rgba(${colors.rgbStr palette.red}, 12%)"
+    /* --- Declarative NixOS Overrides --- */
+    @import "~/.config/rofi/tokens.rasi"
 
-    perl -0pi -e 's/(window \{.*?background-color:\s*)transparent;/$1\@columnBg;/s' "$out/custom/column-tco.rasi"
-    perl -0pi -e 's/(window \{.*?border-radius:\s*)50px;/$1 64px;/s' "$out/custom/column-tco.rasi"
-    perl -0pi -e 's/(element \{.*?border-radius:\s*)50px;/$1 64px;/s' "$out/custom/column-tco.rasi"
-    perl -0pi -e 's/(element \{.*?border:\s*)2px;/$1 0;/s' "$out/custom/column-tco.rasi"
+    * {
+      c-teal:        @accent;
+      c-selected-bg: @selectedBg;
+      text-color:    @accent;
+    }
 
-    perl -0pi -e 's/(inputbar \{.*?border:\s*)1px;/$1 0;/s' "$out/themes/apps-grid.rasi"
-    perl -0pi -e 's/(element \{.*?border:\s*)2px;/$1 0;/s' "$out/themes/apps-grid.rasi"
+    window {
+      background-color: @columnBg;
+      border-radius:    64px;
+    }
+
+    element {
+      border-radius:    64px;
+      border:           0;
+    }
+    EOF
+
+    cat >> "$out/themes/apps-grid.rasi" <<EOF
+
+    /* --- Declarative NixOS Overrides --- */
+    inputbar {
+      border: 0;
+    }
+
+    element {
+      border: 0;
+    }
+
+    element selected {
+      background-color: @selectedBg;
+    }
+
+    element.urgent,
+    element selected.urgent {
+      background-color: @urgentBg;
+    }
+    EOF
   '';
 
   conkyConfig = pkgs.runCommand "conky-config" { } ''
+    if [ -z "$(ls -A ${../../config/conky} 2>/dev/null)" ]; then
+      echo "ERROR: config/conky submodule is empty! Run 'git submodule update --init --recursive'." >&2
+      exit 1
+    fi
     mkdir -p "$out"
     cp -R ${../../config/conky}/. "$out/"
     chmod -R u+w "$out"

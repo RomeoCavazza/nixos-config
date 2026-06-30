@@ -95,6 +95,20 @@ rec {
     graphBase = "14313d";
   };
 
+  starship = p: {
+    format = "[░▒▓](${p.accent})[  ](bg:${p.accent} fg:${p.crust})[](fg:${p.accent} bg:${p.surface0})$directory[](fg:${p.surface0} bg:none)$character";
+    directory = {
+      style = "fg:${p.accent} bg:${p.surface0}";
+      format = "[ $path ]($style)";
+      truncation_length = 3;
+      truncation_symbol = "…/";
+    };
+    character = {
+      success_symbol = "[ ❯](bold ${p.accent})";
+      error_symbol = "[ ❯](bold ${p.red})";
+    };
+  };
+
   # waybar scss variables (consumed via @use '../scss/variables')
   scss =
     p:

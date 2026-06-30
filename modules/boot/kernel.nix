@@ -7,7 +7,6 @@ _:
   ];
 
   boot.kernelParams = [
-    "nvidia-drm.modeset=1"
     "pcie_aspm=off"
   ];
 

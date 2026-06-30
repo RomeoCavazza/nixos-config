@@ -1,11 +1,13 @@
 {
   pkgs,
   lib,
+  customPkgs,
   ...
 }:
 
 {
   home.packages = with pkgs; [
+    customPkgs.cursor
     dockfmt
     nixfmt
     shellcheck

@@ -1,24 +1,20 @@
-{ locality, ... }:
+{
+  lib,
+  locality,
+  palette,
+  ...
+}:
 
+let
+  colors = import ../../lib/colors.nix { inherit lib; };
+in
 {
   home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
 
   programs.starship = {
     enable = true;
     enableBashIntegration = true;
-    settings = {
-      format = "[░▒▓](#94e2d5)[  ](bg:#94e2d5 fg:#090c0c)[](fg:#94e2d5 bg:#1d2230)$directory[](fg:#1d2230 bg:none)$character";
-      directory = {
-        style = "fg:#94e2d5 bg:#1d2230";
-        format = "[ $path ]($style)";
-        truncation_length = 3;
-        truncation_symbol = "…/";
-      };
-      character = {
-        success_symbol = "[ ❯](bold #94e2d5)";
-        error_symbol = "[ ❯](bold #ff0055)";
-      };
-    };
+    settings = colors.starship palette;
   };
 
   programs.git = {

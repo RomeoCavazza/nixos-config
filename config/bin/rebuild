@@ -27,13 +27,30 @@ if git -C "$repo_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
   git -C "$repo_dir" submodule update --init --recursive
 fi
 
+# Auto-detect local development repositories in $HOME/dev when --dev flag is passed
+DEV_OVERRIDES=()
+ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--dev" ]]; then
+    for input in hyprland-config hyprspace hyprchroma hypr-canvas hyprtasking; do
+      if [[ -d "$HOME/dev/$input/.git" || -f "$HOME/dev/$input/.git" ]]; then
+        echo "rebuild [dev]: redirecting input '$input' to local clone $HOME/dev/$input"
+        DEV_OVERRIDES+=("--override-input" "$input" "git+file://$HOME/dev/$input")
+      fi
+    done
+  else
+    ARGS+=("$arg")
+  fi
+done
+set -- "${ARGS[@]}"
+
 start_ns=$(date +%s%N)
 start_ts=$(date +%s)
 
 # Run rebuild — allow failure so we can still record the exit code.
 # Pass NIXOS_CONFIG_REPO into sudo environment and enable --impure so flake evaluation
 # can dynamically resolve locality.repoCheckout via builtins.getEnv.
-sudo NIXOS_CONFIG_REPO="$repo_dir" "$NIXOS_REBUILD" --impure --flake "$FLAKE_REF" "$@"
+sudo NIXOS_CONFIG_REPO="$repo_dir" "$NIXOS_REBUILD" --impure --flake "$FLAKE_REF" "${DEV_OVERRIDES[@]}" "$@"
 exit_code=$?
 
 end_ns=$(date +%s%N)

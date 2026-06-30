@@ -35,7 +35,7 @@ in
       initialize = true;
 
       paths = [
-        locality.repoCheckout
+        "${homeDir}/dev/nixos-config"
         "${homeDir}/.ssh"
         "${homeDir}/.gnupg"
         "${homeDir}/.config"

@@ -7,10 +7,6 @@ if [ ! -f "$APPIMAGE" ]; then
   exit 1
 fi
 
-# --- Runtime Libraries ---
-export LD_LIBRARY_PATH="/run/current-system/sw/lib:${LD_LIBRARY_PATH:-}"
-export NIX_LD_LIBRARY_PATH="/run/current-system/sw/lib:${NIX_LD_LIBRARY_PATH:-}"
-
 # --- AppImage Cache ---
 appimage-run "$APPIMAGE" --version >/dev/null 2>&1 || true
 

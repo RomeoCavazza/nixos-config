@@ -62,8 +62,16 @@
         repoCheckout =
           let
             envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
+            devRepo = "${homeDirectory}/dev/nixos-config";
           in
-          if envRepo != "" then envRepo else "/etc/nixos";
+          if envRepo != "" then
+            envRepo
+          else if builtins.pathExists devRepo then
+            devRepo
+          else if builtins.pathExists "/etc/nixos/flake.nix" then
+            "/etc/nixos"
+          else
+            devRepo;
         gitName = "RomeoCavazza";
         gitEmail = "romeo.cavazza@gmail.com";
         snapshotGitName = "Romeo Cavazza";

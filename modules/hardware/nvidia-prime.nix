@@ -5,6 +5,8 @@
 
   config = lib.mkIf config.hardware.nvidia-prime.enable {
     # --- NVIDIA Drivers ---
+    boot.kernelParams = [ "nvidia-drm.modeset=1" ];
+
     services.xserver.videoDrivers = [ "nvidia" ];
 
     hardware.nvidia = {
