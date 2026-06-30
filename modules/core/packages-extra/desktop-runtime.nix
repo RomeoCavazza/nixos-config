@@ -1,12 +1,10 @@
 { pkgs, ... }:
 
 {
+  # System desktop runtime: libraries and services needed by the graphical
+  # stack. User themes/session helpers live in Home Manager.
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
-    papirus-icon-theme
-    bibata-cursors
-    brightnessctl
-    appimage-run
     fuse2
     fuse3
     libxshmfence

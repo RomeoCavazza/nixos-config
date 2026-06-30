@@ -6,7 +6,6 @@
     # DATA & OBSERVABILITY
     # ==========================================================================
     dbeaver-bin # Universal Database Tool
-    grafana
     influxdb2
   ];
 }

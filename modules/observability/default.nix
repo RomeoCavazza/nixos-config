@@ -16,7 +16,6 @@
     prometheus
     loki
     promtail-bin
-    nvtopPackages.full
     imagemagick
   ];
 }
