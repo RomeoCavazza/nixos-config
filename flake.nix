@@ -18,6 +18,11 @@
       flake = false;
     };
 
+    conky-config = {
+      url = "github:RomeoCavazza/conky-config";
+      flake = false;
+    };
+
     hyprspace.url = "github:RomeoCavazza/hyprspace/main";
     hyprspace.inputs.hyprland.follows = "hyprland";
 

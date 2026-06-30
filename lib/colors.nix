@@ -65,6 +65,36 @@ in
 rec {
   inherit rgbStr noHash;
 
+  rofi = p: ''
+    /* --- Rofi Tokens --- */
+
+    * {
+      accent:     ${p.accent};
+      selectedBg: rgba(${rgbStr p.accent}, 14%);
+
+      fg0:        rgba(255, 255, 255, 95%);
+      fgDim:      rgba(255, 255, 255, 45%);
+
+      scrim:      rgba(18, 20, 24, 22%);
+      field:      rgba(255, 255, 255, 10%);
+      fieldEdge:  rgba(255, 255, 255, 16%);
+
+      hover:      rgba(255, 255, 255, 14%);
+      urgentBg:   rgba(${rgbStr p.red}, 12%);
+
+      columnBg:   rgba(${rgbStr p.surface0}, 18%);
+      columnEdge: rgba(${rgbStr p.accent}, 22%);
+    }
+  '';
+
+  conky = p: {
+    accent = noHash p.accent;
+    graph = noHash p.sky;
+    text = noHash p.text;
+    muted = noHash p.overlay0;
+    graphBase = "14313d";
+  };
+
   # waybar scss variables (consumed via @use '../scss/variables')
   scss =
     p:
