@@ -1,11 +1,15 @@
-{ config, pkgs, ... }:
+{
+  config,
+  locality,
+  pkgs,
+  ...
+}:
 
 let
   repoRoot = ../../.;
-  user = "tco";
+  inherit (locality) user;
   homeDir = config.users.users.${user}.home;
-  repoCheckout = "/etc/nixos";
-  liveAssetsDir = "${repoCheckout}/docs/assets/live";
+  liveAssetsDir = "${locality.repoCheckout}/docs/assets/live";
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
@@ -47,18 +51,18 @@ in
       Type = "oneshot";
       User = user;
       Group = "users";
-      WorkingDirectory = repoCheckout;
+      WorkingDirectory = locality.repoCheckout;
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
     };
     environment = {
-      REPO_DIR = repoCheckout;
+      REPO_DIR = locality.repoCheckout;
       MIN_CHANGE_PERCENT = "0.3";
       HOME = homeDir;
       SNAPSHOT_GIT_NAME = "Romeo Cavazza";
       SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
-      SNAPSHOT_REPO_URL = "git@github.com:RomeoCavazza/nixos-config.git";
+      SNAPSHOT_REPO_URL = locality.snapshotRepoUrl;
       SNAPSHOT_BRANCH = "main";
-      PUBLISH_REPO_DIR = "/var/lib/grafana-snapshot-sync/nixos-config";
+      PUBLISH_REPO_DIR = locality.snapshotPublishDir;
     };
   };
 

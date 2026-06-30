@@ -1,8 +1,12 @@
-{ config, inputs, ... }:
+{
+  config,
+  inputs,
+  locality,
+  ...
+}:
 
 let
-  repoCheckout = "/etc/nixos";
-  liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${repoCheckout}/config/${name}";
+  liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${locality.repoCheckout}/config/${name}";
 in
 {
   home.file.".config/rofi".source = "${inputs.hypr-config}/rofi";

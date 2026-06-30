@@ -49,6 +49,14 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      locality = rec {
+        user = "tco";
+        homeDirectory = "/home/${user}";
+        labApplicationsDir = "${homeDirectory}/Applications";
+        repoCheckout = "/etc/nixos";
+        snapshotRepoUrl = "git@github.com:RomeoCavazza/nixos-config.git";
+        snapshotPublishDir = "/var/lib/grafana-snapshot-sync/nixos-config";
+      };
       mkApp = package: description: {
         type = "app";
         program = "${package}/bin/${package.meta.mainProgram}";
@@ -174,7 +182,7 @@
         inherit system;
 
         specialArgs = {
-          inherit inputs;
+          inherit inputs locality;
           flakeSelf = self;
         };
 
@@ -195,11 +203,11 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = {
-                inherit inputs customPkgs;
+                inherit inputs customPkgs locality;
                 flakeSelf = self;
               };
 
-              home-manager.users.tco = import ./home/tco;
+              home-manager.users.${locality.user} = import ./home/tco;
             }
           )
         ];

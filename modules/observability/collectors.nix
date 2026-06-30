@@ -1,8 +1,7 @@
-{ pkgs, ... }:
+{ locality, pkgs, ... }:
 
 let
   repoRoot = ../../.;
-  repoCheckout = "/etc/nixos";
 
   nixMetricsScript = pkgs.writeShellApplication {
     name = "nix-metrics";
@@ -14,7 +13,7 @@ let
       pkgs.python3
     ];
     text = ''
-      export REPO_DIR="${repoCheckout}"
+      export REPO_DIR="${locality.repoCheckout}"
     ''
     + builtins.readFile (repoRoot + "/config/bin/nix-metrics");
   };

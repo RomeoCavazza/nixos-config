@@ -1,8 +1,5 @@
-_:
+{ locality, ... }:
 
-let
-  repoCheckout = "/etc/nixos";
-in
 {
   home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
 
@@ -33,7 +30,7 @@ in
       };
       init.defaultBranch = "main";
       pull.rebase = true;
-      safe.directory = repoCheckout;
+      safe.directory = locality.repoCheckout;
     };
   };
 
@@ -85,8 +82,8 @@ in
       ll = "eza -l --icons";
       ls = "eza --icons";
       rebuild = "command rebuild";
-      scope = "bash ~/Applications/launch-hantek.sh";
-      tinysa = "bash ~/Applications/launch-tinysa.sh";
+      scope = "bash ${locality.labApplicationsDir}/launch-hantek.sh";
+      tinysa = "bash ${locality.labApplicationsDir}/launch-tinysa.sh";
     };
   };
 }

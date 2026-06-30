@@ -1,8 +1,9 @@
-{ pkgs, ... }:
+{ locality, pkgs, ... }:
 
 {
-  users.users.tco = {
+  users.users.${locality.user} = {
     isNormalUser = true;
+    home = locality.homeDirectory;
     shell = pkgs.bash;
     extraGroups = [
       "wheel"

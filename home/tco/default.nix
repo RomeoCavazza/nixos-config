@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, locality, ... }:
 
 {
   imports = [
@@ -12,8 +12,8 @@
     ./dotfiles.nix
   ];
 
-  home.username = "tco";
-  home.homeDirectory = "/home/tco";
+  home.username = locality.user;
+  home.homeDirectory = locality.homeDirectory;
   home.stateVersion = "25.05";
   home.enableNixpkgsReleaseCheck = false;
 
