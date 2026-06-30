@@ -1,10 +1,18 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {
-        nativeBuildInputs = [ pkgs.dart-sass ];
+        nativeBuildInputs = [
+          pkgs.dart-sass
+          pkgs.makeWrapper
+        ];
       }
       ''
             mkdir -p $out source/waybar source/scss
@@ -22,6 +30,19 @@ let
           --style=expanded \
           source/waybar/style.scss \
           $out/style.css
+
+        patchShebangs $out/WaybarCava.sh
+        wrapProgram $out/WaybarCava.sh \
+          --prefix PATH : ${
+            lib.makeBinPath [
+              pkgs.bash
+              pkgs.cava
+              pkgs.coreutils
+              pkgs.gawk
+              pkgs.gnused
+              pkgs.procps
+            ]
+          }
       '';
 in
 {
