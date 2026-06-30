@@ -126,11 +126,11 @@
     "hypr-canvas": {
       "flake": false,
       "locked": {
-        "lastModified": 1782859939,
-        "narHash": "sha256-ybCXVyIt2fc1SjOAJCFNYoM5Q07eFK8P5Vvz2gYQbdQ=",
+        "lastModified": 1782860790,
+        "narHash": "sha256-aKG6//SgnrJFq355GEvclsqSx7cTiLZt+nYcuc4vDzA=",
         "owner": "RomeoCavazza",
         "repo": "hypr-canvas",
-        "rev": "229069d8cb6a0dfd763dfc6cb4c5fa4f8f6b67b0",
+        "rev": "a488990755978fd7d62ff867738e9334554f3b20",
         "type": "github"
       },
       "original": {
@@ -159,11 +159,11 @@
     "hyprchroma": {
       "flake": false,
       "locked": {
-        "lastModified": 1782859939,
-        "narHash": "sha256-WcZI1tVo7CqL0Z0ey+YcKXir26T+LSoLMONXgXomuJM=",
+        "lastModified": 1782860792,
+        "narHash": "sha256-660z4KmNEK6Maw7hdlvQHIPRCOV5lD3QxrAvZt+1y/U=",
         "owner": "RomeoCavazza",
         "repo": "hyprchroma",
-        "rev": "47a8b946520c45bdb9adc7cdfe6773db8e7f200d",
+        "rev": "00846d945e8c1ab77aa865f33489dddd4b223fd1",
         "type": "github"
       },
       "original": {
@@ -400,11 +400,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782859939,
-        "narHash": "sha256-JZZ9t0ljG3TobAZPgb/Da3+W43CWBjjNV6NxuX3odOs=",
+        "lastModified": 1782860794,
+        "narHash": "sha256-3riv5reY9Jcv7w7xJsQZNXIlOSpfsWHTv1+iuYBzSuM=",
         "owner": "RomeoCavazza",
         "repo": "hyprspace",
-        "rev": "7562e269144f81102ed9596493b59e7f10a674cc",
+        "rev": "41c26bffc589825135d6e75f7e5cca1390924e78",
         "type": "github"
       },
       "original": {
