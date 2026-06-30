@@ -126,11 +126,11 @@
     "hypr-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782667339,
-        "narHash": "sha256-9WQWCyKkIAQIdj05bEVf6Y+n+JlMYX7yQpYDRrMDBok=",
+        "lastModified": 1782786642,
+        "narHash": "sha256-CW29NUpVinxgnY8UnxHHTI3epEsuUmlTM6+U6+CuTJM=",
         "owner": "RomeoCavazza",
         "repo": "hyprland-config",
-        "rev": "2cd79d0335462e29f9f2241a868490ba46954299",
+        "rev": "310686f76de99cab01057a0a06ef604087e9125c",
         "type": "github"
       },
       "original": {
