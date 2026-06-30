@@ -26,6 +26,7 @@ let
 
             cp ${inputs.hypr-config}/waybar/style.scss source/waybar/style.scss
             cp -R ${inputs.hypr-config}/scss/. source/scss/
+            chmod -R u+w source
             cp ${scssVariables} source/scss/_variables.scss
 
         sass \
