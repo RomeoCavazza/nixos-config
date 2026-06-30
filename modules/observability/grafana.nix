@@ -23,7 +23,20 @@
         root_url = "http://localhost:3000/";
       };
       security = {
+        disable_gravatar = true;
         secret_key = "$__file{${config.sops.secrets.grafana_secret_key.path}}";
+      };
+      analytics = {
+        reporting_enabled = false;
+        check_for_updates = false;
+        check_for_plugin_updates = false;
+        feedback_links_enabled = false;
+      };
+      users = {
+        allow_sign_up = false;
+        allow_org_create = false;
+        auto_assign_org_role = "Viewer";
+        viewers_can_edit = false;
       };
       "auth.anonymous" = {
         enabled = true;

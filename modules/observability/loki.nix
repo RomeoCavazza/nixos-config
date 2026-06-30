@@ -5,7 +5,12 @@ _:
     enable = true;
     configuration = {
       auth_enabled = false;
-      server.http_listen_port = 3100;
+      server = {
+        http_listen_address = "127.0.0.1";
+        http_listen_port = 3100;
+        grpc_listen_address = "127.0.0.1";
+        grpc_listen_port = 9095;
+      };
       common = {
         path_prefix = "/var/lib/loki";
         ring.kvstore.store = "inmemory";

@@ -4,7 +4,9 @@ let
   promtailConfig = pkgs.writeText "promtail.yaml" (
     builtins.toJSON {
       server = {
+        http_listen_address = "127.0.0.1";
         http_listen_port = 9080;
+        grpc_listen_address = "127.0.0.1";
         grpc_listen_port = 0;
       };
       positions.filename = "/var/lib/promtail/positions.yaml";

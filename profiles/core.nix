@@ -10,6 +10,7 @@
     ../modules/core/nix-ld.nix
     ../modules/core/packages.nix
     ../modules/core/networking.nix
+    ../modules/core/sysctl.nix
     ../modules/core/session.nix
     ../modules/core/logging.nix
     ../modules/core/build-sandbox.nix
