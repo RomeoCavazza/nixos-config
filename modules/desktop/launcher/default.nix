@@ -2,7 +2,7 @@
 
 {
   environment.systemPackages = with pkgs; [
-    rofi-wayland # native layer-shell build → Hyprland can blur it via layerrule
+    rofi # Wayland layer-shell capable; launcher backdrop blurred via layerrule (hyprland-config)
     waybar
     networkmanagerapplet
     nemo
