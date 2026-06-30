@@ -251,6 +251,7 @@
             ${deadnix}/bin/nixos-config-deadnix
             ${statix}/bin/nixos-config-statix
             ${grafana-check}/bin/nixos-config-grafana-check
+            nix flake archive "$flake_ref"
             nix flake check --no-build "$flake_ref"
           '';
         };

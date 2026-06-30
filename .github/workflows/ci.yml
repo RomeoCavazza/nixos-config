@@ -35,6 +35,9 @@ jobs:
       - name: Grafana dashboard check
         run: nix run .#grafana-check
 
+      - name: Archive flake inputs
+        run: nix flake archive "git+file://$PWD?submodules=1"
+
       - name: Flake check
         run: nix flake check --no-build "git+file://$PWD?submodules=1"
 
