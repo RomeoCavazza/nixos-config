@@ -2,9 +2,6 @@
 
 {
   imports = [
-    ./modules/apps/cad.nix
-    ./modules/apps/embedded.nix
-    ./modules/apps/data.nix
     ./scripts
     ./packages
     ./shell.nix
