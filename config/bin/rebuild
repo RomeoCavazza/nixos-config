@@ -37,10 +37,12 @@ DEV_OVERRIDES=()
 ARGS=()
 for arg in "$@"; do
   if [[ "$arg" == "--dev" ]]; then
-    for input in hyprland-config hyprspace hyprchroma hypr-canvas hyprtasking; do
-      if [[ -d "$HOME/dev/$input/.git" || -f "$HOME/dev/$input/.git" ]]; then
-        echo "rebuild [dev]: redirecting input '$input' to local clone $HOME/dev/$input"
-        DEV_OVERRIDES+=("--override-input" "$input" "git+file://$HOME/dev/$input")
+    for spec in "hypr-config:hyprland-config" "hyprspace:hyprspace" "hyprchroma:hyprchroma" "hypr-canvas:hypr-canvas" "hyprtasking:hyprtasking"; do
+      input="${spec%%:*}"
+      repo="${spec#*:}"
+      if [[ -d "$HOME/dev/$repo/.git" || -f "$HOME/dev/$repo/.git" ]]; then
+        echo "rebuild [dev]: redirecting input '$input' to local clone $HOME/dev/$repo"
+        DEV_OVERRIDES+=("--override-input" "$input" "git+file://$HOME/dev/$repo")
       fi
     done
   else

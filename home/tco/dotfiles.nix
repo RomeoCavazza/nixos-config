@@ -85,14 +85,26 @@ let
         --replace-fail "14313d" "${conkyPalette.graphBase}"
     done
   '';
+
+  edexSettings = pkgs.runCommand "edex-settings.json" { } ''
+    sed -e 's|"/home/tco"|"${locality.homeDirectory}"|g' \
+        -e 's|"en-US"|"fr-FR"|g' \
+        ${inputs.hypr-config}/edex/settings.json > $out
+  '';
 in
 {
+  # ---------------------------------------------------------------------------
+  # 1. Compiled Store Derivations (Requiring token injection or build step)
+  # ---------------------------------------------------------------------------
   home.file.".config/rofi".source = rofiConfig;
+  home.file.".config/conky".source = conkyConfig;
   home.file.".config/foot".source = "${inputs.hypr-config}/foot";
   home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
-  home.file.".config/conky".source = conkyConfig;
+  xdg.configFile."eDEX-UI/settings.json".source = edexSettings;
+
+  # ---------------------------------------------------------------------------
+  # 2. Live Out-of-Store Symlinks (Zero rebuild needed for rapid iteration)
+  # ---------------------------------------------------------------------------
   home.file.".config/nvim".source = liveConfig "nvim";
   home.file.".config/doom".source = liveConfig "doom";
-
-  xdg.configFile."eDEX-UI/settings.json".source = "${inputs.hypr-config}/edex/settings.json";
 }

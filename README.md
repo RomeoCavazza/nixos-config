@@ -186,5 +186,5 @@ with `direnv`.
 3. **Apply the configuration**:
    ```bash
    cd /etc/nixos
-   sudo nixos-rebuild switch --flake .#nixos
+   sudo nixos-rebuild switch --flake .#legion
    ```

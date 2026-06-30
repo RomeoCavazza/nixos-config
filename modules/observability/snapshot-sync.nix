@@ -24,10 +24,16 @@ let
       pkgs.google-chrome
       pkgs.playwright-driver
     ];
-    text = ''
-      export PLAYWRIGHT_CORE_PATH=${pkgs.playwright-driver}
-    ''
-    + builtins.readFile (repoRoot + "/config/bin/grafana-snapshot-sync");
+    text =
+      let
+        raw = builtins.readFile (repoRoot + "/config/bin/grafana-snapshot-sync");
+        lines = pkgs.lib.splitString "\n" raw;
+        body = pkgs.lib.concatStringsSep "\n" (pkgs.lib.tail lines);
+      in
+      ''
+        export PLAYWRIGHT_CORE_PATH=${pkgs.playwright-driver}
+      ''
+      + body;
   };
 in
 {
@@ -55,6 +61,7 @@ in
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
     };
     environment = {
+      PLAYWRIGHT_CORE_PATH = "${pkgs.playwright-driver}";
       STATE_DIR = stateDir;
       SNAPSHOT_DIR = "${stateDir}/snapshots";
       MIN_CHANGE_PERCENT = "0.3";

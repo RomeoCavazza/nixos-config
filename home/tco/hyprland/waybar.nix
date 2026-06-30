@@ -52,4 +52,22 @@ let
 in
 {
   home.file.".config/waybar".source = waybarConfig;
+
+  systemd.user.services.waybar = {
+    Unit = {
+      Description = "Highly customizable Wayland bar for Hyprland";
+      Documentation = "https://github.com/Alexays/Waybar/wiki";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.waybar}/bin/waybar -c %h/.config/waybar/config.jsonc -s %h/.config/waybar/style.css";
+      ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR2 $MAINPID";
+      Restart = "always";
+      RestartSec = "100ms";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }
