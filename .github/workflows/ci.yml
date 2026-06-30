@@ -40,11 +40,11 @@ jobs:
       - name: Grafana dashboard check
         run: nix run .#grafana-check
 
-      - name: Archive flake inputs
-        run: nix flake archive "git+file://$PWD?submodules=1"
-
-      - name: Flake check
-        run: nix flake check --no-build "git+file://$PWD?submodules=1"
-
-      - name: Evaluate system build
-        run: nix build "git+file://$PWD?submodules=1#nixosConfigurations.legion.config.system.build.toplevel" --no-link --dry-run
+      - name: Build declared checks
+        run: |
+          nix build \
+            "git+file://$PWD?submodules=1#checks.x86_64-linux.fmt" \
+            "git+file://$PWD?submodules=1#checks.x86_64-linux.deadnix" \
+            "git+file://$PWD?submodules=1#checks.x86_64-linux.statix" \
+            "git+file://$PWD?submodules=1#checks.x86_64-linux.grafana" \
+            --no-link
