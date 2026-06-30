@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 
+let
+  repoCheckout = "/etc/nixos";
+in
 {
   sops.secrets.grafana_secret_key = {
     owner = "grafana";
@@ -70,7 +73,7 @@
         {
           name = "nixos";
           type = "file";
-          options.path = "/etc/nixos/config/grafana";
+          options.path = "${repoCheckout}/config/grafana";
         }
       ];
     };

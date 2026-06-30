@@ -2,6 +2,7 @@
 
 let
   repoRoot = ../../.;
+  repoCheckout = "/etc/nixos";
 
   nixMetricsScript = pkgs.writeShellApplication {
     name = "nix-metrics";
@@ -12,7 +13,10 @@ let
       pkgs.gawk
       pkgs.python3
     ];
-    text = builtins.readFile (repoRoot + "/config/bin/nix-metrics");
+    text = ''
+      export REPO_DIR="${repoCheckout}"
+    ''
+    + builtins.readFile (repoRoot + "/config/bin/nix-metrics");
   };
 
   hyprMetricsScript = pkgs.writeShellApplication {

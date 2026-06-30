@@ -1,12 +1,16 @@
 { config, inputs, ... }:
 
+let
+  repoCheckout = "/etc/nixos";
+  liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${repoCheckout}/config/${name}";
+in
 {
   home.file.".config/rofi".source = "${inputs.hypr-config}/rofi";
   home.file.".config/foot".source = "${inputs.hypr-config}/foot";
   home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
-  home.file.".config/conky".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/conky";
-  home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/nvim";
-  home.file.".config/doom".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/doom";
+  home.file.".config/conky".source = liveConfig "conky";
+  home.file.".config/nvim".source = liveConfig "nvim";
+  home.file.".config/doom".source = liveConfig "doom";
 
   xdg.configFile."eDEX-UI/settings.json".source = "${inputs.hypr-config}/edex/settings.json";
 

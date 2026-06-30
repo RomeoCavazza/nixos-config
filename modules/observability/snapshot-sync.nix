@@ -1,7 +1,11 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   repoRoot = ../../.;
+  user = "tco";
+  homeDir = config.users.users.${user}.home;
+  repoCheckout = "/etc/nixos";
+  liveAssetsDir = "${repoCheckout}/docs/assets/live";
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
@@ -24,8 +28,8 @@ let
 in
 {
   systemd.tmpfiles.rules = [
-    "d /var/lib/grafana-snapshot-sync 0755 tco users -"
-    "d /etc/nixos/docs/assets/live 0755 tco users -"
+    "d /var/lib/grafana-snapshot-sync 0755 ${user} users -"
+    "d ${liveAssetsDir} 0755 ${user} users -"
   ];
 
   systemd.services.grafana-snapshot-sync = {
@@ -41,14 +45,15 @@ in
     ];
     serviceConfig = {
       Type = "oneshot";
-      User = "tco";
+      User = user;
       Group = "users";
-      WorkingDirectory = "/etc/nixos";
+      WorkingDirectory = repoCheckout;
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
     };
     environment = {
+      REPO_DIR = repoCheckout;
       MIN_CHANGE_PERCENT = "0.3";
-      HOME = "/home/tco";
+      HOME = homeDir;
       SNAPSHOT_GIT_NAME = "Romeo Cavazza";
       SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
       SNAPSHOT_REPO_URL = "git@github.com:RomeoCavazza/nixos-config.git";

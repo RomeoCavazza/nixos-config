@@ -1,5 +1,8 @@
 _:
 
+let
+  repoCheckout = "/etc/nixos";
+in
 {
   home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
 
@@ -30,7 +33,7 @@ _:
       };
       init.defaultBranch = "main";
       pull.rebase = true;
-      safe.directory = "/etc/nixos";
+      safe.directory = repoCheckout;
     };
   };
 

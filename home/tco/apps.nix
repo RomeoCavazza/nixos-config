@@ -1,12 +1,15 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
+let
+  localBin = "${config.home.homeDirectory}/.local/bin";
+in
 {
   xdg.desktopEntries = {
     cursor = {
       name = "Cursor";
       genericName = "AI Code Editor";
       comment = "Built for AI coding";
-      exec = "/home/tco/.local/bin/cursor %U";
+      exec = "${localBin}/cursor %U";
       icon = "cursor-icon";
       terminal = false;
       startupNotify = true;
@@ -21,7 +24,7 @@
       name = "Devin";
       genericName = "AI Code Editor";
       comment = "Devin AI Desktop";
-      exec = "/home/tco/.local/bin/devin %U";
+      exec = "${localBin}/devin %U";
       icon = "text-editor";
       terminal = false;
       startupNotify = true;
@@ -36,7 +39,7 @@
       name = "Antigravity 2.0";
       genericName = "AI Assistant";
       comment = "Antigravity v2";
-      exec = "/home/tco/.local/bin/antigravity %U";
+      exec = "${localBin}/antigravity %U";
       icon = "antigravity-icon";
       terminal = false;
       startupNotify = true;
@@ -49,7 +52,7 @@
       name = "Antigravity IDE";
       genericName = "IDE";
       comment = "Antigravity IDE Application";
-      exec = "/home/tco/.local/bin/antigravity-ide %U";
+      exec = "${localBin}/antigravity-ide %U";
       icon = "antigravity-icon";
       terminal = false;
       startupNotify = true;

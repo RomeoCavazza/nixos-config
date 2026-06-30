@@ -35,7 +35,8 @@ generations_count=$(printf '%s\n' "$generations" \
   | awk 'NF > 0 { c++ } END { print (c ? c : 0) }')
 
 # --- flake.lock freshness ----------------------------------------------------
-flake_lock="/etc/nixos/flake.lock"
+repo_dir="${REPO_DIR:-/etc/nixos}"
+flake_lock="${repo_dir}/flake.lock"
 if [[ -f "$flake_lock" ]]; then
   lock_age=$(( $(date +%s) - $(stat -c %Y "$flake_lock") ))
 else
@@ -122,6 +123,6 @@ EOF
 # --- Flame graph profile ----------------------------------------------------
 # We hide the deprecation error of nix path info using 2>/dev/null
 nix path-info -r --json /run/current-system 2>/dev/null \
-  | /etc/nixos/config/bin/nix-flamegraph.py >> "$TMPFILE" || true
+  | "${repo_dir}/config/bin/nix-flamegraph.py" >> "$TMPFILE" || true
 
 mv "$TMPFILE" "$OUTFILE"

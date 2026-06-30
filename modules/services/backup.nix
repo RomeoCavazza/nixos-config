@@ -2,6 +2,7 @@
 let
   user = "tco";
   homeDir = config.users.users.${user}.home;
+  repoCheckout = "/etc/nixos";
   # Restic uses the B2 S3-compatible endpoint.
   repository = "s3:s3.eu-central-003.backblazeb2.com/tco-nixos-backup/restic";
   passwordFile = config.sops.secrets.restic_password.path;
@@ -30,7 +31,7 @@ in
       initialize = true;
 
       paths = [
-        "/etc/nixos"
+        repoCheckout
         "${homeDir}/.ssh"
         "${homeDir}/.gnupg"
         "${homeDir}/.config"
