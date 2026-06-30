@@ -12,7 +12,6 @@ let
     cp -R ${inputs.hypr-config} $out
     chmod -R u+w $out
     cp ${pkgs.writeText "tokens.conf" (colors.hyprland palette)} $out/conf/tokens.conf
-    sed -i '/^layerrule = .*match:namespace \^(rofi)\$/d' $out/theme/rules.conf
   '';
 in
 {
