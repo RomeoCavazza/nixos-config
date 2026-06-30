@@ -2,10 +2,13 @@
   pkgs,
   lib,
   inputs,
+  palette,
   ...
 }:
 
 let
+  colors = import ../../../lib/colors.nix { inherit lib; };
+  scssVariables = pkgs.writeText "waybar-variables.scss" (colors.scss palette);
   waybarConfig =
     pkgs.runCommand "waybar-config"
       {
@@ -23,6 +26,7 @@ let
 
             cp ${inputs.hypr-config}/waybar/style.scss source/waybar/style.scss
             cp -R ${inputs.hypr-config}/scss/. source/scss/
+            cp ${scssVariables} source/scss/_variables.scss
 
         sass \
           --no-source-map \

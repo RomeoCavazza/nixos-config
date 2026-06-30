@@ -62,6 +62,7 @@
         snapshotRepoUrl = "git@github.com:RomeoCavazza/nixos-config.git";
         snapshotPublishDir = "/var/lib/grafana-snapshot-sync/nixos-config";
       };
+      palette = import ./lib/palette.nix;
       mkApp = package: description: {
         type = "app";
         program = "${package}/bin/${package.meta.mainProgram}";
@@ -128,7 +129,12 @@
           inherit system;
 
           specialArgs = {
-            inherit inputs locality hostName;
+            inherit
+              inputs
+              locality
+              palette
+              hostName
+              ;
             flakeSelf = self;
           };
 
@@ -149,7 +155,12 @@
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
                 home-manager.extraSpecialArgs = {
-                  inherit inputs customPkgs locality;
+                  inherit
+                    inputs
+                    customPkgs
+                    locality
+                    palette
+                    ;
                   flakeSelf = self;
                 };
 
