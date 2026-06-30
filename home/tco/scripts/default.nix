@@ -7,7 +7,7 @@
 }:
 
 let
-  # home/tco/scripts/ is two levels below the repo root.
+  # home/tco/scripts/ is three levels below the repo root.
   repoRoot = ../../..;
   mkBin = name: source: {
     inherit name;
@@ -59,15 +59,6 @@ in
     )
     // {
       # --- Inline scripts ---
-      ".local/bin/hypr-layout-toggle" = {
-        executable = true;
-        text = ''
-          #!/usr/bin/env bash
-          set -euo pipefail
-          exec hyprctl dispatch canvas:toggle
-        '';
-      };
-
       ".local/bin/edex-ui-run" = {
         executable = true;
         text = ''
