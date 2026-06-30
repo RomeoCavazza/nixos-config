@@ -42,6 +42,15 @@
         . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
 
+      # Keep interactive shells resilient when the graphical session inherited
+      # Home Manager's marker but not its full PATH.
+      for dir in "$HOME/.local/bin" "$HOME/.npm-global/bin" "$HOME/.lmstudio/bin"; do
+        if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
+          PATH="$dir:$PATH"
+        fi
+      done
+      export PATH
+
       # Smart Tab: ls + exec on empty line
       _tab_smart_ls_exec() {
         if [[ -z "$READLINE_LINE" ]]; then

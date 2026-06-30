@@ -7,9 +7,11 @@
 
 let
   liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${locality.repoCheckout}/config/${name}";
+  liveHyprConfig =
+    name: config.lib.file.mkOutOfStoreSymlink "${locality.homeDirectory}/dev/hyprland-config/${name}";
 in
 {
-  home.file.".config/rofi".source = "${inputs.hypr-config}/rofi";
+  home.file.".config/rofi".source = liveHyprConfig "rofi";
   home.file.".config/foot".source = "${inputs.hypr-config}/foot";
   home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
   home.file.".config/conky".source = liveConfig "conky";
