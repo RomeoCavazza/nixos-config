@@ -3,9 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
-    nixpkgs-portal.url = "github:NixOS/nixpkgs/nixos-26.05";
-
     nixpkgs-legacy.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     home-manager.url = "github:nix-community/home-manager";
@@ -188,17 +185,11 @@
           home-manager.nixosModules.home-manager
 
           (
-            { pkgs, lib, ... }:
+            { pkgs, ... }:
             let
               customPkgs = import ./pkgs { inherit pkgs inputs; };
             in
             {
-              nixpkgs.config.allowUnfreePredicate =
-                pkg:
-                builtins.elem (lib.getName pkg) [
-                  "unrar"
-                ];
-
               nixpkgs.overlays = import ./overlays { inherit inputs system; };
 
               home-manager.useGlobalPkgs = true;

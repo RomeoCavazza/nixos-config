@@ -38,9 +38,6 @@
         enableOffloadCmd = true; # Provides `nvidia-offload` command
       };
 
-      # Bus IDs (Verify with `lspci` if hardware changes)
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:2:0:0";
     };
   };
 }

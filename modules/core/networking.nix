@@ -1,7 +1,6 @@
 _:
 
 {
-  networking.hostName = "nixos";
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
   networking.firewall.enable = true;

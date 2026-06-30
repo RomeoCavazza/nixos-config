@@ -1,18 +1,10 @@
 { inputs, system }:
 
 let
-  # Secondary nixpkgs channels, used only to backport a handful of packages
-  # into the main package set via the overlay below.
-  mkPkgs =
-    src:
-    import src {
-      inherit system;
-      config.allowUnfree = true;
-    };
-
-  pkgs-stable = mkPkgs inputs.nixpkgs-stable;
-  pkgs-portal = mkPkgs inputs.nixpkgs-portal;
-  pkgs-legacy = mkPkgs inputs.nixpkgs-legacy;
+  pkgs-legacy = import inputs.nixpkgs-legacy {
+    inherit system;
+    config.allowUnfree = true;
+  };
 in
 [
   (import inputs.rust-overlay)
@@ -23,12 +15,5 @@ in
     xdg-desktop-portal-hyprland = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
 
     promtail-bin = pkgs-legacy.promtail;
-
-    inherit (pkgs-stable) guix;
-    inherit (pkgs-portal)
-      xdg-desktop-portal
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-gnome
-      ;
   })
 ]
