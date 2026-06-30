@@ -54,6 +54,11 @@ in
     recommendedProxySettings = true;
     recommendedGzipSettings = true;
 
+    appendHttpConfig = ''
+      proxy_headers_hash_bucket_size 128;
+      proxy_headers_hash_max_size 1024;
+    '';
+
     virtualHosts = {
       # Grafana helper: keeps localhost:3000 pointing at the real Grafana port.
       "grafana.localhost-proxy" = {
