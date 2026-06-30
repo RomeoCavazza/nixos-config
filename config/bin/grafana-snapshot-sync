@@ -8,8 +8,9 @@
 
 set -euo pipefail
 
+STATE_DIR="${STATE_DIR:-/var/lib/grafana-snapshot-sync}"
+SNAPSHOT_DIR="${SNAPSHOT_DIR:-${STATE_DIR}/snapshots}"
 REPO_DIR="${REPO_DIR:-${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
-SNAPSHOT_DIR="${REPO_DIR}/docs/assets/live"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -166,5 +167,8 @@ git add docs/assets/live/*.png
 git commit -q -m "snapshots: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 echo "snapshot-sync: force-pushing to ${REPO_URL} branch=${SNAPSHOT_BRANCH}"
-git push -q --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}"
+if ! git push -q --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}"; then
+  echo "snapshot-sync: warning: git push failed (check SSH authentication or network). Snapshots remain cached in ${SNAPSHOT_DIR}." >&2
+  exit 0
+fi
 echo "snapshot-sync: done"

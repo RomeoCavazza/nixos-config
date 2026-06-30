@@ -33,22 +33,6 @@
         "type": "github"
       }
     },
-    "conky-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1782842555,
-        "narHash": "sha256-0CvZ6wafeKEcb/1ORwPUT2u89IxOb9nNUaJqeNIq3Ws=",
-        "owner": "RomeoCavazza",
-        "repo": "conky-config",
-        "rev": "043c146af11d4f37092c2e067d38881d53b9a0e3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "RomeoCavazza",
-        "repo": "conky-config",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -697,7 +681,6 @@
     },
     "root": {
       "inputs": {
-        "conky-config": "conky-config",
         "home-manager": "home-manager",
         "hypr-canvas": "hypr-canvas",
         "hypr-config": "hypr-config",

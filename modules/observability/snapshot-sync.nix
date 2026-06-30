@@ -9,7 +9,7 @@ let
   repoRoot = ../../.;
   inherit (locality) user;
   homeDir = config.users.users.${user}.home;
-  liveAssetsDir = "${locality.repoCheckout}/docs/assets/live";
+  stateDir = "/var/lib/grafana-snapshot-sync";
 
   snapshotScript = pkgs.writeShellApplication {
     name = "grafana-snapshot-sync";
@@ -32,8 +32,8 @@ let
 in
 {
   systemd.tmpfiles.rules = [
-    "d /var/lib/grafana-snapshot-sync 0755 ${user} users -"
-    "d ${liveAssetsDir} 0755 ${user} users -"
+    "d ${stateDir} 0755 ${user} users -"
+    "d ${stateDir}/snapshots 0755 ${user} users -"
   ];
 
   systemd.services.grafana-snapshot-sync = {
@@ -51,15 +51,16 @@ in
       Type = "oneshot";
       User = user;
       Group = "users";
-      WorkingDirectory = locality.repoCheckout;
+      WorkingDirectory = stateDir;
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
     };
     environment = {
-      REPO_DIR = locality.repoCheckout;
+      STATE_DIR = stateDir;
+      SNAPSHOT_DIR = "${stateDir}/snapshots";
       MIN_CHANGE_PERCENT = "0.3";
       HOME = homeDir;
-      SNAPSHOT_GIT_NAME = "Romeo Cavazza";
-      SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
+      SNAPSHOT_GIT_NAME = locality.snapshotGitName;
+      SNAPSHOT_GIT_EMAIL = locality.snapshotGitEmail;
       SNAPSHOT_REPO_URL = locality.snapshotRepoUrl;
       SNAPSHOT_BRANCH = "snapshots";
       PUBLISH_REPO_DIR = locality.snapshotPublishDir;

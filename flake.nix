@@ -18,10 +18,6 @@
       flake = false;
     };
 
-    conky-config = {
-      url = "github:RomeoCavazza/conky-config";
-      flake = false;
-    };
 
     hyprspace.url = "github:RomeoCavazza/hyprspace/main";
     hyprspace.inputs.hyprland.follows = "hyprland";
@@ -63,7 +59,15 @@
         user = "tco";
         homeDirectory = "/home/${user}";
         labApplicationsDir = "${homeDirectory}/Applications";
-        repoCheckout = "/etc/nixos";
+        repoCheckout =
+          let
+            envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
+          in
+          if envRepo != "" then envRepo else "/etc/nixos";
+        gitName = "RomeoCavazza";
+        gitEmail = "romeo.cavazza@gmail.com";
+        snapshotGitName = "Romeo Cavazza";
+        snapshotGitEmail = "romeo.cavazza@users.noreply.github.com";
         snapshotRepoUrl = "git@github.com:RomeoCavazza/nixos-config.git";
         snapshotPublishDir = "/var/lib/grafana-snapshot-sync/nixos-config";
       };

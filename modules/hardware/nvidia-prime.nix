@@ -1,33 +1,37 @@
 { config, lib, ... }:
 
 {
-  # --- NVIDIA Drivers ---
-  services.xserver.videoDrivers = [ "nvidia" ];
+  options.hardware.nvidia-prime.enable = lib.mkEnableOption "NVIDIA PRIME hybrid graphics offload";
 
-  hardware.nvidia = {
-    modesetting.enable = true;
+  config = lib.mkIf config.hardware.nvidia-prime.enable {
+    # --- NVIDIA Drivers ---
+    services.xserver.videoDrivers = [ "nvidia" ];
 
-    open = lib.mkDefault true;
+    hardware.nvidia = {
+      modesetting.enable = true;
 
-    nvidiaSettings = true;
+      open = lib.mkDefault true;
 
-    nvidiaPersistenced = true;
+      nvidiaSettings = true;
 
-    powerManagement = {
-      enable = true;
-      finegrained = true;
-    };
+      nvidiaPersistenced = true;
 
-    package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.stable;
-
-    # --- PRIME Offload ---
-    # Hosts importing this module must set GPU bus IDs, for example:
-    #   hardware.nvidia.prime.intelBusId  = "PCI:0:2:0";
-    #   hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
-    prime = {
-      offload = {
+      powerManagement = {
         enable = true;
-        enableOffloadCmd = true;
+        finegrained = true;
+      };
+
+      package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.stable;
+
+      # --- PRIME Offload ---
+      # Hosts importing this module and enabling nvidia-prime must set GPU bus IDs, for example:
+      #   hardware.nvidia.prime.intelBusId  = "PCI:0:2:0";
+      #   hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
+      prime = {
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
       };
     };
   };

@@ -31,7 +31,9 @@ start_ns=$(date +%s%N)
 start_ts=$(date +%s)
 
 # Run rebuild — allow failure so we can still record the exit code.
-sudo "$NIXOS_REBUILD" --flake "$FLAKE_REF" "$@"
+# Pass NIXOS_CONFIG_REPO into sudo environment and enable --impure so flake evaluation
+# can dynamically resolve locality.repoCheckout via builtins.getEnv.
+sudo NIXOS_CONFIG_REPO="$repo_dir" "$NIXOS_REBUILD" --impure --flake "$FLAKE_REF" "$@"
 exit_code=$?
 
 end_ns=$(date +%s%N)

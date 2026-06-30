@@ -42,7 +42,7 @@ let
 
   conkyConfig = pkgs.runCommand "conky-config" { } ''
     mkdir -p "$out"
-    cp -R ${inputs.conky-config}/. "$out/"
+    cp -R ${../../config/conky}/. "$out/"
     chmod -R u+w "$out"
     rm -rf "$out/.git"
 
@@ -65,9 +65,4 @@ in
   home.file.".config/doom".source = liveConfig "doom";
 
   xdg.configFile."eDEX-UI/settings.json".source = "${inputs.hypr-config}/edex/settings.json";
-
-  xdg.configFile."wal/templates/colors-foot.ini".source =
-    "${inputs.hypr-config}/wal/templates/colors-foot.ini";
-  xdg.configFile."wal/templates/colors-hyprland.conf".source =
-    "${inputs.hypr-config}/wal/templates/colors-hyprland.conf";
 }

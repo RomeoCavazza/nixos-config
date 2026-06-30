@@ -25,8 +25,8 @@
     enable = true;
     settings = {
       user = {
-        name = "RomeoCavazza";
-        email = "romeo.cavazza@gmail.com";
+        name = locality.gitName;
+        email = locality.gitEmail;
       };
       init.defaultBranch = "main";
       pull.rebase = true;

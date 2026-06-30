@@ -14,8 +14,6 @@
     conky
     adw-gtk3
     gnome-themes-extra
-    pywal
-    wpgtk
     qt6Packages.qtbase
     qt6Packages.qt6ct
     qt6Packages.qttools
