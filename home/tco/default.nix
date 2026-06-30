@@ -7,6 +7,7 @@
     ./shell.nix
     ./gtk.nix
     ./apps.nix
+    ./emacs.nix
     ./hyprland
     ./dotfiles.nix
   ];
