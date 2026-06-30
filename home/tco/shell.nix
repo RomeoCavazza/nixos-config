@@ -85,6 +85,8 @@ in
       ll = "eza -l --icons";
       ls = "eza --icons";
       rebuild = "command rebuild";
+      scope = "bash ~/Applications/launch-hantek.sh";
+      tinysa = "bash ~/Applications/launch-tinysa.sh";
     };
   };
 }
