@@ -167,8 +167,12 @@ git add docs/assets/live/*.png
 git commit -q -m "snapshots: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
 echo "snapshot-sync: force-pushing to ${REPO_URL} branch=${SNAPSHOT_BRANCH}"
-if ! git push -q --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}"; then
+push_output=$(git push --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}" 2>&1) || push_exit=$?
+if [[ "${push_exit:-0}" -ne 0 ]]; then
+  echo "$push_output" | grep -v -iE '(Create a pull request|pull/new)' >&2 || true
   echo "snapshot-sync: warning: git push failed (check SSH authentication or network). Snapshots remain cached in ${SNAPSHOT_DIR}." >&2
   exit 0
+else
+  echo "$push_output" | grep -v -iE '(Create a pull request|pull/new)' || true
 fi
 echo "snapshot-sync: done"
