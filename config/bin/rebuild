@@ -12,6 +12,12 @@ NIXOS_REBUILD=/run/current-system/sw/bin/nixos-rebuild
 repo_dir="${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 FLAKE_REF="${FLAKE_REF:-${repo_dir}#legion}"
 
+# Self-heal: initialize submodules if any are missing (safe after a plain clone).
+if git -C "$repo_dir" submodule status | grep -q '^-'; then
+  echo "rebuild: uninitialised submodules detected — running git submodule update --init --recursive"
+  git -C "$repo_dir" submodule update --init --recursive
+fi
+
 start_ns=$(date +%s%N)
 start_ts=$(date +%s)
 

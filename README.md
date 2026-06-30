@@ -126,7 +126,7 @@ flowchart TB
 
 ## Live Infrastructure
 
-![Live NixOS Metrics](./docs/assets/live/live-dashboard.png)
+![Live NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
 
 Prometheus, Loki, Grafana, and Promtail provide local observability. The
 snapshots committed under `docs/assets/live/` are documentation artifacts only:
@@ -135,9 +135,9 @@ they are refreshed by a 15-minute systemd timer when the visual delta exceeds
 
 Dashboard snapshots:
 
-- [NixOS Metrics](./docs/assets/live/live-dashboard.png) - current pressure and rebuild cost
-- [Nix Efficiency](./docs/assets/live/nix-efficiency.png) - freshness, generation debt, closure structure
-- [Incident Correlation](./docs/assets/live/incident-dashboard.png) - pressure spikes mapped to Loki logs
+- [NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png) - current pressure and rebuild cost
+- [Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/nix-efficiency.png) - freshness, generation debt, closure structure
+- [Incident Correlation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/incident-dashboard.png) - pressure spikes mapped to Loki logs
 
 Runbook details live in the
 [Observability wiki page](https://github.com/RomeoCavazza/setup-os/wiki/Observability-and-Metrics).
@@ -178,7 +178,7 @@ for paths, timers, retention, and restore commands.
 
 2. **Clone this repository**:
    ```bash
-   sudo git clone https://github.com/RomeoCavazza/setup-os.git /etc/nixos-new
+   sudo git clone --recurse-submodules https://github.com/RomeoCavazza/setup-os.git /etc/nixos-new
    sudo cp -r /etc/nixos-new/* /etc/nixos/
    ```
 

@@ -61,7 +61,7 @@ in
       SNAPSHOT_GIT_NAME = "Romeo Cavazza";
       SNAPSHOT_GIT_EMAIL = "romeo.cavazza@users.noreply.github.com";
       SNAPSHOT_REPO_URL = locality.snapshotRepoUrl;
-      SNAPSHOT_BRANCH = "main";
+      SNAPSHOT_BRANCH = "snapshots";
       PUBLISH_REPO_DIR = locality.snapshotPublishDir;
     };
   };

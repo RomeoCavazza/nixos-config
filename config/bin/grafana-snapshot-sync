@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
-# Render Grafana dashboards to PNG and push only meaningful visual updates.
+# Render Grafana dashboards to PNG and force-push only meaningful visual
+# updates to the dedicated `snapshots` branch (never main).
+#
+# The snapshots branch is always kept at a single orphan commit so the
+# repository size stays bounded regardless of how often this runs.
+# Images are referenced in README via raw GitHub URLs pointing at that branch.
 
 set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
-OUT_DIR="${REPO_DIR}/docs/assets/live"
+SNAPSHOT_DIR="${REPO_DIR}/docs/assets/live"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -16,6 +21,8 @@ SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-setup-os bot}"
 SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@setup-os.local}"
 PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
 CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
+SNAPSHOT_REPO_URL="${SNAPSHOT_REPO_URL:-}"
+SNAPSHOT_BRANCH="${SNAPSHOT_BRANCH:-snapshots}"
 
 # uid:slug:file
 DASHBOARDS=(
@@ -25,8 +32,11 @@ DASHBOARDS=(
   "nixos-compiled:nixos-system-overview:nixos-system-overview.png"
 )
 
-mkdir -p "$OUT_DIR"
+mkdir -p "$SNAPSHOT_DIR"
+TMP_RENDER="${TMP_DIR}/render"
+mkdir -p "$TMP_RENDER"
 
+# ── Wait for Grafana ──────────────────────────────────────────────────────────
 for _ in $(seq 1 30); do
   if curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
     break
@@ -39,19 +49,24 @@ if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
   exit 1
 fi
 
+# ── Resolve Playwright ────────────────────────────────────────────────────────
+if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null || true)
+fi
+if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
+  exit 1
+fi
+
+# ── Render each dashboard ─────────────────────────────────────────────────────
 has_changes=0
 
 for item in "${DASHBOARDS[@]}"; do
   IFS=":" read -r uid slug filename <<< "$item"
-  new_file="${TMP_DIR}/${filename}"
-  target_file="${OUT_DIR}/${filename}"
+  new_file="${TMP_RENDER}/${filename}"
+  current_file="${SNAPSHOT_DIR}/${filename}"
 
   dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
-  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]] && [[ -f $(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null)/index.js ]]; then PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver)/index.js; fi
-  if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
-    echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
-    exit 1
-  fi
 
   PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
   CHROME_BIN="$CHROME_BIN" \
@@ -67,52 +82,32 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none'],
   });
 
-  const page = await browser.newPage({ 
+  const page = await browser.newPage({
     viewport: { width: 1920, height: 3000 },
-    deviceScaleFactor: 2, // Better resolution for documentation
+    deviceScaleFactor: 2,
   });
-  
+
   page.on('console', msg => console.log(`snapshot-sync: browser: ${msg.text()}`));
-
-
   console.log(`snapshot-sync: navigating to ${process.env.DASHBOARD_URL}`);
+
   try {
     await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'load', timeout: 60000 });
-    
-    // Wait for network to settle
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => console.log('snapshot-sync: networkidle timeout, proceeding anyway'));
-
-    // Wait for any element that looks like a panel or dashboard
+    await page.waitForLoadState('networkidle', { timeout: 30000 })
+      .catch(() => console.log('snapshot-sync: networkidle timeout, proceeding anyway'));
     await page.waitForSelector('.panel-title, .panel-title-text, [data-testid="panel-header"]', { timeout: 15000 })
       .catch(() => console.log('snapshot-sync: panel title not found, checking body...'));
+    console.log('snapshot-sync: waiting for stabilization...');
+    await page.waitForTimeout(10000);
 
-    // Give extra time for ECharts and data fetching
-    console.log(`snapshot-sync: waiting for stabilization...`);
-    await page.waitForTimeout(10000); 
-
-    // Calculate the bounding box of the actual content to remove the "cushion of air"
     const clip = await page.evaluate(() => {
-      // Find all grid items and specific panel containers
       const items = Array.from(document.querySelectorAll('.react-grid-item, .panel-container, [data-testid="grid-item"]'));
-      
-      const visibleItems = items.filter(p => {
-        const rect = p.getBoundingClientRect();
-        // Ignore tiny, invisible, or clearly out-of-bounds items
-        const isVisible = rect.height > 20 && rect.width > 20;
-        const isWithinReason = rect.bottom < 5000;
-        return isVisible && isWithinReason;
+      const visible = items.filter(p => {
+        const r = p.getBoundingClientRect();
+        return r.height > 20 && r.width > 20 && r.bottom < 5000;
       });
-      
       let maxBottom = 0;
-      visibleItems.forEach((p) => {
-        const rect = p.getBoundingClientRect();
-        if (rect.bottom > maxBottom) maxBottom = rect.bottom;
-      });
-      
-      // If we still get zero, fallback to a sensible default
-      // Otherwise, add a small 20px padding
+      visible.forEach(p => { const r = p.getBoundingClientRect(); if (r.bottom > maxBottom) maxBottom = r.bottom; });
       const height = maxBottom > 100 ? Math.ceil(maxBottom) + 20 : 1200;
-      
       return { x: 0, y: 0, width: 1920, height };
     });
 
@@ -124,52 +119,52 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
     process.exit(1);
   }
   await browser.close();
-})().catch((error) => {
+})().catch(error => {
   console.error(`snapshot-sync: fatal error: ${error.message}`);
   process.exit(1);
 });
 NODE
 
-  if [[ ! -f "$target_file" ]]; then
-    mv "$new_file" "$target_file"
-    has_changes=1
-    continue
-  fi
+  # Compare against the current snapshot if one exists.
+  if [[ -f "$current_file" ]]; then
+    changed_pixels=$(compare -metric AE "$current_file" "$new_file" null: 2>&1 || true)
+    total_pixels=$(identify -format "%[fx:w*h]" "$current_file")
+    percent_changed=$(awk -v c="$changed_pixels" -v t="$total_pixels" \
+      'BEGIN { if (t == 0) print 100; else printf "%.2f", (c * 100) / t }')
 
-  changed_pixels=$(compare -metric AE "$target_file" "$new_file" null: 2>&1 || true)
-  total_pixels=$(identify -format "%[fx:w*h]" "$target_file")
-  percent_changed=$(awk -v c="$changed_pixels" -v t="$total_pixels" 'BEGIN { if (t == 0) print 100; else printf "%.2f", (c * 100) / t }')
-
-  if awk -v p="$percent_changed" -v m="$MIN_CHANGE_PERCENT" 'BEGIN { exit !(p > m) }'; then
-    mv "$new_file" "$target_file"
+    if awk -v p="$percent_changed" -v m="$MIN_CHANGE_PERCENT" 'BEGIN { exit !(p > m) }'; then
+      cp "$new_file" "$current_file"
+      has_changes=1
+    else
+      echo "snapshot-sync: ${filename} unchanged (${percent_changed}% < ${MIN_CHANGE_PERCENT}%), skipping"
+    fi
+  else
+    cp "$new_file" "$current_file"
     has_changes=1
   fi
 done
 
-if [[ "$has_changes" -eq 0 ]]; then
-  exit 0
-fi
+[[ "$has_changes" -eq 0 ]] && { echo "snapshot-sync: no meaningful changes, skipping publish"; exit 0; }
 
-cd "$REPO_DIR"
+# ── Publish to `snapshots` orphan branch (always depth-1) ────────────────────
+# Build a fresh orphan commit in a throw-away worktree so we never touch the
+# main branch's index or working tree.
+PUBLISH_DIR="${TMP_DIR}/publish"
+mkdir -p "$PUBLISH_DIR/docs/assets/live"
+cp "$SNAPSHOT_DIR"/*.png "$PUBLISH_DIR/docs/assets/live/"
 
-if [[ ! -w .git/index ]]; then
-  echo "snapshot-sync: repository is not writable by current user" >&2
-  exit 1
-fi
+REPO_URL="${SNAPSHOT_REPO_URL:-$(git -C "$REPO_DIR" remote get-url origin)}"
 
-if ! git config user.name >/dev/null; then
-  git config user.name "$SNAPSHOT_GIT_NAME"
-fi
+cd "$PUBLISH_DIR"
+git init -q
+git config user.name  "$SNAPSHOT_GIT_NAME"
+git config user.email "$SNAPSHOT_GIT_EMAIL"
 
-if ! git config user.email >/dev/null; then
-  git config user.email "$SNAPSHOT_GIT_EMAIL"
-fi
-
+# Create a lone orphan commit — no parent, no history.
+git checkout -q --orphan "$SNAPSHOT_BRANCH"
 git add docs/assets/live/*.png
+git commit -q -m "snapshots: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 
-if git diff --cached --quiet; then
-  exit 0
-fi
-
-git commit -m "docs(live): refresh Grafana snapshots"
-git push origin "HEAD:${SNAPSHOT_BRANCH:-main}"
+echo "snapshot-sync: force-pushing to ${REPO_URL} branch=${SNAPSHOT_BRANCH}"
+git push -q --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}"
+echo "snapshot-sync: done"

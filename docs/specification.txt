@@ -101,9 +101,11 @@ observability.nix:
     mutable path): nixos-metrics.json, nix-efficiency.json,
     incident-correlation.json, nixos-compiled.json.
   - Local Continuous Documentation: `grafana-snapshot-sync.timer` (every 6h)
-    captures dashboards via headless Playwright/Chrome, writes PNGs to
-    docs/assets/live, publishes via git push when image delta > 0.3%
-    (MIN_CHANGE_PERCENT=0.3 in service environment).
+    captures dashboards via headless Playwright/Chrome, writes PNGs to a
+    throw-away orphan Git commit, and force-pushes to the remote `snapshots`
+    branch (`MIN_CHANGE_PERCENT=0.3` gate). The `snapshots` branch is kept at
+    exactly 1 commit depth; the `main` branch history is never touched.
+    Dashboard images in README point to raw GitHub URLs on `snapshots`.
   - Additional timers: nix-metrics (15min), hypr-metrics (30s).
   - Log correlation labels: promtail injects `component=display|build|system`.
 
