@@ -2,7 +2,7 @@
 
 {
   environment.systemPackages = with pkgs; [
-    rofi
+    rofi-wayland # native layer-shell build → Hyprland can blur it via layerrule
     waybar
     networkmanagerapplet
     nemo
