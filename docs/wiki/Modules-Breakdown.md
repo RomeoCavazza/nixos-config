@@ -8,7 +8,7 @@ The goal is to keep [`configuration.nix`](https://github.com/RomeoCavazza/nixos-
 
 ### [`nvidia-prime.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/hardware/nvidia-prime.nix) — Hybrid GPU
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/nvidia.svg" alt="NVIDIA" width="28" />
+	<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/nvidia.svg" alt="NVIDIA" width="28" />
 </p>
 
 On a laptop with both an Intel iGPU and an NVIDIA discrete GPU, the choice of GPU mode has significant power implications. Running in full NVIDIA mode keeps the discrete GPU active at all times, drawing 10–15W at desktop idle. PRIME Offload mode makes the Intel GPU the primary display device and suspends the NVIDIA GPU until a process explicitly requests it — at which point the GPU wakes, does its work, and returns to D3cold (fully powered off), drawing around 0.5W at rest.
@@ -21,7 +21,7 @@ Applications that need the discrete GPU use the `nvidia-offload` wrapper — for
 
 ### [`gdm-wallpaper.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/desktop/gdm-wallpaper.nix) — Custom GDM Login Screen
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/gnome.svg" alt="GNOME" width="28" />
+	<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/gnome.svg" alt="GNOME" width="28" />
 </p>
 
 This is a custom NixOS module with no upstream equivalent in `nixpkgs`. It patches the GDM login screen wallpaper by extracting the existing `gnome-shell-theme.gresource` binary, injecting CSS that overrides the background selectors, recompiling it with `glib-compile-resources`, and replacing the original via a Nix overlay on the `gnome-shell` package.
@@ -47,7 +47,7 @@ The module also installs Rofi, Waybar, the NetworkManager system tray applet, an
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/obsidian.webp" alt="Obsidian" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/kicad.webp" alt="KiCad" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/freecad.png" alt="FreeCAD" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/arduino.svg" alt="Arduino" width="28" />
+	<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/arduino.svg" alt="Arduino" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/esptool.png" alt="esptool" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/dbeaver.webp" alt="DBeaver" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/influxdb.png" alt="InfluxDB" width="28" />
@@ -144,7 +144,7 @@ WebSocket proxying is enabled on all virtual hosts, which is required for develo
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/apache.png" alt="Apache" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/php.png" alt="PHP" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/mariadb.svg" alt="MariaDB" width="28" />
+	<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/mariadb.svg" alt="MariaDB" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/streamlit.webp" alt="Streamlit" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/edex-ui.png" alt="eDEX-UI" width="28" />
 </p>
