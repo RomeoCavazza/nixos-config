@@ -14,9 +14,9 @@ let
   lzbtNixOSMenuTitle = lanzaboote.packages.lzbt.overrideAttrs (old: {
     postPatch = (old.postPatch or "") + ''
       grep -q 'generation.describe()' shared/src/os_release.rs
-      sed -i '40,44c\            generation.spec.bootspec.bootspec.label.clone()' shared/src/os_release.rs
+      sed -i '40,44c\            "NixOS".to_string()' shared/src/os_release.rs
       substituteInPlace systemd/tests/integration/os_release.rs \
-        --replace-fail 'PRETTY_NAME=LanzaOS (Generation 1, 1970-01-01)' 'PRETTY_NAME=LanzaOS'
+        --replace-fail 'PRETTY_NAME=LanzaOS (Generation 1, 1970-01-01)' 'PRETTY_NAME=NixOS'
     '';
   });
 in
