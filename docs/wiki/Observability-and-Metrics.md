@@ -1,7 +1,7 @@
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" width="26" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/loki.png" alt="Loki" width="26" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/loki.png" alt="Loki" width="26" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" width="26" />
 </p>
 
 ## Stack Summary
@@ -78,7 +78,7 @@ Source: [config/grafana/src/incident-correlation-dashboard.jsonnet](https://gith
 
 Prometheus is the verification layer. If a dashboard panel looks wrong, this is where raw `nix_*` or `node_*` series are checked first.
 
-![Prometheus query view](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/prometheus.webp)
+![Prometheus query view](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/refs/heads/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/prometheus.webp)
 
 ### Log Correlation Labels (Promtail)
 

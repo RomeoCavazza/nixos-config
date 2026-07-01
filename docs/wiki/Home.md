@@ -9,7 +9,7 @@
 > **Declarative workstation infrastructure.**
 > This is a reproducible, auditable NixOS system with pinned inputs, encrypted secrets, and integrated observability.
 
-![](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/htop.webp)
+![](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp)
 
 ---
 

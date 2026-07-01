@@ -2,7 +2,7 @@ Each module in [`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/ma
 
 The goal is to keep [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
 
-![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/scheme.webp)
+![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/scheme.webp)
 
 ---
 
@@ -32,7 +32,7 @@ Only the theme resource is modified. GNOME Shell itself remains unpatched and co
 
 ### [`launcher.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/desktop/launcher) — Desktop Integration
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/rofi.png" alt="Rofi" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/rofi.png" alt="Rofi" width="28" />
 </p>
 
 This module is intentionally thin. Its only job is to ensure that `gvfs` and `udisks2` run as system services. Without `gvfs`, file managers cannot access SFTP mounts, MTP devices (Android phones), or network shares. Without `udisks2`, USB drives are not automounted and the file manager has no mechanism to eject removable media. These services need to be enabled at the system level regardless of which file manager or desktop environment session is active.
@@ -44,13 +44,13 @@ The module also installs Rofi, Waybar, the NetworkManager system tray applet, an
 ## User App Modules
 
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/obsidian.webp" alt="Obsidian" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/kicad.webp" alt="KiCad" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/freecad.png" alt="FreeCAD" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/obsidian.webp" alt="Obsidian" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/kicad.webp" alt="KiCad" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/freecad.png" alt="FreeCAD" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/arduino.svg" alt="Arduino" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/esptool.png" alt="esptool" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/dbeaver.webp" alt="DBeaver" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/influxdb.png" alt="InfluxDB" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/esptool.png" alt="esptool" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/dbeaver.webp" alt="DBeaver" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/influxdb.png" alt="InfluxDB" width="28" />
 </p>
 
 The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/) are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, and they have no service dependencies.
@@ -65,8 +65,8 @@ The grouping reflects how these tools are actually used. They are domain-specifi
 
 ### [`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/backup.nix) — Restic + Backblaze B2
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/restic.webp" alt="Restic" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/backblaze.png" alt="Backblaze B2" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/restic.webp" alt="Restic" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/backblaze.png" alt="Backblaze B2" width="28" />
 </p>
 
 This is the most operationally critical module. It runs two independent systemd timer and service pairs, each targeting a different category of data with different retention requirements.
@@ -81,9 +81,9 @@ Both timers use `RandomizedDelaySec` to add a random offset to their start time,
 
 ### [`observability.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/observability) — Prometheus, Loki, Grafana
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/loki.png" alt="Loki" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/loki.png" alt="Loki" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" width="28" />
 </p>
 
 The observability stack mirrors what a production SRE environment looks like: Prometheus scrapes metrics from Node Exporter and from itself, Promtail ships the systemd journal to Loki, and Grafana provides a unified dashboard interface pre-wired to both sources.
@@ -96,9 +96,9 @@ Promtail runs as a raw systemd service rather than through the NixOS module, bec
 
 ### [`databases.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/databases.nix) — PostgreSQL, Redis, Qdrant
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/postgresql.webp" alt="PostgreSQL" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/redis.webp" alt="Redis" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/postgresql.webp" alt="PostgreSQL" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/redis.webp" alt="Redis" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
 </p>
 
 Three data services are configured as local development services, each bound to localhost only.
@@ -113,9 +113,9 @@ Qdrant is the vector database of this stack. It listens on `localhost:6333` and 
 
 ### [`virtualisation.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/virtualisation.nix) — Containers, VMs, and ARM Emulation
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/docker.png" alt="Docker" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/kvm.png" alt="KVM" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/qemu.png" alt="QEMU" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/docker.png" alt="Docker" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/kvm.png" alt="KVM" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/qemu.png" alt="QEMU" width="28" />
 </p>
 
 This module handles three distinct layers of virtualisation that are used for different purposes.
@@ -130,7 +130,7 @@ The third layer is `binfmt` emulation for `aarch64-linux`. This registers the AR
 
 ### [`nginx.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/nginx.nix) — Local Reverse Proxy
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/nginx.webp" alt="Nginx" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/nginx.webp" alt="Nginx" width="28" />
 </p>
 
 Nginx runs three virtual hosts on localhost, routing traffic from named ports to local development services. The reason for a reverse proxy on localhost is that named virtual hosts allow multiple projects to run as distinct browser origins. Without this, every development server is `localhost:some-port`, and testing anything that is sensitive to origin — CORS policy, cookies with `SameSite` restrictions, OAuth redirect URIs — requires either faking the origin in some other way or manually reconfiguring headers.
@@ -142,11 +142,11 @@ WebSocket proxying is enabled on all virtual hosts, which is required for develo
 ## Optional Modules
 
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/apache.png" alt="Apache" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/php.png" alt="PHP" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/apache.png" alt="Apache" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/php.png" alt="PHP" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/mariadb.svg" alt="MariaDB" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/streamlit.webp" alt="Streamlit" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/edex-ui.png" alt="eDEX-UI" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/streamlit.webp" alt="Streamlit" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/edex-ui.png" alt="eDEX-UI" width="28" />
 </p>
 
 Three modules exist in [`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) but are not active by default. They are ready to use but represent services that are not always needed.
@@ -160,9 +160,9 @@ Any of these can be activated by adding the corresponding `./modules/filename.ni
 
 ### [`ollama.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/ollama.nix) — Local LLM Daemon (AI Stack)
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/n8n.png" alt="n8n" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/ollama.png" alt="Ollama" width="28" />
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/n8n.png" alt="n8n" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/ollama.png" alt="Ollama" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/qdrant.png" alt="Qdrant" width="28" />
 </p>
 
 Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA cuBLAS for matrix operations instead of falling back to CPU. GPU inference is typically several times faster than CPU-only execution for interactive local models.
@@ -177,7 +177,7 @@ Ollama + Qdrant form a local RAG pipeline: Ollama handles embedding generation a
 
 ### [`emacs.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/emacs.nix) — Emacs Daemon
 <p align="left">
-	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/emacs.webp" alt="Emacs" width="28" />
+	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/emacs.webp" alt="Emacs" width="28" />
 </p>
 
 Emacs runs as a systemd user service using the `emacs-pgtk` build — Pure GTK, which renders natively on Wayland without requiring XWayland. The daemon approach means the editor process starts at login and remains running. Connecting via `emacsclient` takes around 50ms regardless of configuration complexity, compared to 2 to 5 seconds for a cold Emacs start with Doom Emacs loaded.

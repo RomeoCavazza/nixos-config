@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
 
   <div align="center">
@@ -55,13 +55,13 @@ Local technical annexes:
 ## Preview
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/hero-video.mp4" alt="Desktop demo" width="100%">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/hero-video.mp4" alt="Desktop demo" width="100%">
 </div>
 
 <br>
 
-![Waybar showcase](https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/screen-waybar.webp)
-*Desktop Interface — [Waybar Configuration](./home/tco/hyprland/waybar.nix) · [Wallpaper](https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/background.webp)*
+![Waybar showcase](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-waybar.webp)
+*Desktop Interface — [Waybar Configuration](./home/tco/hyprland/waybar.nix) · [Wallpaper](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/background.webp)*
 
 <br>
 
@@ -84,45 +84,45 @@ flowchart TB
 ```
 
 ### GNOME
-![GNOME Desktop](https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/gnome-desktop.webp)
+![GNOME Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/gnome-desktop.webp)
 
 <br>
 
 ### Hyprland
-![Hyprland Desktop](https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/screen-fastfetch.webp)
+![Hyprland Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-fastfetch.webp)
 
 <br>
 
 ### Code Environment
-<img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
 
 *Fully featured Neovim setup for efficient coding and development.*
 
 <br>
 
 ### Virtualization
-<img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/virual-machine.webp" alt="Virtual Machine Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/virual-machine.webp" alt="Virtual Machine Screen" width="100%">
 
 *Seamless virtualization support for running isolated environments and testing.*
 
 <br>
 
 ### Hardware & Modeling
-<img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/screen-cad.webp" alt="CAD Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-cad.webp" alt="CAD Screen" width="100%">
 
 *Optimized performance for demanding CAD and 3D modeling workloads.*
 
 <br>
 
 ### System Metrics
-<img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/htop.webp" alt="HTOP Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="HTOP Screen" width="100%">
 
 *Real-time system monitoring and resource management.*
 
 <br>
 
 ### Graphics Engine
-<img src="https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/screen-nvidia.webp" alt="NVIDIA Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvidia.webp" alt="NVIDIA Screen" width="100%">
 
 *Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
 
