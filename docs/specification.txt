@@ -9,29 +9,33 @@ Project Type: Hybrid NixOS Workstation (Hyprland/GNOME)
 --------------------------------------------------------------------------------
 The project uses a Nix Flake for reproducible system deployment and dev shells.
 
-Inputs (10 total):
-  - nixpkgs: Unstable branch for bleeding-edge desktop features.
-  - nixpkgs-stable: Frozen 24.11 for specific utilities (Guix, Promtail).
+Inputs:
+  - nixpkgs: nixos-26.05 branch, primary package set.
+  - nixpkgs-legacy: Frozen 24.11 for a single package (promtail; removed from newer
+    nixpkgs during the Loki 3 transition). Consumed via overlays/default.nix.
   - home-manager: User environment sync (inline in nixosConfigurations).
   - sops-nix: Declarative secret management for encrypted, committable secrets.
   - rust-overlay: Nightly/Stable Rust toolchains.
-  - hyprland: Wayland compositor, pinned to v0.54.2.
-  - hyprspace: RomeoCavazza/Hyprspace flake input, follows hyprland.
-  - hyprland-plugins: Official plugin ecosystem, follows hyprland.
-  - hyprtasking: Task management plugin, follows hyprland.
+  - hyprland: Wayland compositor, pinned to v0.55.4.
+  - hypr-config: RomeoCavazza/hyprland-config (flake=false). Source for the
+    Hyprland/Waybar/Rofi/foot configs, rendered with palette injection.
+  - hyprspace / hyprland-plugins / hyprtasking: flake inputs, follow hyprland.
+  - hyprchroma / hypr-canvas: RomeoCavazza forks (flake=false), built as Nix
+    derivations under pkgs/hyprland-plugins/.
   - nix-snapd: Canonical Snap daemon implementation for NixOS.
-  - hyprchroma: RomeoCavazza/Hyprchroma (flake=false), compiled during home-manager activation.
 
 Outputs:
-  - nixosConfigurations.nixos: Sole entry point. System + Home Manager applied atomically.
-  Note: devShells (.#ai, .#embedded) were present in earlier versions but have been
-  removed. Development environments are now managed via home-manager packages and
-  per-project flakes.
+  - nixosConfigurations.legion: primary entry point. System + Home Manager applied atomically.
+  - devShell + apps/checks: local quality gate (nixfmt, deadnix, statix, grafana drift check).
+  Per-project development uses home-manager packages plus per-project flakes with direnv.
 
 --------------------------------------------------------------------------------
-2. SYSTEM LAYER (configuration.nix)
+2. SYSTEM LAYER (hosts/legion + profiles)
 --------------------------------------------------------------------------------
-Entry point: /etc/nixos/configuration.nix.
+Entry point: hosts/legion/default.nix imports hardware-configuration.nix and
+profiles/workstation.nix, which composes the profiles (core, boot, hardware,
+services, desktop-hyprland, launcher, observability). Profiles import the domain
+modules under modules/{boot,core,desktop,hardware,services,observability}/.
 
 Boot Logic (systemd-boot):
   - configurationLimit = 1: Limits boot menu to 1 NixOS entry. Rollback via
@@ -49,15 +53,16 @@ Display & Desktop Environment:
   - XDG Portal: Dual implementation (hyprland/gtk) for Wayland compatibility.
 
 System Services:
-  - Guix: Native Guix daemon integration via pkgs-stable.
+  - Guix: Native Guix daemon integration (from the primary nixpkgs).
   - Pipewire: High-performance audio with ALSA and Pulse layers.
   - Polkit: GNOME auth-agent integrated into systemd user session.
   - Restic backups: Encrypted cloud snapshots to Backblaze B2 via sops-nix.
 
 --------------------------------------------------------------------------------
-3. USER ENVIRONMENT (home/tco/home.nix)
+3. USER ENVIRONMENT (home/tco/default.nix)
 --------------------------------------------------------------------------------
-Managed via Home-Manager.
+Managed via Home-Manager. Imports: packages/, hyprland/, dotfiles.nix, scripts/,
+shell.nix, gtk.nix, apps.nix, emacs.nix.
 
 Session & Paths:
   - $PATH injection: .lmstudio/bin, .npm-global/bin, .local/bin (priority order).
@@ -67,12 +72,14 @@ Package Ecosystem:
   - Standard Tools: Bat, Eza, Fzf, Zoxide, Direnv.
   - Creative Tools: OBS Studio, Discord, Spotify.
   - Development: Zed, NeoVim, VSCode (with Nix/Python/Rust extensions).
-  - CAD/EDA: Obsidian, KiCad, FreeCAD (→ home/tco/modules/apps/cad.nix).
-  - Embedded: Arduino IDE/CLI, esptool, minicom (→ home/tco/modules/apps/embedded.nix).
-  - Data: DBeaver, Grafana, InfluxDB2 (→ home/tco/modules/apps/data.nix).
+  - CAD/EDA: KiCad, FreeCAD (→ home/tco/packages/cad.nix).
+  - Embedded: Arduino IDE/CLI, esptool, minicom (→ home/tco/packages/embedded.nix).
+  - Data: DBeaver, database tooling (→ home/tco/packages/data.nix).
 
 Dotfile Management:
-  - Seaglass Theme: Symlinks for Hyprland/Waybar/Rofi configs.
+  - Theme: Hyprland/Waybar/Rofi/foot configs are rendered into the store from the
+    hyprland-config flake input with palette injection (not raw symlinks). Only
+    nvim/doom are out-of-store symlinks to the live checkout for zero-rebuild edits.
   - Antigravity: Multi-binary integration (system-wide vs local shim).
   - SOPS secrets: Encrypted YAML stored in-repo; decrypted locally via Age/SSH.
 
@@ -96,7 +103,7 @@ observability.nix:
   - Prometheus :9090, Node Exporter :9100, NVIDIA GPU Exporter :9835,
     Loki :3100, Grafana listener :3001 (proxied to :3000 by nginx.nix).
   - Promtail runs as raw systemd service (NixOS module conflict workaround),
-    binary sourced from pkgs-stable.promtail via custom overlay.
+    binary sourced from pkgs-legacy.promtail via custom overlay.
   - Four dashboards provisioned from /etc/nixos/config/grafana/ (hot-reload
     mutable path): nixos-metrics.json, nix-efficiency.json,
     incident-correlation.json, nixos-compiled.json.
@@ -123,12 +130,12 @@ nginx.nix:
     * localhost:8084  → localhost:80             (localhost-8084-proxy)
   - All loopback-only; the firewall opens no extra ports (allowedTCPPorts = []).
     Port 8081 is intentionally left free for OpsWarden's `client_web` Compose
-    service. streamlit.nix exists but is not imported, so it has no vhost here.
+    service.
 
 --------------------------------------------------------------------------------
-4b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
+4b. HOME MANAGER PACKAGE MODULES (home/tco/packages/)
 --------------------------------------------------------------------------------
-Thematic user modules imported by home/tco/home.nix.
+Thematic package sets imported by home/tco/default.nix.
 Separation principle: system modules = services/drivers, user modules = apps.
 
 cad.nix:
@@ -174,21 +181,21 @@ cursor:
 --------------------------------------------------------------------------------
 Accent: Teal (#94E2D5).
 Components:
-  - Hyprland: Rounded 12px borders, dual-border active state.
-  - Waybar: Mocha-inspired top bar with workspace/media/clock modules.
-  - Pywal: Automatic color palette generation from wallpapers.
+  - Hyprland: rounded borders, dual-border active state (conf/theme.conf).
+  - Waybar: teal-accented top bar with workspace/media/clock modules.
+  Palette is defined once in lib/palette.nix and rendered per tool by lib/colors.nix.
 
 config/
-  Source configuration tree:
-  bin/, conky/, doom/, edex/, fastfetch/, foot/, grafana/, hypr/,
-  icons/, nvim/, rofi/, scss/, swappy/, wal/
+  In-repo configuration tree (Hyprland/Waybar/Rofi/foot live in the separate
+  hyprland-config repo, pulled as a flake input):
+  bin/, conky/, doom/, fastfetch/, grafana/, icons/, nvim/
 
 config/bin/
-  Custom scripts (18 total): antigravity, cursor, cursor-toggle,
-  edex-conky-toggle, edex-toggle, grafana-generate, grafana-snapshot-sync,
-  hypr-close-all, hypr-layout-toggle, hypr-metrics, hypr-plugins-init,
-  legion-pulse, legion-toggle, nix-flamegraph.py, nix-metrics, rebuild,
-  scss-compile, waybar-toggle.
+  Custom scripts: antigravity, antigravity-ide, cursor, cursor-toggle, devin,
+  grafana-generate, grafana-snapshot-sync, hypr-metrics, legion-pulse,
+  legion-toggle, nix-flamegraph.py, nix-metrics, rebuild.
+  (Hyprland/Waybar helper scripts — hypr-plugins-init, waybar-toggle,
+  scss-compile, edex-toggle, etc. — live in hyprland-config/bin/.)
 
 antigravity (home.file.".local/bin/antigravity")
   Wrapper script that runs /etc/nixos/config/bin/antigravity. Lets you invoke the system binary from the user profile.
@@ -225,50 +232,50 @@ xdg.portal
   enable, xdgOpenUsePortal, extraPortals: xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk.
 
 Hyprland (programs.hyprland)
-  enable = true, xwayland.enable = true. Config in config/hypr (hyprland.conf, theme/seaglass.conf, theme/hyprchroma.conf, waybar).
+  enable = true, xwayland.enable = true. Config in hyprland-config repo (hyprland.conf, conf/*.conf, waybar/).
 
 Hyprchroma fork / hypr-darkwindow
   RomeoCavazza/Hyprchroma fork compiled into libhypr-darkwindow.so. Used for inactive-window tint and workspace-transition smoothing.
 
 hyprspace (flake input)
-  RomeoCavazza/Hyprspace fork locked as a flake input. Used for the overview plugin on Hyprland v0.54.2.
+  RomeoCavazza/Hyprspace fork locked as a flake input. Used for the overview plugin on Hyprland v0.55.4.
 
 seaglass
-  Main visual theme (accent #94E2D5). Files config/hypr/theme/seaglass.conf and hyprchroma.conf.
+  Main visual theme (accent #94E2D5). Files hyprland-config conf/theme.conf.
 
-Waybar (config/hypr/waybar)
-  Status bar (config.jsonc, generated style.css from style.scss, mocha.css, scripts).
+Waybar (hyprland-config waybar/)
+  Status bar (config.jsonc, generated style.css from style.scss (+ injected _variables.scss), scripts).
 
-WaybarCava.sh (config/hypr/waybar/WaybarCava.sh)
+WaybarCava.sh (hyprland-config waybar/WaybarCava.sh)
   Cava integration script. Generates temporary config in /tmp/bar_cava_config.
   Processes raw ASCII output from Cava into bar characters for Waybar.
   Handles silence masking. Deployed to ~/.config/waybar/ via the Sass
-  compilation derivation (waybarConfig in home.nix).
+  compilation derivation (waybarConfig in home/tco/hyprland/waybar.nix).
 
-activeapp.sh (config/hypr/waybar/activeapp.sh)
+activeapp.sh (hyprland-config waybar/activeapp.sh)
   Active window tracker. Uses `hyprctl activewindow` and `jq` to extract
   class/title. Maps class to Nerd Font icons (firefox -> , code -> 󰨞, etc.).
   Outputs JSON for Waybar. Deployed alongside WaybarCava.sh via waybarConfig.
 
-rofi (config/rofi, home.file.".config/rofi")
+rofi (hyprland-config rofi/, home.file.".hyprland-config rofi/")
   Active runtime: config.rasi, theme.rasi, custom/column-tco.rasi, scripts/rofi-push.sh, bin/rofi-grid.sh, themes/apps-grid.rasi. Referenced in hyprland.conf ($menu, $powermenu -> rofi-push.sh).
 
-rofi-push.sh (config/rofi/scripts/rofi-push.sh)
+rofi-push.sh (hyprland-config rofi/scripts/rofi-push.sh)
   Dynamic gap management script. Calculates LEFT_GAP = BASE_GAP + 400.
   Sets Hyprland gaps_out to "LEFT,BASE,BASE,BASE" to make room for Rofi
   without overlapping windows. Restores original gaps on exit.
 
-rofi-grid.sh (config/rofi/bin/rofi-grid.sh)
+rofi-grid.sh (hyprland-config rofi/bin/rofi-grid.sh)
   Display management. Temporarily increases Hyprland blur size when Rofi
   is active. Kills Waybar on launch and relaunches on exit.
 
-foot (config/foot/, home.file.".config/foot")
+foot (hyprland-config foot/, home.file.".hyprland-config foot/")
   Foot terminal configuration (foot.ini). Theme and colour palette.
 
 GTK (home: gtk)
   theme name = "Adwaita-dark", iconTheme = "Papirus-Dark", cursorTheme = "Bibata-Modern-Ice".
 
-launcher.nix (modules/)
+launcher.nix (modules/desktop/launcher/)
   Launcher integration (Rofi etc.).
 
 --------------------------------------------------------------------------------
@@ -308,7 +315,7 @@ snap (services.snap) / nix-snapd (flake input + nixosModules.default)
   Snap support on NixOS.
 
 guix (services.guix)
-  Guix service enabled. Flake overlay: guix provided by pkgs-stable.guix.
+  Guix service enabled. Flake overlay: guix provided by the primary nixpkgs.
 
 polkit (security.polkit)
   enable = true. User service polkit-gnome-authentication-agent-1 for GUI.
@@ -341,50 +348,48 @@ networking.networkmanager
 modules/
   Optional NixOS modules directory. Imported from configuration.nix as listed in imports.
 
-nvidia-prime.nix (modules/)
+nvidia-prime.nix (modules/hardware/)
   NVIDIA and PRIME configuration (hybrid GPU).
 
-virtualisation.nix (modules/)
+virtualisation.nix (modules/services/)
   Libvirt and virtualisation tools.
 
-emacs.nix (modules/)
+emacs.nix (home/tco/)
   Emacs daemon (emacs-pgtk, Wayland-native). LSP servers: nil (Nix),
   bash-language-server. Build tools: clang, cmake, gnumake, libtool.
   Publishing: pandoc, graphviz. LaTeX: texlive scheme-medium.
   User config lives in config/doom/ (Doom Emacs).
 
-launcher.nix (modules/)
+launcher.nix (modules/desktop/launcher/)
   Launcher integration (Rofi etc.).
 
-databases.nix (modules/)
+databases.nix (modules/services/)
   Optional module: local database tools and services.
 
-ollama.nix (modules/)
+ollama.nix (modules/services/)
   Ollama integration (local LLM).
 
-nginx.nix (modules/)
+nginx.nix (modules/services/)
   Nginx module (e.g. serving apps or reverse proxy).
 
-observability.nix (modules/)
+observability/ (modules/)
   Monitoring and observability tools.
 
-edex.nix (modules/)
-  Optional module (not imported in current configuration.nix): edex configuration.
-
-  Also in modules/ but not imported: lamp.nix, streamlit.nix.
+edex.nix (pkgs/apps/)
+  eDEX-UI packaging — builds an FHS environment for the eDEX-UI AppImage.
 
 --------------------------------------------------------------------------------
-11b. HOME MANAGER USER MODULES (home/tco/modules/apps/)
+11b. HOME MANAGER USER MODULES (home/tco/packages/)
 --------------------------------------------------------------------------------
-Imported by home/tco/home.nix. Evaluated by Home Manager module system (user scope).
+Imported by home/tco/default.nix. Evaluated by Home Manager module system (user scope).
 
-cad.nix (home/tco/modules/apps/)
+cad.nix (home/tco/packages/)
   CAD/EDA stack: obsidian, kicad, freecad.
 
-embedded.nix (home/tco/modules/apps/)
+embedded.nix (home/tco/packages/)
   Embedded/IoT tools: arduino-ide, arduino-cli, esptool, minicom.
 
-data.nix (home/tco/modules/apps/)
+data.nix (home/tco/packages/)
   Data/observability: dbeaver-bin, grafana, influxdb2.
 
 --------------------------------------------------------------------------------
@@ -399,7 +404,7 @@ rust-overlay (flake input)
 --------------------------------------------------------------------------------
 Commands
 --------------------------------------------------------------------------------
-  Apply system config   sudo nixos-rebuild switch --flake .#nixos   (or alias: rebuild)
+  Apply system config   sudo nixos-rebuild switch --flake .#legion   (or alias: rebuild)
   Rebuild (alias)      rebuild (bash)
   Refresh cloc report  nix shell nixpkgs#cloc -c cloc . --exclude-dir=.git,node_modules,result,.direnv --md --out=docs/cloc-report.md
 
@@ -407,10 +412,10 @@ Commands
   theme-flow.puml       Seaglass theme propagation → Hyprland, Waybar, Rofi → Foot, Hyprchroma, GTK
   integration-logic.puml   Logical dependencies between Nix, Rofi, and Waybar
   rofi-launcher-flow.puml  Sidebar and app-grid coordination logic
-  flake-outputs.puml    nixosConfigurations — 10 inputs (nixpkgs, nixpkgs-stable,
-                        home-manager, rust-overlay, hyprland, hyprspace,
-                        hyprland-plugins, hyprtasking, nix-snapd, sops-nix),
-                        system + HM + sops output
+  flake-outputs.puml    nixosConfigurations.legion — inputs (nixpkgs, nixpkgs-legacy,
+                        home-manager, rust-overlay, hyprland, hypr-config, hyprspace,
+                        hyprchroma, hypr-canvas, hyprland-plugins, hyprtasking,
+                        nix-snapd, sops-nix), system + HM + sops output
   display-audio.puml    Display stack, audio pipeline, and portal configuration
   observability.puml    Prometheus/Loki/Grafana data flow and scrape topology
   user-layer.puml       Home Manager user environment and dotfile symlink map
