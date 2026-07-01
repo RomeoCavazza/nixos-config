@@ -15,8 +15,11 @@ let
     postPatch = (old.postPatch or "") + ''
       grep -q 'generation.describe()' shared/src/os_release.rs
       sed -i '40,44c\            "NixOS".to_string()' shared/src/os_release.rs
+      substituteInPlace shared/src/os_release.rs \
+        --replace-fail '        map.insert("VERSION_ID".into(), generation.describe());' '        // VERSION_ID intentionally omitted so systemd-boot shows just "NixOS".'
       substituteInPlace systemd/tests/integration/os_release.rs \
         --replace-fail 'PRETTY_NAME=LanzaOS (Generation 1, 1970-01-01)' 'PRETTY_NAME=NixOS'
+      sed -i '/VERSION_ID=Generation 1, 1970-01-01/d' systemd/tests/integration/os_release.rs
     '';
   });
 in
@@ -35,6 +38,12 @@ in
       auto-firmware = true;
     };
   };
+
+  system.activationScripts.cleanupLegacySystemdBootEntries.text = ''
+    if [ -d /boot/loader/entries ]; then
+      ${pkgs.coreutils}/bin/rm -f /boot/loader/entries/nixos-generation-*.conf
+    fi
+  '';
 
   system.build.secureBootDryRun = pkgs.writeShellApplication {
     name = "secure-boot-dry-run";
