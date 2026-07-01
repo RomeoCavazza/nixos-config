@@ -15,11 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Initialize submodules over HTTPS
-        run: |
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
-          git submodule update --init --recursive
-
       - name: Install Nix
         uses: cachix/install-nix-action@v26
 
@@ -43,8 +38,13 @@ jobs:
       - name: Build declared checks
         run: |
           nix build \
-            "git+file://$PWD?submodules=1#checks.x86_64-linux.fmt" \
-            "git+file://$PWD?submodules=1#checks.x86_64-linux.deadnix" \
-            "git+file://$PWD?submodules=1#checks.x86_64-linux.statix" \
-            "git+file://$PWD?submodules=1#checks.x86_64-linux.grafana" \
+            "git+file://$PWD#checks.x86_64-linux.fmt" \
+            "git+file://$PWD#checks.x86_64-linux.deadnix" \
+            "git+file://$PWD#checks.x86_64-linux.statix" \
+            "git+file://$PWD#checks.x86_64-linux.grafana" \
             --no-link
+
+      # Reports pinned flake inputs vs upstream. The lock file remains the source
+      # of truth; this surfaces lagging pins without making intentional lag noisy.
+      - name: Dependency pin audit
+        run: nix run .#repo-audit

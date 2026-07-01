@@ -2,7 +2,17 @@
 set -euo pipefail
 
 repo_dir="${REPO_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-grafana_dir="${repo_dir}/config/grafana"
+if [[ -n "${GRAFANA_DIR:-}" ]]; then
+  grafana_dir="$GRAFANA_DIR"
+elif [[ -d "${repo_dir}/src" ]]; then
+  grafana_dir="$repo_dir"
+elif [[ -d "${repo_dir}/config/grafana/src" ]]; then
+  grafana_dir="${repo_dir}/config/grafana"
+else
+  echo "ERROR: Grafana Jsonnet sources not found." >&2
+  echo "Run from grafana-config, or set GRAFANA_DIR=/path/to/grafana-config." >&2
+  exit 1
+fi
 src_dir="${grafana_dir}/src"
 jsonnet_bin="${JSONNET:-jsonnet}"
 jq_bin="${JQ:-jq}"

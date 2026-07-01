@@ -18,6 +18,26 @@
       flake = false;
     };
 
+    conky-config = {
+      url = "github:RomeoCavazza/conky-config";
+      flake = false;
+    };
+
+    doom-config = {
+      url = "github:RomeoCavazza/emacs-config";
+      flake = false;
+    };
+
+    grafana-config = {
+      url = "github:RomeoCavazza/grafana-config";
+      flake = false;
+    };
+
+    nvim-config = {
+      url = "github:RomeoCavazza/nvim-config";
+      flake = false;
+    };
+
     hyprspace.url = "github:RomeoCavazza/hyprspace/main";
     hyprspace.inputs.hyprland.follows = "hyprland";
 
@@ -58,6 +78,8 @@
         user = "tco";
         homeDirectory = "/home/${user}";
         labApplicationsDir = "${homeDirectory}/Applications";
+        # Runtime path to the deployed checkout for scripts that inspect this repo.
+        # Prefer the active system config over any transient dev clone.
         repoCheckout =
           let
             envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
@@ -65,8 +87,6 @@
           in
           if envRepo != "" then
             envRepo
-          else if builtins.pathExists devRepo then
-            devRepo
           else if builtins.pathExists "/etc/nixos/flake.nix" then
             "/etc/nixos"
           else
@@ -135,7 +155,7 @@
             pkgs.jsonnet
           ];
           text = ''
-            grafana_dir="''${REPO_DIR:-$PWD}/config/grafana"
+            grafana_dir="''${GRAFANA_DIR:-${inputs.grafana-config}}"
             tmp_dir="$(mktemp -d)"
             trap 'rm -rf "$tmp_dir"' EXIT
 
@@ -164,15 +184,6 @@
             repo_dir="''${REPO_DIR:-$PWD}"
             cd "$repo_dir"
 
-            https_url() {
-              local url="$1"
-              if [[ "$url" =~ ^git@github.com:(.*)\.git$ ]]; then
-                printf 'https://github.com/%s.git\n' "''${BASH_REMATCH[1]}"
-              else
-                printf '%s\n' "$url"
-              fi
-            }
-
             short_rev() {
               local rev="''${1:--}"
               if [[ "$rev" == "-" || -z "$rev" ]]; then
@@ -197,28 +208,10 @@
             remote_head() {
               local url="$1"
               local ref="''${2:-main}"
-              git ls-remote "$(https_url "$url")" "refs/heads/$ref" 2>/dev/null | awk 'NR == 1 { print $1 }'
+              git ls-remote "$url" "refs/heads/$ref" 2>/dev/null | awk 'NR == 1 { print $1 }'
             }
 
-            printf 'Submodules\n'
-            printf '%-18s %-28s %-10s %-10s %-10s %-8s\n' "name" "path" "parent" "checkout" "upstream" "status"
-            if [[ -f .gitmodules ]]; then
-              while read -r key path; do
-                name="''${key#submodule.}"
-                name="''${name%.path}"
-                url="$(git config --file .gitmodules --get "submodule.$name.url")"
-                parent="$(git ls-files --stage "$path" | awk 'NR == 1 { print $2 }')"
-                checkout="-"
-                if [[ -e "$path" ]]; then
-                  checkout="$(git -C "$path" rev-parse HEAD 2>/dev/null || printf '-')"
-                fi
-                upstream="$(remote_head "$url" main)"
-                printf '%-18s %-28s %-10s %-10s %-10s %-8s\n' \
-                  "$name" "$path" "$(short_rev "$parent")" "$(short_rev "$checkout")" "$(short_rev "$upstream")" "$(status_for "$parent" "$upstream")"
-              done < <(git config --file .gitmodules --get-regexp '^submodule\..*\.path$' || true)
-            fi
-
-            printf '\nRomeoCavazza flake inputs\n'
+            printf 'RomeoCavazza flake inputs\n'
             printf '%-18s %-24s %-10s %-10s %-8s\n' "input" "repo" "locked" "upstream" "status"
             jq -r '
               .nodes
@@ -245,7 +238,7 @@
           name = "nixos-config-quality";
           runtimeInputs = [ pkgs.nix ];
           text = ''
-            flake_ref="''${FLAKE_REF:-git+file://$PWD?submodules=1}"
+            flake_ref="''${FLAKE_REF:-git+file://$PWD}"
 
             ${fmt-check}/bin/nixos-config-fmt-check
             ${deadnix}/bin/nixos-config-deadnix
@@ -323,7 +316,7 @@
         fmt-check = mkApp qualityScripts.fmt-check "Check tracked Nix formatting.";
         deadnix = mkApp qualityScripts.deadnix "Fail on unused Nix declarations.";
         grafana-check = mkApp qualityScripts.grafana-check "Verify generated Grafana dashboards match Jsonnet sources.";
-        repo-audit = mkApp qualityScripts.repo-audit "Show submodule and flake-input drift against upstream.";
+        repo-audit = mkApp qualityScripts.repo-audit "Show flake-input drift against upstream.";
         statix = mkApp qualityScripts.statix "Run configured statix lint checks.";
         quality = mkApp qualityScripts.quality "Run the local quality gate.";
       };
@@ -376,11 +369,11 @@
                 pkgs.jq
                 pkgs.jsonnet
               ];
-              src = self;
+              grafanaSrc = inputs.grafana-config;
             }
             ''
               set -euo pipefail
-              cp -R "$src/config/grafana" grafana
+              cp -R "$grafanaSrc" grafana
               chmod -R u+w grafana
               mkdir -p generated
 

@@ -33,6 +33,38 @@
         "type": "github"
       }
     },
+    "conky-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782862944,
+        "narHash": "sha256-fbz3WRQLjdwds+vZP3+LB0WD+huaLs+lr9GA2Mn5M4k=",
+        "owner": "RomeoCavazza",
+        "repo": "conky-config",
+        "rev": "3b25abf4b29b470eee53ba6d3377beb2ec1d35a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "conky-config",
+        "type": "github"
+      }
+    },
+    "doom-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782862948,
+        "narHash": "sha256-Et0IcOgmer1DbZzhBQhTdUhStVw+4ICHVNWNhWTdRRg=",
+        "owner": "RomeoCavazza",
+        "repo": "emacs-config",
+        "rev": "3e9d40eb77e43ecc90051809e602acabe13d7ff2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "emacs-config",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -100,6 +132,22 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
+        "type": "github"
+      }
+    },
+    "grafana-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782862952,
+        "narHash": "sha256-UkqPocwmsznMdD3NF+VK631zSmzhEW3x+069RxpRn0w=",
+        "owner": "RomeoCavazza",
+        "repo": "grafana-config",
+        "rev": "2287812f720a730ae4a5cd95fc69a89b602f6499",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "grafana-config",
         "type": "github"
       }
     },
@@ -656,6 +704,22 @@
         "type": "github"
       }
     },
+    "nvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782868893,
+        "narHash": "sha256-xaxGEv57keNl42rWfZaDTMikMGrhLksiduGUpQ6e98I=",
+        "owner": "RomeoCavazza",
+        "repo": "nvim-config",
+        "rev": "b68f4287a4d217fa18630df226d1c5db230fb836",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RomeoCavazza",
+        "repo": "nvim-config",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -681,6 +745,9 @@
     },
     "root": {
       "inputs": {
+        "conky-config": "conky-config",
+        "doom-config": "doom-config",
+        "grafana-config": "grafana-config",
         "home-manager": "home-manager",
         "hypr-canvas": "hypr-canvas",
         "hypr-config": "hypr-config",
@@ -692,6 +759,7 @@
         "nix-snapd": "nix-snapd",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-legacy": "nixpkgs-legacy",
+        "nvim-config": "nvim-config",
         "rust-overlay": "rust-overlay",
         "sops-nix": "sops-nix"
       }

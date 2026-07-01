@@ -1,5 +1,4 @@
 {
-  config,
   inputs,
   lib,
   locality,
@@ -11,8 +10,6 @@
 let
   colors = import ../../lib/colors.nix { inherit lib; };
   conkyPalette = colors.conky palette;
-
-  liveConfig = name: config.lib.file.mkOutOfStoreSymlink "${locality.repoCheckout}/config/${name}";
 
   rofiTokens = pkgs.writeText "rofi-tokens.rasi" (colors.rofi palette);
   rofiConfig = pkgs.runCommand "rofi-config" { } ''
@@ -67,12 +64,12 @@ let
   '';
 
   conkyConfig = pkgs.runCommand "conky-config" { } ''
-    if [ -z "$(ls -A ${../../config/conky} 2>/dev/null)" ]; then
-      echo "ERROR: config/conky submodule is empty! Run 'git submodule update --init --recursive'." >&2
+    if [ ! -f ${inputs.conky-config}/conky-left.txt ] || [ ! -f ${inputs.conky-config}/conky-right.txt ]; then
+      echo "ERROR: conky-config input is missing expected panel files." >&2
       exit 1
     fi
     mkdir -p "$out"
-    cp -R ${../../config/conky}/. "$out/"
+    cp -R ${inputs.conky-config}/. "$out/"
     chmod -R u+w "$out"
     rm -rf "$out/.git"
 
@@ -89,8 +86,7 @@ let
   edexSettings = pkgs.runCommand "edex-settings.json" { } ''
     cp ${inputs.hypr-config}/edex/settings.json "$out"
     substituteInPlace "$out" \
-      --replace-fail '"/home/tco"' '"${locality.homeDirectory}"' \
-      --replace-fail '"en-US"' '"fr-FR"'
+      --replace-fail '"/home/tco"' '"${locality.homeDirectory}"'
   '';
 in
 {
@@ -102,10 +98,6 @@ in
   home.file.".config/foot".source = "${inputs.hypr-config}/foot";
   home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
   xdg.configFile."eDEX-UI/settings.json".source = edexSettings;
-
-  # ---------------------------------------------------------------------------
-  # 2. Live Out-of-Store Symlinks (Zero rebuild needed for rapid iteration)
-  # ---------------------------------------------------------------------------
-  home.file.".config/nvim".source = liveConfig "nvim";
-  home.file.".config/doom".source = liveConfig "doom";
+  home.file.".config/nvim".source = inputs.nvim-config;
+  home.file.".config/doom".source = inputs.doom-config;
 }

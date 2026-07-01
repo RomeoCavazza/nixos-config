@@ -1,5 +1,5 @@
-# Single source of truth for the desktop palette (Catppuccin Mocha + brand accent).
-# Consumed by home-manager modules that render per-tool colour files.
+# Shared desktop palette for Nix-rendered surfaces.
+# Standalone upstream configs may keep their own deliberate colour systems.
 rec {
   rosewater = "#f5e0dc";
   flamingo = "#f2cdcd";

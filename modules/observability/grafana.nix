@@ -1,19 +1,12 @@
 {
   config,
-  locality,
+  inputs,
   pkgs,
   ...
 }:
 
 let
   ports = import ./ports.nix;
-  # Warn (don't fail) when the config/grafana submodule is uninitialized, so a
-  # missing dashboards dir is visible in the journal instead of silently empty.
-  dashboardsCheck = pkgs.writeShellScript "grafana-dashboards-check" ''
-    if [ -z "$(${pkgs.coreutils}/bin/ls -A ${locality.repoCheckout}/config/grafana 2>/dev/null)" ]; then
-      echo "WARNING: ${locality.repoCheckout}/config/grafana is empty — git submodule not initialized? Run 'git submodule update --init'. Grafana will provision no dashboards." >&2
-    fi
-  '';
 in
 {
   sops.secrets.grafana_secret_key = {
@@ -85,11 +78,9 @@ in
         {
           name = "nixos";
           type = "file";
-          options.path = "${locality.repoCheckout}/config/grafana";
+          options.path = "${inputs.grafana-config}";
         }
       ];
     };
   };
-
-  systemd.services.grafana.serviceConfig.ExecStartPre = [ "${dashboardsCheck}" ];
 }

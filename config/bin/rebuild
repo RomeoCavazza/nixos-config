@@ -20,16 +20,9 @@ else
 fi
 
 if [[ -d "$repo_dir/.git" || -f "$repo_dir/.git" ]]; then
-  FLAKE_REF="${FLAKE_REF:-git+file://${repo_dir}?submodules=1#legion}"
+  FLAKE_REF="${FLAKE_REF:-git+file://${repo_dir}#legion}"
 else
   FLAKE_REF="${FLAKE_REF:-${repo_dir}#legion}"
-fi
-
-# Self-heal: initialize submodules if any are missing (safe after a plain clone).
-if git -C "$repo_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
-  git -C "$repo_dir" submodule status | grep -q '^-'; then
-  echo "rebuild: uninitialised submodules detected — running git submodule update --init --recursive"
-  git -C "$repo_dir" submodule update --init --recursive
 fi
 
 # Auto-detect local development repositories in $HOME/dev when --dev flag is passed

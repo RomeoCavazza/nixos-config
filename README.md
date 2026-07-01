@@ -45,7 +45,7 @@ Local technical annexes:
 ├── home/tco/     # Home Manager: packages/, hyprland/, dotfiles, scripts
 ├── pkgs/         # Custom package derivations (+ overlays/ for nixpkgs overlays)
 ├── lib/          # Shared helpers (palette, colour renderers)
-├── config/       # Vendored app configs (bin scripts, conky/doom/grafana/nvim submodules)
+├── config/       # Local scripts and static config; app configs are pinned flake inputs
 ├── secrets/      # SOPS-encrypted secrets
 └── docs/         # Wiki sources, diagrams, and assets
 ```
@@ -184,7 +184,7 @@ with `direnv`.
 
 2. **Clone this repository**:
    ```bash
-   sudo git clone --recurse-submodules https://github.com/RomeoCavazza/nixos-config.git /etc/nixos-new
+   sudo git clone https://github.com/RomeoCavazza/nixos-config.git /etc/nixos-new
    sudo cp -r /etc/nixos-new/* /etc/nixos/
    ```
 
