@@ -11,6 +11,14 @@ let
     sha256 = "0rgjccwwzfanbf5chx91grmi8v9cgxgsm963ldkdnkh445as7a46";
   };
   lanzaboote = import lanzabooteSrc { inherit pkgs; };
+  lzbtNixOSMenuTitle = lanzaboote.packages.lzbt.overrideAttrs (old: {
+    postPatch = (old.postPatch or "") + ''
+      grep -q 'generation.describe()' shared/src/os_release.rs
+      sed -i '40,44c\            generation.spec.bootspec.bootspec.label.clone()' shared/src/os_release.rs
+      substituteInPlace systemd/tests/integration/os_release.rs \
+        --replace-fail 'PRETTY_NAME=LanzaOS (Generation 1, 1970-01-01)' 'PRETTY_NAME=LanzaOS'
+    '';
+  });
 in
 
 {
@@ -19,6 +27,7 @@ in
   boot.loader.systemd-boot.enable = lib.mkForce false;
   boot.lanzaboote = {
     enable = true;
+    package = lzbtNixOSMenuTitle;
     pkiBundle = "/var/lib/sbctl";
     settings = {
       timeout = "menu-force";
