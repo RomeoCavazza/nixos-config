@@ -60,13 +60,13 @@ creation_rules:
 
 `editor_tco` is the editor key used to update secrets from the development machine. `machine_nixos` is the host key stored at `/var/lib/sops-nix/key.txt` on the NixOS system. SOPS encrypts each secret to both recipients simultaneously: the host does not need the editor key to boot, and the editor does not need the host key to update encrypted files.
 
-See [`modules/backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix) for how these keys are consumed at the system level.
+See [`modules/backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/backup.nix) for how these keys are consumed at the system level.
 
 ---
 
 ## NixOS Integration
 
-[`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix) declares how secrets are consumed at the system level:
+[`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/backup.nix) declares how secrets are consumed at the system level:
 
 ```nix
 sops.defaultSopsFile = ../secrets/backup.yaml;

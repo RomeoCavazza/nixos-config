@@ -3,7 +3,7 @@ This page is a reading map for the repository. It does not try to repeat every d
 Read the repository through three rules:
 
 - [`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix) and [`flake.lock`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.lock) are the build contract: inputs, pinned versions, and the NixOS output.
-- [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix) builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
+- [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
 - [`docs/diagrams/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/) contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
 
 ![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/flake-outputs.png)
@@ -29,9 +29,9 @@ Generated HTML: [code-map.html](https://github.com/RomeoCavazza/nixos-config/blo
 └── secrets/
 ```
 
-The root stays intentionally flat. The four top-level files define the machine: the [`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix), its lockfile [`flake.lock`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.lock), the main [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix), and the detected [`hardware-configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hardware-configuration.nix). The directories then split responsibility across system modules ([`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/)), the user layer ([`home/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/)), dotfiles ([`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/)), documentation ([`docs/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/)), and secrets ([`secrets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/secrets/)).
+The root stays intentionally flat. The four top-level files define the machine: the [`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix), its lockfile [`flake.lock`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.lock), the main [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix), and the detected [`hardware-configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/hardware-configuration.nix). The directories then split responsibility across system modules ([`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/)), the user layer ([`home/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/)), dotfiles ([`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/)), documentation ([`docs/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/)), and secrets ([`secrets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/secrets/)).
 
-[`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix) exposes one important output: `nixosConfigurations.nixos`. It evaluates [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix), injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
+[`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix) exposes one important output: `nixosConfigurations.nixos`. It evaluates [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix), injects the required modules, and embeds Home Manager inline. That design lets `nixos-rebuild switch` apply system and user state in the same activation.
 
 ---
 
@@ -58,9 +58,9 @@ Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/nixos-co
 └── streamlit.nix
 ```
 
-[`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix), except [`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix), which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
+[`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) is the system-only area. Each file adds one machine capability: GPU handling, virtualisation, local databases, observability, backups, services, or desktop integration. These modules are imported explicitly from [`hosts/legion/default.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix), except [`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/backup.nix), which is injected by the flake together with `sops-nix` so secrets and Restic jobs stay in the same wiring layer.
 
-[`edex.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/edex.nix), [`lamp.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/lamp.nix), and [`streamlit.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/streamlit.nix) are optional blocks. They remain documented and ready to connect, but they do not define the default machine behavior until they are imported.
+[`edex.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/pkgs/apps/edex.nix) is an optional block. It remains documented and ready to connect, but it does not define the default machine behavior until it is imported.
 
 ---
 
@@ -80,9 +80,9 @@ Generated HTML: [code-map-home.html](https://github.com/RomeoCavazza/nixos-confi
         └── embedded.nix
 ```
 
-[`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix) describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
+[`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix) describes the user environment: packages, shell, themes, desktop entries, editors, and links to dotfiles. Home Manager uses the same `pkgs` instance as NixOS through `useGlobalPkgs = true`, avoiding two divergent package worlds.
 
-The [`apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/modules/apps/) modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
+The [`apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/) modules group tools by work context. They remain user-only: they add applications and session configuration, not global daemons or drivers.
 
 ---
 
@@ -110,9 +110,9 @@ Generated HTML: [code-map-config.html](https://github.com/RomeoCavazza/nixos-con
 └── wal/
 ```
 
-[`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/) contains the files used by the graphical session: scripts, themes, Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs, and Grafana dashboards. Home Manager does not copy that logic into [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix); it exposes these files into `$HOME` through symlinks or declared files.
+[`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/) contains the files used by the graphical session: scripts, themes, Hyprland, Waybar, Rofi, Foot, Neovim, Doom Emacs, and Grafana dashboards. Home Manager does not copy that logic into [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix); it exposes these files into `$HOME` through symlinks or declared files.
 
-This separation keeps [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix) readable. Nix describes how files are linked into the user profile; [`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/) keeps the editable content in a normal Linux configuration tree.
+This separation keeps [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix) readable. Nix describes how files are linked into the user profile; [`config/`](https://github.com/RomeoCavazza/nixos-config/blob/main/config/) keeps the editable content in a normal Linux configuration tree.
 
 ---
 
@@ -143,7 +143,7 @@ Diagrams are separated to avoid mixing source and rendered assets:
 - [`docs/diagrams/carbon/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/) contains the TreeView HTML visualizer and its renderer.
 - [`docs/diagrams/png/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/png/) contains the images published in the README and Wiki.
 
-Other media stay in [`docs/assets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/): screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: [`docs/assets/gdm-background.png`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/gdm-background.png) is also referenced by [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix) for the GDM wallpaper.
+Other media stay in [`docs/assets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/): screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: [`docs/assets/gdm-background.png`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/gdm-background.png) is also referenced by [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) for the GDM wallpaper.
 
 ---
 

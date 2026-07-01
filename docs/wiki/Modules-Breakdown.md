@@ -1,12 +1,12 @@
-Each module in [`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) is a self-contained NixOS configuration unit. A module only activates when listed in [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix)'s `imports` — removing one line disables the entire service, cleanly, with no orphaned options left behind. This page documents what each module does, why it exists as a separate unit, and what engineering decisions shaped its configuration.
+Each module in [`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) is a self-contained NixOS configuration unit. A module only activates when listed in [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix)'s `imports` — removing one line disables the entire service, cleanly, with no orphaned options left behind. This page documents what each module does, why it exists as a separate unit, and what engineering decisions shaped its configuration.
 
-The goal is to keep [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix) legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
+The goal is to keep [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) legible. It should read as a declaration of intent — "this machine runs a database, a backup job, a local LLM, and a monitoring stack" — without embedding the implementation details of each. Those details live in their respective module files, where they can be read, modified, or audited independently. A new host in the flake could import a subset of these modules without touching anything else.
 
 ![Architectural Scheme](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/scheme.png)
 
 ---
 
-### [`nvidia-prime.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/nvidia-prime.nix) — Hybrid GPU
+### [`nvidia-prime.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/hardware/nvidia-prime.nix) — Hybrid GPU
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/nvidia.svg" alt="NVIDIA" width="28" />
 </p>
@@ -19,7 +19,7 @@ Applications that need the discrete GPU use the `nvidia-offload` wrapper — for
 
 ---
 
-### [`gdm-wallpaper.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/gdm-wallpaper.nix) — Custom GDM Login Screen
+### [`gdm-wallpaper.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/desktop/gdm-wallpaper.nix) — Custom GDM Login Screen
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/gnome.svg" alt="GNOME" width="28" />
 </p>
@@ -30,7 +30,7 @@ Only the theme resource is modified. GNOME Shell itself remains unpatched and co
 
 ---
 
-### [`launcher.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/launcher.nix) — Desktop Integration
+### [`launcher.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/desktop/launcher) — Desktop Integration
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/rofi.png" alt="Rofi" width="28" />
 </p>
@@ -53,17 +53,17 @@ The module also installs Rofi, Waybar, the NetworkManager system tray applet, an
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/influxdb.png" alt="InfluxDB" width="28" />
 </p>
 
-The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/modules/apps/) are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, and they have no service dependencies.
+The three modules in [`home/tco/modules/apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/) are Home Manager modules, not NixOS modules — they install packages into the user profile rather than the system, and they have no service dependencies.
 
-- [`cad.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/modules/apps/cad.nix) groups Obsidian (notes and knowledge management), KiCad (PCB and schematic design), and FreeCAD (parametric 3D CAD) together.
-- [`embedded.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/modules/apps/embedded.nix) provides the Arduino IDE and CLI, esptool for ESP8266/ESP32 firmware flashing, and minicom for serial port monitoring.
-- [`data.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/modules/apps/data.nix) installs DBeaver (a universal database GUI), Grafana, and InfluxDB2 for time-series data work.
+- [`cad.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/cad.nix) groups Obsidian (notes and knowledge management), KiCad (PCB and schematic design), and FreeCAD (parametric 3D CAD) together.
+- [`embedded.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/embedded.nix) provides the Arduino IDE and CLI, esptool for ESP8266/ESP32 firmware flashing, and minicom for serial port monitoring.
+- [`data.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/packages/data.nix) installs DBeaver (a universal database GUI), Grafana, and InfluxDB2 for time-series data work.
 
-The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line in [`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix).
+The grouping reflects how these tools are actually used. They are domain-specific toolchains that are either all needed or none needed for a given project. Enabling or disabling a domain is one import line in [`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix).
 
 ---
 
-### [`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/backup.nix) — Restic + Backblaze B2
+### [`backup.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/backup.nix) — Restic + Backblaze B2
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/restic.png" alt="Restic" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/backblaze.png" alt="Backblaze B2" width="28" />
@@ -79,7 +79,7 @@ Both timers use `RandomizedDelaySec` to add a random offset to their start time,
 
 ---
 
-### [`observability.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/observability.nix) — Prometheus, Loki, Grafana
+### [`observability.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/observability) — Prometheus, Loki, Grafana
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/prometheus.png" alt="Prometheus" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/loki.png" alt="Loki" width="28" />
@@ -94,7 +94,7 @@ Promtail runs as a raw systemd service rather than through the NixOS module, bec
 
 ---
 
-### [`databases.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/databases.nix) — PostgreSQL, Redis, Qdrant
+### [`databases.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/databases.nix) — PostgreSQL, Redis, Qdrant
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/postgresql.png" alt="PostgreSQL" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/redis.webp" alt="Redis" width="28" />
@@ -111,7 +111,7 @@ Qdrant is the vector database of this stack. It listens on `localhost:6333` and 
 
 ---
 
-### [`virtualisation.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/virtualisation.nix) — Containers, VMs, and ARM Emulation
+### [`virtualisation.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/virtualisation.nix) — Containers, VMs, and ARM Emulation
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/docker.png" alt="Docker" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/kvm.png" alt="KVM" width="28" />
@@ -128,7 +128,7 @@ The third layer is `binfmt` emulation for `aarch64-linux`. This registers the AR
 
 ---
 
-### [`nginx.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/nginx.nix) — Local Reverse Proxy
+### [`nginx.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/nginx.nix) — Local Reverse Proxy
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/nginx.webp" alt="Nginx" width="28" />
 </p>
@@ -152,15 +152,13 @@ WebSocket proxying is enabled on all virtual hosts, which is required for develo
 Three modules exist in [`modules/`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/) but are not active by default. They are ready to use but represent services that are not always needed.
 
 
-- [`lamp.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/lamp.nix) provides a full Apache, PHP, and MariaDB stack for PHP development, with two virtual hosts and a PHP build that includes xdebug and opcache.
-- [`streamlit.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/streamlit.nix) runs a Streamlit application as a sandboxed systemd service, installing Python dependencies via `uv` at runtime without Nix packaging.
-- [`edex.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/edex.nix) builds an FHS environment for eDEX-UI, which requires a traditional Linux filesystem layout that NixOS's `/nix/store`-based approach does not provide by default.
+- [`edex.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/pkgs/apps/edex.nix) builds an FHS environment for eDEX-UI, which requires a traditional Linux filesystem layout that NixOS's `/nix/store`-based approach does not provide by default.
 
-Any of these can be activated by adding the corresponding `./modules/filename.nix` line to [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix)'s `imports` list and running a rebuild.
+Any of these can be activated by adding the corresponding `./modules/filename.nix` line to [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix)'s `imports` list and running a rebuild.
 
 ---
 
-### [`ollama.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/ollama.nix) — Local LLM Daemon (AI Stack)
+### [`ollama.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/ollama.nix) — Local LLM Daemon (AI Stack)
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/n8n.png" alt="n8n" width="28" />
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/ollama.png" alt="Ollama" width="28" />
@@ -171,13 +169,13 @@ Ollama runs as a system daemon using the CUDA-enabled package, which uses NVIDIA
 
 Two configuration choices are worth explaining. `OLLAMA_KEEP_ALIVE` is set to 24 hours, which keeps a loaded model in VRAM between requests. Without this, Ollama unloads the model after 5 minutes of inactivity, and the next request pays a cold-start cost of 2 to 10 seconds depending on model size. The tradeoff is 4 to 8 GB of VRAM reserved while a model is loaded. `OLLAMA_KV_CACHE_TYPE` is set to `q8_0`, which quantizes the key-value cache to 8-bit integers, reducing VRAM usage with a negligible quality impact on most tasks.
 
-Ollama is paired with Qdrant (for vector search — declared in [`databases.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/databases.nix)) and [`aider-chat`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix) (installed in [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix)) to form a self-contained local AI development environment with no external API dependency.
+Ollama is paired with Qdrant (for vector search — declared in [`databases.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/services/databases.nix)) and [`aider-chat`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix) (installed in [`home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix)) to form a self-contained local AI development environment with no external API dependency.
 
 Ollama + Qdrant form a local RAG pipeline: Ollama handles embedding generation and inference at `localhost:11434`, Qdrant handles nearest-neighbour search over those embeddings at `localhost:6333`.
 
 ---
 
-### [`emacs.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/modules/emacs.nix) — Emacs Daemon
+### [`emacs.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/emacs.nix) — Emacs Daemon
 <p align="left">
 	<img src="https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/assets/logo/emacs.png" alt="Emacs" width="28" />
 </p>

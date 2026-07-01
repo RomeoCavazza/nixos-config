@@ -37,14 +37,17 @@ Local technical annexes:
 ### Architecture
 
 ```
-nixos/
-├── config/           # Application-specific configurations (Hypr, scripts, terminal)
-├── home/tco/         # Home Manager entry point and user-space modules
-│   └── modules/      # Domain-specific apps (CAD, data, embedded)
-├── modules/          # System-level services and driver configurations
-├── secrets/          # SOPS-encrypted secrets
-├── configuration.nix # Core system entry point
-└── flake.nix         # Flake definition and inputs
+.
+├── flake.nix     # Inputs, outputs, and the `legion` host definition (entry point)
+├── profiles/     # Composable feature bundles (core, desktop, services, observability)
+├── hosts/legion/ # Host-specific config + hardware-configuration.nix
+├── modules/      # System modules by domain (boot, core, desktop, hardware, services, observability)
+├── home/tco/     # Home Manager: packages/, hyprland/, dotfiles, scripts
+├── pkgs/         # Custom package derivations (+ overlays/ for nixpkgs overlays)
+├── lib/          # Shared helpers (palette, colour renderers)
+├── config/       # Vendored app configs (bin scripts, conky/doom/grafana/nvim submodules)
+├── secrets/      # SOPS-encrypted secrets
+└── docs/         # Wiki sources, diagrams, and assets
 ```
 
 ---
@@ -58,7 +61,7 @@ nixos/
 <br>
 
 ![Waybar showcase](./docs/assets/screen-waybar.png)
-*Desktop Interface — [Waybar Configuration](./config/hypr/waybar) · [Wallpaper](./docs/assets/background.png)*
+*Desktop Interface — [Waybar Configuration](./home/tco/hyprland/waybar.nix) · [Wallpaper](./docs/assets/background.png)*
 
 <br>
 
@@ -168,8 +171,9 @@ for paths, timers, retention, and restore commands.
 This configuration targets a specific host. Review hardware IDs, filesystems,
 secrets, and service assumptions before reusing it.
 
-The repository is modular: services can be enabled by importing the
-corresponding files in `configuration.nix`. Development toolchains are
+The repository is modular: features are enabled by composing profiles in
+[`profiles/`](./profiles/), which the host assembles in
+[`hosts/legion/default.nix`](./hosts/legion/default.nix). Development toolchains are
 installed globally via Home Manager; per-project environments use local flakes
 with `direnv`.
 

@@ -43,8 +43,8 @@ The goal is to keep the workstation state explicit. If a tool or service is not 
 ## Architecture & Logic
 
 The configuration defines a single system output, `nixosConfigurations.nixos`, which applies two layers atomically:
-1.  **NixOS System Layer**: Kernel, drivers, and system services defined in [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/configuration.nix).
-2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in [`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/home.nix).
+1.  **NixOS System Layer**: Kernel, drivers, and system services defined in [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix).
+2.  **Home Manager Layer**: Editor, shell, and user-space tools defined in [`home/tco/home.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/default.nix).
 
 Both layers are versioned in the same flake. It is not possible to apply a system update without syncing the user environment, and a failure in either part prevents activation of the entire rebuild.
 
