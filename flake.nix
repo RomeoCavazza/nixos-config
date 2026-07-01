@@ -78,6 +78,7 @@
         user = "tco";
         homeDirectory = "/home/${user}";
         labApplicationsDir = "${homeDirectory}/Applications";
+        activeConfigRepo = "/etc/nixos";
         # Runtime path to the deployed checkout for scripts that inspect this repo.
         # Prefer the active system config over any transient dev clone.
         repoCheckout =
@@ -87,8 +88,8 @@
           in
           if envRepo != "" then
             envRepo
-          else if builtins.pathExists "/etc/nixos/flake.nix" then
-            "/etc/nixos"
+          else if builtins.pathExists "${activeConfigRepo}/flake.nix" then
+            activeConfigRepo
           else
             devRepo;
         gitName = "RomeoCavazza";
@@ -291,7 +292,7 @@
                   flakeSelf = self;
                 };
 
-                home-manager.users.${locality.user} = import ./home/tco;
+                home-manager.users.${locality.user} = import (./home + "/${locality.user}");
               }
             )
           ];
@@ -394,6 +395,6 @@
             '';
       };
 
-      nixosConfigurations.legion = mkHost "legion";
+      nixosConfigurations = nixpkgs.lib.genAttrs [ "legion" ] mkHost;
     };
 }

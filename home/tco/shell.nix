@@ -40,11 +40,18 @@ in
 
       # Keep interactive shells resilient when the graphical session inherited
       # Home Manager's marker but not its full PATH.
-      for dir in "$HOME/.local/bin" "$HOME/.npm-global/bin" "$HOME/.lmstudio/bin"; do
+      for dir in "$HOME/.local/bin"; do
         if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
           PATH="$dir:$PATH"
         fi
       done
+      if [[ "''${NIXOS_ENABLE_MUTABLE_USER_PATH:-0}" == "1" ]]; then
+        for dir in "$HOME/.npm-global/bin" "$HOME/.lmstudio/bin"; do
+          if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
+            PATH="$dir:$PATH"
+          fi
+        done
+      fi
       export PATH
 
       # Smart Tab: ls + exec on empty line

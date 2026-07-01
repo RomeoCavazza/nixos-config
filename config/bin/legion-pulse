@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 DEV="platform::kbd_backlight"
 
-trap "brightnessctl -d $DEV set 2; exit" SIGINT SIGTERM
+trap 'brightnessctl -d "$DEV" set 2; exit' SIGINT SIGTERM
 
 while true; do
   brightnessctl -d "$DEV" set 1

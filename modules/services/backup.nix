@@ -35,7 +35,7 @@ in
       initialize = true;
 
       paths = [
-        "${homeDir}/dev/nixos-config"
+        locality.activeConfigRepo
         "${homeDir}/.ssh"
         "${homeDir}/.gnupg"
         "${homeDir}/.config"

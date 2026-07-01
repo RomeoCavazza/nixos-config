@@ -18,8 +18,6 @@
   home.enableNixpkgsReleaseCheck = false;
 
   home.sessionPath = [
-    "${config.home.homeDirectory}/.lmstudio/bin"
-    "${config.home.homeDirectory}/.npm-global/bin"
     "${config.home.homeDirectory}/.local/bin"
   ];
 

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ locality, pkgs, ... }:
 
 {
   nix.package = pkgs.nixVersions.latest;
@@ -6,7 +6,7 @@
   nix.settings = {
     allowed-users = [
       "@wheel"
-      "tco"
+      locality.user
     ];
     experimental-features = [
       "nix-command"
