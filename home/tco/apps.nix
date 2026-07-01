@@ -64,13 +64,13 @@ in
   };
 
   xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source =
-    ../../config/icons/hicolor/256x256/apps/antigravity-icon.png;
+    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/antigravity-icon.png;
   xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source =
-    ../../config/icons/hicolor/512x512/apps/antigravity-icon.png;
+    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/antigravity-icon.png;
   xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source =
-    ../../config/icons/hicolor/256x256/apps/cursor-icon.png;
+    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/cursor-icon.png;
   xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source =
-    ../../config/icons/hicolor/512x512/apps/cursor-icon.png;
+    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/cursor-icon.png;
 
   programs.vscode = {
     enable = true;

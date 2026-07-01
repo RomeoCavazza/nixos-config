@@ -6,13 +6,13 @@ Read the repository through three rules:
 - [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) builds the machine; Home Manager is embedded in that evaluation, so system and user state switch together.
 - [`docs/diagrams/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/) contains the visual maps: PlantUML sources, Carbon-style TreeView HTML, and published PNGs.
 
-![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/flake-outputs.png)
+![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/flake-outputs.png)
 
 ---
 
 ## Repository Root
 
-![Root TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map.png)
+![Root TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map.webp)
 
 Generated HTML: [code-map.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map.html)
 
@@ -37,7 +37,7 @@ The root stays intentionally flat. The four top-level files define the machine: 
 
 ## System Modules
 
-![Modules TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map-modules.png)
+![Modules TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map-modules.png)
 
 Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map-modules.html)
 
@@ -66,7 +66,7 @@ Generated HTML: [code-map-modules.html](https://github.com/RomeoCavazza/nixos-co
 
 ## User Layer
 
-![Home TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map-home.png)
+![Home TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map-home.webp)
 
 Generated HTML: [code-map-home.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map-home.html)
 
@@ -88,7 +88,7 @@ The [`apps/`](https://github.com/RomeoCavazza/nixos-config/blob/main/home/tco/pa
 
 ## Dotfiles and Scripts
 
-![Config TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map-config.png)
+![Config TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map-config.webp)
 
 Generated HTML: [code-map-config.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map-config.html)
 
@@ -118,7 +118,7 @@ This separation keeps [`home.nix`](https://github.com/RomeoCavazza/nixos-config/
 
 ## Documentation and Diagrams
 
-![Docs TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map-docs.png)
+![Docs TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map-docs.webp)
 
 Generated HTML: [code-map-docs.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map-docs.html)
 
@@ -143,13 +143,13 @@ Diagrams are separated to avoid mixing source and rendered assets:
 - [`docs/diagrams/carbon/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/) contains the TreeView HTML visualizer and its renderer.
 - [`docs/diagrams/png/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/png/) contains the images published in the README and Wiki.
 
-Other media stay in [`docs/assets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/): screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: [`docs/assets/gdm-background.png`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/gdm-background.png) is also referenced by [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) for the GDM wallpaper.
+Other media stay in [`docs/assets/`](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/assets/): screenshots, logos, wallpapers, and Grafana snapshots. One intentional exception: [`https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/gdm-background.webp`](https://github.com/RomeoCavazza/nixos-config/blob/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/gdm-background.webp) is also referenced by [`configuration.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/hosts/legion/default.nix) for the GDM wallpaper.
 
 ---
 
 ## Secrets
 
-![Secrets TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/code-map-secrets.png)
+![Secrets TreeView screenshot](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/code-map-secrets.png)
 
 Generated HTML: [code-map-secrets.html](https://github.com/RomeoCavazza/nixos-config/blob/main/docs/diagrams/carbon/code-map-secrets.html)
 

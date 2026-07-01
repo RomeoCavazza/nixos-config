@@ -2,8 +2,10 @@
 # Wrapper around nixos-rebuild that records build duration, exit status,
 # and timestamp to the Prometheus textfile collector.
 #
-# Usage: rebuild switch | rebuild boot | rebuild test | rebuild --help
-#   (passes all arguments to nixos-rebuild and defaults to the local flake)
+# Usage: rebuild [--dev] [--pull] [--allow-dirty] <switch|boot|test|dry-activate|build> [nixos-rebuild args...]
+#   Defaults to the active local flake and records Prometheus textfile metrics.
+
+set -euo pipefail
 
 OUTFILE="/var/lib/node_exporter/textfile_collector/nix-rebuild.prom"
 
@@ -19,30 +21,99 @@ else
   repo_dir="$PWD"
 fi
 
+usage() {
+  cat <<'EOF'
+Usage: rebuild [OPTIONS] VERB [NIXOS_REBUILD_ARGS...]
+
+Verbs:
+  switch        Build and activate now.
+  boot          Build and make active on next boot.
+  test          Activate without adding a bootloader entry.
+  dry-activate  Build and show activation actions without applying them.
+  build         Build only.
+
+Options:
+  --dev          Override selected flake inputs with matching $HOME/dev clones.
+  --pull         Fast-forward the active repo from origin/main before rebuilding.
+  --allow-dirty  Allow --pull with local changes.
+  -h, --help     Show this help.
+EOF
+}
+
+DEV_OVERRIDES=()
+ARGS=()
+PULL=0
+ALLOW_DIRTY=0
+for arg in "$@"; do
+  case "$arg" in
+    --dev)
+      for spec in "hypr-config:hyprland-config" "hyprspace:hyprspace" "hyprchroma:hyprchroma" "hypr-canvas:hypr-canvas"; do
+        input="${spec%%:*}"
+        repo="${spec#*:}"
+        if [[ -d "$HOME/dev/$repo/.git" || -f "$HOME/dev/$repo/.git" ]]; then
+          echo "rebuild [dev]: redirecting input '$input' to local clone $HOME/dev/$repo"
+          DEV_OVERRIDES+=("--override-input" "$input" "git+file://$HOME/dev/$repo")
+        fi
+      done
+      ;;
+    --pull)
+      PULL=1
+      ;;
+    --allow-dirty)
+      ALLOW_DIRTY=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      ARGS+=("$arg")
+      ;;
+  esac
+done
+set -- "${ARGS[@]}"
+
+verb="${1:-}"
+case "$verb" in
+  switch|boot|test|dry-activate|build)
+    ;;
+  "")
+    usage >&2
+    exit 2
+    ;;
+  *)
+    echo "rebuild: unknown verb '$verb'" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
+
+if [[ "$PULL" -eq 1 ]]; then
+  if [[ ! -d "$repo_dir/.git" && ! -f "$repo_dir/.git" ]]; then
+    echo "rebuild: --pull requires a git checkout: $repo_dir" >&2
+    exit 2
+  fi
+
+  branch="$(git -C "$repo_dir" branch --show-current)"
+  if [[ "$branch" != "main" ]]; then
+    echo "rebuild: --pull is only allowed on main, current branch is '$branch'" >&2
+    exit 2
+  fi
+
+  if [[ "$ALLOW_DIRTY" -eq 0 && -n "$(git -C "$repo_dir" status --porcelain)" ]]; then
+    echo "rebuild: refusing --pull with local changes; pass --allow-dirty to override" >&2
+    exit 2
+  fi
+
+  git -C "$repo_dir" fetch origin main
+  git -C "$repo_dir" merge --ff-only origin/main
+fi
+
 if [[ -d "$repo_dir/.git" || -f "$repo_dir/.git" ]]; then
   FLAKE_REF="${FLAKE_REF:-git+file://${repo_dir}#legion}"
 else
   FLAKE_REF="${FLAKE_REF:-${repo_dir}#legion}"
 fi
-
-# Auto-detect local development repositories in $HOME/dev when --dev flag is passed
-DEV_OVERRIDES=()
-ARGS=()
-for arg in "$@"; do
-  if [[ "$arg" == "--dev" ]]; then
-    for spec in "hypr-config:hyprland-config" "hyprspace:hyprspace" "hyprchroma:hyprchroma" "hypr-canvas:hypr-canvas"; do
-      input="${spec%%:*}"
-      repo="${spec#*:}"
-      if [[ -d "$HOME/dev/$repo/.git" || -f "$HOME/dev/$repo/.git" ]]; then
-        echo "rebuild [dev]: redirecting input '$input' to local clone $HOME/dev/$repo"
-        DEV_OVERRIDES+=("--override-input" "$input" "git+file://$HOME/dev/$repo")
-      fi
-    done
-  else
-    ARGS+=("$arg")
-  fi
-done
-set -- "${ARGS[@]}"
 
 start_ns=$(date +%s%N)
 start_ts=$(date +%s)
@@ -50,8 +121,10 @@ start_ts=$(date +%s)
 # Run rebuild — allow failure so we can still record the exit code.
 # Pass NIXOS_CONFIG_REPO into sudo environment and enable --impure so flake evaluation
 # can dynamically resolve locality.repoCheckout via builtins.getEnv.
+set +e
 sudo NIXOS_CONFIG_REPO="$repo_dir" "$NIXOS_REBUILD" --impure --flake "$FLAKE_REF" "${DEV_OVERRIDES[@]}" "$@"
 exit_code=$?
+set -e
 
 end_ns=$(date +%s%N)
 duration_ms=$(( (end_ns - start_ns) / 1000000 ))

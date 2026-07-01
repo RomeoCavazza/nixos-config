@@ -1,4 +1,4 @@
-_:
+{ pkgs, ... }:
 
 {
   imports = [ ./gdm-wallpaper.nix ];
@@ -12,6 +12,9 @@ _:
 
   services.displayManager.gdm.customWallpaper = {
     enable = true;
-    path = ../../docs/assets/gdm-background.png;
+    path = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/assets/gdm-background.webp";
+      sha256 = "sha256-0YdJ4ODElC/cXxvmN6nh7/nybMXyc27+FGSEMmRLUG0=";
+    };
   };
 }

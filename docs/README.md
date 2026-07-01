@@ -8,7 +8,7 @@ Technical documentation annexes for the `nixos-config` NixOS configuration — c
 
 The entire system is defined by a single [`flake.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/flake.nix). It acts as the entry point for everything: system builds, user environments, and overlay composition.
 
-![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/flake-outputs.png)
+![Flake structure](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/flake-outputs.png)
 
 The flake tracks `nixpkgs` at `nixos-26.05` as the primary package set. `nixpkgs-legacy` (`nixos-24.11`) is pulled for a single package — `promtail`, which was removed from newer nixpkgs during the Loki 3 transition and is kept via an overlay in [`overlays/`](https://github.com/RomeoCavazza/nixos-config/blob/main/overlays/default.nix) until the host migrates to Grafana Alloy. `rust-overlay` injects Rust toolchains. Hyprland is pinned to `v0.55.4`, and the plugins that are flake inputs (`hyprspace`, `hyprland-plugins`, `hyprtasking`) follow that exact version via `inputs.hyprland.follows` — this prevents ABI mismatches between the compositor and its plugins. The remaining plugins (`hypr-canvas`, `hyprchroma`) are `flake = false` sources built as derivations under [`pkgs/hyprland-plugins/`](https://github.com/RomeoCavazza/nixos-config/blob/main/pkgs/hyprland-plugins/). `hypr-config` vendors the [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) repository as the source for the Hyprland, Waybar, Rofi, and foot configurations. `nix-snapd` enables Snap package support; `sops-nix` handles secret decryption.
 
@@ -89,7 +89,7 @@ Hyprland is a tiling Wayland compositor with XWayland enabled for X11 applicatio
 
 The visual theme uses teal (`#94E2D5`) as its accent, defined once in [`lib/palette.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/lib/palette.nix) and rendered per tool by [`lib/colors.nix`](https://github.com/RomeoCavazza/nixos-config/blob/main/lib/colors.nix) — so the identity stays consistent across every component without coordination logic.
 
-![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/main/docs/diagrams/png/theme-flow.png)
+![Theme propagation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/mainhttps://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/docs/diagrams/png/theme-flow.png)
 
 [`conf/theme.conf`](https://github.com/RomeoCavazza/hyprland-config/blob/main/conf/theme.conf) sets border colors, rounding, blur parameters, and active/inactive window states, reading the accent from the generated `conf/tokens.conf`. Rofi uses [`rofi/custom/column-tco.rasi`](https://github.com/RomeoCavazza/hyprland-config/blob/main/rofi/custom/column-tco.rasi) for the sidebar layout and [`rofi/themes/apps-grid.rasi`](https://github.com/RomeoCavazza/hyprland-config/blob/main/rofi/themes/apps-grid.rasi) for the application grid, both fed a generated `tokens.rasi`. The foot terminal palette is tracked in [`foot/foot.ini`](https://github.com/RomeoCavazza/hyprland-config/blob/main/foot/foot.ini). GTK theme is Adwaita-dark with Papirus-Dark icons and Bibata-Modern-Ice cursor.
 
