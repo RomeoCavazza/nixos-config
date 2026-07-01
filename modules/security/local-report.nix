@@ -55,6 +55,8 @@ let
   loopbackChecks = lib.mapAttrsToList (name: port: ''
     check_loopback_port ${lib.escapeShellArg name} ${toString port}
   '') loopbackPorts;
+  pamU2fAuthFile = config.security.pam.u2f.settings.authfile or null;
+  sudoPamU2fEnabled = config.security.pam.services.sudo.u2f.enable or false;
   localSecurityReport = {
     schema = "nixos-config.local-security.v1";
     host = config.networking.hostName;
@@ -86,14 +88,30 @@ let
         ports = loopbackPorts;
         status = "runtime-check";
       };
+      recoveryReadiness = {
+        expected = "Recovery tooling and Ventoy readiness are checked before any Lanzaboote activation";
+        actual = {
+          command = "recovery-readiness-check";
+          ventoyConfig = "/home/tco/dev/ventoy-config/ventoy/ventoy/ventoy.json";
+        };
+        status = "runtime-check";
+        rationale = "This check is non-mutating. It verifies recovery tools, current mounts, Ventoy/VTOYEFI presence and the Ventoy config, but the real boot drill remains manual.";
+      };
       sysctlBaseline = {
         expected = expectedSysctls;
         status = "runtime-check";
       };
       secureBoot = {
-        expected = "Secure Boot state is visible before any Lanzaboote migration";
-        status = "runtime-check";
-        rationale = "Observation only. Lanzaboote must be handled in a dedicated boot run.";
+        expected = "Secure Boot state is visible and dry-run tooling is installed before any Lanzaboote migration";
+        actual = {
+          systemdBoot = config.boot.loader.systemd-boot.enable or false;
+          canTouchEfiVariables = config.boot.loader.efi.canTouchEfiVariables or false;
+          dryRunCommand = "secure-boot-dry-run";
+          sbctl = pkgs.sbctl.version;
+          signing = "not-configured";
+        };
+        status = "dry-run-ready";
+        rationale = "Observation only. sbctl is installed for inspection, but no keys are generated, enrolled or used for boot signing.";
       };
       tpm2 = {
         expected = "TPM device presence is visible before any TPM2 secret-binding work";
@@ -106,9 +124,14 @@ let
         rationale = "Observation only. Disk layout changes must be tested in a VM before touching the workstation.";
       };
       pamU2f = {
-        expected = "PAM U2F state is visible before any sudo/login hardening";
-        status = "runtime-check";
-        rationale = "Observation only. U2F must keep a documented recovery path.";
+        expected = "PAM U2F is enabled for sudo only, with password fallback";
+        actual = {
+          sudo = sudoPamU2fEnabled;
+          control = config.security.pam.u2f.control;
+          authFile = pamU2fAuthFile;
+        };
+        status = if sudoPamU2fEnabled then "configured" else "runtime-check";
+        rationale = "U2F is intentionally scoped to sudo first. With control=sufficient, a missing or failed key falls back to the regular password path.";
       };
     };
     acceptedRisks = [
@@ -154,6 +177,7 @@ in
       pkgs.iproute2
       pkgs.procps
       pkgs.util-linux
+      config.system.build.recoveryReadinessCheck
     ];
     text = ''
       failures=0
@@ -250,10 +274,30 @@ in
       }
 
       check_pam_u2f() {
-        if [[ -s /etc/u2f-mappings ]] || grep -Rqs 'pam_u2f' /etc/pam.d; then
-          ok "PAM U2F appears configured"
+        local auth_file=${lib.escapeShellArg (toString pamU2fAuthFile)}
+        if grep -qs 'pam_u2f' /etc/pam.d/sudo; then
+          ok "PAM U2F is wired for sudo"
         else
-          warn "PAM U2F is not configured"
+          warn "PAM U2F is not wired for sudo"
+          return
+        fi
+        if [[ -s "$auth_file" ]]; then
+          ok "PAM U2F mapping file has at least one entry ($auth_file)"
+        else
+          warn "PAM U2F mapping file is empty or missing ($auth_file); sudo will fall back to password"
+        fi
+      }
+
+      check_recovery_readiness() {
+        if command -v recovery-readiness-check >/dev/null 2>&1; then
+          ok "recovery-readiness-check is installed"
+        else
+          warn "recovery-readiness-check is not installed"
+        fi
+        if findfs LABEL=Ventoy >/dev/null 2>&1 && findfs LABEL=VTOYEFI >/dev/null 2>&1; then
+          ok "Ventoy and VTOYEFI partitions are detected"
+        else
+          warn "Ventoy recovery USB is not detected"
         fi
       }
 
@@ -279,6 +323,7 @@ in
       check_tpm2
       check_root_disk_encryption
       check_pam_u2f
+      check_recovery_readiness
 
       if [[ "$failures" -gt 0 ]]; then
         printf 'local-security-check: %s failure(s)\n' "$failures" >&2
