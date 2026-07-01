@@ -69,6 +69,8 @@ in
         warn "run with sudo for complete ESP and EFI variable visibility"
       fi
 
+      secure_boot_enabled=0
+
       if [[ -d /sys/firmware/efi ]]; then
         ok "booted through UEFI"
       else
@@ -85,6 +87,7 @@ in
         warn "Secure Boot is disabled"
       elif grep -q 'Secure Boot: enabled' "$bootctl_output" 2>/dev/null; then
         ok "Secure Boot is enabled"
+        secure_boot_enabled=1
       else
         warn "Secure Boot state was not found in bootctl output"
       fi
@@ -124,7 +127,11 @@ in
         warn "sbctl key bundle directory is missing; run: sudo sbctl create-keys"
       fi
 
-      warn "no firmware keys enrolled by this command"
+      if [[ "$secure_boot_enabled" -eq 1 ]]; then
+        ok "firmware Secure Boot enforcement is active"
+      else
+        warn "no firmware keys enrolled by this command"
+      fi
 
       if [[ "$warnings" -gt 0 ]]; then
         printf 'secure-boot-dry-run: %s warning(s), no mutation performed\n' "$warnings" >&2
