@@ -63,14 +63,22 @@ in
     };
   };
 
-  xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source =
-    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/antigravity-icon.png;
-  xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source =
-    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/antigravity-icon.png;
-  xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source =
-    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/cursor-icon.png;
-  xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source =
-    https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/cursor-icon.png;
+  xdg.dataFile."icons/hicolor/256x256/apps/antigravity-icon.png".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/antigravity-icon.png";
+    sha256 = "sha256-XqsTQW5DXcLLTrh/0HYJhSugl8tFKBNFg3fjdeMlscE=";
+  };
+  xdg.dataFile."icons/hicolor/512x512/apps/antigravity-icon.png".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/antigravity-icon.png";
+    sha256 = "sha256-hYYyRVg9W0Fhl8yWMK4r2jEEMyXFkavPSi6xRy54xFc=";
+  };
+  xdg.dataFile."icons/hicolor/256x256/apps/cursor-icon.png".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/256x256/apps/cursor-icon.png";
+    sha256 = "sha256-TAhb2UY6Q0V1Rr3HxZOCTbyQM9ix2SYP93nN0eeL1Ew=";
+  };
+  xdg.dataFile."icons/hicolor/512x512/apps/cursor-icon.png".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/RomeoCavazza/assets/main/nixos-config/config/icons/hicolor/512x512/apps/cursor-icon.png";
+    sha256 = "sha256-FBnrdBPguVXbbfOU8IfwiKgPWM+qOXfNzeW0iXVj1DU=";
+  };
 
   programs.vscode = {
     enable = true;
