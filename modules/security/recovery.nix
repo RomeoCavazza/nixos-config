@@ -147,10 +147,12 @@ in
         warn "no active swap detected"
       fi
 
-      if [[ ${if config.boot.loader.systemd-boot.enable or false then "1" else "0"} -eq 1 ]]; then
+      if [[ ${if config.boot.lanzaboote.enable or false then "1" else "0"} -eq 1 ]]; then
+        ok "Lanzaboote is enabled in NixOS"
+      elif [[ ${if config.boot.loader.systemd-boot.enable or false then "1" else "0"} -eq 1 ]]; then
         ok "systemd-boot is enabled in NixOS"
       else
-        warn "systemd-boot is not enabled in NixOS"
+        warn "Neither Lanzaboote nor systemd-boot is enabled in NixOS"
       fi
 
       printf '\n== Ventoy USB ==\n'

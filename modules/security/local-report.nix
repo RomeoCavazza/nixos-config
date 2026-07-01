@@ -102,16 +102,19 @@ let
         status = "runtime-check";
       };
       secureBoot = {
-        expected = "Secure Boot state is visible and dry-run tooling is installed before any Lanzaboote migration";
+        expected = "Lanzaboote is configured for signed boot artifacts before firmware enforcement is enabled";
         actual = {
+          lanzaboote = config.boot.lanzaboote.enable or false;
           systemdBoot = config.boot.loader.systemd-boot.enable or false;
           canTouchEfiVariables = config.boot.loader.efi.canTouchEfiVariables or false;
           dryRunCommand = "secure-boot-dry-run";
           sbctl = pkgs.sbctl.version;
-          signing = "not-configured";
+          pkiBundle = config.boot.lanzaboote.pkiBundle or null;
+          signing = if config.boot.lanzaboote.enable or false then "configured" else "not-configured";
         };
-        status = "dry-run-ready";
-        rationale = "Observation only. sbctl is installed for inspection, but no keys are generated, enrolled or used for boot signing.";
+        status =
+          if config.boot.lanzaboote.enable or false then "lanzaboote-configured" else "dry-run-ready";
+        rationale = "Lanzaboote signs boot artifacts with the sbctl key bundle. Firmware key enrollment remains a separate manual step.";
       };
       tpm2 = {
         expected = "TPM device presence is visible before any TPM2 secret-binding work";

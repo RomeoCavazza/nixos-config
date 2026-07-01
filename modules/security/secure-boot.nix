@@ -1,6 +1,27 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  lanzabooteSrc = builtins.fetchTarball {
+    url = "https://github.com/nix-community/lanzaboote/archive/refs/tags/v1.1.0.tar.gz";
+    sha256 = "0rgjccwwzfanbf5chx91grmi8v9cgxgsm963ldkdnkh445as7a46";
+  };
+  lanzaboote = import lanzabooteSrc { inherit pkgs; };
+in
 
 {
+  imports = [ lanzaboote.nixosModules.lanzaboote ];
+
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/var/lib/sbctl";
+  };
+
   system.build.secureBootDryRun = pkgs.writeShellApplication {
     name = "secure-boot-dry-run";
     runtimeInputs = [
@@ -66,13 +87,21 @@
         warn "/boot mount was not detected"
       fi
 
-      if [[ ${if config.boot.loader.systemd-boot.enable or false then "1" else "0"} -eq 1 ]]; then
+      if [[ ${if config.boot.lanzaboote.enable or false then "1" else "0"} -eq 1 ]]; then
+        ok "NixOS uses Lanzaboote"
+      elif [[ ${if config.boot.loader.systemd-boot.enable or false then "1" else "0"} -eq 1 ]]; then
         ok "NixOS uses systemd-boot"
       else
-        warn "NixOS systemd-boot is not enabled"
+        warn "Neither Lanzaboote nor systemd-boot is enabled"
       fi
 
-      warn "dry run only: no keys generated, no keys enrolled, Lanzaboote not enabled"
+      if [[ -d /var/lib/sbctl ]]; then
+        ok "sbctl key bundle directory exists at /var/lib/sbctl"
+      else
+        warn "sbctl key bundle directory is missing; run: sudo sbctl create-keys"
+      fi
+
+      warn "no firmware keys enrolled by this command"
 
       if [[ "$warnings" -gt 0 ]]; then
         printf 'secure-boot-dry-run: %s warning(s), no mutation performed\n' "$warnings" >&2
