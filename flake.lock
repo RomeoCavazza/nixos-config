@@ -52,11 +52,11 @@
     "doom-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782862948,
-        "narHash": "sha256-Et0IcOgmer1DbZzhBQhTdUhStVw+4ICHVNWNhWTdRRg=",
+        "lastModified": 1782870936,
+        "narHash": "sha256-I7CoYw9e3IuSAa04F3RPjLaIZL+Ol2ew3zl0mYM+j/4=",
         "owner": "RomeoCavazza",
         "repo": "emacs-config",
-        "rev": "3e9d40eb77e43ecc90051809e602acabe13d7ff2",
+        "rev": "5b0a04deb40e92a43c195f3bdc4c700b80a27f27",
         "type": "github"
       },
       "original": {
@@ -138,11 +138,11 @@
     "grafana-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782862952,
-        "narHash": "sha256-UkqPocwmsznMdD3NF+VK631zSmzhEW3x+069RxpRn0w=",
+        "lastModified": 1782870936,
+        "narHash": "sha256-VW7yX7NEjb8ntkea0YeNjek8NaGtIGDF5aSuuFkpP8M=",
         "owner": "RomeoCavazza",
         "repo": "grafana-config",
-        "rev": "2287812f720a730ae4a5cd95fc69a89b602f6499",
+        "rev": "edf2d2341158c396df7c0532e38a025dd082673f",
         "type": "github"
       },
       "original": {
@@ -707,11 +707,11 @@
     "nvim-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782868893,
-        "narHash": "sha256-xaxGEv57keNl42rWfZaDTMikMGrhLksiduGUpQ6e98I=",
+        "lastModified": 1782870936,
+        "narHash": "sha256-zoNuyjuqkpHhsflT7cyiqNstziBofzc0AvtJW8R9hFA=",
         "owner": "RomeoCavazza",
         "repo": "nvim-config",
-        "rev": "b68f4287a4d217fa18630df226d1c5db230fb836",
+        "rev": "5fc7201b0e245e6ec0194bf995b767b152e9ee55",
         "type": "github"
       },
       "original": {
