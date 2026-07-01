@@ -26,7 +26,7 @@
   },
   sizes ? {
     root = "80G";
-    nix = "220G";
+    nix = "100%FREE";
     home = "220G";
     build = "80G";
     swap = "32G";
