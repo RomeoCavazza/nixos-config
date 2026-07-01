@@ -122,9 +122,9 @@ let
         rationale = "Observation only. TPM2 enrollment must be handled in a dedicated secrets run.";
       };
       rootDiskEncryption = {
-        expected = "Root filesystem encryption state is visible before any Disko migration";
+        expected = "Root filesystem encryption state stays visible after the LUKS/LVM migration";
         status = "runtime-check";
-        rationale = "Observation only. Disk layout changes must be tested in a VM before touching the workstation.";
+        rationale = "Observation only. Future disk layout changes must be handled as dedicated migration runs.";
       };
       pamU2f = {
         expected = "PAM U2F is enabled for sudo only, with password fallback";

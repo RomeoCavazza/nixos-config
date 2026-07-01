@@ -15,7 +15,6 @@
     ../modules/security
     ../modules/core/session.nix
     ../modules/core/logging.nix
-    ../modules/core/build-sandbox.nix
     ../modules/core/programs.nix
     ../modules/core/packages-extra
   ];
