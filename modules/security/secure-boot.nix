@@ -20,6 +20,11 @@ in
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/var/lib/sbctl";
+    settings = {
+      timeout = "menu-force";
+      auto-entries = false;
+      auto-firmware = true;
+    };
   };
 
   system.build.secureBootDryRun = pkgs.writeShellApplication {
