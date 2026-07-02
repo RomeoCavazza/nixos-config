@@ -31,5 +31,20 @@ _:
     "net.ipv6.conf.default.accept_redirects" = 0;
     "net.ipv6.conf.all.accept_source_route" = 0;
     "net.ipv6.conf.default.accept_source_route" = 0;
+
+    "kernel.pid_max" = 1048576;
+    "kernel.unprivileged_bpf_disabled" = 1;
+
+    "net.core.bpf_jit_harden" = 2;
+    "net.ipv4.conf.all.accept_local" = 0;
+    "net.ipv4.conf.all.shared_media" = 0;
+    "net.ipv4.conf.default.shared_media" = 0;
+    "net.ipv4.conf.all.arp_filter" = 1;
+    "net.ipv4.conf.all.arp_ignore" = 2;
+    "net.ipv4.conf.all.route_localnet" = 0;
+    "net.ipv4.conf.all.drop_gratuitous_arp" = 1;
+    "net.ipv4.conf.all.rp_filter" = 1;
+    "net.ipv4.conf.default.rp_filter" = 1;
+    "net.ipv4.ip_local_port_range" = "32768 65535";
   };
 }

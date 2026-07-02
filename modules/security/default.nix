@@ -1,5 +1,6 @@
 {
   imports = [
+    ./auditd.nix
     ./local-report.nix
     ./recovery.nix
     ./secure-boot.nix

@@ -8,6 +8,10 @@ _:
 
   boot.kernelParams = [
     "pcie_aspm=off"
+    "intel_iommu=on"
+    "iommu=pt"
+    "page_alloc.shuffle=1"
+    "slab_nomerge=yes"
   ];
 
   boot.blacklistedKernelModules = [
