@@ -78,20 +78,19 @@
         user = "tco";
         homeDirectory = "/home/${user}";
         labApplicationsDir = "${homeDirectory}/Applications";
-        activeConfigRepo = "/etc/nixos";
+        activeConfigRepo = "${homeDirectory}/dev/nixos-config";
         # Runtime path to the deployed checkout for scripts that inspect this repo.
-        # Prefer the active system config over any transient dev clone.
+        # Prefer the canonical user checkout over any stale system clone.
         repoCheckout =
           let
             envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
-            devRepo = "${homeDirectory}/dev/nixos-config";
           in
           if envRepo != "" then
             envRepo
-          else if builtins.pathExists "${activeConfigRepo}/flake.nix" then
+          else if builtins.pathExists "${activeConfigRepo}/.git" then
             activeConfigRepo
           else
-            devRepo;
+            "/etc/nixos";
         gitName = "RomeoCavazza";
         gitEmail = "romeo.cavazza@gmail.com";
         snapshotGitName = "Romeo Cavazza";

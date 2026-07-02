@@ -184,12 +184,12 @@ with `direnv`.
 
 2. **Clone this repository**:
    ```bash
-   sudo git clone https://github.com/RomeoCavazza/nixos-config.git /etc/nixos-new
-   sudo cp -r /etc/nixos-new/* /etc/nixos/
+   mkdir -p ~/dev
+   git clone https://github.com/RomeoCavazza/nixos-config.git ~/dev/nixos-config
    ```
 
 3. **Apply the configuration**:
    ```bash
-   cd /etc/nixos
+   cd ~/dev/nixos-config
    sudo nixos-rebuild switch --flake .#legion
    ```

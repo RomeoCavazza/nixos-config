@@ -15,6 +15,8 @@ if [[ -n "${NIXOS_CONFIG_REPO:-}" ]]; then
   repo_dir="$NIXOS_CONFIG_REPO"
 elif repo_dir="$(git rev-parse --show-toplevel 2>/dev/null)" && [[ -f "$repo_dir/flake.nix" ]]; then
   :
+elif [[ -f "$HOME/dev/nixos-config/flake.nix" ]]; then
+  repo_dir="$HOME/dev/nixos-config"
 elif [[ -f /etc/nixos/flake.nix ]]; then
   repo_dir=/etc/nixos
 else
