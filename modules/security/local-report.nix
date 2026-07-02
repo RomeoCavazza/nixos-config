@@ -343,6 +343,22 @@ in
         fi
       }
 
+      check_iommu() {
+        if [[ -d /sys/class/iommu ]] && [[ -n "$(ls -A /sys/class/iommu 2>/dev/null)" ]]; then
+          ok "IOMMU is enabled"
+        else
+          warn "IOMMU is not enabled"
+        fi
+      }
+
+      check_apparmor() {
+        if [[ -d /sys/kernel/security/apparmor ]]; then
+          ok "AppArmor LSM is active"
+        else
+          warn "AppArmor LSM is not active"
+        fi
+      }
+
       if [[ ${toString rollbackLimit} -eq 1 ]]; then
         warn "systemd-boot keeps 1 generation by explicit policy"
       elif [[ ${toString rollbackLimit} -gt 1 ]]; then
@@ -367,6 +383,8 @@ in
       check_root_disk_encryption
       check_pam_u2f
       check_recovery_readiness
+      check_iommu
+      check_apparmor
 
       if [[ "$failures" -gt 0 ]]; then
         printf 'local-security-check: %s failure(s)\n' "$failures" >&2

@@ -6,5 +6,5 @@ _:
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ ];
   networking.firewall.allowedUDPPorts = [ ];
-  services.avahi.openFirewall = false;
+  services.avahi.enable = false;
 }
