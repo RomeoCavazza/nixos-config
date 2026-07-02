@@ -1,6 +1,5 @@
 {
   imports = [
-    ./auditd.nix
     ./hardening.nix
     ./local-report.nix
     ./recovery.nix
