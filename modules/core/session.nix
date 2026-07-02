@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   lateShutdownMountUnits = [
@@ -8,14 +8,22 @@ let
     "run-secrets.d.mount"
     "run-wrappers.mount"
   ];
-  lateShutdownMount = ''
+  silencedMountUnits = [
+    "nix.mount"
+    "nix-store.mount"
+  ];
+  dropinFor = unit: ''
     [Unit]
     DefaultDependencies=no
+  '' + lib.optionalString (builtins.elem unit silencedMountUnits) ''
+
+    [Mount]
+    LogLevelMax=crit
   '';
   shutdownMountDropins = pkgs.runCommand "shutdown-mount-dropins" { } (
     builtins.concatStringsSep "\n" (
       map (unit: ''
-        install -D -m 0444 ${pkgs.writeText "late-shutdown-mount.conf" lateShutdownMount} \
+        install -D -m 0444 ${pkgs.writeText "late-shutdown-mount.conf" (dropinFor unit)} \
           "$out/lib/systemd/system/${unit}.d/late-shutdown-mount.conf"
       '') lateShutdownMountUnits
     )
