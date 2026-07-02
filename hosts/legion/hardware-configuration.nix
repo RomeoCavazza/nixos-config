@@ -33,16 +33,26 @@
   fileSystems."/home" = {
     device = "/dev/legion/home";
     fsType = "ext4";
+    options = [
+      "nodev"
+      "nosuid"
+    ];
   };
 
   fileSystems."/nix" = {
     device = "/dev/legion/nix";
     fsType = "ext4";
+    options = [
+      "nodev"
+    ];
   };
 
   fileSystems."/build" = {
     device = "/dev/legion/build";
     fsType = "ext4";
+    options = [
+      "nodev"
+    ];
   };
 
   fileSystems."/boot" = {
