@@ -12,14 +12,17 @@ let
     "nix.mount"
     "nix-store.mount"
   ];
-  dropinFor = unit: ''
-    [Unit]
-    DefaultDependencies=no
-  '' + lib.optionalString (builtins.elem unit silencedMountUnits) ''
+  dropinFor =
+    unit:
+    ''
+      [Unit]
+      DefaultDependencies=no
+    ''
+    + lib.optionalString (builtins.elem unit silencedMountUnits) ''
 
-    [Mount]
-    LogLevelMax=crit
-  '';
+      [Mount]
+      LogLevelMax=crit
+    '';
   shutdownMountDropins = pkgs.runCommand "shutdown-mount-dropins" { } (
     builtins.concatStringsSep "\n" (
       map (unit: ''
