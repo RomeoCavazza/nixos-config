@@ -117,9 +117,17 @@ let
         rationale = "Lanzaboote signs boot artifacts with the sbctl key bundle. Firmware key enrollment remains a separate manual step.";
       };
       tpm2 = {
-        expected = "TPM device presence is visible before any TPM2 secret-binding work";
+        expected = "TPM device presence and TPM2 unlock readiness stay visible before and after enrollment";
+        actual = {
+          systemdInitrdSupport = config.boot.initrd.systemd.tpm2.enable or false;
+          systemdRuntimeSupport = config.systemd.tpm2.enable or false;
+          runtimeTools = config.security.tpm2.enable or false;
+          unlockCheck = "tpm2-unlock-check";
+          luksDevice = "/dev/disk/by-partlabel/legion-crypt";
+          recommendedEnrollment = "sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7 /dev/disk/by-partlabel/legion-crypt";
+        };
         status = "runtime-check";
-        rationale = "Observation only. TPM2 enrollment must be handled in a dedicated secrets run.";
+        rationale = "The NixOS side only prepares TPM2 support and check tooling. LUKS token enrollment remains a manual, auditable step and keeps the passphrase fallback.";
       };
       rootDiskEncryption = {
         expected = "Root filesystem encryption state stays visible after the LUKS/LVM migration";
@@ -173,6 +181,7 @@ in
     name = "local-security-check";
     runtimeInputs = [
       pkgs.coreutils
+      pkgs.cryptsetup
       pkgs.findutils
       pkgs.gawk
       pkgs.gnugrep
@@ -252,6 +261,36 @@ in
         fi
       }
 
+      check_tpm2_unlock() {
+        local luks_device="/dev/disk/by-partlabel/legion-crypt" luks_dump
+        if [[ ${if config.boot.initrd.systemd.tpm2.enable or false then "1" else "0"} -eq 1 ]]; then
+          ok "TPM2 unlock support is configured in initrd"
+        else
+          warn "TPM2 unlock support is not configured in initrd"
+        fi
+        if command -v tpm2-unlock-check >/dev/null 2>&1; then
+          ok "tpm2-unlock-check is installed"
+        else
+          warn "tpm2-unlock-check is not installed"
+        fi
+        if [[ ! -e "$luks_device" ]]; then
+          warn "TPM2 LUKS token not inspectable: $luks_device is missing"
+          return
+        fi
+        if [[ "$EUID" -ne 0 ]]; then
+          ok "TPM2 LUKS token inspection requires sudo; run sudo tpm2-unlock-check"
+          return
+        fi
+        luks_dump="$(cryptsetup luksDump "$luks_device" 2>/dev/null || true)"
+        if [[ -z "$luks_dump" ]]; then
+          warn "TPM2 LUKS token not inspectable: cryptsetup could not read $luks_device"
+        elif grep -qi 'systemd-tpm2' <<< "$luks_dump"; then
+          ok "LUKS has a systemd-tpm2 token enrolled"
+        else
+          warn "LUKS has no systemd-tpm2 token enrolled"
+        fi
+      }
+
       check_root_disk_encryption() {
         local source type parent parent_type
         source="$(findmnt -no SOURCE / 2>/dev/null || true)"
@@ -324,6 +363,7 @@ in
 
       check_secure_boot
       check_tpm2
+      check_tpm2_unlock
       check_root_disk_encryption
       check_pam_u2f
       check_recovery_readiness
