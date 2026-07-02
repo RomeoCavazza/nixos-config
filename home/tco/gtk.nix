@@ -16,6 +16,7 @@
       package = pkgs.bibata-cursors;
       size = 24;
     };
+    gtk3.colorScheme = "dark";
     gtk4.theme = config.gtk.theme;
   };
 }
