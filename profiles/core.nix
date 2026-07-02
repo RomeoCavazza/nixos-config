@@ -14,7 +14,6 @@
     ../modules/core/sysctl.nix
     ../modules/security
     ../modules/core/session.nix
-    ../modules/core/shutdown-audit.nix
     ../modules/core/logging.nix
     ../modules/core/programs.nix
     ../modules/core/packages-extra

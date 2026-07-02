@@ -1,9 +1,11 @@
 { pkgs, ... }:
 
 let
-  lazyUnmountUnits = [
+  nixUnmountUnits = [
     "nix.mount"
     "nix-store.mount"
+  ];
+  lateRuntimeMountUnits = [
     "run-keys.mount"
     "run-secrets.d.mount"
     "run-wrappers.mount"
@@ -12,12 +14,20 @@ let
     [Mount]
     LazyUnmount=yes
   '';
-  lazyUnmountDropins = pkgs.runCommand "lazy-unmount-dropins" { } (
+  lateRuntimeMount = ''
+    [Unit]
+    DefaultDependencies=no
+  '';
+  shutdownMountDropins = pkgs.runCommand "shutdown-mount-dropins" { } (
     builtins.concatStringsSep "\n" (
-      map (unit: ''
+      (map (unit: ''
         install -D -m 0444 ${pkgs.writeText "lazy-unmount.conf" lazyUnmount} \
           "$out/lib/systemd/system/${unit}.d/lazy-unmount.conf"
-      '') lazyUnmountUnits
+      '') nixUnmountUnits)
+      ++ (map (unit: ''
+        install -D -m 0444 ${pkgs.writeText "runtime-mount.conf" lateRuntimeMount} \
+          "$out/lib/systemd/system/${unit}.d/runtime-mount.conf"
+      '') lateRuntimeMountUnits)
     )
   );
 in
@@ -25,5 +35,5 @@ in
 {
   services.logind.settings.Login.KillUserProcesses = true;
   systemd.settings.Manager.DefaultTimeoutStopSec = "15s";
-  systemd.packages = [ lazyUnmountDropins ];
+  systemd.packages = [ shutdownMountDropins ];
 }
