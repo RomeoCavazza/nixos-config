@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
-# Advanced Hyprland Telemetry for Combat HUD
-# Run by the hypr-metrics.timer every 30s as user 'tco'.
 
 set -euo pipefail
 
 OUTFILE="/var/lib/node_exporter/textfile_collector/hyprland.prom"
 TMPFILE="${OUTFILE}.tmp"
 
-# 0. Ensure we have the Hyprland signature
 if [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
   USER_UID=$(id -u)
   HYPR_DIR="/run/user/${USER_UID}/hypr"
@@ -20,7 +17,6 @@ if [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
   fi
 fi
 
-# 1. Gather raw data (handle failure gracefully)
 if monitors_json=$(hyprctl monitors -j 2>/dev/null); then
   active_ws=$(echo "$monitors_json" | jq -r '.[0].activeWorkspace.id')
   fullscreen=$(echo "$monitors_json" | jq -r '.[0].hasfullscreen | if . then 1 else 0 end')
@@ -42,19 +38,16 @@ else
   workspaces_count="0"
 fi
 
-# 2. Extract window info
 win_class="${active_client%%@*}"
 win_title="${active_client#*@}"
 win_class="${win_class:-none}"
 win_title="${win_title:-none}"
 
-# Sanitize strings for Prometheus labels
 win_class=${win_class//\\/\\\\}
 win_class=${win_class//\"/\\\"}
 win_title=${win_title//\\/\\\\}
 win_title=${win_title//\"/\\\"}
 
-# 3. Write atomically
 cat > "$TMPFILE" << EOF
 # HELP hypr_active_workspace_id Current active workspace ID
 # TYPE hypr_active_workspace_id gauge

@@ -1,40 +1,32 @@
 #!/usr/bin/env bash
-# Collect NixOS/Nix store metrics and write them to the Prometheus textfile
-# collector directory. Run by the nix-metrics.timer systemd unit every 15 min.
 
 set -euo pipefail
 
 OUTFILE="/var/lib/node_exporter/textfile_collector/nix-store.prom"
 TMPFILE="${OUTFILE}.tmp"
 
-# --- Nix store filesystem use (fast: read from df, no store walk) -----------
 df_stats=$(df --output=used,avail,size -B1 /nix/store 2>/dev/null \
   | awk 'NR == 2 { print $1, $2, $3 }' || echo "0 0 0")
 read -r store_bytes store_available_bytes store_capacity_bytes <<< "${df_stats:-0 0 0}"
 store_usage_ratio=$(awk -v used="${store_bytes:-0}" -v total="${store_capacity_bytes:-0}" \
   'BEGIN { if (total > 0) printf "%.6f", used / total; else print 0 }')
 
-# --- Total paths in store (fast: directory entry count) ----------------------
 store_paths=$(find /nix/store -mindepth 1 -maxdepth 1 -printf '.' 2>/dev/null | wc -c || echo 0)
 
-# --- Current system closure --------------------------------------------------
 closure_paths=$(nix-store -q --requisites /run/current-system 2>/dev/null | wc -l || echo 0)
 closure_bytes=$(nix path-info -rS /run/current-system 2>/dev/null \
   | awk '{sum += $2} END { print (sum ? sum : 0) }')
-# Get top 10 closures safely without triggering SIGPIPE errors in sort/head
 top_closures=$(nix path-info -rS /run/current-system 2>/dev/null \
   | awk 'NF >= 2 { print $1, $2 }' \
   | sort -k2,2nr 2>/dev/null \
   | head -10 || true)
 
-# --- Current NixOS generation ------------------------------------------------
 generations=$(nix-env --list-generations -p /nix/var/nix/profiles/system 2>/dev/null || true)
 current_gen=$(printf '%s\n' "$generations" \
   | awk '/\(current\)/ { print $1; found = 1; exit } END { if (!found) print 0 }')
 generations_count=$(printf '%s\n' "$generations" \
   | awk 'NF > 0 { c++ } END { print (c ? c : 0) }')
 
-# --- flake.lock freshness ----------------------------------------------------
 repo_dir="${REPO_DIR:-${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
 flake_lock="${repo_dir}/flake.lock"
 if [[ -f "$flake_lock" ]]; then
@@ -43,13 +35,10 @@ else
   lock_age=0
 fi
 
-# --- Pressure Stall Information (PSI) ---------------------------------------
-# We expose avg10 as a percent-like value for Grafana gauge panels.
 pressure_cpu_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/cpu 2>/dev/null || echo 0)
 pressure_io_some_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/io 2>/dev/null || echo 0)
 pressure_mem_some_avg10=$(awk '/^some / { for (i = 1; i <= NF; i++) if ($i ~ /^avg10=/) { sub("avg10=", "", $i); print $i; exit } }' /proc/pressure/memory 2>/dev/null || echo 0)
 
-# --- Write atomically --------------------------------------------------------
 cat > "$TMPFILE" << EOF
 # HELP nix_store_bytes Nix store used space in bytes (from df)
 # TYPE nix_store_bytes gauge
@@ -120,8 +109,6 @@ nix_pressure_io_some_avg10 ${pressure_io_some_avg10}
 nix_pressure_mem_some_avg10 ${pressure_mem_some_avg10}
 EOF
 
-# --- Flame graph profile ----------------------------------------------------
-# We hide the deprecation error of nix path info using 2>/dev/null
 nix path-info -r --json /run/current-system 2>/dev/null \
   | "${repo_dir}/config/bin/nix-flamegraph.py" >> "$TMPFILE" || true
 

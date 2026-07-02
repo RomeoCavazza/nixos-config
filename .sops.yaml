@@ -1,7 +1,5 @@
 keys:
-  # Clé Administrateur tco (dérivée de ~/.ssh/id_ed25519)
   - &admin_tco age1jf9hc5ntgx27flj7h8e2fua0dfhnunnd3snnm8ujm4t5rpv8uqqqk2a85r
-  # Clé Machine legion (/var/lib/sops-nix/key.txt)
   - &host_legion age19wtmkh43mmjnjjumgk379l4dy97dp2ghhlgc8rywh49jyu2uc9kqdsaw6x
 
 creation_rules:

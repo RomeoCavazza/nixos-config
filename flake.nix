@@ -79,8 +79,6 @@
         homeDirectory = "/home/${user}";
         labApplicationsDir = "${homeDirectory}/Applications";
         activeConfigRepo = "${homeDirectory}/dev/nixos-config";
-        # Runtime path to the deployed checkout for scripts that inspect this repo.
-        # Prefer the canonical user checkout over any stale system clone.
         repoCheckout =
           let
             envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";

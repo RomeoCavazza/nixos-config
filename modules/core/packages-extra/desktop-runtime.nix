@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # --- Desktop Runtime ---
   environment.systemPackages = with pkgs; [
     adwaita-icon-theme
     fuse2

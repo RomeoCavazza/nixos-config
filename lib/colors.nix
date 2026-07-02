@@ -1,4 +1,3 @@
-# Renderers: turn the palette attrset (lib/palette.nix) into per-tool colour files.
 { lib }:
 let
   hexMap = {
@@ -31,7 +30,6 @@ let
       toString (hex2 (lib.substring 4 2 h))
     }";
 
-  # Catppuccin Mocha names rendered in palette order.
   names = [
     "rosewater"
     "flamingo"
@@ -66,8 +64,6 @@ rec {
   inherit rgbStr noHash;
 
   rofi = p: ''
-    /* --- Rofi Tokens --- */
-
     * {
       accent:     ${p.accent};
       selectedBg: rgba(${rgbStr p.accent}, 14%);
@@ -109,30 +105,22 @@ rec {
     };
   };
 
-  # waybar scss variables (consumed via @use '../scss/variables')
   scss =
     p:
     let
       line = n: "$wb-${n}: ${p.${n}};";
     in
     ''
-      // --- Waybar Tokens ---
-
       $wb-accent: ${p.accent};
 
-      // --- Catppuccin Mocha ---
       ${lib.concatStringsSep "\n" (map line names)}
 
-      // --- States ---
       $wb-hover-bg:       rgba(${rgbStr p.accent}, 0.12);
       $wb-taskbar-hover:  rgba(${rgbStr p.accent}, 0.10);
       $wb-taskbar-active: rgba(${rgbStr p.accent}, 0.14);
     '';
 
-  # hyprland design tokens (sourced by conf/tokens.conf consumers)
   hyprland = p: ''
-    # --- Design Tokens ---
-
     $accent = rgba(${noHash p.accent}ff)
   '';
 }

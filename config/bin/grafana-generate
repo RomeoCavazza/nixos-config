@@ -17,7 +17,6 @@ src_dir="${grafana_dir}/src"
 jsonnet_bin="${JSONNET:-jsonnet}"
 jq_bin="${JQ:-jq}"
 
-# Mapping legacy sources to your preferred JSON filenames
 declare -A mapping=(
   ["nix-dashboard"]="nixos-metrics"
   ["nix-efficiency-dashboard"]="nix-efficiency"

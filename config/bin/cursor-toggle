@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Persistent toggle: stay hidden until explicit detoggle.
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypr-cursor-hidden.state"
 
 HIDDEN="0"

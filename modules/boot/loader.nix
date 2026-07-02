@@ -7,7 +7,6 @@
   boot.loader.timeout = null;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Keep the systemd-boot menu visible and hide auto-detected entries so curated entries stay predictable.
   boot.loader.systemd-boot.extraInstallCommands = ''
     conf=/boot/loader/loader.conf
     ${pkgs.gnused}/bin/sed -i '/^timeout /d; /^auto-entries /d' "$conf"

@@ -1,7 +1,6 @@
 { pkgs, lib, ... }:
 
 {
-  # --- PostgreSQL ---
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_17;
@@ -23,7 +22,6 @@
     '';
   };
 
-  # --- Redis ---
   services.redis.servers.insider = {
     enable = true;
     port = 6379;
@@ -45,7 +43,6 @@
     };
   };
 
-  # --- Qdrant ---
   services.qdrant = {
     enable = true;
     settings = {

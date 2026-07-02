@@ -1,5 +1,3 @@
-# Shared desktop palette for Nix-rendered surfaces.
-# Standalone upstream configs may keep their own deliberate colour systems.
 rec {
   rosewater = "#f5e0dc";
   flamingo = "#f2cdcd";

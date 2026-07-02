@@ -2,7 +2,7 @@
 
 {
   environment.systemPackages = with pkgs; [
-    rofi # Wayland layer-shell capable; launcher backdrop blurred via layerrule (hyprland-config)
+    rofi
     waybar
     networkmanagerapplet
     nemo
@@ -11,7 +11,5 @@
 
   services.gvfs.enable = true;
   services.udisks2.enable = true;
-  # Thumbnailer for nemo (video/pdf). Replaces the unused thunar file manager,
-  # which was only pulled in for its services; nemo is the actual $fileManager.
   services.tumbler.enable = true;
 }

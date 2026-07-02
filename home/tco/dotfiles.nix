@@ -21,7 +21,6 @@ let
 
     cat >> "$out/custom/column-tco.rasi" <<EOF
 
-    /* --- Declarative NixOS Overrides --- */
     @import "~/.config/rofi/tokens.rasi"
 
     * {
@@ -43,7 +42,6 @@ let
 
     cat >> "$out/themes/apps-grid.rasi" <<EOF
 
-    /* --- Declarative NixOS Overrides --- */
     inputbar {
       border: 0;
     }
@@ -90,9 +88,6 @@ let
   '';
 in
 {
-  # ---------------------------------------------------------------------------
-  # 1. Compiled Store Derivations (Requiring token injection or build step)
-  # ---------------------------------------------------------------------------
   home.file.".config/rofi".source = rofiConfig;
   home.file.".config/conky".source = conkyConfig;
   home.file.".config/foot".source = "${inputs.hypr-config}/foot";

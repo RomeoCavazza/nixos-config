@@ -1,15 +1,9 @@
 #!/usr/bin/env bash
-# Wrapper around nixos-rebuild that records build duration, exit status,
-# and timestamp to the Prometheus textfile collector.
-#
-# Usage: rebuild [--dev] [--pull] [--allow-dirty] <switch|boot|test|dry-activate|build> [nixos-rebuild args...]
-#   Defaults to the active local flake and records Prometheus textfile metrics.
 
 set -euo pipefail
 
 OUTFILE="/var/lib/node_exporter/textfile_collector/nix-rebuild.prom"
 
-# Use the nixos-rebuild from the running system to avoid sudo PATH issues.
 NIXOS_REBUILD=/run/current-system/sw/bin/nixos-rebuild
 if [[ -n "${NIXOS_CONFIG_REPO:-}" ]]; then
   repo_dir="$NIXOS_CONFIG_REPO"
@@ -120,9 +114,6 @@ fi
 start_ns=$(date +%s%N)
 start_ts=$(date +%s)
 
-# Run rebuild — allow failure so we can still record the exit code.
-# Pass NIXOS_CONFIG_REPO into sudo environment and enable --impure so flake evaluation
-# can dynamically resolve locality.repoCheckout via builtins.getEnv.
 set +e
 sudo NIXOS_CONFIG_REPO="$repo_dir" "$NIXOS_REBUILD" --impure --flake "$FLAKE_REF" "${DEV_OVERRIDES[@]}" "$@"
 exit_code=$?
@@ -132,8 +123,6 @@ end_ns=$(date +%s%N)
 duration_ms=$(( (end_ns - start_ns) / 1000000 ))
 success=$([ "$exit_code" -eq 0 ] && echo 1 || echo 0)
 
-# Write atomically. The textfile_collector dir is owned by tco (see observability.nix
-# tmpfiles rule) so no sudo is needed here — and node_exporter reads 644 files fine.
 TMPFILE=$(mktemp /tmp/nix-rebuild.prom.XXXXXX)
 cat > "$TMPFILE" << EOF
 # HELP nix_rebuild_duration_ms Duration of the last nixos-rebuild in milliseconds

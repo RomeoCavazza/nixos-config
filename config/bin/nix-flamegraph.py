@@ -16,7 +16,6 @@ def main():
     else:
         return
 
-    # To avoid key errors, ensure every node has narSize and references
     for path, info in nodes.items():
         if "references" not in info:
             info["references"] = []
@@ -36,7 +35,6 @@ def main():
         else:
             return
 
-    # Breadth First Spanning Tree
     tree = { p: [] for p in nodes }
     visited = set()
     
@@ -65,11 +63,9 @@ def main():
         
     rank = 1
     
-    # Write prometheus header
     print("# HELP nix_flamegraph Nix store closure nested set flame graph")
     print("# TYPE nix_flamegraph gauge")
     
-    # Calculate total closure size
     total_val = sum(values[r] for r in roots)
     print(f'nix_flamegraph{{rank="{rank:05d}",level="0",label="CLOSURE_ROOT",self="0"}} {total_val}')
     rank += 1
@@ -80,7 +76,6 @@ def main():
         val = values[node]
         label = node.split("/")[-1].replace('\\', '\\\\').replace('"', '\\"')
         
-        # We output rank, level, label, self
         print(f'nix_flamegraph{{rank="{rank:05d}",level="{level}",label="{label}",self="{self_size}"}} {val}')
         rank += 1
         

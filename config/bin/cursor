@@ -7,10 +7,8 @@ if [ ! -f "$APPIMAGE" ]; then
   exit 1
 fi
 
-# --- AppImage Cache ---
 appimage-run "$APPIMAGE" --version >/dev/null 2>&1 || true
 
-# --- Native Keymap ---
 for NK in "$HOME"/.cache/appimage-run/*/usr/share/cursor/resources/app/node_modules/native-keymap/build; do
   [ -d "$NK/Release" ] || continue
   mkdir -p "$NK/Debug"

@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # --- Docker ---
   virtualisation.docker = {
     enable = true;
 
@@ -14,14 +13,11 @@
     };
   };
 
-  # --- Libvirt / KVM ---
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
-  # --- Binary Format Emulation ---
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
 
-  # --- Tools ---
   environment.systemPackages = with pkgs; [
     docker-compose
     lazydocker

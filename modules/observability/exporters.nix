@@ -6,9 +6,6 @@ let
   textfileDir = "/var/lib/node_exporter/textfile_collector";
 in
 {
-  # The primary user owns the dir so the rebuild wrapper can write nix-rebuild.prom without sudo.
-  # nix-metrics runs as root and can write there regardless.
-  # node_exporter reads 644 files — no group membership needed.
   systemd.tmpfiles.rules = [
     "d ${textfileDir} 0755 ${user} users -"
   ];

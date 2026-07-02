@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # --- System CLI ---
   environment.systemPackages = with pkgs; [
     bash
     vim

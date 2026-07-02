@@ -2,7 +2,6 @@
 
 let
   hyprland-pkg = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-  # Hyprchroma v3.4.1-v055 — unified adaptive tint release
   hyprchroma-src = pkgs.lib.cleanSource inputs.hyprchroma;
 in
 pkgs.stdenv.mkDerivation {

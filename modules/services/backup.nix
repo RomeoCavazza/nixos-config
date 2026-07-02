@@ -7,7 +7,6 @@
 let
   inherit (locality) user;
   homeDir = config.users.users.${user}.home;
-  # Restic uses the B2 S3-compatible endpoint.
   repository = "s3:s3.eu-central-003.backblazeb2.com/tco-nixos-backup/restic";
   passwordFile = config.sops.secrets.restic_password.path;
   environmentFile = config.sops.templates."restic-b2.env".path;
@@ -20,7 +19,6 @@ in
   sops.templates."restic-b2.env" = {
     mode = "0400";
     content = ''
-      # Rendered at activation time into /run/secrets/rendered/restic-b2.env
       AWS_ACCESS_KEY_ID=${config.sops.placeholder.b2_key_id}
       AWS_SECRET_ACCESS_KEY=${config.sops.placeholder.b2_app_key}
     '';
@@ -29,7 +27,6 @@ in
   environment.systemPackages = [ pkgs.restic ];
 
   services.restic.backups = {
-    # Critical machine state: config + credentials.
     b2-critical = {
       inherit environmentFile passwordFile repository;
       initialize = true;
@@ -59,7 +56,6 @@ in
         RandomizedDelaySec = "20min";
       };
 
-      # Keep a longer history for machine recovery.
       pruneOpts = [
         "--tag"
         "critical"
@@ -74,7 +70,6 @@ in
       ];
     };
 
-    # User data snapshots: lighter retention and separate schedule.
     b2-data = {
       inherit environmentFile passwordFile repository;
       initialize = true;

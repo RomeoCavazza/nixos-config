@@ -7,7 +7,6 @@
 }:
 
 let
-  # home/tco/scripts/ is three levels below the repo root.
   repoRoot = ../../..;
   mkBin = name: source: {
     inherit name;
@@ -49,7 +48,6 @@ in
       map mkLocalBin vendoredBins ++ map (name: mkInputBin name name) hyprConfigBins
     )
     // {
-      # --- Inline scripts ---
       ".local/bin/edex-ui-run" = {
         executable = true;
         text = ''

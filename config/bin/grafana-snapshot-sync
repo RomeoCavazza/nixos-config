@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-# Render Grafana dashboards to PNG and force-push only meaningful visual
-# updates to the dedicated `snapshots` branch (never main).
-#
-# The snapshots branch is always kept at a single orphan commit so the
-# repository size stays bounded regardless of how often this runs.
-# Images are referenced in README via raw GitHub URLs pointing at that branch.
 
 set -euo pipefail
 
@@ -25,7 +19,6 @@ CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
 SNAPSHOT_REPO_URL="${SNAPSHOT_REPO_URL:-}"
 SNAPSHOT_BRANCH="${SNAPSHOT_BRANCH:-snapshots}"
 
-# uid:slug:file
 DASHBOARDS=(
   "nixos-metrics:nixos-metrics:live-dashboard.png"
   "nix-efficiency:nix-efficiency:nix-efficiency.png"
@@ -37,7 +30,6 @@ mkdir -p "$SNAPSHOT_DIR"
 TMP_RENDER="${TMP_DIR}/render"
 mkdir -p "$TMP_RENDER"
 
-# ── Wait for Grafana ──────────────────────────────────────────────────────────
 for _ in $(seq 1 30); do
   if curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
     break
@@ -50,7 +42,6 @@ if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
   exit 1
 fi
 
-# ── Resolve Playwright ────────────────────────────────────────────────────────
 if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
   PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null || true)
 fi
@@ -59,7 +50,6 @@ if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
   exit 1
 fi
 
-# ── Render each dashboard ─────────────────────────────────────────────────────
 has_changes=0
 
 for item in "${DASHBOARDS[@]}"; do
@@ -126,7 +116,6 @@ const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
 });
 NODE
 
-  # Compare against the current snapshot if one exists.
   if [[ -f "$current_file" ]]; then
     changed_pixels=$(compare -metric AE "$current_file" "$new_file" null: 2>&1 || true)
     total_pixels=$(identify -format "%[fx:w*h]" "$current_file")
@@ -147,9 +136,6 @@ done
 
 [[ "$has_changes" -eq 0 ]] && { echo "snapshot-sync: no meaningful changes, skipping publish"; exit 0; }
 
-# ── Publish to `snapshots` orphan branch (always depth-1) ────────────────────
-# Build a fresh orphan commit in a throw-away worktree so we never touch the
-# main branch's index or working tree.
 PUBLISH_DIR="${TMP_DIR}/publish"
 mkdir -p "$PUBLISH_DIR/docs/assets/live"
 cp "$SNAPSHOT_DIR"/*.png "$PUBLISH_DIR/docs/assets/live/"
@@ -161,7 +147,6 @@ git init -q
 git config user.name  "$SNAPSHOT_GIT_NAME"
 git config user.email "$SNAPSHOT_GIT_EMAIL"
 
-# Create a lone orphan commit — no parent, no history.
 git checkout -q --orphan "$SNAPSHOT_BRANCH"
 git add docs/assets/live/*.png
 git commit -q -m "snapshots: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"

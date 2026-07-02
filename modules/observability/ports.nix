@@ -1,4 +1,3 @@
-# --- Observability Ports ---
 {
   prometheus = 9090;
   node = 9100;

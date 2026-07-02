@@ -44,7 +44,5 @@ jobs:
             "git+file://$PWD#checks.x86_64-linux.grafana" \
             --no-link
 
-      # Reports pinned flake inputs vs upstream. The lock file remains the source
-      # of truth; this surfaces lagging pins without making intentional lag noisy.
       - name: Dependency pin audit
         run: nix run .#repo-audit

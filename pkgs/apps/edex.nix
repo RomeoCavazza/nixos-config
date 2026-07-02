@@ -11,13 +11,12 @@
       pkg-config
       gnumake
       gcc
-      # System dependencies.
       libxshmfence
       nss
       nspr
       alsa-lib
       libdrm
-      mesa.drivers # Provides libgbm.so.1.
+      mesa.drivers
       libgbm
       mesa
       libGL

@@ -4,7 +4,6 @@
   options.hardware.nvidia-prime.enable = lib.mkEnableOption "NVIDIA PRIME hybrid graphics offload";
 
   config = lib.mkIf config.hardware.nvidia-prime.enable {
-    # --- NVIDIA Drivers ---
     boot.kernelParams = [ "nvidia-drm.modeset=1" ];
 
     services.xserver.videoDrivers = [ "nvidia" ];
@@ -25,10 +24,6 @@
 
       package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.stable;
 
-      # --- PRIME Offload ---
-      # Hosts importing this module and enabling nvidia-prime must set GPU bus IDs, for example:
-      #   hardware.nvidia.prime.intelBusId  = "PCI:0:2:0";
-      #   hardware.nvidia.prime.nvidiaBusId = "PCI:2:0:0";
       prime = {
         offload = {
           enable = true;

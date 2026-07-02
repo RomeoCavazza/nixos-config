@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-# Use pgrep -f to make sure the Bash script is matched.
 if pgrep -f "legion-pulse" > /dev/null
 then
     pkill -f "legion-pulse"
     brightnessctl -d "platform::kbd_backlight" set 2
 else
-    # Use the Home Manager-installed entrypoint instead of the repo path.
     bash "$HOME/.local/bin/legion-pulse" &
 fi

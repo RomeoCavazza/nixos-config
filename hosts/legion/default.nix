@@ -7,7 +7,6 @@
 
   networking.hostName = hostName;
 
-  # Legion-specific PRIME bus IDs and hybrid graphics enable.
   hardware.nvidia-prime.enable = true;
   hardware.nvidia.prime = {
     intelBusId = "PCI:0:2:0";

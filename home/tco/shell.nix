@@ -38,8 +38,6 @@ in
         . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
       fi
 
-      # Keep interactive shells resilient when the graphical session inherited
-      # Home Manager's marker but not its full PATH.
       for dir in "$HOME/.local/bin"; do
         if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
           PATH="$dir:$PATH"
@@ -54,7 +52,6 @@ in
       fi
       export PATH
 
-      # Smart Tab: ls + exec on empty line
       _tab_smart_ls_exec() {
         if [[ -z "$READLINE_LINE" ]]; then
           local selected
@@ -78,11 +75,8 @@ in
               READLINE_POINT=0
             fi
           fi
-          # Force prompt refresh
           printf "\r"
         else
-          # Fallback to standard completion (Insert a literal tab and trigger)
-          # Note: bind -x is limited, but this works for simple cases
           printf "\t"
         fi
       }

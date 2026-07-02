@@ -41,8 +41,6 @@ let
           '';
         };
 
-        # Cheap local smoke checks for these helper proxies. The actual upstream
-        # can still be down; app-specific health checks should target real routes.
         "=/" = okResponse;
         "/health" = okResponse;
       };
@@ -61,7 +59,6 @@ in
     '';
 
     virtualHosts = {
-      # Grafana helper: keeps localhost:3000 pointing at the real Grafana port.
       "grafana.localhost-proxy" = {
         serverName = "localhost";
         listen = listenOn ports.grafanaProxy;
@@ -71,16 +68,12 @@ in
         };
       };
 
-      # 8081 is intentionally free for OpsWarden's `client_web` Docker Compose
-      # service. VIGIL expects the web client at http://localhost:8081.
       "dev.localhost-proxy" = mkLocalProxy {
         serverName = "dev.localhost";
         port = 8082;
         upstream = "http://${loopback}:80";
       };
 
-      # Local localhost -> :80 proxy, moved away from 8081 so it no longer
-      # shadows OpsWarden's jury-facing Compose port.
       "localhost-8084-proxy" = mkLocalProxy {
         serverName = "localhost";
         port = 8084;

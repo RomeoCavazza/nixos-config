@@ -10,6 +10,5 @@ in
 {
   environment.etc."ssh/github_known_hosts".source = githubKnownHosts;
 
-  # Pin GitHub SSH host keys to avoid first-use trust prompts for repo syncs.
   programs.ssh.knownHostsFiles = [ githubKnownHosts ];
 }
