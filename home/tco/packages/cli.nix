@@ -10,7 +10,6 @@
     jq
     d2
     ripgrep
-    yazi
     home-manager
     superfile
   ];

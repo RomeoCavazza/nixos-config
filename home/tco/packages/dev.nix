@@ -18,7 +18,6 @@
     lua
     lua-language-server
     luaPackages.lgi
-    lazygit
     aider-chat
     cargo
     openssl

@@ -5,6 +5,7 @@
     ./scripts
     ./packages
     ./shell.nix
+    ./tui.nix
     ./gtk.nix
     ./apps.nix
     ./emacs.nix
