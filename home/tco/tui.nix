@@ -1,15 +1,46 @@
 { pkgs, ... }:
 
 {
+  programs.tmux = {
+    enable = true;
+    clock24 = true;
+    focusEvents = true;
+    historyLimit = 50000;
+    keyMode = "vi";
+    mouse = true;
+    sensibleOnTop = true;
+    terminal = "tmux-256color";
+    extraConfig = ''
+      set -g detach-on-destroy off
+      set -g renumber-windows on
+      set -g set-titles on
+      set -g set-titles-string "#S:#W"
+      setw -g automatic-rename on
+
+      bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "tmux config reloaded"
+      bind-key c new-window -c "#{pane_current_path}"
+      bind-key '"' split-window -v -c "#{pane_current_path}"
+      bind-key % split-window -h -c "#{pane_current_path}"
+      bind-key | split-window -h -c "#{pane_current_path}"
+      bind-key - split-window -v -c "#{pane_current_path}"
+    '';
+  };
+
   programs.yazi = {
     enable = true;
     enableBashIntegration = true;
     shellWrapperName = "y";
     extraPackages = with pkgs; [
+      file
       ouch
     ];
     plugins = with pkgs.yaziPlugins; {
-      inherit git ouch;
+      git = {
+        package = git;
+        setup = true;
+        settings.order = 1500;
+      };
+      inherit ouch;
     };
     settings = {
       mgr = {
@@ -66,13 +97,15 @@
         prepend_fetchers = [
           {
             id = "git";
-            name = "*";
+            url = "*";
             run = "git";
+            group = "git";
           }
           {
             id = "git";
-            name = "*/";
+            url = "*/";
             run = "git";
+            group = "git";
           }
         ];
       };

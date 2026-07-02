@@ -81,6 +81,24 @@ in
         fi
       }
       bind -x '"\t": _tab_smart_ls_exec'
+
+      tm() {
+        local dir session
+        if [[ $# -gt 0 ]]; then
+          dir="$1"
+        else
+          dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+        fi
+        dir="$(realpath -m "$dir")"
+        [[ -d "$dir" ]] || { echo "tm: directory not found: $dir" >&2; return 1; }
+        session="$(basename "$dir" | tr '.- ' '___')"
+        if [[ -n "''${TMUX:-}" ]]; then
+          tmux has-session -t "$session" 2>/dev/null || tmux new-session -d -s "$session" -c "$dir"
+          tmux switch-client -t "$session"
+        else
+          tmux new-session -A -s "$session" -c "$dir"
+        fi
+      }
     '';
     shellAliases = {
       g = "git";

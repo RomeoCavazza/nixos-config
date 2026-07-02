@@ -26,9 +26,11 @@ let
     "antigravity"
     "antigravity-ide"
     "grafana-generate"
+    "get-user-info"
     "rebuild"
     "legion-pulse"
     "legion-toggle"
+    "toggle-showmethekey"
   ];
 
   hyprConfigBins = [

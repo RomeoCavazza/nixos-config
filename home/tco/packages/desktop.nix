@@ -10,6 +10,7 @@
     libnotify
     desktop-file-utils
     obs-studio
+    wshowkeys
     discord
     spotify
   ];

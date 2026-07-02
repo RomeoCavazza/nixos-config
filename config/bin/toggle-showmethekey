@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cmd=(wshowkeys -a right -a bottom -m 64 -b 00000000 -t 5)
+pattern="wshowkeys -a right -a bottom -m 64 -b 00000000 -t 5"
+
+if pgrep -f -- "$pattern" >/dev/null; then
+  pkill -f -- "$pattern"
+  exit 0
+fi
+
+exec "${cmd[@]}"
