@@ -9,9 +9,23 @@ let
         http_listen_port = ports.promtail;
         grpc_listen_address = "127.0.0.1";
         grpc_listen_port = 0;
+        graceful_shutdown_timeout = "5s";
       };
-      positions.filename = "/var/lib/promtail/positions.yaml";
-      clients = [ { url = "http://127.0.0.1:${toString ports.loki}/loki/api/v1/push"; } ];
+      positions = {
+        filename = "/var/lib/promtail/positions.yaml";
+        sync_period = "2s";
+      };
+      clients = [
+        {
+          url = "http://127.0.0.1:${toString ports.loki}/loki/api/v1/push";
+          timeout = "3s";
+          backoff_config = {
+            min_period = "250ms";
+            max_period = "2s";
+            max_retries = 3;
+          };
+        }
+      ];
       scrape_configs = [
         {
           job_name = "journal";
@@ -59,7 +73,9 @@ in
     after = [ "loki.service" ];
     serviceConfig = {
       ExecStart = "${pkgs.promtail-bin}/bin/promtail -config.file=${promtailConfig}";
-      Restart = "always";
+      Restart = "on-failure";
+      RestartSec = "2s";
+      TimeoutStopSec = "12s";
     };
   };
 }
