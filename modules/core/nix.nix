@@ -1,5 +1,7 @@
 {
+  config,
   inputs,
+  lib,
   locality,
   pkgs,
   ...
@@ -35,4 +37,16 @@
     dates = "weekly";
     options = "--delete-older-than 7d";
   };
+
+  # After every `nixos-rebuild switch`, print the package diff (previous -> new
+  # generation) via nvd — a quick "what changed" report. Idea from gvolpe/nix-config.
+  system.activationScripts.reportChanges = ''
+    PATH=$PATH:${
+      lib.makeBinPath [
+        pkgs.nvd
+        config.nix.package
+      ]
+    }
+    nvd diff $(ls -dv /nix/var/nix/profiles/system-*-link 2>/dev/null | tail -2) 2>/dev/null || true
+  '';
 }
