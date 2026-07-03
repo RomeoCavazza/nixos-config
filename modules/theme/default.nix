@@ -7,6 +7,8 @@
 }:
 
 {
+  imports = [ ./stylix.nix ];
+
   options.theme = {
     name = lib.mkOption {
       type = lib.types.str;

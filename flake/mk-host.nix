@@ -36,6 +36,7 @@ nixpkgs.lib.nixosSystem {
     inputs.disko.nixosModules.disko
     inputs.nix-snapd.nixosModules.default
     inputs.sops-nix.nixosModules.sops
+    inputs.stylix.nixosModules.stylix
     home-manager.nixosModules.home-manager
 
     (
