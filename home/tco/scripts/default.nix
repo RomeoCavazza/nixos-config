@@ -30,6 +30,9 @@ let
     "rebuild"
     "legion-pulse"
     "legion-toggle"
+    "tmux-fzf-man-pages"
+    "tmux-fzf-sessions"
+    "tmux-sessions"
     "toggle-showmethekey"
   ];
 

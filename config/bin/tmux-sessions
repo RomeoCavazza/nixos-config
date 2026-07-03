@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+sanitize_session_name() {
+  printf '%s' "$1" \
+    | tr -c '[:alnum:]_' '_' \
+    | sed -E 's/_+/_/g; s/^_//; s/_$//'
+}
+
+declare -A seen=()
+current_session=""
+
+if [[ -n "${TMUX:-}" ]]; then
+  current_session="$(tmux display-message -p '#S' 2>/dev/null || true)"
+fi
+
+if tmux ls >/dev/null 2>&1; then
+  while IFS= read -r session; do
+    [[ -n "$session" ]] || continue
+    seen["$session"]=1
+    [[ "$session" == "$current_session" ]] && continue
+    printf '%s\t%s\n' "$session" "tmux"
+  done < <(tmux ls -F '#S')
+fi
+
+root_spec="${TMUX_SESSION_ROOTS:-$HOME/dev}"
+depth="${TMUX_SESSION_DEPTH:-1}"
+IFS=':' read -r -a roots <<< "$root_spec"
+
+for root in "${roots[@]}"; do
+  [[ -d "$root" ]] || continue
+
+  if command -v fd >/dev/null 2>&1; then
+    dir_cmd=(fd -t d -d "$depth" . "$root")
+  else
+    dir_cmd=(find "$root" -mindepth 1 -maxdepth "$depth" -type d)
+  fi
+
+  while IFS= read -r dir; do
+    [[ -d "$dir" ]] || continue
+    session="$(sanitize_session_name "$(basename "$dir")")"
+    [[ -n "$session" ]] || continue
+    [[ -n "${seen[$session]+x}" ]] && continue
+    seen["$session"]=1
+    printf '%s\t%s\n' "$session" "$dir"
+  done < <("${dir_cmd[@]}" | sort)
+done

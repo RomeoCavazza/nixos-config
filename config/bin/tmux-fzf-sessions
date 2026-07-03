@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -z "${TMUX:-}" ]]; then
+  echo "tmux-fzf-sessions: run this from inside tmux" >&2
+  exit 1
+fi
+
+# shellcheck disable=SC2016
+selected="$(
+  tmux-sessions \
+    | fzf \
+      --delimiter='\t' \
+      --with-nth=1,2 \
+      --preview='path={2}; if [ -d "$path" ]; then eza --icons --tree --level=1 "$path"; else tmux list-windows -t {1}; fi' \
+      --preview-window='right,55%,wrap' \
+      --border-label=' Tmux Sessions ' \
+      --prompt='tmux> ' \
+      --tmux bottom,80% \
+    || true
+)"
+
+[[ -n "$selected" ]] || exit 0
+
+session="${selected%%$'\t'*}"
+dir="${selected#*$'\t'}"
+
+if ! tmux has-session -t "$session" 2>/dev/null; then
+  [[ -d "$dir" ]] || {
+    echo "tmux-fzf-sessions: missing directory for new session: $dir" >&2
+    exit 1
+  }
+  tmux new-session -d -s "$session" -c "$dir"
+fi
+
+tmux switch-client -t "$session"

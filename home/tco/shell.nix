@@ -34,9 +34,20 @@ in
     enable = true;
     enableCompletion = true;
     initExtra = ''
-      if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
-        . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+      if [ -f "$HOME/.profile" ]; then
+        . "$HOME/.profile"
       fi
+
+      mkdir -p \
+        "''${BUNDLE_USER_CACHE:-$HOME/.cache/bundle}" \
+        "''${BUNDLE_USER_CONFIG:-$HOME/.config/bundle}" \
+        "''${BUNDLE_USER_PLUGIN:-$HOME/.local/share/bundle}" \
+        "''${HISTFILE%/*}" \
+        "''${NODE_REPL_HISTORY%/*}" \
+        "''${NPM_CONFIG_TMP:-''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/npm}" \
+        "''${PYTHON_HISTORY%/*}" \
+        "''${USQL_HISTORY%/*}" \
+        2>/dev/null || true
 
       for dir in "$HOME/.local/bin"; do
         if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then

@@ -6,6 +6,17 @@
 }:
 
 {
+  programs.gh = {
+    enable = true;
+    extensions = with pkgs; [
+      gh-dash
+      gh-f
+      gh-i
+      gh-markdown-preview
+      gh-s
+    ];
+  };
+
   home.packages = with pkgs; [
     customPkgs.cursor
     dockfmt
@@ -14,7 +25,6 @@
     shfmt
     zed-editor
     neovim
-    gh
     lua
     lua-language-server
     luaPackages.lgi

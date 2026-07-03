@@ -3,6 +3,7 @@
 {
   imports = [
     ./scripts
+    ./env.nix
     ./packages
     ./shell.nix
     ./tui.nix

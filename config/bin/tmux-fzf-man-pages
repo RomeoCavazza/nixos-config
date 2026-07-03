@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+selected="$(
+  (man -k . 2>/dev/null || true) \
+    | awk 'match($0, /^([^ ]+) \(([^)]+)\)[[:space:]]+-[[:space:]]+(.*)$/, m) { printf "%s\t%s\t%s\n", m[1], m[2], m[3] }' \
+    | fzf \
+      --delimiter='\t' \
+      --with-nth=1,2,3 \
+      --preview='man {2} {1} 2>/dev/null | bat --language man --color always --plain' \
+      --preview-window='right,65%,wrap' \
+      --border-label=' Man Pages ' \
+      --prompt='man> ' \
+    || true
+)"
+
+[[ -n "$selected" ]] || exit 0
+
+name="${selected%%$'\t'*}"
+rest="${selected#*$'\t'}"
+section="${rest%%$'\t'*}"
+
+if [[ -n "${TMUX:-}" ]]; then
+  tmux new-window -n "man:$name" "man '$section' '$name'"
+else
+  exec man "$section" "$name"
+fi
