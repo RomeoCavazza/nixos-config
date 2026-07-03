@@ -22,7 +22,7 @@ in
 
   fonts.fontconfig.enable = true;
 
-  xdg.configFile."fontconfig/conf.d/50-tco-fonts.conf".text = ''
+  xdg.configFile."fontconfig/conf.d/99-tco-fonts.conf".text = ''
     <?xml version="1.0"?>
     <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
     <fontconfig>
