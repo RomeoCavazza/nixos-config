@@ -36,11 +36,11 @@
     "conky-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782862944,
-        "narHash": "sha256-fbz3WRQLjdwds+vZP3+LB0WD+huaLs+lr9GA2Mn5M4k=",
+        "lastModified": 1783098095,
+        "narHash": "sha256-+f73RqHNDnQ23e8e6e2WO7wTFTrE66lzL4YsxPt5ckw=",
         "owner": "RomeoCavazza",
         "repo": "conky-config",
-        "rev": "3b25abf4b29b470eee53ba6d3377beb2ec1d35a2",
+        "rev": "1f2bdf9d32ba0f54cff22142e896979185d86323",
         "type": "github"
       },
       "original": {
@@ -211,11 +211,11 @@
     "hypr-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1782862980,
-        "narHash": "sha256-jc1V355HJfPwJiSHnb//BIO2jrWP3gbn8U1PCeoFDOs=",
+        "lastModified": 1783098093,
+        "narHash": "sha256-4MddNWi0fJbB8lQd8+uf7v5y0NWFxrwEQFKTGJQKb/c=",
         "owner": "RomeoCavazza",
         "repo": "hyprland-config",
-        "rev": "3049b6299e0c1da2628ffa98974027f58923ec7b",
+        "rev": "7b8132be46196620fca3163ffb4493c092a85f6f",
         "type": "github"
       },
       "original": {
