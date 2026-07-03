@@ -8,6 +8,9 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -265,6 +268,7 @@
 
           modules = [
             ./hosts/${hostName}/default.nix
+            inputs.disko.nixosModules.disko
             inputs.nix-snapd.nixosModules.default
             inputs.sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
