@@ -165,7 +165,6 @@ in
       initialize = true;
 
       paths = [
-        "${homeDir}/Desktop"
         "${homeDir}/Documents"
         "${homeDir}/Images"
       ];
