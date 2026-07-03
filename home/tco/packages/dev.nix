@@ -19,6 +19,7 @@
 
   home.packages = with pkgs; [
     customPkgs.cursor
+    customPkgs.repl
     dockfmt
     nixfmt
     shellcheck

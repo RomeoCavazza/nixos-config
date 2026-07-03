@@ -9,4 +9,6 @@
   edex-ui-appimage = import ./apps/edex-appimage.nix { inherit pkgs; };
   edex-ui-dev = import ./apps/edex.nix { inherit pkgs; };
   cursor = import ./apps/cursor.nix { inherit pkgs; };
+  repl = import ./apps/repl.nix { inherit pkgs; };
+  wl-ocr = import ./apps/wl-ocr.nix { inherit pkgs; };
 }

@@ -1,7 +1,8 @@
-{ pkgs, ... }:
+{ pkgs, customPkgs, ... }:
 
 {
   home.packages = with pkgs; [
+    customPkgs.wl-ocr
     grim
     slurp
     wev
