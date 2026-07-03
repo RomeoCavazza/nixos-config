@@ -1,10 +1,11 @@
 { pkgs, typography, ... }:
 
 # Typography tokens live in lib/fonts.nix (companion to lib/palette.nix).
-# UI stays on DejaVu Sans; foot uses JetBrainsMono explicitly. Consumers
-# (waybar, rofi, conky, hyprlock) use the generic families "sans-serif" /
-# "monospace"; the aliases below resolve those to the tokens, with
-# "Symbols Nerd Font" kept as a glyph fallback so nerd icons keep rendering.
+# UI consumers (waybar, rofi, conky, hyprlock) use the generic "sans-serif"
+# family, aliased below to DejaVu Sans (+ Symbols Nerd Font fallback so nerd
+# icons keep rendering). foot sets typography.mono (JetBrainsMono) explicitly
+# in its own config; the generic "monospace" is left to the system default,
+# so it is intentionally not aliased here.
 {
   home.packages = with pkgs; [
     dejavu_fonts
@@ -22,13 +23,6 @@
         <family>sans-serif</family>
         <prefer>
           <family>${typography.ui}</family>
-          <family>${typography.symbols}</family>
-        </prefer>
-      </alias>
-      <alias>
-        <family>monospace</family>
-        <prefer>
-          <family>${typography.mono}</family>
           <family>${typography.symbols}</family>
         </prefer>
       </alias>
