@@ -70,7 +70,7 @@ in
       _tab_smart_ls_exec() {
         if [[ -z "$READLINE_LINE" ]]; then
           local selected
-          selected=$(fzf --height 40% --reverse --preview '[[ -d {} ]] && eza --icons --tree --level=1 {} || (bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {})' 2>/dev/null)
+          selected=$(fzf --height 40% --reverse --preview '[[ -d {} ]] && eza --icons --tree --level=1 {} || sed -n "1,500p" {} 2>/dev/null' 2>/dev/null)
           if [[ -n "$selected" ]]; then
             if [[ -d "$selected" ]]; then
               cd "$selected"

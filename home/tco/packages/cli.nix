@@ -3,7 +3,6 @@
 {
   home.packages = with pkgs; [
     chafa
-    bat
     eza
     fd
     fzf

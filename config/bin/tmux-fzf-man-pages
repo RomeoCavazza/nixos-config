@@ -7,7 +7,7 @@ selected="$(
     | fzf \
       --delimiter='\t' \
       --with-nth=1,2,3 \
-      --preview='man {2} {1} 2>/dev/null | bat --language man --color always --plain' \
+      --preview='man {2} {1} 2>/dev/null | col -bx | sed -n "1,160p"' \
       --preview-window='right,65%,wrap' \
       --border-label=' Man Pages ' \
       --prompt='man> ' \
