@@ -6,10 +6,8 @@
     swaynotificationcenter
     cava
     cool-retro-term
-    nerd-fonts.symbols-only
     hyprcursor
     rose-pine-hyprcursor
-    nerd-fonts.jetbrains-mono
     bibata-cursors
     conky
     adw-gtk3
