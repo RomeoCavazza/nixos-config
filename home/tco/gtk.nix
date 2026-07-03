@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   nemoPalette = {
@@ -32,6 +32,9 @@ in
       size = 24;
     };
     gtk3.colorScheme = "dark";
+    # Keep GTK4 apps on the same theme (silences the HM stateVersion warning
+    # without changing the current look).
+    gtk4.theme = config.gtk.theme;
     gtk3.extraCss = ''
       /* Nemo (GTK3/Cinnamon) polished to a neutral blue-gray surface. */
       .nemo-window,
