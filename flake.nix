@@ -100,6 +100,7 @@
         snapshotPublishDir = "/var/lib/grafana-snapshot-sync/nixos-config";
       };
       palette = import ./lib/palette.nix;
+      typography = import ./lib/fonts.nix;
       mkApp = package: description: {
         type = "app";
         program = "${package}/bin/${package.meta.mainProgram}";
@@ -261,6 +262,7 @@
               inputs
               locality
               palette
+              typography
               hostName
               ;
             flakeSelf = self;
@@ -289,6 +291,7 @@
                     customPkgs
                     locality
                     palette
+                    typography
                     ;
                   flakeSelf = self;
                 };

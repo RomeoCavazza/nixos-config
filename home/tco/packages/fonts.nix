@@ -1,18 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, typography, ... }:
 
-let
-  # Single source of truth for desktop typography.
-  # UI stays on DejaVu Sans (the deliberate look); terminals use JetBrainsMono.
-  # "Symbols Nerd Font" is kept as a glyph fallback so nerd icons keep rendering.
-  # Consumers (waybar, rofi, conky, hyprlock, foot) reference the generic
-  # families "sans-serif" / "monospace" and inherit these choices.
-  typo = {
-    ui = "DejaVu Sans";
-    mono = "JetBrainsMono Nerd Font";
-    serif = "DejaVu Serif";
-    symbols = "Symbols Nerd Font";
-  };
-in
+# Typography tokens live in lib/fonts.nix (companion to lib/palette.nix).
+# UI stays on DejaVu Sans; foot uses JetBrainsMono explicitly. Consumers
+# (waybar, rofi, conky, hyprlock) use the generic families "sans-serif" /
+# "monospace"; the aliases below resolve those to the tokens, with
+# "Symbols Nerd Font" kept as a glyph fallback so nerd icons keep rendering.
 {
   home.packages = with pkgs; [
     dejavu_fonts
@@ -29,21 +21,21 @@ in
       <alias>
         <family>sans-serif</family>
         <prefer>
-          <family>${typo.ui}</family>
-          <family>${typo.symbols}</family>
+          <family>${typography.ui}</family>
+          <family>${typography.symbols}</family>
         </prefer>
       </alias>
       <alias>
         <family>monospace</family>
         <prefer>
-          <family>${typo.mono}</family>
-          <family>${typo.symbols}</family>
+          <family>${typography.mono}</family>
+          <family>${typography.symbols}</family>
         </prefer>
       </alias>
       <alias>
         <family>serif</family>
         <prefer>
-          <family>${typo.serif}</family>
+          <family>${typography.serif}</family>
         </prefer>
       </alias>
     </fontconfig>
