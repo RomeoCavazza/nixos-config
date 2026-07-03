@@ -36,6 +36,10 @@ in
     initExtra = ''
       if [ -f "$HOME/.profile" ]; then
         . "$HOME/.profile"
+        if [[ -z "''${XDG_CONFIG_HOME:-}" || -z "''${NPM_CONFIG_CACHE:-}" ]]; then
+          unset __HM_SESS_VARS_SOURCED
+          . "$HOME/.profile"
+        fi
       fi
 
       mkdir -p \
