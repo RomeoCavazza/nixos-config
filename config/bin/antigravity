@@ -14,8 +14,11 @@ if [ ! -x "$BIN" ]; then
   exit 1
 fi
 
+# EXCEPTION / CONTRAT NIXOS :
+# - --password-store=basic : évite qu'Electron ne bloque en attendant Secret Service / GNOME Keyring
+#   dans une session standalone Hyprland.
+# Note : Le sandbox Chromium fonctionne sous NixOS avec NIX_LD/userns sur le kernel actuel,
+# les anciens flags --no-sandbox / --disable-gpu-sandbox ont été supprimés pour réactiver la sécurité.
 exec "$BIN" \
   --password-store=basic \
-  --no-sandbox \
-  --disable-gpu-sandbox \
   "$@"

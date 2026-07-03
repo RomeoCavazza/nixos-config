@@ -21,6 +21,8 @@ export PATH="$SHIM_DIR:$PATH"
 BIN_TAR="$HOME/.local/opt/antigravity-ide/Antigravity IDE/antigravity-ide"
 if [ -f "$BIN_TAR" ]; then
   chmod +x "$BIN_TAR" 2>/dev/null || true
+  # EXCEPTION / CONTRAT NIXOS :
+  # - --password-store=basic : évite les échecs ou blocages d'accès au keyring (Secret Service) en session standalone.
   exec "$BIN_TAR" --password-store="basic" "$@"
 fi
 echo "Antigravity IDE introuvable: $BIN_TAR" >&2
