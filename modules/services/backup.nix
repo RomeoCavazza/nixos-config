@@ -25,10 +25,12 @@ let
       # Run as root (needs the SOPS secrets): sudo restic-restore-drill
       export RESTIC_REPOSITORY="${repository}"
       export RESTIC_PASSWORD_FILE="${passwordFile}"
-      set -a
-      # shellcheck disable=SC1091
-      source "${environmentFile}"
-      set +a
+      # Load B2 credentials literally (systemd EnvironmentFile semantics).
+      # Never `source` this: a shell metacharacter (#, $, backtick...) in the
+      # secret key would truncate/mangle it and break S3 auth.
+      while IFS='=' read -r __k __v || [[ -n "$__k" ]]; do
+        [[ "$__k" == AWS_* ]] && export "$__k=$__v"
+      done < "${environmentFile}"
 
       failures=0
       warnings=0
