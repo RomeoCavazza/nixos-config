@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Romeo Cavazza
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+
+[[annotations]]
+path = [
+  "**",
+  ".github/**",
+  ".gitignore",
+  ".sops.yaml",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Romeo Cavazza"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+  "lib/repl.nix",
+  "pkgs/apps/repl.nix",
+  "pkgs/apps/wl-ocr.nix",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "fufexan/dotfiles contributors"
+SPDX-License-Identifier = "MIT"
