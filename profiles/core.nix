@@ -2,6 +2,7 @@
   imports = [
     ../modules/core/nix.nix
     ../modules/core/nixpkgs-policy.nix
+    ../modules/theme
     ../modules/core/locale.nix
     ../modules/core/users.nix
     ../modules/core/user-dirs.nix

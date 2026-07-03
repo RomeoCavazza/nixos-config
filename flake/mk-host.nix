@@ -39,7 +39,7 @@ nixpkgs.lib.nixosSystem {
     home-manager.nixosModules.home-manager
 
     (
-      { pkgs, ... }:
+      { config, pkgs, ... }:
       let
         customPkgs = import ../pkgs { inherit pkgs inputs; };
       in
@@ -56,6 +56,7 @@ nixpkgs.lib.nixosSystem {
             palette
             typography
             ;
+          inherit (config) theme;
           flakeSelf = self;
         };
 
