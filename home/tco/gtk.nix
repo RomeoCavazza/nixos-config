@@ -13,11 +13,27 @@ let
 in
 
 {
-  stylix.targets.gtk = {
+  # GTK is intentionally NOT themed by Stylix: its Catppuccin Mocha accent
+  # (mauve) leaked into every GTK app. adw-gtk3-dark gives neutral gray
+  # surfaces with a blue accent — the gray/blue look, consistent with foot.
+  gtk = {
     enable = true;
-    extraCss = ''
-      /* Nemo is GTK3/Cinnamon and can over-amplify generated theme tints.
-         Keep it on a neutral blue-gray surface while the rest of GTK follows Stylix. */
+    theme = {
+      name = "adw-gtk3-dark";
+      package = pkgs.adw-gtk3;
+    };
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 24;
+    };
+    gtk3.colorScheme = "dark";
+    gtk3.extraCss = ''
+      /* Nemo (GTK3/Cinnamon) polished to a neutral blue-gray surface. */
       .nemo-window,
       .nemo-window.background,
       .nemo-window notebook,
@@ -71,19 +87,5 @@ in
         color: ${nemoPalette.muted};
       }
     '';
-  };
-
-  gtk = {
-    enable = true;
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-    cursorTheme = {
-      name = "Bibata-Modern-Ice";
-      package = pkgs.bibata-cursors;
-      size = 24;
-    };
-    gtk3.colorScheme = "dark";
   };
 }
