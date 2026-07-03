@@ -1,0 +1,10 @@
+[
+  "core"
+  "boot"
+  "hardware"
+  "services"
+  "desktop-hyprland"
+  "launcher"
+  "observability"
+  "tco-home"
+]

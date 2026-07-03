@@ -9,6 +9,14 @@
   typography,
 }:
 hostName:
+let
+  moduleProfiles = import ../profiles;
+  selectedProfiles = import (../hosts + "/${hostName}/profiles.nix");
+  selectedModules = import ./select-profiles.nix {
+    inherit (nixpkgs) lib;
+    inherit moduleProfiles selectedProfiles;
+  };
+in
 nixpkgs.lib.nixosSystem {
   inherit system;
 
@@ -24,7 +32,7 @@ nixpkgs.lib.nixosSystem {
   };
 
   modules = [
-    ../hosts/${hostName}/default.nix
+    (../hosts + "/${hostName}/default.nix")
     inputs.disko.nixosModules.disko
     inputs.nix-snapd.nixosModules.default
     inputs.sops-nix.nixosModules.sops
@@ -51,8 +59,11 @@ nixpkgs.lib.nixosSystem {
           flakeSelf = self;
         };
 
-        home-manager.users.${locality.user} = import (../home + "/${locality.user}");
+        home-manager.users.${locality.user} = {
+          imports = selectedModules.home;
+        };
       }
     )
-  ];
+  ]
+  ++ selectedModules.system;
 }

@@ -3,7 +3,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/disko/legion.nix
-    ../../profiles/workstation.nix
   ];
 
   networking.hostName = hostName;
