@@ -44,10 +44,12 @@ let
       fi
 
       # 1. Repository reachable and credentials valid
-      if restic snapshots --tag critical --latest 1 >/dev/null 2>&1; then
+      restic_probe_log="$(mktemp)"
+      if restic snapshots --tag critical --latest 1 > /dev/null 2>"$restic_probe_log"; then
         ok "repository reachable and credentials valid"
       else
-        printf '[fail] cannot reach repository or list snapshots (auth/network?)\n' >&2
+        printf '[fail] cannot reach repository or list snapshots\n' >&2
+        sed -n '1,12p' "$restic_probe_log" >&2
         exit 1
       fi
 
