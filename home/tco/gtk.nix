@@ -1,12 +1,10 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
+  stylix.targets.gtk.enable = true;
+
   gtk = {
     enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
@@ -17,6 +15,5 @@
       size = 24;
     };
     gtk3.colorScheme = "dark";
-    gtk4.theme = config.gtk.theme;
   };
 }

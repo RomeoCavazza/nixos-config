@@ -34,5 +34,6 @@
 
     targets.font-packages.enable = true;
     targets.fontconfig.enable = true;
+    targets.gtk.enable = true;
   };
 }
