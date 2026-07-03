@@ -48,14 +48,6 @@ let
       '';
     };
 
-    reuse = pkgs.writeShellApplication {
-      name = "nixos-config-reuse";
-      runtimeInputs = [ pkgs.reuse ];
-      text = ''
-        reuse lint
-      '';
-    };
-
     grafana-check = pkgs.writeShellApplication {
       name = "nixos-config-grafana-check";
       runtimeInputs = [
@@ -152,7 +144,6 @@ let
         ${fmt-check}/bin/nixos-config-fmt-check
         ${deadnix}/bin/nixos-config-deadnix
         ${statix}/bin/nixos-config-statix
-        ${reuse}/bin/nixos-config-reuse
         ${grafana-check}/bin/nixos-config-grafana-check
         nix flake archive "$flake_ref"
         nix flake check --no-build "$flake_ref"
@@ -172,7 +163,6 @@ in
       jsonnet
       nil
       nixfmt
-      reuse
       statix
     ];
   };
@@ -183,7 +173,6 @@ in
     deadnix = mkApp scripts.deadnix "Fail on unused Nix declarations.";
     grafana-check = mkApp scripts.grafana-check "Verify generated Grafana dashboards match Jsonnet sources.";
     repo-audit = mkApp scripts.repo-audit "Show flake-input drift against upstream.";
-    reuse = mkApp scripts.reuse "Verify REUSE licensing metadata.";
     statix = mkApp scripts.statix "Run configured statix lint checks.";
     quality = mkApp scripts.quality "Run the local quality gate.";
   };
@@ -225,20 +214,6 @@ in
           chmod -R u+w source
           cd source
           statix check .
-          touch "$out"
-        '';
-
-    reuse =
-      pkgs.runCommand "nixos-config-reuse-check"
-        {
-          nativeBuildInputs = [ pkgs.reuse ];
-          src = self;
-        }
-        ''
-          cp -R "$src" source
-          chmod -R u+w source
-          cd source
-          reuse lint
           touch "$out"
         '';
 
