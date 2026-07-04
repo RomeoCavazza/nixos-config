@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ config, pkgs, locality, ... }:
 
 let
-  ventoyConfig = "/home/tco/dev/ventoy-config/ventoy/ventoy/ventoy.json";
+  ventoyConfig = "${locality.devDir}/ventoy-config/ventoy/ventoy/ventoy.json";
 in
 {
   system.build.recoveryReadinessCheck = pkgs.writeShellApplication {

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  locality,
   ...
 }:
 
@@ -92,7 +93,7 @@ let
         expected = "Recovery tooling and Ventoy readiness are checked before any Lanzaboote activation";
         actual = {
           command = "recovery-readiness-check";
-          ventoyConfig = "/home/tco/dev/ventoy-config/ventoy/ventoy/ventoy.json";
+          ventoyConfig = "${locality.devDir}/ventoy-config/ventoy/ventoy/ventoy.json";
         };
         status = "runtime-check";
         rationale = "This check is non-mutating. It verifies recovery tools, current mounts, Ventoy/VTOYEFI presence and the Ventoy config, but the real boot drill remains manual.";
