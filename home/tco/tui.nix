@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, palette, ... }:
 
 {
   programs.tmux = {
@@ -133,15 +133,15 @@
       dark = true;
       line-numbers = true;
       navigate = true;
-      file-style = "#cdd6f4";
-      file-decoration-style = "#6c7086";
+      file-style = palette.text;
+      file-decoration-style = palette.overlay0;
       hunk-header-style = "file line-number syntax";
       hunk-header-file-style = "bold";
-      hunk-header-line-number-style = "bold #a6adc8";
-      line-numbers-left-style = "#6c7086";
-      line-numbers-right-style = "#6c7086";
-      line-numbers-minus-style = "bold #f38ba8";
-      line-numbers-plus-style = "bold #a6e3a1";
+      hunk-header-line-number-style = "bold ${palette.subtext0}";
+      line-numbers-left-style = palette.overlay0;
+      line-numbers-right-style = palette.overlay0;
+      line-numbers-minus-style = "bold ${palette.red}";
+      line-numbers-plus-style = "bold ${palette.green}";
       minus-style = "syntax #34293a";
       minus-emph-style = "bold syntax #53394c";
       plus-style = "syntax #2c3239";
