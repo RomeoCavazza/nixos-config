@@ -33,16 +33,16 @@ The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the 
 
 ```
 .
-├── flake.nix        # Inputs + the `legion` output
-├── flake/           # mk-host, quality, profile selection
-├── profiles/        # Composable feature bundles (system + home)
-├── hosts/legion/    # Host config + hardware-configuration.nix
-├── modules/         # System modules by domain
-├── home/tco/        # Home Manager (packages/, hyprland/, ...)
-├── lib/             # palette, colors, fonts, locality
-├── pkgs/ overlays/  # Custom packages + nixpkgs overlays
-├── config/          # Local scripts and Grafana sources
-└── secrets/         # SOPS-encrypted secrets
+├── flake.nix
+├── flake/
+├── profiles/
+├── hosts/legion/
+├── modules/
+├── home/tco/
+├── lib/
+├── pkgs/ overlays/
+├── config/
+└── secrets/
 ```
 
 ---
@@ -75,12 +75,12 @@ This dotfile is not a monolith — it is composed from small, single-purpose rep
 flowchart TB
   Boot["Boot"]
   GDM["GDM"]
-  H["Hyprland"]
   G["GNOME"]
+  H["Hyprland"]
 
   Boot --> GDM
-  GDM --> H
   GDM --> G
+  GDM --> H
 ```
 
 | GNOME | Hyprland |
@@ -101,11 +101,6 @@ flowchart TB
 
 ### Hardware and Modeling
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-cad.webp" alt="CAD Screen" width="100%">
-
-<br>
-
-### System Metrics
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="HTOP Screen" width="100%">
 
 <br>
 
