@@ -16,53 +16,27 @@
   </div>
 </div>
 
-A reproducible, single-host NixOS workstation: a Hyprland/GNOME desktop on a LUKS-encrypted disk behind Secure Boot with TPM2 unlock, SOPS-managed secrets, and an integrated Prometheus/Loki/Grafana stack. Assembled from a constellation of small, pinned repositories.
+Dotfile NixOS pour une single-host workstation, taillée pour mon Legion. Inspiré de [fufexan/dotfiles](https://github.com/fufexan/dotfiles) et durci autour des recommandations de l'ANSSI ainsi que des réalisations [Sécurix](https://github.com/cloud-gouv/securix) et [Bureautix](https://github.com/cloud-gouv/bureautix-example) de [cloud-gouv](https://github.com/cloud-gouv).
 
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/architecture.png" alt="System architecture" width="100%">
-
----
-
-## Documentation
-
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary reference:
+The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary reference:
 
 - [Architecture](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture) — how the flake, profiles, and modules assemble the machine.
-- [Modules](https://github.com/RomeoCavazza/nixos-config/wiki/Modules) — what each system module does and why.
 - [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) — disk encryption, verified boot, secrets, and backups.
 - [Observability](https://github.com/RomeoCavazza/nixos-config/wiki/Observability) — dashboards, correlation logs, and live snapshots.
 
-```
-.
-├── config/
-├── flake/
-├── flake.nix
-├── home/tco/
-├── hosts/legion/
-├── lib/
-├── modules/
-├── overlays/
-├── pkgs/
-├── profiles/
-└── secrets/
-```
-
----
-
-## Constellation
-
 This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
 
-| Repository | Role |
-|---|---|
-| [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) | Hyprland compositor, Waybar, Rofi, foot |
-| [`conky-config`](https://github.com/RomeoCavazza/conky-config) | Transparent Conky telemetry rails |
-| [`hypr-canvas`](https://github.com/RomeoCavazza/hypr-canvas) | Native infinite-canvas Hyprland plugin |
-| [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
-| [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
-| [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
-| [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
-| [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
-| [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |
+| Icon | Repository | Role |
+|:---:|---|---|
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/hyprland.png" alt="Hyprland" height="22"> | [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) | Hyprland compositor, Waybar, Rofi, foot |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/conky.webp" alt="Conky" height="22"> | [`conky-config`](https://github.com/RomeoCavazza/conky-config) | Transparent Conky telemetry rails |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hypr-canvas`](https://github.com/RomeoCavazza/hypr-canvas) | Native infinite-canvas Hyprland plugin |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
+| <img src="https://img.shields.io/badge/Neovim-57A143?style=flat-square&logo=neovim&logoColor=white" alt="Neovim" height="20"> | [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/emacs.png" alt="Emacs" height="22"> | [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="22"> | [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/ventoy-config/assets/screenshots/ventoy.webp" alt="Ventoy" height="22"> | [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |
 
 ---
 
@@ -113,6 +87,13 @@ flowchart TB
 ## Live Infrastructure
 
 ![Live NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" height="36">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/loki.png" alt="Loki" height="36">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="36">
+  <img src="https://img.shields.io/badge/Promtail-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Promtail" height="28">
+</p>
 
 Prometheus, Loki, Grafana, and Promtail provide local observability. The snapshots committed on the `snapshots` branch are documentation artifacts only, refreshed by a systemd timer when the visual delta exceeds 0.3%. Live operations stay in Grafana.
 
