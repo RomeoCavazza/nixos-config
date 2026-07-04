@@ -33,15 +33,16 @@ The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the 
 
 ```
 .
-├── flake.nix
-├── flake/
-├── profiles/
-├── hosts/legion/
-├── modules/
-├── home/tco/
-├── lib/
-├── pkgs/ overlays/
 ├── config/
+├── flake/
+├── flake.nix
+├── home/tco/
+├── hosts/legion/
+├── lib/
+├── modules/
+├── overlays/
+├── pkgs/
+├── profiles/
 └── secrets/
 ```
 
