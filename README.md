@@ -3,8 +3,6 @@
   <h1>NixOS dotfiles</h1>
 </div>
 
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="NixOS workstation system monitor" width="100%">
-
 <div align="center">
   <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
   <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
