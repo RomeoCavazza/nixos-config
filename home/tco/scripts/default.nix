@@ -20,7 +20,6 @@ let
   mkInputBin = name: sourceName: mkBin ".local/bin/${name}" "${inputs.hypr-config}/bin/${sourceName}";
 
   vendoredBins = [
-    "cursor"
     "cursor-toggle"
     "devin"
     "antigravity"

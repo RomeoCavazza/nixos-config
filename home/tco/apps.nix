@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  customPkgs,
+  ...
+}:
 
 let
   localBin = "${config.home.homeDirectory}/.local/bin";
@@ -9,7 +14,7 @@ in
       name = "Cursor";
       genericName = "AI Code Editor";
       comment = "Built for AI coding";
-      exec = "${localBin}/cursor %U";
+      exec = "${customPkgs.cursor}/bin/cursor %U";
       icon = "cursor-icon";
       terminal = false;
       startupNotify = true;
