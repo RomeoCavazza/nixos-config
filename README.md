@@ -16,59 +16,59 @@
   </div>
 </div>
 
+A reproducible, single-host NixOS workstation: a Hyprland/GNOME desktop on a LUKS-encrypted disk behind Secure Boot with TPM2 unlock, SOPS-managed secrets, and an integrated Prometheus/Loki/Grafana stack. Assembled from a constellation of small, pinned repositories.
+
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/architecture.png" alt="System architecture" width="100%">
+
 ---
 
-## Overview
+## Documentation
 
-The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary documentation resource for this repository.
+The [**GitHub Wiki**](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary reference:
 
-- [Architecture & Flake Logic](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture-&-Flake-Logic)
-- [Modules Breakdown](https://github.com/RomeoCavazza/nixos-config/wiki/Modules-Breakdown)
-- [Security & Secrets](https://github.com/RomeoCavazza/nixos-config/wiki/Security-&-Secrets)
-- [Observability and Metrics](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics)
-
-Local technical annexes:
-
-- [docs/README.md](./docs/README.md) - technical annexes, diagram index, and regeneration commands
-- [docs/cloc-report.md](./docs/cloc-report.md) - raw cloc report
-- [docs/specification.txt](./docs/specification.txt) - dense configuration glossary
-- [docs/diagrams/](./docs/diagrams/) - PlantUML sources, Carbon TreeView maps, and generated PNGs
-
-### Architecture
+- [Architecture](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture) — how the flake, profiles, and modules assemble the machine.
+- [Modules](https://github.com/RomeoCavazza/nixos-config/wiki/Modules) — what each system module does and why.
+- [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) — disk encryption, verified boot, secrets, and backups.
+- [Observability](https://github.com/RomeoCavazza/nixos-config/wiki/Observability) — dashboards, correlation logs, and live snapshots.
 
 ```
 .
-├── flake.nix     # Inputs, outputs, and the `legion` host definition (entry point)
-├── profiles/     # Composable feature bundles (core, desktop, services, observability)
-├── hosts/legion/ # Host-specific config + hardware-configuration.nix
-├── modules/      # System modules by domain (boot, core, desktop, hardware, services, observability)
-├── home/tco/     # Home Manager: packages/, hyprland/, dotfiles, scripts
-├── pkgs/         # Custom package derivations (+ overlays/ for nixpkgs overlays)
-├── lib/          # Shared helpers (palette, colour renderers)
-├── config/       # Local scripts and static config; app configs are pinned flake inputs
-├── secrets/      # SOPS-encrypted secrets
-└── docs/         # Wiki sources, diagrams, and assets
+├── flake.nix        # Inputs + the `legion` output
+├── flake/           # mk-host, quality, profile selection
+├── profiles/        # Composable feature bundles (system + home)
+├── hosts/legion/    # Host config + hardware-configuration.nix
+├── modules/         # System modules by domain
+├── home/tco/        # Home Manager (packages/, hyprland/, ...)
+├── lib/             # palette, colors, fonts, locality
+├── pkgs/ overlays/  # Custom packages + nixpkgs overlays
+├── config/          # Local scripts and Grafana sources
+└── secrets/         # SOPS-encrypted secrets
 ```
 
 ---
 
-## Preview
+## Constellation
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/hero-video.mp4" alt="Desktop demo" width="100%">
-</div>
+This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
 
-<br>
+| Repository | Role |
+|---|---|
+| [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) | Hyprland compositor, Waybar, Rofi, foot |
+| [`conky-config`](https://github.com/RomeoCavazza/conky-config) | Transparent Conky telemetry rails |
+| [`hypr-canvas`](https://github.com/RomeoCavazza/hypr-canvas) | Native infinite-canvas Hyprland plugin |
+| [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
+| [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
+| [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
+| [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
+| [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
+| [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |
 
-![Waybar showcase](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-waybar.webp)
-*Desktop Interface — [Waybar Configuration](./home/tco/hyprland/waybar.nix) · [Wallpaper](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/background.webp)*
+---
 
-<br>
+## Desktop
 
 > [!TIP]
-> This setup ships with **two desktop environments** accessible via GDM — switch seamlessly between **Hyprland** and **GNOME** at login.
-
-#### Session at login
+> GDM offers both desktops at login — switch between **Hyprland** (Wayland) and **GNOME** without friction.
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#161b22', 'secondaryColor': '#0d1117', 'tertiaryColor': '#0d1117', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#c9d1d9', 'mainBkg': '#0d1117', 'clusterBkg': '#161b22', 'clusterBorder': '#30363d' }}}%%
@@ -93,38 +93,28 @@ flowchart TB
 
 <br>
 
-### Code Environment
+### Neovim
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
-
-*Fully featured Neovim setup for efficient coding and development.*
 
 <br>
 
 ### Virtualization
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/virual-machine.webp" alt="Virtual Machine Screen" width="100%">
 
-*Seamless virtualization support for running isolated environments and testing.*
-
 <br>
 
-### Hardware & Modeling
+### Hardware and Modeling
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-cad.webp" alt="CAD Screen" width="100%">
-
-*Optimized performance for demanding CAD and 3D modeling workloads.*
 
 <br>
 
 ### System Metrics
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="HTOP Screen" width="100%">
 
-*Real-time system monitoring and resource management.*
-
 <br>
 
-### Graphics Engine
+### NVIDIA Prime
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvidia.webp" alt="NVIDIA Screen" width="100%">
-
-*Dedicated NVIDIA GPU integration with Prime support for maximum graphics power.*
 
 ---
 
@@ -132,64 +122,36 @@ flowchart TB
 
 ![Live NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
 
-Prometheus, Loki, Grafana, and Promtail provide local observability. The
-snapshots committed under `docs/assets/live/` are documentation artifacts only:
-they are refreshed by a 15-minute systemd timer when the visual delta exceeds
-0.3% (`MIN_CHANGE_PERCENT=0.3`). Live operations stay in Grafana.
+Prometheus, Loki, Grafana, and Promtail provide local observability. The snapshots committed on the `snapshots` branch are documentation artifacts only, refreshed by a systemd timer when the visual delta exceeds 0.3%. Live operations stay in Grafana.
 
-Dashboard snapshots:
+- [NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png) — current pressure and rebuild cost
+- [Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/nix-efficiency.png) — freshness, generation debt, closure structure
+- [Incident Correlation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/incident-dashboard.png) — pressure spikes mapped to Loki logs
 
-- [NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png) - current pressure and rebuild cost
-- [Nix Efficiency](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/nix-efficiency.png) - freshness, generation debt, closure structure
-- [Incident Correlation](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/incident-dashboard.png) - pressure spikes mapped to Loki logs
-
-Runbook details live in the
-[Observability wiki page](https://github.com/RomeoCavazza/nixos-config/wiki/Observability-and-Metrics).
+Details on the [Observability](https://github.com/RomeoCavazza/nixos-config/wiki/Observability) wiki page.
 
 ---
 
-## Backup & Secrets
+## Security and Backups
 
-Backups use `sops-nix`, `restic`, and Backblaze B2, split into `b2-critical`
-for configuration and secret-adjacent material, and `b2-data` for user files.
-Secrets are committed only in encrypted form under [`secrets/`](./secrets/).
-See the [Security & Secrets wiki page](https://github.com/RomeoCavazza/nixos-config/wiki/Security-&-Secrets)
-for paths, timers, retention, and restore commands.
+The disk is LUKS-encrypted and unlocked by a TPM2 keyslot behind Secure Boot ([Lanzaboote](https://github.com/nix-community/lanzaboote)); the layout is declarative via [disko](https://github.com/nix-community/disko). Secrets are committed only in encrypted form under [`secrets/`](./secrets/) with [sops-nix](https://github.com/Mic92/sops-nix). Backups use `restic` to Backblaze B2, split into `b2-critical` and `b2-data`, with a weekly non-destructive restore drill. Full model on the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) wiki page.
 
 ---
 
 ## Installation
 
-### Prerequisites
-- [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso)
-- [Ventoy](https://www.ventoy.net/en/download.html) or [Rufus](https://rufus.ie/en/) to create a bootable USB drive.
+> [!IMPORTANT]
+> This configuration targets a specific host — review hardware IDs, filesystems, secrets, and service assumptions before reusing it. Features are enabled by composing profiles in [`profiles/`](./profiles/), which the host assembles in [`hosts/legion/profiles.nix`](./hosts/legion/profiles.nix).
 
-### Setup Instructions
+Prerequisites: a [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso) on a bootable USB ([Ventoy](https://www.ventoy.net/en/download.html) or [Rufus](https://rufus.ie/en/)).
 
-### Host Assumptions
+```bash
+# 1. Back up the current config
+sudo cp -r /etc/nixos /etc/nixos-backup
 
-This configuration targets a specific host. Review hardware IDs, filesystems,
-secrets, and service assumptions before reusing it.
+# 2. Clone
+git clone https://github.com/RomeoCavazza/nixos-config.git ~/dev/nixos-config
 
-The repository is modular: features are enabled by composing profiles in
-[`profiles/`](./profiles/), which the host assembles in
-[`hosts/legion/default.nix`](./hosts/legion/default.nix). Development toolchains are
-installed globally via Home Manager; per-project environments use local flakes
-with `direnv`.
-
-1. **Backup your current config**:
-   ```bash
-   sudo cp -r /etc/nixos /etc/nixos-backup
-   ```
-
-2. **Clone this repository**:
-   ```bash
-   mkdir -p ~/dev
-   git clone https://github.com/RomeoCavazza/nixos-config.git ~/dev/nixos-config
-   ```
-
-3. **Apply the configuration**:
-   ```bash
-   cd ~/dev/nixos-config
-   sudo nixos-rebuild switch --flake .#legion
-   ```
+# 3. Apply
+cd ~/dev/nixos-config && sudo nixos-rebuild switch --flake .#legion
+```
