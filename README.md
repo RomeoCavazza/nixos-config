@@ -1,22 +1,22 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
-
-  <div align="center">
-    <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
-    <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
-    <img src="https://img.shields.io/badge/GNOME-4A86CF?style=flat-square&logo=gnome&logoColor=white" alt="GNOME">
-    <img src="https://img.shields.io/badge/Nix%20Flakes-7EBAE4?style=flat-square&logo=snowflake&logoColor=white" alt="Nix Flakes">
-    <img src="https://img.shields.io/badge/Guix-FFD700?style=flat-square&logo=gnu&logoColor=black" alt="Guix">
-    <img src="https://img.shields.io/badge/NVIDIA%20Prime-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="NVIDIA Prime">
-    <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" alt="Prometheus">
-    <img src="https://img.shields.io/badge/Loki-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Loki">
-    <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" alt="Grafana">
-    <a href="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml"><img src="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  </div>
 </div>
 
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="NixOS workstation system monitor" width="100%">
+
+<div align="center">
+  <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
+  <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
+  <img src="https://img.shields.io/badge/GNOME-4A86CF?style=flat-square&logo=gnome&logoColor=white" alt="GNOME">
+  <img src="https://img.shields.io/badge/Nix%20Flakes-7EBAE4?style=flat-square&logo=snowflake&logoColor=white" alt="Nix Flakes">
+  <img src="https://img.shields.io/badge/Guix-FFD700?style=flat-square&logo=gnu&logoColor=black" alt="Guix">
+  <img src="https://img.shields.io/badge/NVIDIA%20Prime-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="NVIDIA Prime">
+  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" alt="Prometheus">
+  <img src="https://img.shields.io/badge/Loki-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Loki">
+  <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" alt="Grafana">
+  <a href="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml"><img src="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</div>
 
 NixOS dotfiles for a single-host workstation, tailored to my Legion. Inspired by [fufexan/dotfiles](https://github.com/fufexan/dotfiles) and hardened around ANSSI recommendations, with influence from [Sécurix](https://github.com/cloud-gouv/securix) and [Bureautix](https://github.com/cloud-gouv/bureautix-example) by [cloud-gouv](https://github.com/cloud-gouv).
 
@@ -25,22 +25,6 @@ The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the prim
 - [Architecture](https://github.com/RomeoCavazza/nixos-config/wiki/Architecture) — how the flake, profiles, and modules assemble the machine.
 - [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) — disk encryption, verified boot, secrets, and backups.
 - [Observability](https://github.com/RomeoCavazza/nixos-config/wiki/Observability) — dashboards, correlation logs, and live snapshots.
-
-This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
-
-| Icon | Repository | Role |
-|:---:|---|---|
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/hyprland.png" alt="Hyprland" height="22"> | [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) | Hyprland compositor, Waybar, Rofi, foot |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/conky.webp" alt="Conky" height="22"> | [`conky-config`](https://github.com/RomeoCavazza/conky-config) | Transparent Conky telemetry rails |
-| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hypr-canvas`](https://github.com/RomeoCavazza/hypr-canvas) | Native infinite-canvas Hyprland plugin |
-| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
-| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
-| <img src="https://img.shields.io/badge/Neovim-57A143?style=flat-square&logo=neovim&logoColor=white" alt="Neovim" height="20"> | [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/emacs.png" alt="Emacs" height="22"> | [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="22"> | [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/ventoy-config/assets/screenshots/ventoy.webp" alt="Ventoy" height="22"> | [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |
-
----
 
 ## Desktop
 
@@ -66,7 +50,9 @@ flowchart TB
 
 <br>
 
-### Neovim
+## Features
+
+### Code Environment
 <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
 
 <br>
@@ -90,11 +76,10 @@ flowchart TB
 
 ![Live NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
 
-<p align="center">
+<p align="left">
   <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" height="36">
   <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/loki.png" alt="Loki" height="36">
   <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="36">
-  <img src="https://img.shields.io/badge/Promtail-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Promtail" height="28">
 </p>
 
 Prometheus, Loki, Grafana, and Promtail provide local observability. The snapshots committed on the `snapshots` branch are documentation artifacts only, refreshed by a systemd timer when the visual delta exceeds 0.3%. Live operations stay in Grafana.
@@ -130,3 +115,17 @@ git clone https://github.com/RomeoCavazza/nixos-config.git ~/dev/nixos-config
 # 3. Apply
 cd ~/dev/nixos-config && sudo nixos-rebuild switch --flake .#legion
 ```
+
+This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
+
+| Icon | Repository | Role |
+|:---:|---|---|
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/hyprland.png" alt="Hyprland" height="22"> | [`hyprland-config`](https://github.com/RomeoCavazza/hyprland-config) | Hyprland compositor, Waybar, Rofi, foot |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/conky-config/assets/conky.webp" alt="Conky" height="22"> | [`conky-config`](https://github.com/RomeoCavazza/conky-config) | Transparent Conky telemetry rails |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hypr-canvas`](https://github.com/RomeoCavazza/hypr-canvas) | Native infinite-canvas Hyprland plugin |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
+| <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
+| <img src="https://img.shields.io/badge/Neovim-57A143?style=flat-square&logo=neovim&logoColor=white" alt="Neovim" height="20"> | [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/emacs.png" alt="Emacs" height="22"> | [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="22"> | [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/ventoy-config/assets/screenshots/ventoy.webp" alt="Ventoy" height="22"> | [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |
