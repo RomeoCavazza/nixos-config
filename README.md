@@ -83,13 +83,9 @@ flowchart TB
   GDM --> G
 ```
 
-### GNOME
-![GNOME Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/gnome-desktop.webp)
-
-<br>
-
-### Hyprland
-![Hyprland Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-fastfetch.webp)
+| GNOME | Hyprland |
+|:---:|:---:|
+| ![GNOME Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/gnome-desktop.webp) | ![Hyprland Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-fastfetch.webp) |
 
 <br>
 
