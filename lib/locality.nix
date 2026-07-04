@@ -3,17 +3,12 @@ rec {
   homeDirectory = "/home/${user}";
   labApplicationsDir = "${homeDirectory}/Applications";
   devDir = "${homeDirectory}/dev";
-  activeConfigRepo = "${devDir}/nixos-config";
+  activeConfigRepo = "/etc/nixos";
   repoCheckout =
     let
       envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
     in
-    if envRepo != "" then
-      envRepo
-    else if builtins.pathExists "${activeConfigRepo}/.git" then
-      activeConfigRepo
-    else
-      "/etc/nixos";
+    if envRepo != "" then envRepo else activeConfigRepo;
   gitName = "RomeoCavazza";
   gitEmail = "romeo.cavazza@gmail.com";
   snapshotGitName = "Romeo Cavazza";

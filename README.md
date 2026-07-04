@@ -105,13 +105,14 @@ Prerequisites: a [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-ni
 
 ```bash
 # 1. Back up the current config
-sudo cp -r /etc/nixos /etc/nixos-backup
+sudo mv /etc/nixos /etc/nixos-backup
 
-# 2. Clone
-git clone https://github.com/RomeoCavazza/nixos-config.git ~/dev/nixos-config
+# 2. Clone (this repo lives at /etc/nixos, not a separate checkout)
+sudo git clone https://github.com/RomeoCavazza/nixos-config.git /etc/nixos
+sudo chown -R "$USER" /etc/nixos
 
 # 3. Apply
-cd ~/dev/nixos-config && sudo nixos-rebuild switch --flake .#legion
+cd /etc/nixos && sudo nixos-rebuild switch --flake .#legion
 ```
 
 This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
