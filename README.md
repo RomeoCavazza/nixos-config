@@ -16,7 +16,9 @@
   </div>
 </div>
 
-Dotfile NixOS pour une single-host workstation, taillée pour mon Legion. Inspiré de [fufexan/dotfiles](https://github.com/fufexan/dotfiles) et durci autour des recommandations de l'ANSSI ainsi que des réalisations [Sécurix](https://github.com/cloud-gouv/securix) et [Bureautix](https://github.com/cloud-gouv/bureautix-example) de [cloud-gouv](https://github.com/cloud-gouv).
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/htop.webp" alt="NixOS workstation system monitor" width="100%">
+
+NixOS dotfiles for a single-host workstation, tailored to my Legion. Inspired by [fufexan/dotfiles](https://github.com/fufexan/dotfiles) and hardened around ANSSI recommendations, with influence from [Sécurix](https://github.com/cloud-gouv/securix) and [Bureautix](https://github.com/cloud-gouv/bureautix-example) by [cloud-gouv](https://github.com/cloud-gouv).
 
 The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the primary reference:
 
