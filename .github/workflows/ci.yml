@@ -23,26 +23,8 @@ jobs:
         with:
           name: hyprland
 
-      - name: Format check
-        run: nix run .#fmt-check
-
-      - name: Dead code check
-        run: nix run .#deadnix
-
-      - name: Static lint
-        run: nix run .#statix
-
-      - name: Grafana dashboard check
-        run: nix run .#grafana-check
-
-      - name: Build declared checks
-        run: |
-          nix build \
-            "git+file://$PWD#checks.x86_64-linux.fmt" \
-            "git+file://$PWD#checks.x86_64-linux.deadnix" \
-            "git+file://$PWD#checks.x86_64-linux.statix" \
-            "git+file://$PWD#checks.x86_64-linux.grafana" \
-            --no-link
+      - name: Run quality gate
+        run: nix run .#quality
 
       - name: Dependency pin audit
         run: nix run .#repo-audit
