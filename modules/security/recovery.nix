@@ -1,4 +1,9 @@
-{ config, pkgs, locality, ... }:
+{
+  config,
+  pkgs,
+  locality,
+  ...
+}:
 
 let
   ventoyConfig = "${locality.devDir}/ventoy-config/ventoy/ventoy/ventoy.json";
