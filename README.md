@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/nixos.png" alt="NixOS Logo" width="120">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/nixos.png" alt="NixOS Logo" width="120">
   <h1>NixOS dotfiles</h1>
 </div>
 
@@ -44,29 +44,29 @@ flowchart TB
 
 | GNOME | Hyprland |
 |:---:|:---:|
-| ![GNOME Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/gnome-desktop.webp) | ![Hyprland Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-fastfetch.webp) |
+| ![GNOME Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/gnome-desktop.webp) | ![Hyprland Desktop](https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-fastfetch.webp) |
 
 <br>
 
 ## Features
 
 ### Code Environment
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-nvim.webp" alt="Neovim Screen" width="100%">
 
 <br>
 
 ### Virtualization
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/virual-machine.webp" alt="Virtual Machine Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/virual-machine.webp" alt="Virtual Machine Screen" width="100%">
 
 <br>
 
 ### Hardware and Modeling
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-cad.webp" alt="CAD Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-cad.webp" alt="CAD Screen" width="100%">
 
 <br>
 
 ### NVIDIA Prime
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/screen-nvidia.webp" alt="NVIDIA Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-nvidia.webp" alt="NVIDIA Screen" width="100%">
 
 ---
 
@@ -75,9 +75,9 @@ flowchart TB
 ![Live NixOS Metrics](https://raw.githubusercontent.com/RomeoCavazza/nixos-config/snapshots/docs/assets/live/live-dashboard.png)
 
 <p align="left">
-  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/prometheus.png" alt="Prometheus" height="36">
-  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/loki.png" alt="Loki" height="36">
-  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="36">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/prometheus.png" alt="Prometheus" height="36">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/loki.png" alt="Loki" height="36">
+  <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/graphana.png" alt="Grafana" height="36">
 </p>
 
 Prometheus, Loki, Grafana, and Promtail provide local observability. The snapshots committed on the `snapshots` branch are documentation artifacts only, refreshed by a systemd timer when the visual delta exceeds 0.3%. Live operations stay in Grafana.
@@ -124,6 +124,6 @@ This dotfile is not a monolith — it is composed from small, single-purpose rep
 | <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprspace`](https://github.com/RomeoCavazza/hyprspace) | Workspace overview plugin |
 | <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white" alt="C++" height="20"> | [`hyprchroma`](https://github.com/RomeoCavazza/hyprchroma) | Chromakey transparency plugin |
 | <img src="https://img.shields.io/badge/Neovim-57A143?style=flat-square&logo=neovim&logoColor=white" alt="Neovim" height="20"> | [`nvim-config`](https://github.com/RomeoCavazza/nvim-config) | Neovim configuration |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/emacs.png" alt="Emacs" height="22"> | [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
-| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/logo/graphana.png" alt="Grafana" height="22"> | [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/emacs.png" alt="Emacs" height="22"> | [`emacs-config`](https://github.com/RomeoCavazza/emacs-config) | Doom Emacs configuration |
+| <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/logo/graphana.png" alt="Grafana" height="22"> | [`grafana-config`](https://github.com/RomeoCavazza/grafana-config) | Grafana dashboards (Jsonnet) |
 | <img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/ventoy-config/assets/screenshots/ventoy.webp" alt="Ventoy" height="22"> | [`ventoy-config`](https://github.com/RomeoCavazza/ventoy-config) | Multiboot recovery USB |

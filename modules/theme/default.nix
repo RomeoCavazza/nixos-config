@@ -37,7 +37,7 @@
     wallpaper = lib.mkOption {
       type = lib.types.path;
       default = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/docs/assets/gdm-background.webp";
+        url = "https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/gdm-background.webp";
         sha256 = "sha256-0YdJ4ODElC/cXxvmN6nh7/nybMXyc27+FGSEMmRLUG0=";
       };
       description = "Primary wallpaper asset used by display-facing modules.";
