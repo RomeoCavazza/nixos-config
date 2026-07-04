@@ -94,24 +94,18 @@ let
     chmod -R u+w "$out"
 
     substituteInPlace "$out/foot.ini" \
-      --replace-fail "20242C" "${footPalette.background}" \
-      --replace-fail "F6F8FC" "${footPalette.foreground}" \
-      --replace-fail "161A20" "${footPalette.regular0}" \
-      --replace-fail "FF4D6D" "${footPalette.regular1}" \
-      --replace-fail "7CFFB2" "${footPalette.regular2}" \
-      --replace-fail "FFD166" "${footPalette.regular3}" \
-      --replace-fail "3B82F6" "${footPalette.regular4}" \
-      --replace-fail "B48EFA" "${footPalette.regular5}" \
-      --replace-fail "94E2D5" "${footPalette.regular6}" \
-      --replace-fail "C9D1E1" "${footPalette.regular7}" \
-      --replace-fail "2B313C" "${footPalette.bright0}" \
-      --replace-fail "FF6B86" "${footPalette.bright1}" \
-      --replace-fail "A8FFD1" "${footPalette.bright2}" \
-      --replace-fail "FFE29A" "${footPalette.bright3}" \
-      --replace-fail "6AA6FF" "${footPalette.bright4}" \
-      --replace-fail "D7C0FF" "${footPalette.bright5}" \
-      --replace-fail "B8FFF4" "${footPalette.bright6}" \
-      --replace-fail "FFFFFF" "${footPalette.bright7}"
+      --replace-fail "1e1e2e" "${footPalette.background}" \
+      --replace-fail "cdd6f4" "${footPalette.foreground}" \
+      --replace-fail "45475a" "${footPalette.regular0}" \
+      --replace-fail "f38ba8" "${footPalette.regular1}" \
+      --replace-fail "a6e3a1" "${footPalette.regular2}" \
+      --replace-fail "f9e2af" "${footPalette.regular3}" \
+      --replace-fail "89b4fa" "${footPalette.regular4}" \
+      --replace-fail "f5c2e7" "${footPalette.regular5}" \
+      --replace-fail "94e2d5" "${footPalette.regular6}" \
+      --replace-fail "bac2de" "${footPalette.regular7}" \
+      --replace-fail "585b70" "${footPalette.bright0}" \
+      --replace-fail "a6adc8" "${footPalette.bright7}"
   '';
 in
 {
