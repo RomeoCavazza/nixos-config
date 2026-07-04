@@ -86,11 +86,38 @@ let
     substituteInPlace "$out" \
       --replace-fail '"/home/tco"' '"${locality.homeDirectory}"'
   '';
+
+  footPalette = colors.foot palette;
+  footConfig = pkgs.runCommand "foot-config" { } ''
+    mkdir -p "$out"
+    cp -R ${inputs.hypr-config}/foot/. "$out/"
+    chmod -R u+w "$out"
+
+    substituteInPlace "$out/foot.ini" \
+      --replace-fail "20242C" "${footPalette.background}" \
+      --replace-fail "F6F8FC" "${footPalette.foreground}" \
+      --replace-fail "161A20" "${footPalette.regular0}" \
+      --replace-fail "FF4D6D" "${footPalette.regular1}" \
+      --replace-fail "7CFFB2" "${footPalette.regular2}" \
+      --replace-fail "FFD166" "${footPalette.regular3}" \
+      --replace-fail "3B82F6" "${footPalette.regular4}" \
+      --replace-fail "B48EFA" "${footPalette.regular5}" \
+      --replace-fail "94E2D5" "${footPalette.regular6}" \
+      --replace-fail "C9D1E1" "${footPalette.regular7}" \
+      --replace-fail "2B313C" "${footPalette.bright0}" \
+      --replace-fail "FF6B86" "${footPalette.bright1}" \
+      --replace-fail "A8FFD1" "${footPalette.bright2}" \
+      --replace-fail "FFE29A" "${footPalette.bright3}" \
+      --replace-fail "6AA6FF" "${footPalette.bright4}" \
+      --replace-fail "D7C0FF" "${footPalette.bright5}" \
+      --replace-fail "B8FFF4" "${footPalette.bright6}" \
+      --replace-fail "FFFFFF" "${footPalette.bright7}"
+  '';
 in
 {
   home.file.".config/rofi".source = rofiConfig;
   home.file.".config/conky".source = conkyConfig;
-  home.file.".config/foot".source = "${inputs.hypr-config}/foot";
+  home.file.".config/foot".source = footConfig;
   home.file.".config/swappy/config".source = "${inputs.hypr-config}/swappy/config";
   xdg.configFile."eDEX-UI/settings.json".source = edexSettings;
   home.file.".config/nvim".source = inputs.nvim-config;

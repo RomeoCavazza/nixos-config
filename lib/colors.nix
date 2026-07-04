@@ -91,6 +91,29 @@ rec {
     graphBase = "14313d";
   };
 
+  # Standard Catppuccin terminal ANSI mapping, with the cyan slot tied to
+  # the shared accent so Foot follows Waybar/Rofi when the accent changes.
+  foot = p: {
+    background = noHash p.base;
+    foreground = noHash p.text;
+    regular0 = noHash p.surface1;
+    regular1 = noHash p.red;
+    regular2 = noHash p.green;
+    regular3 = noHash p.yellow;
+    regular4 = noHash p.blue;
+    regular5 = noHash p.pink;
+    regular6 = noHash p.accent;
+    regular7 = noHash p.subtext1;
+    bright0 = noHash p.surface2;
+    bright1 = noHash p.red;
+    bright2 = noHash p.green;
+    bright3 = noHash p.yellow;
+    bright4 = noHash p.blue;
+    bright5 = noHash p.pink;
+    bright6 = noHash p.accent;
+    bright7 = noHash p.subtext0;
+  };
+
   starship = p: {
     format = "[░▒▓](${p.accent})[  ](bg:${p.accent} fg:${p.crust})[](fg:${p.accent} bg:${p.surface0})$directory[](fg:${p.surface0} bg:none)$character";
     directory = {
