@@ -3,8 +3,13 @@
   inputs,
   pkgs,
   mkApp,
+  palette,
 }:
 let
+  colors = import ../lib/colors.nix { inherit (pkgs) lib; };
+  grafanaMochaBlock = colors.grafanaMocha palette;
+  expectedMochaFile = pkgs.writeText "grafana-mocha-expected.libsonnet" grafanaMochaBlock;
+  extractMochaAwk = ''awk '/^local mocha = \{$/{flag=1} flag{print} /^\};$/{if(flag){exit}}' '';
   scripts = rec {
     fmt = pkgs.writeShellApplication {
       name = "nixos-config-fmt";
@@ -52,6 +57,7 @@ let
       name = "nixos-config-grafana-check";
       runtimeInputs = [
         pkgs.diffutils
+        pkgs.gawk
         pkgs.jq
         pkgs.jsonnet
       ];
@@ -72,6 +78,37 @@ let
           jsonnet "$grafana_dir/src/$source.jsonnet" | jq . > "$tmp_dir/$target.json"
           diff -u "$grafana_dir/$target.json" "$tmp_dir/$target.json"
         done
+
+        ${extractMochaAwk} "$grafana_dir/src/lib/palette.libsonnet" > "$tmp_dir/mocha-actual.libsonnet"
+        diff -u ${expectedMochaFile} "$tmp_dir/mocha-actual.libsonnet"
+      '';
+    };
+
+    sync-grafana-palette = pkgs.writeShellApplication {
+      name = "nixos-config-sync-grafana-palette";
+      runtimeInputs = [ pkgs.gawk ];
+      text = ''
+        repo_dir="''${REPO_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+        if [[ -n "''${GRAFANA_DIR:-}" ]]; then
+          grafana_dir="$GRAFANA_DIR"
+        elif [[ -d "''${repo_dir}/src" ]]; then
+          grafana_dir="$repo_dir"
+        else
+          echo "ERROR: Grafana Jsonnet sources not found." >&2
+          echo "Run from grafana-config, or set GRAFANA_DIR=/path/to/grafana-config." >&2
+          exit 1
+        fi
+
+        target="''${grafana_dir}/src/lib/palette.libsonnet"
+        awk -v block_file=${expectedMochaFile} '
+          BEGIN { while ((getline line < block_file) > 0) block = block line "\n"; close(block_file) }
+          /^local mocha = \{$/ { printf "%s", block; in_mocha = 1; next }
+          in_mocha && /^\};$/ { in_mocha = 0; next }
+          in_mocha { next }
+          { print }
+        ' "$target" > "$target.tmp"
+        mv "$target.tmp" "$target"
+        echo "Synced mocha palette into $target"
       '';
     };
 
@@ -172,6 +209,7 @@ in
     fmt-check = mkApp scripts.fmt-check "Check tracked Nix formatting.";
     deadnix = mkApp scripts.deadnix "Fail on unused Nix declarations.";
     grafana-check = mkApp scripts.grafana-check "Verify generated Grafana dashboards match Jsonnet sources.";
+    sync-grafana-palette = mkApp scripts.sync-grafana-palette "Sync grafana-config's mocha reference palette from lib/palette.nix.";
     repo-audit = mkApp scripts.repo-audit "Show flake-input drift against upstream.";
     statix = mkApp scripts.statix "Run configured statix lint checks.";
     quality = mkApp scripts.quality "Run the local quality gate.";
@@ -222,10 +260,12 @@ in
         {
           nativeBuildInputs = [
             pkgs.diffutils
+            pkgs.gawk
             pkgs.jq
             pkgs.jsonnet
           ];
           grafanaSrc = inputs.grafana-config;
+          expectedMocha = expectedMochaFile;
         }
         ''
           set -euo pipefail
@@ -245,6 +285,9 @@ in
             jsonnet "grafana/src/$source.jsonnet" | jq . > "generated/$target.json"
             diff -u "grafana/$target.json" "generated/$target.json"
           done
+
+          ${extractMochaAwk} "grafana/src/lib/palette.libsonnet" > "generated/mocha-actual.libsonnet"
+          diff -u "$expectedMocha" "generated/mocha-actual.libsonnet"
 
           touch "$out"
         '';

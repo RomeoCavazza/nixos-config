@@ -146,4 +146,39 @@ rec {
   hyprland = p: ''
     $accent = rgba(${noHash p.accent}ff)
   '';
+
+  # Raw Catppuccin Mocha reference table for grafana-config's palette.libsonnet.
+  # Only this block is generated: `theme`/`colors`/the lerp helpers in that
+  # file are a deliberately distinct, hand-tuned dashboard palette and must
+  # stay untouched.
+  grafanaMocha = p: ''
+    local mocha = {
+      base: '${p.base}',
+      mantle: '${p.mantle}',
+      crust: '${p.crust}',
+      surface0: '${p.surface0}',
+      surface1: '${p.surface1}',
+      surface2: '${p.surface2}',
+
+      text: '${p.text}',
+      subtext1: '${p.subtext1}',
+      subtext0: '${p.subtext0}',
+      overlay2: '${p.overlay2}',
+
+      blue: '${p.blue}',
+      sapphire: '${p.sapphire}',
+      sky: '${p.sky}',
+      teal: '${p.teal}',
+      lavender: '${p.lavender}',
+      mauve: '${p.mauve}',
+      pink: '${p.pink}',
+      flamingo: '${p.flamingo}',
+
+      green: '${p.green}',
+      yellow: '${p.yellow}',
+      peach: '${p.peach}',
+      maroon: '${p.maroon}',
+      red: '${p.red}',
+    };
+  '';
 }

@@ -90,6 +90,7 @@
           inputs
           pkgs
           mkApp
+          palette
           ;
       };
       mkHost = import ./flake/mk-host.nix {
