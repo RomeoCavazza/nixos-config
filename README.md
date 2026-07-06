@@ -14,9 +14,9 @@
   <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" alt="Prometheus">
   <img src="https://img.shields.io/badge/Loki-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Loki">
   <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" alt="Grafana">
-  <br><br>
-  <a href="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml"><img src="https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </div>
+
+[![CI](https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml/badge.svg)](https://github.com/RomeoCavazza/nixos-config/actions/workflows/ci.yml)
 
 NixOS dotfiles for a single-host workstation, tailored to my Legion. Inspired by [fufexan/dotfiles](https://github.com/fufexan/dotfiles) and hardened around ANSSI recommendations, with influence from [Sécurix](https://github.com/cloud-gouv/securix) and [Bureautix](https://github.com/cloud-gouv/bureautix-example) by [cloud-gouv](https://github.com/cloud-gouv).
 
