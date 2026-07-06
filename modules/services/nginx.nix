@@ -32,9 +32,12 @@ let
       listen = listenOn port;
       locations = {
         "/" = {
-          proxyPass = upstream;
-          proxyWebsockets = true;
           extraConfig = ''
+            proxy_pass ${upstream};
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+
             proxy_set_header Host              ${forwardedHost};
             proxy_set_header X-Forwarded-Host  ${forwardedHost};
 
@@ -90,9 +93,12 @@ in
         listen = listenOn ports.gitlabProxy;
         locations = {
           "/" = {
-            proxyPass = gitlabSocket;
-            proxyWebsockets = true;
             extraConfig = ''
+              proxy_pass ${gitlabSocket};
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $connection_upgrade;
+
               proxy_set_header Host              gitlab.localhost:8930;
               proxy_set_header X-Forwarded-Host  gitlab.localhost:8930;
               proxy_set_header X-Real-IP         $remote_addr;
@@ -114,10 +120,12 @@ in
         serverAliases = [ "*.pages.localhost" ];
         listen = listenOn ports.gitlabPages;
         locations."/" = {
-          # Pages tourne sur le port interne 8090 par défaut (gitlab-pages daemon)
-          proxyPass = "http://${loopback}:8090";
-          proxyWebsockets = true;
           extraConfig = ''
+            proxy_pass http://${loopback}:8090;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
