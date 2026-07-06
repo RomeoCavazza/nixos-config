@@ -33,10 +33,9 @@ The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the prim
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#161b22', 'secondaryColor': '#0d1117', 'tertiaryColor': '#0d1117', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#c9d1d9', 'mainBkg': '#0d1117', 'clusterBkg': '#161b22', 'clusterBorder': '#30363d' }}}%%
 flowchart TB
-  Disko --> Boot
-  Disko --> Windows
-  Disko --> NixOS
-  Boot --> NixOS
+  Disko --> Dualboot
+  Dualboot --> Windows
+  Dualboot --> NixOS
   NixOS --> GDM
   GDM --> GNOME
   GDM --> Hyprland
