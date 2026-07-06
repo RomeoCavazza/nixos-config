@@ -4,6 +4,9 @@ let
   ports = import ../observability/ports.nix;
   loopback = "127.0.0.1";
 
+  # Socket Workhorse de GitLab
+  gitlabSocket = "unix:/run/gitlab/gitlab-workhorse.socket";
+
   listenOn = port: [
     {
       addr = loopback;
@@ -79,6 +82,47 @@ in
         port = 8084;
         upstream = "http://${loopback}:80";
         forwardedHost = "localhost";
+      };
+
+      # ── GitLab ────────────────────────────────────────────────────────────
+      "gitlab.localhost-proxy" = {
+        serverName = "gitlab.localhost";
+        listen = listenOn ports.gitlabProxy;
+        locations = {
+          "/" = {
+            proxyPass = gitlabSocket;
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_set_header Host              gitlab.localhost;
+              proxy_set_header X-Forwarded-Host  gitlab.localhost;
+              proxy_set_header X-Real-IP         $remote_addr;
+              proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+
+              # Gros fichiers : LFS, artefacts CI, uploads
+              client_max_body_size 2G;
+              proxy_read_timeout   300;
+              proxy_connect_timeout 300;
+            '';
+          };
+        };
+      };
+
+      # ── GitLab Pages ──────────────────────────────────────────────────────
+      "gitlab-pages-proxy" = {
+        serverName = "pages.localhost";
+        serverAliases = [ "*.pages.localhost" ];
+        listen = listenOn ports.gitlabPages;
+        locations."/" = {
+          # Pages tourne sur le port interne 8090 par défaut (gitlab-pages daemon)
+          proxyPass = "http://${loopback}:8090";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          '';
+        };
       };
     };
   };

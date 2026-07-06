@@ -125,14 +125,28 @@ in
         locality.activeConfigRepo
         "${homeDir}/.ssh"
         "${homeDir}/.gnupg"
-        "${homeDir}/.config"
+        # Seul le sous-ensemble utile de .config (pas les apps électron)
+        "${homeDir}/.config/hypr"
+        "${homeDir}/.config/hypr.backup"
+        "${homeDir}/.config/waybar"
+        "${homeDir}/.config/dunst"
+        "${homeDir}/.config/yazi"
+        "${homeDir}/.config/cava"
+        "${homeDir}/.config/systemd"
+        "${homeDir}/.config/dconf"
+        "${homeDir}/.config/fontconfig"
+        "${homeDir}/.config/obsidian"
+        "${homeDir}/.config/kicad"
+        "${homeDir}/.config/spotify"
+        "${homeDir}/.config/draw.io"
+        "${homeDir}/.config/libreoffice"
       ];
 
+      # Plus besoin de lister les exclusions ligne par ligne :
+      # on n'inclut plus .config en entier
       exclude = [
-        "${homeDir}/.config/Cursor/Cache"
-        "${homeDir}/.config/google-chrome/Default/Cache"
-        "${homeDir}/.config/chromium/Default/Cache"
         "**/__pycache__"
+        "**/.DS_Store"
       ];
 
       extraBackupArgs = [
@@ -192,6 +206,58 @@ in
       pruneOpts = [
         "--tag"
         "data"
+        "--group-by"
+        "tags,paths"
+        "--keep-daily"
+        "7"
+        "--keep-weekly"
+        "4"
+        "--keep-monthly"
+        "3"
+      ];
+    };
+
+    # ── GitLab : DB + repos + uploads + shared ──────────────────────────────
+    b2-gitlab = {
+      inherit environmentFile passwordFile repository;
+      initialize = true;
+
+      # Dump PostgreSQL avant le backup (injecté dans /var/lib/gitlab/db-dump.sql)
+      backupPrepareCommand = ''
+        ${pkgs.sudo}/bin/sudo -u gitlab \
+          ${pkgs.postgresql}/bin/pg_dump \
+            --no-password \
+            gitlabhq_production \
+          > /var/lib/gitlab/db-dump.sql
+        chmod 600 /var/lib/gitlab/db-dump.sql
+      '';
+
+      paths = [
+        "/var/lib/gitlab/repositories"  # repos Git bare
+        "/var/lib/gitlab/uploads"       # uploads utilisateurs
+        "/var/lib/gitlab/shared"        # artefacts CI, LFS, packages
+        "/var/lib/gitlab/db-dump.sql"   # dump PostgreSQL
+      ];
+
+      exclude = [
+        "/var/lib/gitlab/shared/cache"
+        "/var/lib/gitlab/tmp"
+      ];
+
+      extraBackupArgs = [
+        "--tag"
+        "gitlab"
+      ];
+
+      timerConfig = {
+        OnCalendar = "04:00";
+        Persistent = true;
+        RandomizedDelaySec = "15min";
+      };
+
+      pruneOpts = [
+        "--tag"
+        "gitlab"
         "--group-by"
         "tags,paths"
         "--keep-daily"
