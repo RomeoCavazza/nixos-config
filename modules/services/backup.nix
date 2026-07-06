@@ -233,10 +233,10 @@ in
       '';
 
       paths = [
-        "/var/lib/gitlab/repositories"  # repos Git bare
-        "/var/lib/gitlab/uploads"       # uploads utilisateurs
-        "/var/lib/gitlab/shared"        # artefacts CI, LFS, packages
-        "/var/lib/gitlab/db-dump.sql"   # dump PostgreSQL
+        "/var/lib/gitlab/repositories" # repos Git bare
+        "/var/lib/gitlab/uploads" # uploads utilisateurs
+        "/var/lib/gitlab/shared" # artefacts CI, LFS, packages
+        "/var/lib/gitlab/db-dump.sql" # dump PostgreSQL
       ];
 
       exclude = [

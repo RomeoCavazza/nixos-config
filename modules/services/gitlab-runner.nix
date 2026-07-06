@@ -25,7 +25,7 @@ in
     enable = true;
 
     settings = {
-      concurrent = 4;        # jusqu'à 4 jobs simultanés (Ultra 9 275HX)
+      concurrent = 4; # jusqu'à 4 jobs simultanés (Ultra 9 275HX)
       log_level = "info";
       check_interval = 0;
     };
@@ -51,7 +51,7 @@ in
         dockerImage = "nixos/nix:latest";
 
         dockerVolumes = [
-          "/nix/store:/nix/store:ro"  # partage du store Nix → builds rapides
+          "/nix/store:/nix/store:ro" # partage du store Nix → builds rapides
           "/var/run/docker.sock:/var/run/docker.sock"
         ];
 

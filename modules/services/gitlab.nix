@@ -2,7 +2,6 @@
   config,
   lib,
   locality,
-  pkgs,
   ...
 }:
 
@@ -84,7 +83,7 @@ in
     enable = true;
     port = ports.gitlabProxy; # port public (nginx proxy)
     https = false;
-    host = host;
+    inherit host;
 
     # Données sur le SSD système (/var/lib/gitlab)
     statePath = "/var/lib/gitlab";
@@ -96,13 +95,13 @@ in
     initialRootPasswordFile = config.sops.secrets.gitlab_root_password.path;
 
     secrets = {
-      secretFile    = config.sops.secrets.gitlab_secret_key_base.path;
-      dbFile        = config.sops.secrets.gitlab_db_key_base.path;
-      otpFile       = config.sops.secrets.gitlab_otp_key_base.path;
-      jwsFile       = config.sops.secrets.gitlab_jws_private_key.path;
-      activeRecordPrimaryKeyFile      = config.sops.secrets.gitlab_ar_primary_key.path;
+      secretFile = config.sops.secrets.gitlab_secret_key_base.path;
+      dbFile = config.sops.secrets.gitlab_db_key_base.path;
+      otpFile = config.sops.secrets.gitlab_otp_key_base.path;
+      jwsFile = config.sops.secrets.gitlab_jws_private_key.path;
+      activeRecordPrimaryKeyFile = config.sops.secrets.gitlab_ar_primary_key.path;
       activeRecordDeterministicKeyFile = config.sops.secrets.gitlab_ar_deterministic_key.path;
-      activeRecordSaltFile            = config.sops.secrets.gitlab_ar_salt.path;
+      activeRecordSaltFile = config.sops.secrets.gitlab_ar_salt.path;
     };
 
     # ── SMTP via Gmail App Password ──────────────────────────────────────────
