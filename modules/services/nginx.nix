@@ -5,7 +5,7 @@ let
   loopback = "127.0.0.1";
 
   # Socket Workhorse de GitLab
-  gitlabSocket = "unix:/run/gitlab/gitlab-workhorse.socket";
+  gitlabSocket = "http://unix:/run/gitlab/gitlab-workhorse.socket";
 
   listenOn = port: [
     {
@@ -16,7 +16,7 @@ let
   ];
 
   okResponse = {
-    return = "200 'ok'\n";
+    return = "200 'ok'";
     extraConfig = "add_header Content-Type text/plain;";
   };
 
