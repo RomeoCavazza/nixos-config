@@ -61,7 +61,7 @@ flowchart TB
 <br>
 
 ### Hardware and Modeling
-<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-cad.webp" alt="CAD Screen" width="100%">
+<img src="https://raw.githubusercontent.com/wiki/RomeoCavazza/nixos-config/images/nixos-config/assets/screen-cad.png" alt="CAD Screen" width="100%">
 
 <br>
 
