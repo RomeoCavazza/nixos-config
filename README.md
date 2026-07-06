@@ -33,43 +33,19 @@ The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the prim
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#161b22', 'secondaryColor': '#0d1117', 'tertiaryColor': '#0d1117', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#c9d1d9', 'mainBkg': '#0d1117', 'clusterBkg': '#161b22', 'clusterBorder': '#30363d' }}}%%
 flowchart TB
-  subgraph DISK["NVMe — GPT (disko)"]
-    direction LR
-    ESP["EFI — 260 MB\nvfat"]
-    MSR["MSR — 16 MB\n0C01"]
-    WIN["Windows — 451 GB\nNTFS"]
-    WINRE["WinRE — 2 GB\n2700"]
-    LUKS["legion-crypt\nLUKS2 + LUKS Discard"]
-  end
-
-  subgraph LVM["LVM VG — legion"]
-    direction LR
-    ROOT["/  — 80 GB\next4"]
-    HOME["/home  — 220 GB\next4 nodev,nosuid"]
-    BUILD["/build  — 80 GB\next4 nodev"]
-    NIX["/nix  — ~rest\next4 nodev"]
-    SWAP["swap  — 32 GB"]
-  end
-
-  subgraph BOOT["Boot chain"]
+  subgraph BOOT ["Boot & Storage"]
     direction TB
-    UEFI["UEFI / Secure Boot"]
-    LB["Lanzaboote\nsigned UKI"]
-    NixKernel["NixOS kernel + initrd"]
-    GDM["GDM"]
-    GNOME["GNOME"]
-    Hyprland["Hyprland"]
+    ESP["EFI Boot"] -->|"Secure Boot"| LB["Lanzaboote (UKI)"]
+    ESP -.->|"Windows Bootloader"| WIN["Windows 11"]
+    LB -->|"TPM2 Unlock"| LUKS["LUKS2 / Disko (LVM)"]
   end
 
-  ESP --> UEFI
-  UEFI --> LB
-  LB --> NixKernel
-  NixKernel -->|"TPM2 unlock"| LUKS
-  LUKS --> LVM
-  LVM --> GDM
-  GDM --> GNOME
-  GDM --> Hyprland
-  ESP -.->|"Windows bootloader"| WIN
+  subgraph SESSION ["Desktop Session"]
+    direction TB
+    LUKS --> GDM["GDM Display Manager"]
+    GDM --> GNOME["GNOME Desktop"]
+    GDM --> HYPR["Hyprland (Wayland)"]
+  end
 ```
 
 
