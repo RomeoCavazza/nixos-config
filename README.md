@@ -4,12 +4,13 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/NixOS-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
-  <img src="https://img.shields.io/badge/Hyprland-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
+  <img src="https://img.shields.io/badge/NixOS-26.05-5277C3?style=flat-square&logo=nixos&logoColor=white" alt="NixOS">
+  <img src="https://img.shields.io/badge/Hyprland-v0.55.4-58E1FF?style=flat-square&logo=hyprland&logoColor=white" alt="Hyprland">
   <img src="https://img.shields.io/badge/GNOME-4A86CF?style=flat-square&logo=gnome&logoColor=white" alt="GNOME">
   <img src="https://img.shields.io/badge/Nix%20Flakes-7EBAE4?style=flat-square&logo=snowflake&logoColor=white" alt="Nix Flakes">
   <img src="https://img.shields.io/badge/Guix-FFD700?style=flat-square&logo=gnu&logoColor=black" alt="Guix">
   <img src="https://img.shields.io/badge/NVIDIA%20Prime-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="NVIDIA Prime">
+  <img src="https://img.shields.io/badge/GitLab-FC6D26?style=flat-square&logo=gitlab&logoColor=white" alt="GitLab Self-Hosted">
   <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white" alt="Prometheus">
   <img src="https://img.shields.io/badge/Loki-0E7490?style=flat-square&logo=grafana&logoColor=white" alt="Loki">
   <img src="https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white" alt="Grafana">
@@ -32,15 +33,45 @@ The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the prim
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#161b22', 'secondaryColor': '#0d1117', 'tertiaryColor': '#0d1117', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#c9d1d9', 'mainBkg': '#0d1117', 'clusterBkg': '#161b22', 'clusterBorder': '#30363d' }}}%%
 flowchart TB
-  Boot["Boot"]
-  GDM["GDM"]
-  G["GNOME"]
-  H["Hyprland"]
+  subgraph DISK["NVMe — GPT (disko)"]
+    direction LR
+    ESP["EFI — 260 MB\nvfat"]
+    MSR["MSR — 16 MB\n0C01"]
+    WIN["Windows — 451 GB\nNTFS"]
+    WINRE["WinRE — 2 GB\n2700"]
+    LUKS["legion-crypt\nLUKS2 + LUKS Discard"]
+  end
 
-  Boot --> GDM
-  GDM --> G
-  GDM --> H
+  subgraph LVM["LVM VG — legion"]
+    direction LR
+    ROOT["/  — 80 GB\next4"]
+    HOME["/home  — 220 GB\next4 nodev,nosuid"]
+    BUILD["/build  — 80 GB\next4 nodev"]
+    NIX["/nix  — ~rest\next4 nodev"]
+    SWAP["swap  — 32 GB"]
+  end
+
+  subgraph BOOT["Boot chain"]
+    direction TB
+    UEFI["UEFI / Secure Boot"]
+    LB["Lanzaboote\nsigned UKI"]
+    NixKernel["NixOS kernel + initrd"]
+    GDM["GDM"]
+    GNOME["GNOME"]
+    Hyprland["Hyprland"]
+  end
+
+  ESP --> UEFI
+  UEFI --> LB
+  LB --> NixKernel
+  NixKernel -->|"TPM2 unlock"| LUKS
+  LUKS --> LVM
+  LVM --> GDM
+  GDM --> GNOME
+  GDM --> Hyprland
+  ESP -.->|"Windows bootloader"| WIN
 ```
+
 
 | GNOME | Hyprland |
 |:---:|:---:|
@@ -92,7 +123,13 @@ Details on the [Observability](https://github.com/RomeoCavazza/nixos-config/wiki
 
 ## Security and Backups
 
-The disk is LUKS-encrypted and unlocked by a TPM2 keyslot behind Secure Boot ([Lanzaboote](https://github.com/nix-community/lanzaboote)); the layout is declarative via [disko](https://github.com/nix-community/disko). Secrets are committed only in encrypted form under [`secrets/`](./secrets/) with [sops-nix](https://github.com/Mic92/sops-nix). Backups use `restic` to Backblaze B2, split into `b2-critical` and `b2-data`, with a weekly non-destructive restore drill. Full model on the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) wiki page.
+The disk is LUKS-encrypted and unlocked by a TPM2 keyslot behind Secure Boot ([Lanzaboote](https://github.com/nix-community/lanzaboote)); the layout is fully declarative via [disko](https://github.com/nix-community/disko) — one GPT table with Windows, WinRE, and a LUKS2-encrypted LVM volume group (`legion`) partitioned into `/`, `/home`, `/build`, `/nix`, and swap. Secrets are committed only in encrypted form under [`secrets/`](./secrets/) with [sops-nix](https://github.com/Mic92/sops-nix). Backups use `restic` to Backblaze B2, split into three jobs: `b2-critical` (config, SSH, dotfiles — ~100 MB), `b2-data` (Documents, Images), and `b2-gitlab` (GitLab repos, uploads, LFS + PostgreSQL dump). A weekly non-destructive restore drill validates all jobs. Full model on the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) wiki page.
+
+---
+
+## Services
+
+**GitLab CE** runs natively via `services.gitlab` (no Docker) on `gitlab.localhost:8930`, backed by a local PostgreSQL instance. GitLab Pages serve on `pages.localhost:8931`. Two `gitlab-runner` executors (shell + Docker) handle CI/CD jobs locally. SMTP routes through Gmail App Passwords. All secrets (root password, 5 Rails keys, 3 ActiveRecord encryption keys, runner token) are SOPS-encrypted in [`secrets/gitlab.yaml`](./secrets/gitlab.yaml).
 
 ---
 
