@@ -33,19 +33,13 @@ The [GitHub Wiki](https://github.com/RomeoCavazza/nixos-config/wiki) is the prim
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#161b22', 'secondaryColor': '#0d1117', 'tertiaryColor': '#0d1117', 'primaryBorderColor': '#94e2d5', 'lineColor': '#94e2d5', 'primaryTextColor': '#c9d1d9', 'mainBkg': '#0d1117', 'clusterBkg': '#161b22', 'clusterBorder': '#30363d' }}}%%
 flowchart TB
-  subgraph BOOT ["Boot & Storage"]
-    direction TB
-    ESP["EFI Boot"] -->|"Secure Boot"| LB["Lanzaboote (UKI)"]
-    ESP -.->|"Windows Bootloader"| WIN["Windows 11"]
-    LB -->|"TPM2 Unlock"| LUKS["LUKS2 / Disko (LVM)"]
-  end
-
-  subgraph SESSION ["Desktop Session"]
-    direction TB
-    LUKS --> GDM["GDM Display Manager"]
-    GDM --> GNOME["GNOME Desktop"]
-    GDM --> HYPR["Hyprland (Wayland)"]
-  end
+  boot["Bootloader (EFI / Secure Boot)"]
+  boot -.->|"Dual Boot"| windows["Windows 11"]
+  boot -->|"UKIs"| disko["Disko (LUKS / LVM)"]
+  disko --> nixos["NixOS System"]
+  nixos --> gdm["GDM Display Manager"]
+  gdm --> gnome["GNOME Desktop"]
+  gdm --> hyprland["Hyprland (Wayland)"]
 ```
 
 
