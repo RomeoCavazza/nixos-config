@@ -16,65 +16,65 @@ in
 
   sops.secrets.gitlab_root_password = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_secret_key_base = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_db_key_base = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_otp_key_base = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_jws_private_key = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gmail_app_password = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   # ActiveRecord encryption keys (requis depuis NixOS 26.05)
   sops.secrets.gitlab_ar_primary_key = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_ar_deterministic_key = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
   sops.secrets.gitlab_ar_salt = {
     sopsFile = ../../secrets/gitlab.yaml;
-    owner = "git";
-    group = "git";
+    owner = "gitlab";
+    group = "gitlab";
     mode = "0400";
   };
 
