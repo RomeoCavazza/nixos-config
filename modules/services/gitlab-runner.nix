@@ -56,6 +56,7 @@ in
         ];
 
         dockerPrivileged = false;
+        dockerExtraHosts = [ "gitlab.localhost:host-gateway" ];
       };
     };
   };
