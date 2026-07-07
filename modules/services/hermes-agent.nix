@@ -1,4 +1,7 @@
-{ inputs, config, pkgs, lib, ... }:
+{
+  inputs,
+  ...
+}:
 
 {
   imports = [ inputs.hermes-agent.nixosModules.default ];
