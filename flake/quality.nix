@@ -183,12 +183,6 @@ let
         ${statix}/bin/nixos-config-statix
         ${grafana-check}/bin/nixos-config-grafana-check
         nix flake archive "$flake_ref"
-        # --no-build only evaluates: on a NixOS module that readFile's a
-        # git-fetched input (Hyprland's VERSION, via hyprspace), that requires
-        # the source to already be realized in the local store. It happens to
-        # be cached here from earlier work, but a fresh checkout/CI runner has
-        # nothing to fall back on and errors out on that readFile. Run a real
-        # check instead so this is reproducible everywhere.
         nix flake check "$flake_ref"
       '';
     };

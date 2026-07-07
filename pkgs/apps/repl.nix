@@ -1,8 +1,5 @@
 { pkgs }:
 
-# `repl` — opens a Nix REPL preloaded with this flake, its outputs, the current
-# host config, nixpkgs and builtins (see ../../lib/repl.nix).
-# Adapted from fufexan/dotfiles (MIT); fixed the double-command-substitution bug.
 let
   repl = ../../lib/repl.nix;
   example = command: desc: ''\n[33m ${command}[0m - ${desc}'';

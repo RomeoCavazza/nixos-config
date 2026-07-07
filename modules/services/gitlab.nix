@@ -11,7 +11,6 @@ let
   pagesHost = "pages.localhost";
 in
 {
-  # ─── Secrets (SOPS) ─────────────────────────────────────────────────────────
 
   sops.secrets.gitlab_root_password = {
     sopsFile = ../../secrets/gitlab.yaml;
@@ -55,7 +54,6 @@ in
     mode = "0400";
   };
 
-  # ActiveRecord encryption keys (requis depuis NixOS 26.05)
   sops.secrets.gitlab_ar_primary_key = {
     sopsFile = ../../secrets/gitlab.yaml;
     owner = "gitlab";
@@ -77,21 +75,16 @@ in
     mode = "0400";
   };
 
-  # ─── Service GitLab ─────────────────────────────────────────────────────────
-
   services.gitlab = {
     enable = true;
-    port = ports.gitlabProxy; # port public (nginx proxy)
+    port = ports.gitlabProxy;
     https = false;
     inherit host;
 
-    # Données sur le SSD système (/var/lib/gitlab)
     statePath = "/var/lib/gitlab";
 
-    # PostgreSQL local géré automatiquement par NixOS
     databaseCreateLocally = true;
 
-    # Secrets via fichiers SOPS
     initialRootPasswordFile = config.sops.secrets.gitlab_root_password.path;
 
     secrets = {
@@ -104,12 +97,11 @@ in
       activeRecordSaltFile = config.sops.secrets.gitlab_ar_salt.path;
     };
 
-    # ── SMTP via Gmail App Password ──────────────────────────────────────────
     smtp = {
       enable = true;
       address = "smtp.gmail.com";
       port = 587;
-      username = locality.gitEmail; # romeo.cavazza@gmail.com
+      username = locality.gitEmail;
       passwordFile = config.sops.secrets.gmail_app_password.path;
       domain = host;
       authentication = "plain";
@@ -123,23 +115,19 @@ in
         email_display_name = "GitLab (legion)";
         email_reply_to = "noreply@${host}";
 
-        default_theme = 2; # Dark
+        default_theme = 2;
         time_zone = "Europe/Paris";
-        signup_enabled = false; # Pas d'inscription publique
+        signup_enabled = false;
       };
 
-      # ── GitLab Pages ──────────────────────────────────────────────────────
       pages = {
         enabled = true;
         host = pagesHost;
         port = ports.gitlabPages;
         https = false;
-        # Pages access control (nécessite auth GitLab)
         access_control = false;
       };
 
-      # ── Performance ───────────────────────────────────────────────────────
-      # Ultra 9 275HX — on peut être généreux
       puma = {
         workers = 4;
         min_threads = 1;
@@ -150,16 +138,13 @@ in
         concurrency = 8;
       };
 
-      # ── Sécurité ─────────────────────────────────────────────────────────
       gitlab_shell = {
         ssh_port = ports.gitlabSSH;
       };
     };
   };
 
-  # ── nginx doit pouvoir lire le socket Workhorse ───────────────────────────
   users.users.nginx.extraGroups = [ "gitlab" ];
 
-  # ── Autoriser SSH Git ─────────────────────────────────────────────────────
   networking.firewall.allowedTCPPorts = lib.mkAfter [ ports.gitlabSSH ];
 }

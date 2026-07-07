@@ -4,7 +4,6 @@ let
   ports = import ../observability/ports.nix;
   loopback = "127.0.0.1";
 
-  # Socket Workhorse de GitLab
   gitlabSocket = "http://unix:/run/gitlab/gitlab-workhorse.socket";
 
   listenOn = port: [
@@ -87,7 +86,6 @@ in
         forwardedHost = "localhost";
       };
 
-      # ── GitLab ────────────────────────────────────────────────────────────
       "gitlab.localhost-proxy" = {
         serverName = "gitlab.localhost";
         listen = listenOn ports.gitlabProxy;
@@ -105,7 +103,6 @@ in
               proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
               proxy_set_header X-Forwarded-Proto $scheme;
 
-              # Gros fichiers : LFS, artefacts CI, uploads
               client_max_body_size 2G;
               proxy_read_timeout   300;
               proxy_connect_timeout 300;
@@ -114,7 +111,6 @@ in
         };
       };
 
-      # ── GitLab Pages ──────────────────────────────────────────────────────
       "gitlab-pages-proxy" = {
         serverName = "pages.localhost";
         serverAliases = [ "*.pages.localhost" ];

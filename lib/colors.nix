@@ -91,8 +91,6 @@ rec {
     graphBase = "14313d";
   };
 
-  # Standard Catppuccin terminal ANSI mapping, with the cyan slot tied to
-  # the shared accent so Foot follows Waybar/Rofi when the accent changes.
   foot = p: {
     background = noHash p.base;
     foreground = noHash p.text;
@@ -147,10 +145,6 @@ rec {
     $accent = rgba(${noHash p.accent}ff)
   '';
 
-  # Raw Catppuccin Mocha reference table for grafana-config's palette.libsonnet.
-  # Only this block is generated: `theme`/`colors`/the lerp helpers in that
-  # file are a deliberately distinct, hand-tuned dashboard palette and must
-  # stay untouched.
   grafanaMocha = p: ''
     local mocha = {
       base: '${p.base}',

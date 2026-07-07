@@ -1,9 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # GTK is owned by Adwaita-dark (the pre-Stylix look: lighter blue-gray, and
-  # recognised by Nemo), NOT Stylix — whose Catppuccin Mocha turned everything
-  # mauve. Uniform across every GTK app, no per-app CSS overrides.
   gtk = {
     enable = true;
     theme = {

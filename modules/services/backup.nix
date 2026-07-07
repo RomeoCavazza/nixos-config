@@ -20,14 +20,8 @@ let
       pkgs.jq
     ];
     text = ''
-      # Non-destructive Restic restore drill for the b2-critical set.
-      # Proves the backup is reachable, intact, fresh and actually restorable.
-      # Run as root (needs the SOPS secrets): sudo restic-restore-drill
       export RESTIC_REPOSITORY="${repository}"
       export RESTIC_PASSWORD_FILE="${passwordFile}"
-      # Load B2 credentials literally (systemd EnvironmentFile semantics).
-      # Never `source` this: a shell metacharacter (#, $, backtick...) in the
-      # secret key would truncate/mangle it and break S3 auth.
       while IFS='=' read -r __k __v || [[ -n "$__k" ]]; do
         [[ "$__k" == AWS_* ]] && export "$__k=$__v"
       done < "${environmentFile}"
@@ -43,7 +37,6 @@ let
         exit 1
       fi
 
-      # 1. Repository reachable and credentials valid
       restic_probe_log="$(mktemp)"
       if restic snapshots --tag critical --latest 1 > /dev/null 2>"$restic_probe_log"; then
         ok "repository reachable and credentials valid"
@@ -53,7 +46,6 @@ let
         exit 1
       fi
 
-      # 2. Freshness of the latest critical snapshot
       snap_time="$(restic snapshots --tag critical --latest 1 --json 2>/dev/null | jq -r '.[0].time // empty')"
       if [[ -n "$snap_time" ]]; then
         age_days=$(( ( $(date +%s) - $(date -d "$snap_time" +%s) ) / 86400 ))
@@ -66,14 +58,12 @@ let
         warn "could not determine latest snapshot age"
       fi
 
-      # 3. Repository integrity
       if restic check >/dev/null 2>&1; then
         ok "restic check passed (structure intact)"
       else
         fail "restic check failed (integrity problem)"
       fi
 
-      # 4. Real restore of a canary file to a throwaway target
       canary="${locality.activeConfigRepo}/flake.nix"
       target="$(mktemp -d)"
       trap 'rm -rf "$target"' EXIT
@@ -83,7 +73,6 @@ let
         fail "canary restore failed ($canary not recovered)"
       fi
 
-      # Verdict
       if (( failures > 0 )); then
         printf 'restic-restore-drill: %s failure(s), %s warning(s)\n' "$failures" "$warnings" >&2
         exit 1
@@ -125,25 +114,8 @@ in
         locality.activeConfigRepo
         "${homeDir}/.ssh"
         "${homeDir}/.gnupg"
-        # Seul le sous-ensemble utile de .config (pas les apps électron)
-        "${homeDir}/.config/hypr"
-        "${homeDir}/.config/hypr.backup"
-        "${homeDir}/.config/waybar"
-        "${homeDir}/.config/dunst"
-        "${homeDir}/.config/yazi"
-        "${homeDir}/.config/cava"
-        "${homeDir}/.config/systemd"
-        "${homeDir}/.config/dconf"
-        "${homeDir}/.config/fontconfig"
-        "${homeDir}/.config/obsidian"
-        "${homeDir}/.config/kicad"
-        "${homeDir}/.config/spotify"
-        "${homeDir}/.config/draw.io"
-        "${homeDir}/.config/libreoffice"
       ];
 
-      # Plus besoin de lister les exclusions ligne par ligne :
-      # on n'inclut plus .config en entier
       exclude = [
         "**/__pycache__"
         "**/.DS_Store"
@@ -179,8 +151,7 @@ in
       initialize = true;
 
       paths = [
-        "${homeDir}/Documents"
-        "${homeDir}/Images"
+        "${homeDir}/Bureau"
       ];
 
       exclude = [
@@ -217,12 +188,10 @@ in
       ];
     };
 
-    # ── GitLab : DB + repos + uploads + shared ──────────────────────────────
     b2-gitlab = {
       inherit environmentFile passwordFile repository;
       initialize = true;
 
-      # Dump PostgreSQL avant le backup (injecté dans /var/lib/gitlab/db-dump.sql)
       backupPrepareCommand = ''
         ${pkgs.sudo}/bin/sudo -u gitlab \
           ${pkgs.postgresql}/bin/pg_dump \
@@ -233,10 +202,10 @@ in
       '';
 
       paths = [
-        "/var/lib/gitlab/repositories" # repos Git bare
-        "/var/lib/gitlab/uploads" # uploads utilisateurs
-        "/var/lib/gitlab/shared" # artefacts CI, LFS, packages
-        "/var/lib/gitlab/db-dump.sql" # dump PostgreSQL
+        "/var/lib/gitlab/repositories"
+        "/var/lib/gitlab/uploads"
+        "/var/lib/gitlab/shared"
+        "/var/lib/gitlab/db-dump.sql"
       ];
 
       exclude = [
@@ -269,11 +238,6 @@ in
       ];
     };
 
-    # ── σ-RAG : sources scientifiques épinglées (data/ est hors git) ────────
-    # La DB Postgres n'est PAS sauvegardée : régénérable depuis le repo
-    # (seed_s0 + parse_latex). Les tarballs arXiv et le clone AxionLimits,
-    # eux, sont épinglés par sha256 dans provenance/ — irremplaçables tels
-    # quels. Le repo git lui-même sera couvert par b2-gitlab après le push.
     b2-sigma-rag = {
       inherit environmentFile passwordFile repository;
       initialize = true;

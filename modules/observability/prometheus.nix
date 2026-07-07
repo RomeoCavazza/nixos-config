@@ -30,8 +30,6 @@ in
         job_name = "gitlab";
         static_configs = [ { targets = [ "127.0.0.1:${toString ports.gitlab}" ]; } ];
         metrics_path = "/-/metrics";
-        # GitLab exige un token Bearer pour /-/metrics en production
-        # Pour l'instant (local) on peut laisser sans auth si allow_local_requests_from_web_hooks_and_services = true
       }
     ];
   };

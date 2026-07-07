@@ -1,8 +1,5 @@
 { pkgs }:
 
-# `wl-ocr` — select a screen region (slurp), screenshot it (grim), OCR it
-# (tesseract), copy the text to the clipboard and notify.
-# Adapted from fufexan/dotfiles (MIT).
 let
   inherit (pkgs) lib;
   langs = "eng+fra";

@@ -10,9 +10,6 @@
 {
   nix.package = pkgs.nixVersions.latest;
 
-  # Pin the flake registry and legacy nixPath to this flake's locked nixpkgs, so
-  # `nix run nixpkgs#x`, `nix shell nixpkgs#x` and nix-shell resolve to the exact
-  # same nixpkgs as the system — reproducible, no channel drift.
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
@@ -38,8 +35,6 @@
     options = "--delete-older-than 7d";
   };
 
-  # After every `nixos-rebuild switch`, print the package diff (previous -> new
-  # generation) via nvd — a quick "what changed" report. Idea from gvolpe/nix-config.
   system.activationScripts.reportChanges = ''
     PATH=$PATH:${
       lib.makeBinPath [

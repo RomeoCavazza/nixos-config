@@ -1,7 +1,3 @@
-# Expression loaded by the `repl` package (pkgs/apps/repl.nix): opens a Nix REPL
-# pre-populated with this flake, its outputs, the current host's NixOS config,
-# nixpkgs and builtins. Uses /etc/nix/registry.json (pinned in modules/core/nix.nix).
-# Adapted from fufexan/dotfiles (MIT).
 {
   flakePath ? null,
   hostnamePath ? "/etc/hostname",
