@@ -268,6 +268,45 @@ in
         "3"
       ];
     };
+
+    # ── σ-RAG : sources scientifiques épinglées (data/ est hors git) ────────
+    # La DB Postgres n'est PAS sauvegardée : régénérable depuis le repo
+    # (seed_s0 + parse_latex). Les tarballs arXiv et le clone AxionLimits,
+    # eux, sont épinglés par sha256 dans provenance/ — irremplaçables tels
+    # quels. Le repo git lui-même sera couvert par b2-gitlab après le push.
+    b2-sigma-rag = {
+      inherit environmentFile passwordFile repository;
+      initialize = true;
+
+      paths = [
+        "${homeDir}/Bureau/projets/rag/data/raw"
+        "${homeDir}/Bureau/projets/rag/data/external"
+      ];
+
+      extraBackupArgs = [
+        "--tag"
+        "sigma-rag"
+      ];
+
+      timerConfig = {
+        OnCalendar = "03:30";
+        Persistent = true;
+        RandomizedDelaySec = "15min";
+      };
+
+      pruneOpts = [
+        "--tag"
+        "sigma-rag"
+        "--group-by"
+        "tags,paths"
+        "--keep-daily"
+        "7"
+        "--keep-weekly"
+        "4"
+        "--keep-monthly"
+        "3"
+      ];
+    };
   };
 
   systemd.services."restic-restore-drill" = {

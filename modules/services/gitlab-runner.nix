@@ -70,6 +70,9 @@ in
     extraGroups = [ "docker" ];
   };
 
+  # Autoriser gitlab-runner à utiliser le démon Nix pour les jobs CI/CD
+  nix.settings.allowed-users = [ "@gitlab-runner" ];
+
   # ─── Packages utiles pour les runners ───────────────────────────────────────
   environment.systemPackages = with pkgs; [
     gitlab-runner

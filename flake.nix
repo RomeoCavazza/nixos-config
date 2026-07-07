@@ -36,6 +36,9 @@
       flake = false;
     };
 
+    hermes-agent.url = "github:NousResearch/hermes-agent";
+    hermes-agent.inputs.nixpkgs.follows = "nixpkgs";
+
     nvim-config = {
       url = "github:RomeoCavazza/nvim-config";
       flake = false;
