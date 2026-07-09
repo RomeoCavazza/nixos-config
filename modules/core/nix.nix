@@ -7,6 +7,42 @@
   ...
 }:
 
+let
+  pruneOldGenerations = pkgs.writeShellApplication {
+    name = "prune-old-generations";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.findutils
+      pkgs.gawk
+      pkgs.nix
+    ];
+    text = ''
+      min_generations=5
+      max_age_seconds=$((7 * 86400))
+      now=$(date +%s)
+
+      prune_profile() {
+        local profile="$1"
+        [[ -e "$profile" || -L "$profile" ]] || return 0
+
+        mapfile -t gen_ids < <(nix-env -p "$profile" --list-generations 2>/dev/null | awk '{print $1}' | tac)
+        local -a to_delete=()
+        for gen in "''${gen_ids[@]:$min_generations}"; do
+          local link="''${profile}-''${gen}-link"
+          [[ -e "$link" || -L "$link" ]] || continue
+          (( now - $(stat -c %Y "$link" 2>/dev/null || echo "$now") > max_age_seconds )) && to_delete+=("$gen")
+        done
+
+        (( ''${#to_delete[@]} > 0 )) && nix-env -p "$profile" --delete-generations "''${to_delete[@]}" 2>/dev/null || true
+      }
+
+      prune_profile "/nix/var/nix/profiles/system"
+      for hm_profile in /nix/var/nix/profiles/per-user/*/home-manager; do
+        prune_profile "$hm_profile"
+      done
+    '';
+  };
+in
 {
   nix.package = pkgs.nixVersions.latest;
 
@@ -32,7 +68,11 @@
   nix.gc = {
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 7d";
+    options = "";
+  };
+
+  systemd.services.nix-gc = {
+    serviceConfig.ExecStartPre = lib.getExe pruneOldGenerations;
   };
 
   system.activationScripts.reportChanges = ''

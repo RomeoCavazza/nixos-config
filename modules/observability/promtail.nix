@@ -56,6 +56,12 @@ let
               replacement = "build";
               target_label = "component";
             }
+            {
+              source_labels = [ "__journal__systemd_unit" ];
+              regex = "(restic-.*|restic-restore-drill)\\.service";
+              replacement = "backup";
+              target_label = "component";
+            }
           ];
         }
       ];
