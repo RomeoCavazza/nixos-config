@@ -22,6 +22,7 @@ let
     text = ''
             export RESTIC_REPOSITORY="${repository}"
             export RESTIC_PASSWORD_FILE="${passwordFile}"
+            # shellcheck disable=SC1090
             [[ -z "''${AWS_ACCESS_KEY_ID:-}" && -f "${environmentFile}" ]] && source <(grep '^AWS_' "${environmentFile}")
 
             failures=0
