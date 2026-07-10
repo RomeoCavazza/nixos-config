@@ -59,6 +59,18 @@ in
       Group = "users";
       WorkingDirectory = stateDir;
       ExecStart = "${snapshotScript}/bin/grafana-snapshot-sync";
+      ProtectSystem = "strict";
+      ProtectHome = "read-only";
+      ReadWritePaths = [ stateDir ];
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectKernelTunables = true;
+      ProtectControlGroups = true;
+      RestrictAddressFamilies = [
+        "AF_INET"
+        "AF_INET6"
+        "AF_UNIX"
+      ];
     };
     environment = {
       PLAYWRIGHT_CORE_PATH = "${pkgs.playwright-driver}";

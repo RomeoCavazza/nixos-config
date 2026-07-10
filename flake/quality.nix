@@ -291,5 +291,34 @@ in
 
           touch "$out"
         '';
+
+    vm-audit = pkgs.testers.runNixOSTest {
+      name = "nixos-config-vm-audit";
+      node.specialArgs = {
+        locality = import ../lib/locality.nix;
+      };
+      nodes.machine =
+        { ... }:
+        {
+          imports = [
+            ../modules/core/known-hosts.nix
+            ../modules/core/sysctl.nix
+            ../modules/security/local-report.nix
+            ../modules/security/recovery.nix
+          ];
+          boot.loader.systemd-boot.enable = true;
+          boot.loader.systemd-boot.configurationLimit = 1;
+          fileSystems."/" = {
+            device = "/dev/vda1";
+            fsType = "ext4";
+          };
+          system.stateVersion = "26.05";
+        };
+      testScript = ''
+        machine.start()
+        machine.wait_for_unit("multi-user.target")
+        machine.succeed("local-security-check")
+      '';
+    };
   };
 }
