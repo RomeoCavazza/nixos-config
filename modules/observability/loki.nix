@@ -16,6 +16,7 @@ in
       };
       common = {
         path_prefix = "/var/lib/loki";
+        instance_addr = "127.0.0.1";
         ring.kvstore.store = "inmemory";
         storage.filesystem = {
           chunks_directory = "/var/lib/loki/chunks";
