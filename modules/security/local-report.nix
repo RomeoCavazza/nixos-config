@@ -189,6 +189,7 @@ in
       pkgs.gnused
       pkgs.iproute2
       pkgs.procps
+      pkgs.sops
       pkgs.util-linux
       config.system.build.recoveryReadinessCheck
     ];
@@ -360,6 +361,23 @@ in
         fi
       }
 
+      check_secrets_decrypt() {
+        local repo=${lib.escapeShellArg (toString locality.activeConfigRepo)} secrets_dir file
+        secrets_dir="$repo/secrets"
+        if [[ ! -d "$secrets_dir" ]]; then
+          warn "secrets directory not found at $secrets_dir"
+          return
+        fi
+        while IFS= read -r -d ${"''"} file; do
+          if sops -d "$file" >/dev/null 2>/tmp/local-security-check-sops-err; then
+            ok "$(basename "$file") decrypts with the current key"
+          else
+            fail "$(basename "$file") does not decrypt: $(tail -n1 /tmp/local-security-check-sops-err)"
+          fi
+          rm -f /tmp/local-security-check-sops-err
+        done < <(find "$secrets_dir" -maxdepth 1 -name '*.yaml' -print0)
+      }
+
       if [[ ${toString rollbackLimit} -eq 1 ]]; then
         warn "systemd-boot keeps 1 generation by explicit policy"
       elif [[ ${toString rollbackLimit} -gt 1 ]]; then
@@ -386,6 +404,7 @@ in
       check_recovery_readiness
       check_iommu
       check_apparmor
+      check_secrets_decrypt
 
       if [[ "$failures" -gt 0 ]]; then
         printf 'local-security-check: %s failure(s)\n' "$failures" >&2

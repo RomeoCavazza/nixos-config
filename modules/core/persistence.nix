@@ -46,4 +46,12 @@ _:
     fsType = "none";
     options = [ "bind" ];
   };
+
+  # locality.activeConfigRepo ("/etc/nixos") is read by backup.nix's b2-critical
+  # job and by the security audit tooling. It's not itself part of @persist —
+  # the real checkout lives on @home, which already survives the root wipe —
+  # but the symlink pointing at it does, so recreate it on every boot.
+  systemd.tmpfiles.rules = [
+    "L+ /etc/nixos - - - - /home/tco/nixos-config"
+  ];
 }

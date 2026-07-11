@@ -33,7 +33,7 @@ in
     package = lzbtNixOSMenuTitle;
     pkiBundle = "/var/lib/sbctl";
     settings = {
-      timeout = "menu-force";
+      timeout = 0;
       auto-entries = false;
       auto-firmware = true;
     };
