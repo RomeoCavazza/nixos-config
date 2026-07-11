@@ -91,13 +91,13 @@ Details on the [Observability](https://github.com/RomeoCavazza/nixos-config/wiki
 
 ## Security and Backups
 
-The disk is LUKS-encrypted and unlocked by a TPM2 keyslot behind Secure Boot ([Lanzaboote](https://github.com/nix-community/lanzaboote)); the layout is fully declarative via [disko](https://github.com/nix-community/disko) — one GPT table with Windows, WinRE, and a LUKS2-encrypted LVM volume group (`legion`) partitioned into `/`, `/home`, `/build`, `/nix`, and swap. Secrets are committed only in encrypted form under [`secrets/`](./secrets/) with [sops-nix](https://github.com/Mic92/sops-nix). Backups use `restic` to Backblaze B2, split into three jobs: `b2-critical` (config, SSH, dotfiles — ~100 MB), `b2-data` (Documents, Images), and `b2-gitlab` (GitLab repos, uploads, LFS + PostgreSQL dump). A weekly non-destructive restore drill validates all jobs. Full model on the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) wiki page.
+The disk is LUKS2-encrypted and unlocked by a TPM2 keyslot bound to PCR 7 behind Secure Boot ([Lanzaboote](https://github.com/nix-community/lanzaboote)). The [disko](https://github.com/nix-community/disko) layout keeps Windows and WinRE beside an encrypted Btrfs filesystem with `@root`, `@nix`, `@home`, `@persist`, and `@swap`. `@root` is recreated at boot; durable service, identity, desktop, and network state is bind-mounted from `@persist`. Secrets are committed only in encrypted form under [`secrets/`](./secrets/) with [sops-nix](https://github.com/Mic92/sops-nix). Four `restic` jobs back up critical configuration, desktop data, GitLab state, and Sigma/RAG source data to Backblaze B2. A weekly non-destructive restore drill validates the critical backup. Full model on the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) wiki page.
 
 ---
 
 ## Services
 
-**GitLab CE** runs natively via `services.gitlab` (no Docker) on `gitlab.localhost:8930`, backed by a local PostgreSQL instance. GitLab Pages serve on `pages.localhost:8931`. Two `gitlab-runner` executors (shell + Docker) handle CI/CD jobs locally. SMTP routes through Gmail App Passwords. All secrets (root password, 5 Rails keys, 3 ActiveRecord encryption keys, runner token) are SOPS-encrypted in [`secrets/gitlab.yaml`](./secrets/gitlab.yaml).
+**GitLab CE** runs natively via `services.gitlab` (no Docker) on `gitlab.localhost:8930`, backed by a local PostgreSQL instance. GitLab Pages serve on `pages.localhost:8931`. One persistent shell `gitlab-runner` handles local CI/CD and can access Docker through its group membership. SMTP routes through a Gmail App Password. GitLab, Rails, ActiveRecord, runner, and SMTP credentials are SOPS-encrypted in [`secrets/gitlab.yaml`](./secrets/gitlab.yaml).
 
 ---
 
@@ -106,19 +106,18 @@ The disk is LUKS-encrypted and unlocked by a TPM2 keyslot behind Secure Boot ([L
 > [!IMPORTANT]
 > This configuration targets a specific host — review hardware IDs, filesystems, secrets, and service assumptions before reusing it. Features are enabled by composing profiles in [`profiles/`](./profiles/), which the host assembles in [`hosts/legion/profiles.nix`](./hosts/legion/profiles.nix).
 
-Prerequisites: a [NixOS ISO](https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso) on a bootable USB ([Ventoy](https://www.ventoy.net/en/download.html) or [Rufus](https://rufus.ie/en/)).
+Prerequisites: a [NixOS 26.05 ISO](https://channels.nixos.org/nixos-26.05/latest-nixos-graphical-x86_64-linux.iso) on a bootable USB ([Ventoy](https://www.ventoy.net/en/download.html) or [Rufus](https://rufus.ie/en/)).
 
 ```bash
-# 1. Back up the current config
-sudo mv /etc/nixos /etc/nixos-backup
+# 1. Clone the persistent checkout on @home
+git clone https://github.com/RomeoCavazza/nixos-config.git ~/nixos-config
 
-# 2. Clone (this repo lives at /etc/nixos, not a separate checkout)
-sudo git clone https://github.com/RomeoCavazza/nixos-config.git /etc/nixos
-sudo chown -R "$USER" /etc/nixos
-
-# 3. Apply
-cd /etc/nixos && sudo nixos-rebuild switch --flake .#legion
+# 2. Apply
+cd ~/nixos-config
+sudo nixos-rebuild switch --flake .#legion
 ```
+
+The activation recreates `/etc/nixos` as a symlink to `/home/tco/nixos-config`. Disk provisioning, Secure Boot enrollment, TPM enrollment, SOPS key installation, and migration into `@persist` are separate recovery-sensitive operations; review the [Security](https://github.com/RomeoCavazza/nixos-config/wiki/Security) page before applying this host configuration to a fresh disk.
 
 This dotfile is not a monolith — it is composed from small, single-purpose repositories, each pinned as a flake input and documented on its own:
 

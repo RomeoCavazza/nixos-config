@@ -3,7 +3,7 @@ rec {
   homeDirectory = "/home/${user}";
   labApplicationsDir = "${homeDirectory}/Applications";
   devDir = "${homeDirectory}/dev";
-  activeConfigRepo = "/etc/nixos";
+  activeConfigRepo = "${homeDirectory}/nixos-config";
   repoCheckout =
     let
       envRepo = builtins.getEnv "NIXOS_CONFIG_REPO";
