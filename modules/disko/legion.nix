@@ -113,7 +113,9 @@
     serviceConfig.Type = "oneshot";
     path = [
       pkgs.btrfs-progs
+      pkgs.coreutils
       pkgs.findutils
+      pkgs.util-linux
     ];
     script = ''
       mkdir -p /mnt-btrfs
