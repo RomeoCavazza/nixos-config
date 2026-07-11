@@ -104,6 +104,16 @@
   # boot.initrd.postDeviceCommands n'est pas supporté par le stage 1 systemd
   # (imposé ici par modules/security/tpm2.nix, via le profil "core"). Avant le
   # montage de @root, on supprime l'ancien @root et on en recrée un vierge.
+  # `path` above only sets $PATH inside the unit; it does not guarantee the
+  # referenced package's files are actually copied into the initrd image.
+  # coreutils/btrfs-progs/findutils happen to already be pulled in by other
+  # initrd units, but util-linux isn't, so mount/umount must be forced in
+  # explicitly.
+  boot.initrd.systemd.storePaths = [
+    "${pkgs.util-linux}/bin/mount"
+    "${pkgs.util-linux}/bin/umount"
+  ];
+
   boot.initrd.systemd.services.rollback-root = {
     description = "Rollback btrfs @root subvolume (impermanence)";
     wantedBy = [ "initrd-root-device.target" ];
