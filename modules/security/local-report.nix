@@ -369,7 +369,7 @@ in
           return
         fi
         while IFS= read -r -d ${"''"} file; do
-          if sops -d "$file" >/dev/null 2>/tmp/local-security-check-sops-err; then
+          if SOPS_AGE_KEY_FILE=/var/lib/sops-nix/key.txt sops -d "$file" >/dev/null 2>/tmp/local-security-check-sops-err; then
             ok "$(basename "$file") decrypts with the current key"
           else
             fail "$(basename "$file") does not decrypt: $(tail -n1 /tmp/local-security-check-sops-err)"
