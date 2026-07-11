@@ -1,4 +1,4 @@
-_:
+{ pkgs, ... }:
 
 {
   disko.devices = {
@@ -49,68 +49,92 @@ _:
               name = "cryptroot";
               settings.allowDiscards = true;
               content = {
-                type = "lvm_pv";
-                vg = "legion";
+                type = "btrfs";
+                extraArgs = [ "-f" ];
+                subvolumes = {
+                  "@root" = {
+                    mountpoint = "/";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
+
+                  "@nix" = {
+                    mountpoint = "/nix";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                      "nodev"
+                    ];
+                  };
+
+                  "@home" = {
+                    mountpoint = "/home";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                      "nodev"
+                      "nosuid"
+                    ];
+                  };
+
+                  "@persist" = {
+                    mountpoint = "/persist";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
+
+                  "@swap" = {
+                    mountpoint = "/swap";
+                    swap.swapfile.size = "32G";
+                  };
+                };
               };
             };
           };
         };
       };
     };
+  };
 
-    lvm_vg.legion = {
-      type = "lvm_vg";
-      lvs = {
-        root = {
-          size = "80G";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/";
-            mountOptions = [ "defaults" ];
-          };
-        };
-
-        home = {
-          size = "220G";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/home";
-            mountOptions = [
-              "nodev"
-              "nosuid"
-            ];
-          };
-        };
-
-        build = {
-          size = "80G";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/build";
-            mountOptions = [ "nodev" ];
-          };
-        };
-
-        swap = {
-          size = "32G";
-          content = {
-            type = "swap";
-          };
-        };
-
-        nix = {
-          size = "100%FREE";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/nix";
-            mountOptions = [ "nodev" ];
-          };
-        };
-      };
-    };
+  # Hook d'Impermanence (Erase your darlings au boot), en service systemd d'initrd :
+  # boot.initrd.postDeviceCommands n'est pas supporté par le stage 1 systemd
+  # (imposé ici par modules/security/tpm2.nix, via le profil "core"). Avant le
+  # montage de @root, on supprime l'ancien @root et on en recrée un vierge.
+  boot.initrd.systemd.services.rollback-root = {
+    description = "Rollback btrfs @root subvolume (impermanence)";
+    wantedBy = [ "initrd-root-device.target" ];
+    after = [ "systemd-cryptsetup@cryptroot.service" ];
+    before = [ "sysroot.mount" ];
+    unitConfig.DefaultDependencies = "no";
+    serviceConfig.Type = "oneshot";
+    path = [
+      pkgs.btrfs-progs
+      pkgs.findutils
+    ];
+    script = ''
+      mkdir -p /mnt-btrfs
+      mount -o subvol=/ /dev/mapper/cryptroot /mnt-btrfs
+      if [ -e /mnt-btrfs/@root ]; then
+        mkdir -p /mnt-btrfs/old_roots
+        timestamp=$(date --date="@$(stat -c %Y /mnt-btrfs/@root)" "+%Y-%m-%d_%H:%M:%S")
+        mv /mnt-btrfs/@root "/mnt-btrfs/old_roots/$timestamp"
+      fi
+      delete_subvolume_recursively() {
+        IFS=$'\n'
+        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+          delete_subvolume_recursively "/mnt-btrfs/$i"
+        done
+        btrfs subvolume delete "$1"
+      }
+      for i in $(find /mnt-btrfs/old_roots/ -maxdepth 1 -mtime +14); do
+        delete_subvolume_recursively "$i"
+      done
+      btrfs subvolume create /mnt-btrfs/@root
+      umount /mnt-btrfs
+    '';
   };
 }
