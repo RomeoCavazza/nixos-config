@@ -68,6 +68,35 @@ _:
     options = [ "bind" ];
   };
 
+  # NetworkManager keeps saved Wi-Fi credentials and connection metadata in
+  # both locations. They must survive recreation of @root.
+  fileSystems."/etc/NetworkManager/system-connections" = {
+    device = "/persist/etc/NetworkManager/system-connections";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/NetworkManager" = {
+    device = "/persist/var/lib/NetworkManager";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  # GDM reads user avatars and account metadata through AccountsService.
+  fileSystems."/var/lib/AccountsService" = {
+    device = "/persist/var/lib/AccountsService";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  # Preserve runner working state and builds instead of recreating /srv on
+  # every boot. Authentication failures are diagnosed separately.
+  fileSystems."/srv/gitlab-runner" = {
+    device = "/persist/srv/gitlab-runner";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
   fileSystems."/var/lib/docker" = {
     device = "/persist/var/lib/docker";
     fsType = "none";

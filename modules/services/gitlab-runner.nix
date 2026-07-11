@@ -33,7 +33,18 @@ in
     };
   };
 
-  systemd.services.gitlab-runner.serviceConfig.ReadWritePaths = [ "/srv/gitlab-runner" ];
+  systemd.services.gitlab-runner = {
+    # The runner verifies its token during startup. GitLab can briefly return
+    # 502 while Puma/Workhorse are still becoming ready after boot, so order
+    # the units and retry instead of leaving the runner permanently failed.
+    after = [ "gitlab.service" ];
+    wants = [ "gitlab.service" ];
+    serviceConfig = {
+      ReadWritePaths = [ "/srv/gitlab-runner" ];
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
+  };
   systemd.tmpfiles.rules = [
     "d /srv/gitlab-runner 0750 gitlab-runner gitlab-runner -"
     "d /srv/gitlab-runner/builds 0750 gitlab-runner gitlab-runner -"
