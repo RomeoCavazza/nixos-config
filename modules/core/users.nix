@@ -1,9 +1,16 @@
-{ locality, pkgs, ... }:
+{
+  config,
+  locality,
+  pkgs,
+  ...
+}:
 
 {
+  sops.secrets.tco_password_hash = { };
+
   users.users.${locality.user} = {
     isNormalUser = true;
-    password = "password";
+    hashedPasswordFile = config.sops.secrets.tco_password_hash.path;
     home = locality.homeDirectory;
     shell = pkgs.bash;
     extraGroups = [
