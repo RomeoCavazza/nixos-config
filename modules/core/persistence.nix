@@ -27,6 +27,16 @@ _:
     neededForBoot = true;
   };
 
+  # UID/GID allocation table for users.mutableUsers = false (modules/core/users.nix).
+  # Without this, tco's UID drifts on every boot (recreated from scratch each
+  # time), leaving /home/tco owned by a stale UID and breaking login.
+  fileSystems."/var/lib/nixos" = {
+    device = "/persist/var/lib/nixos";
+    fsType = "none";
+    options = [ "bind" ];
+    neededForBoot = true;
+  };
+
   fileSystems."/var/lib/gitlab" = {
     device = "/persist/var/lib/gitlab";
     fsType = "none";
@@ -47,6 +57,13 @@ _:
 
   fileSystems."/var/lib/loki" = {
     device = "/persist/var/lib/loki";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  # Avoid replaying up to 12 hours of journal entries after every root wipe.
+  fileSystems."/var/lib/promtail" = {
+    device = "/persist/var/lib/promtail";
     fsType = "none";
     options = [ "bind" ];
   };

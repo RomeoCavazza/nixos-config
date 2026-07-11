@@ -34,7 +34,7 @@ in
     pkiBundle = "/var/lib/sbctl";
     settings = {
       timeout = 0;
-      auto-entries = false;
+      auto-entries = true;
       auto-firmware = true;
     };
   };

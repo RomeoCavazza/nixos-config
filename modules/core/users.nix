@@ -6,18 +6,14 @@
 }:
 
 {
-  # Required for hashedPasswordFile to actually be applied on every
-  # activation. With the default mutableUsers=true, NixOS's user-groups
-  # activation script only ever writes the declarative password once, at
-  # account creation, and treats /etc/shadow as manually-managed state
-  # afterward — update-users-groups.pl only copies hashedPassword into
-  # /etc/shadow `if defined $u->{hashedPassword} && !$spec->{mutableUsers}`.
-  # Under impermanence /etc/shadow is wiped every boot, so without this the
-  # account looks "freshly created" each time but the password never
-  # actually gets (re)applied from the sops secret.
+  # Impermanence recreates /etc/shadow on every boot. Keep users declarative
+  # so the password hash is reapplied from SOPS during each activation.
   users.mutableUsers = false;
 
-  sops.secrets.tco_password_hash = { };
+  # Decrypt before users-groups activation reads hashedPasswordFile. Without
+  # this, the activation can run first and leave the declarative account with
+  # no usable password until another switch.
+  sops.secrets.tco_password_hash.neededForUsers = true;
 
   users.users.${locality.user} = {
     isNormalUser = true;
