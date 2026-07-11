@@ -33,7 +33,8 @@ in
     package = lzbtNixOSMenuTitle;
     pkiBundle = "/var/lib/sbctl";
     settings = {
-      timeout = 0;
+      # Always show the NixOS/Windows chooser, but never auto-select an entry.
+      timeout = "menu-force";
       auto-entries = true;
       auto-firmware = true;
     };
