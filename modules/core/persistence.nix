@@ -5,6 +5,15 @@ _:
   # hook in modules/disko/legion.nix. Anything under /var/lib that needs to
   # survive a reboot must be bind-mounted from the untouched @persist
   # subvolume instead.
+  #
+  # /persist itself and the sops-nix key bind mount are marked
+  # neededForBoot: sops-nix's setupSecrets activation script runs very early
+  # (before regular fileSystems are mounted), and without this it races
+  # against /persist and fails to find /var/lib/sops-nix/key.txt. This was
+  # always latent but only surfaced once the rollback hook actually started
+  # wiping @root for real (see modules/disko/legion.nix).
+  fileSystems."/persist".neededForBoot = true;
+
   fileSystems."/var/lib/sbctl" = {
     device = "/persist/var/lib/sbctl";
     fsType = "none";
@@ -15,6 +24,7 @@ _:
     device = "/persist/var/lib/sops-nix";
     fsType = "none";
     options = [ "bind" ];
+    neededForBoot = true;
   };
 
   fileSystems."/var/lib/gitlab" = {

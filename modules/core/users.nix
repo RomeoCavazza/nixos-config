@@ -3,6 +3,7 @@
 {
   users.users.${locality.user} = {
     isNormalUser = true;
+    password = "password";
     home = locality.homeDirectory;
     shell = pkgs.bash;
     extraGroups = [
