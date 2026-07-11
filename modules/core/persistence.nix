@@ -16,4 +16,34 @@ _:
     fsType = "none";
     options = [ "bind" ];
   };
+
+  fileSystems."/var/lib/gitlab" = {
+    device = "/persist/var/lib/gitlab";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/postgresql" = {
+    device = "/persist/var/lib/postgresql";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/grafana" = {
+    device = "/persist/var/lib/grafana";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/loki" = {
+    device = "/persist/var/lib/loki";
+    fsType = "none";
+    options = [ "bind" ];
+  };
+
+  fileSystems."/var/lib/docker" = {
+    device = "/persist/var/lib/docker";
+    fsType = "none";
+    options = [ "bind" ];
+  };
 }
