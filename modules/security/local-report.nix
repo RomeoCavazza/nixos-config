@@ -294,9 +294,13 @@ in
               fi
             }
 
-            check_boot_policy() {
-              local efi current order first current_line
-              if grep -qx 'timeout menu-force' /boot/loader/loader.conf 2>/dev/null; then
+      check_boot_policy() {
+        local efi current order first current_line
+        if systemd-detect-virt --quiet; then
+          warn "firmware boot policy checks are skipped in virtualization"
+          return
+        fi
+        if grep -qx 'timeout menu-force' /boot/loader/loader.conf 2>/dev/null; then
                 ok "boot menu is forced without a countdown"
               else
                 fail "loader.conf does not enforce timeout menu-force"
