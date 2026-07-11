@@ -34,9 +34,6 @@ in
   };
 
   systemd.services.gitlab-runner = {
-    # The runner verifies its token during startup. GitLab can briefly return
-    # 502 while Puma/Workhorse are still becoming ready after boot, so order
-    # the units and retry instead of leaving the runner permanently failed.
     after = [ "gitlab.service" ];
     wants = [ "gitlab.service" ];
     serviceConfig = {

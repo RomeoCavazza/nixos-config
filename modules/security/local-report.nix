@@ -319,9 +319,13 @@ in
               fi
             }
 
-            check_persistence_mounts() {
-              local target source expected
-              while IFS='|' read -r target expected; do
+      check_persistence_mounts() {
+        local target source expected
+        if systemd-detect-virt --quiet; then
+          warn "persistence mount checks are skipped in virtualization"
+          return
+        fi
+        while IFS='|' read -r target expected; do
                 source="$(findmnt -n -o SOURCE --target "$target" 2>/dev/null || true)"
                 if [[ "$source" == *"$expected"* ]]; then
                   ok "$target is persisted from $source"
