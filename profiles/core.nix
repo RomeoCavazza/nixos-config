@@ -9,6 +9,7 @@
     ../modules/core/known-hosts.nix
     ../modules/core/home-manager.nix
     ../modules/core/secrets.nix
+    ../modules/core/persistence.nix
     ../modules/core/nix-ld.nix
     ../modules/core/packages.nix
     ../modules/core/networking.nix

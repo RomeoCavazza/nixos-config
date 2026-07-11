@@ -1,10 +1,12 @@
+# Both the previous admin_tco and host_legion private keys were lost in the
+# 2026-07-11 disk wipe (neither was backed up, by design). Re-keyed with a
+# single fresh host key; add a second, separately-stored admin recipient
+# once one exists again.
 keys:
-  - &admin_tco age1jf9hc5ntgx27flj7h8e2fua0dfhnunnd3snnm8ujm4t5rpv8uqqqk2a85r
-  - &host_legion age19wtmkh43mmjnjjumgk379l4dy97dp2ghhlgc8rywh49jyu2uc9kqdsaw6x
+  - &host_legion age1akjpsw3d8kac2fxnprey8qh3r99m58hp8jawmm96juatme4h3q8q73sru0
 
 creation_rules:
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:
-          - *admin_tco
           - *host_legion
