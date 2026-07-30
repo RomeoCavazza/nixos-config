@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+STATE_DIR="${STATE_DIR:-/var/lib/grafana-snapshot-sync}"
+SNAPSHOT_DIR="${SNAPSHOT_DIR:-${STATE_DIR}/snapshots}"
+REPO_DIR="${REPO_DIR:-${NIXOS_CONFIG_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+GRAFANA_URL="${GRAFANA_URL:-http://localhost:3001}"
+SINCE="${SINCE:-now-6h}"
+UNTIL="${UNTIL:-now}"
+MIN_CHANGE_PERCENT="${MIN_CHANGE_PERCENT:-0.3}"
+SNAPSHOT_GIT_NAME="${SNAPSHOT_GIT_NAME:-nixos-config bot}"
+SNAPSHOT_GIT_EMAIL="${SNAPSHOT_GIT_EMAIL:-bot@nixos-config.local}"
+PLAYWRIGHT_CORE_PATH="${PLAYWRIGHT_CORE_PATH:-}"
+CHROME_BIN="${CHROME_BIN:-/run/current-system/sw/bin/google-chrome}"
+SNAPSHOT_REPO_URL="${SNAPSHOT_REPO_URL:-}"
+SNAPSHOT_BRANCH="${SNAPSHOT_BRANCH:-snapshots}"
+
+DASHBOARDS=(
+  "nixos-metrics:nixos-metrics:live-dashboard.png"
+  "nix-efficiency:nix-efficiency:nix-efficiency.png"
+  "incident-correlation:incident-correlation:incident-dashboard.png"
+  "nixos-compiled:nixos-system-overview:nixos-system-overview.png"
+)
+
+mkdir -p "$SNAPSHOT_DIR"
+TMP_RENDER="${TMP_DIR}/render"
+mkdir -p "$TMP_RENDER"
+
+for _ in $(seq 1 30); do
+  if curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+
+if ! curl -fsS "${GRAFANA_URL}/api/health" >/dev/null 2>&1; then
+  echo "snapshot-sync: grafana is not reachable at ${GRAFANA_URL}" >&2
+  exit 1
+fi
+
+if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  PLAYWRIGHT_CORE_PATH=$(nix-build --no-out-link "<nixpkgs>" -A playwright-driver 2>/dev/null || true)
+fi
+if [[ -z "$PLAYWRIGHT_CORE_PATH" ]]; then
+  echo "snapshot-sync: PLAYWRIGHT_CORE_PATH is not set" >&2
+  exit 1
+fi
+
+has_changes=0
+
+for item in "${DASHBOARDS[@]}"; do
+  IFS=":" read -r uid slug filename <<< "$item"
+  new_file="${TMP_RENDER}/${filename}"
+  current_file="${SNAPSHOT_DIR}/${filename}"
+
+  dashboard_url="${GRAFANA_URL}/d/${uid}/${slug}?orgId=1&from=${SINCE}&to=${UNTIL}&kiosk"
+
+  PLAYWRIGHT_CORE_PATH="$PLAYWRIGHT_CORE_PATH" \
+  CHROME_BIN="$CHROME_BIN" \
+  DASHBOARD_URL="$dashboard_url" \
+  OUTPUT_FILE="$new_file" \
+  node <<'NODE'
+const { chromium } = require(process.env.PLAYWRIGHT_CORE_PATH);
+
+(async () => {
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROME_BIN,
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none'],
+  });
+
+  const page = await browser.newPage({
+    viewport: { width: 1920, height: 3000 },
+    deviceScaleFactor: 2,
+  });
+
+  page.on('console', msg => console.log(`snapshot-sync: browser: ${msg.text()}`));
+  console.log(`snapshot-sync: navigating to ${process.env.DASHBOARD_URL}`);
+
+  try {
+    await page.goto(process.env.DASHBOARD_URL, { waitUntil: 'load', timeout: 60000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 })
+      .catch(() => console.log('snapshot-sync: networkidle timeout, proceeding anyway'));
+    await page.waitForSelector('.panel-title, .panel-title-text, [data-testid="panel-header"]', { timeout: 15000 })
+      .catch(() => console.log('snapshot-sync: panel title not found, checking body...'));
+    console.log('snapshot-sync: waiting for stabilization...');
+    await page.waitForTimeout(10000);
+
+    const clip = await page.evaluate(() => {
+      const items = Array.from(document.querySelectorAll('.react-grid-item, .panel-container, [data-testid="grid-item"]'));
+      const visible = items.filter(p => {
+        const r = p.getBoundingClientRect();
+        return r.height > 20 && r.width > 20 && r.bottom < 5000;
+      });
+      let maxBottom = 0;
+      visible.forEach(p => { const r = p.getBoundingClientRect(); if (r.bottom > maxBottom) maxBottom = r.bottom; });
+      const height = maxBottom > 100 ? Math.ceil(maxBottom) + 20 : 1200;
+      return { x: 0, y: 0, width: 1920, height };
+    });
+
+    console.log(`snapshot-sync: cropping to height ${clip.height}px`);
+    await page.screenshot({ path: process.env.OUTPUT_FILE, clip });
+    console.log(`snapshot-sync: ${process.env.OUTPUT_FILE} captured`);
+  } catch (e) {
+    console.error(`snapshot-sync: rendering failed: ${e.message}`);
+    process.exit(1);
+  }
+  await browser.close();
+})().catch(error => {
+  console.error(`snapshot-sync: fatal error: ${error.message}`);
+  process.exit(1);
+});
+NODE
+
+  if [[ -f "$current_file" ]]; then
+    changed_pixels=$(compare -metric AE "$current_file" "$new_file" null: 2>&1 || true)
+    total_pixels=$(identify -format "%[fx:w*h]" "$current_file")
+    percent_changed=$(awk -v c="$changed_pixels" -v t="$total_pixels" \
+      'BEGIN { if (t == 0) print 100; else printf "%.2f", (c * 100) / t }')
+
+    if awk -v p="$percent_changed" -v m="$MIN_CHANGE_PERCENT" 'BEGIN { exit !(p > m) }'; then
+      cp "$new_file" "$current_file"
+      has_changes=1
+    else
+      echo "snapshot-sync: ${filename} unchanged (${percent_changed}% < ${MIN_CHANGE_PERCENT}%), skipping"
+    fi
+  else
+    cp "$new_file" "$current_file"
+    has_changes=1
+  fi
+done
+
+[[ "$has_changes" -eq 0 ]] && { echo "snapshot-sync: no meaningful changes, skipping publish"; exit 0; }
+
+PUBLISH_DIR="${TMP_DIR}/publish"
+mkdir -p "$PUBLISH_DIR/docs/assets/live"
+cp "$SNAPSHOT_DIR"/*.png "$PUBLISH_DIR/docs/assets/live/"
+
+REPO_URL="${SNAPSHOT_REPO_URL:-$(git -C "$REPO_DIR" remote get-url origin)}"
+
+cd "$PUBLISH_DIR"
+git init -q
+git config user.name  "$SNAPSHOT_GIT_NAME"
+git config user.email "$SNAPSHOT_GIT_EMAIL"
+
+git checkout -q --orphan "$SNAPSHOT_BRANCH"
+git add docs/assets/live/*.png
+git commit -q -m "snapshots: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+
+echo "snapshot-sync: force-pushing to ${REPO_URL} branch=${SNAPSHOT_BRANCH}"
+push_output=$(git push --force "$REPO_URL" "${SNAPSHOT_BRANCH}:${SNAPSHOT_BRANCH}" 2>&1) || push_exit=$?
+if [[ "${push_exit:-0}" -ne 0 ]]; then
+  echo "$push_output" | grep -v -iE '(Create a pull request|pull/new)' >&2 || true
+  echo "snapshot-sync: error: git push failed (check SSH authentication or network). Snapshots remain cached in ${SNAPSHOT_DIR}." >&2
+  exit "${push_exit}"
+else
+  echo "$push_output" | grep -v -iE '(Create a pull request|pull/new)' || true
+fi
+echo "snapshot-sync: done"

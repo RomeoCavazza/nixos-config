@@ -1,0 +1,23 @@
+{
+  imports = [
+    ../modules/core/nix.nix
+    ../modules/core/nixpkgs-policy.nix
+    ../modules/theme
+    ../modules/core/locale.nix
+    ../modules/core/users.nix
+    ../modules/core/user-dirs.nix
+    ../modules/core/known-hosts.nix
+    ../modules/core/home-manager.nix
+    ../modules/core/secrets.nix
+    ../modules/core/persistence.nix
+    ../modules/core/nix-ld.nix
+    ../modules/core/packages.nix
+    ../modules/core/networking.nix
+    ../modules/core/sysctl.nix
+    ../modules/security
+    ../modules/core/session.nix
+    ../modules/core/logging.nix
+    ../modules/core/programs.nix
+    ../modules/core/packages-extra
+  ];
+}

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+DEV="platform::kbd_backlight"
+
+trap 'brightnessctl -d "$DEV" set 2; exit' SIGINT SIGTERM
+
+while true; do
+  brightnessctl -d "$DEV" set 1
+  sleep 0.4
+  brightnessctl -d "$DEV" set 2
+  sleep 1.2
+  brightnessctl -d "$DEV" set 1
+  sleep 0.4
+  brightnessctl -d "$DEV" set 0
+  sleep 0.6
+done

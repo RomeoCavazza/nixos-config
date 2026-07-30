@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@8887e596b4ee1134dae06b98d573bd674693f47c # v26
+
+      - name: Hyprland Cachix
+        uses: cachix/cachix-action@18cf96c7c98e048e10a83abd92116114cd8504be # v14
+        with:
+          name: hyprland
+
+      - name: Run quality gate
+        run: nix run .#quality
+
+      - name: Dependency pin audit
+        run: nix run .#repo-audit

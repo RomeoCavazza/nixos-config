@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export LD_LIBRARY_PATH="/run/opengl-driver/lib:${LD_LIBRARY_PATH:-}"
+export NIX_LD_LIBRARY_PATH="/run/opengl-driver/lib:${NIX_LD_LIBRARY_PATH:-}"
+
+export NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+export SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
+
+BIN="$HOME/.local/opt/antigravity-v2/Antigravity-x64/antigravity"
+
+if [ ! -x "$BIN" ]; then
+  echo "Antigravity v2 introuvable ou non exécutable: $BIN" >&2
+  exit 1
+fi
+
+# EXCEPTION / CONTRAT NIXOS :
+# - --password-store=basic : évite qu'Electron ne bloque en attendant Secret Service / GNOME Keyring
+#   dans une session standalone Hyprland.
+# Note : Le sandbox Chromium fonctionne sous NixOS avec NIX_LD/userns sur le kernel actuel,
+# les anciens flags --no-sandbox / --disable-gpu-sandbox ont été supprimés pour réactiver la sécurité.
+exec "$BIN" \
+  --password-store=basic \
+  "$@"

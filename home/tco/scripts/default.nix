@@ -1,0 +1,71 @@
+{
+  config,
+  pkgs,
+  inputs,
+  customPkgs,
+  ...
+}:
+
+let
+  repoRoot = ../../..;
+  mkBin = name: source: {
+    inherit name;
+    value = {
+      inherit source;
+      executable = true;
+    };
+  };
+
+  mkLocalBin = name: mkBin ".local/bin/${name}" (repoRoot + "/config/bin/${name}");
+  mkInputBin = name: sourceName: mkBin ".local/bin/${name}" "${inputs.hypr-config}/bin/${sourceName}";
+
+  vendoredBins = [
+    "cursor-toggle"
+    "devin"
+    "antigravity"
+    "antigravity-ide"
+    "grafana-generate"
+    "get-user-info"
+    "rebuild"
+    "legion-pulse"
+    "legion-toggle"
+    "tmux-fzf-man-pages"
+    "tmux-fzf-sessions"
+    "tmux-sessions"
+    "toggle-showmethekey"
+  ];
+
+  hyprConfigBins = [
+    "hypr-plugins-init"
+    "hypr-gap-state.sh"
+    "hypr-overview-toggle"
+    "hypr-close-all"
+    "edex-conky-toggle"
+    "edex-toggle"
+    "waybar-toggle"
+    "scss-compile"
+  ];
+in
+{
+  home.file =
+    builtins.listToAttrs (
+      map mkLocalBin vendoredBins ++ map (name: mkInputBin name name) hyprConfigBins
+    )
+    // {
+      ".local/bin/edex-ui-run" = {
+        executable = true;
+        text = ''
+          #!/usr/bin/env bash
+          set -euo pipefail
+          export SHELL="''${SHELL:-${pkgs.bashInteractive}/bin/bash}"
+          export TERM="''${TERM:-xterm-256color}"
+          export COLORTERM="''${COLORTERM:-truecolor}"
+          export PATH="''${PATH:-${config.home.profileDirectory}/bin:/run/current-system/sw/bin}"
+          export LD_LIBRARY_PATH="${pkgs.libxshmfence}/lib:''${LD_LIBRARY_PATH:-}"
+          exec ${pkgs.appimage-run}/bin/appimage-run ${customPkgs.edex-ui-appimage} \
+            --no-sandbox --disable-gpu-sandbox \
+            --ozone-platform=x11 --disable-features=UseOzonePlatform "$@"
+        '';
+      };
+    };
+}

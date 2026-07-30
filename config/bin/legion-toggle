@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if pgrep -f "legion-pulse" > /dev/null
+then
+    pkill -f "legion-pulse"
+    brightnessctl -d "platform::kbd_backlight" set 2
+else
+    bash "$HOME/.local/bin/legion-pulse" &
+fi

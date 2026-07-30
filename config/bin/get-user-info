@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+target="${1:-${USER:-}}"
+if [[ -z "$target" ]]; then
+  echo "Usage: get-user-info [USER]" >&2
+  exit 2
+fi
+
+info="$(getent passwd "$target" || true)"
+if [[ -z "$info" ]]; then
+  echo "get-user-info: user '$target' not found" >&2
+  exit 1
+fi
+
+IFS=':' read -r login _password uid gid gecos home shell <<< "$info"
+group_name="$(getent group "$gid" | cut -d: -f1 || true)"
+
+printf 'User:        %s\n' "$login"
+printf 'UID:         %s\n' "$uid"
+printf 'GID:         %s%s\n' "$gid" "${group_name:+ ($group_name)}"
+printf 'Description: %s\n' "${gecos:-n/a}"
+printf 'Home:        %s\n' "$home"
+printf 'Shell:       %s\n' "$shell"

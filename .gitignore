@@ -1,0 +1,17 @@
+# Live Grafana snapshots — published to `snapshots` branch, never committed on main
+docs/assets/live/
+
+# Large binaries — use home.nix fetchurl/AppImage references instead
+config/bin/cursor-app
+config/bin/*.AppImage
+config/bin/*.png
+*.prom.tmp.*
+
+# Brouillons locaux
+.scratch/
+
+# Nix/dev artifacts
+result
+result-*
+.direnv/
+.envrc

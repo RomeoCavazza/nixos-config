@@ -1,0 +1,127 @@
+{
+  lib,
+  locality,
+  palette,
+  ...
+}:
+
+let
+  colors = import ../../lib/colors.nix { inherit lib; };
+in
+{
+  home.file.".config/fastfetch/config.jsonc".source = ../../config/fastfetch/config.jsonc;
+
+  programs.starship = {
+    enable = true;
+    enableBashIntegration = true;
+    settings = colors.starship palette;
+  };
+
+  programs.git = {
+    enable = true;
+    settings = {
+      user = {
+        name = locality.gitName;
+        email = locality.gitEmail;
+      };
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      safe.directory = locality.repoCheckout;
+    };
+  };
+
+  programs.bash = {
+    enable = true;
+    enableCompletion = true;
+    initExtra = ''
+      if [ -f "$HOME/.profile" ]; then
+        . "$HOME/.profile"
+        if [[ -z "''${XDG_CONFIG_HOME:-}" || -z "''${NPM_CONFIG_CACHE:-}" ]]; then
+          unset __HM_SESS_VARS_SOURCED
+          . "$HOME/.profile"
+        fi
+      fi
+
+      mkdir -p \
+        "''${BUNDLE_USER_CACHE:-$HOME/.cache/bundle}" \
+        "''${BUNDLE_USER_CONFIG:-$HOME/.config/bundle}" \
+        "''${BUNDLE_USER_PLUGIN:-$HOME/.local/share/bundle}" \
+        "''${HISTFILE%/*}" \
+        "''${NODE_REPL_HISTORY%/*}" \
+        "''${NPM_CONFIG_TMP:-''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/npm}" \
+        "''${PYTHON_HISTORY%/*}" \
+        "''${USQL_HISTORY%/*}" \
+        2>/dev/null || true
+
+      for dir in "$HOME/.local/bin"; do
+        if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
+          PATH="$dir:$PATH"
+        fi
+      done
+      if [[ "''${NIXOS_ENABLE_MUTABLE_USER_PATH:-0}" == "1" ]]; then
+        for dir in "$HOME/.npm-global/bin" "$HOME/.lmstudio/bin"; do
+          if [[ -d "$dir" && ":$PATH:" != *":$dir:"* ]]; then
+            PATH="$dir:$PATH"
+          fi
+        done
+      fi
+      export PATH
+
+      _tab_smart_ls_exec() {
+        if [[ -z "$READLINE_LINE" ]]; then
+          local selected
+          selected=$(fzf --height 40% --reverse --preview '[[ -d {} ]] && eza --icons --tree --level=1 {} || sed -n "1,500p" {} 2>/dev/null' 2>/dev/null)
+          if [[ -n "$selected" ]]; then
+            if [[ -d "$selected" ]]; then
+              cd "$selected"
+              READLINE_LINE=""
+              READLINE_POINT=0
+              printf "\r\n"
+              ls --icons
+            else
+              if [[ -x "$selected" ]]; then
+                READLINE_LINE="./$selected"
+              else
+                READLINE_LINE="xdg-open \"$selected\""
+              fi
+              printf "\r\n"
+              eval "$READLINE_LINE"
+              READLINE_LINE=""
+              READLINE_POINT=0
+            fi
+          fi
+          printf "\r"
+        else
+          printf "\t"
+        fi
+      }
+      bind -x '"\t": _tab_smart_ls_exec'
+
+      tm() {
+        local dir session
+        if [[ $# -gt 0 ]]; then
+          dir="$1"
+        else
+          dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+        fi
+        dir="$(realpath -m "$dir")"
+        [[ -d "$dir" ]] || { echo "tm: directory not found: $dir" >&2; return 1; }
+        session="$(basename "$dir" | tr '.- ' '___')"
+        if [[ -n "''${TMUX:-}" ]]; then
+          tmux has-session -t "$session" 2>/dev/null || tmux new-session -d -s "$session" -c "$dir"
+          tmux switch-client -t "$session"
+        else
+          tmux new-session -A -s "$session" -c "$dir"
+        fi
+      }
+    '';
+    shellAliases = {
+      g = "git";
+      ll = "eza -l --icons";
+      ls = "eza --icons";
+      rebuild = "command rebuild";
+      scope = "bash ${locality.labApplicationsDir}/launch-hantek.sh";
+      tinysa = "bash ${locality.labApplicationsDir}/launch-tinysa.sh";
+    };
+  };
+}
