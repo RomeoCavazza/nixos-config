@@ -1,0 +1,46 @@
+{% extends "app.html" %}
+{% block title %}{{ email.subject }} — Inbox{% endblock %}
+{% block content %}
+<article class="message">
+  <header>
+    <h1>{{ email.subject }}</h1>
+    <p><strong>{{ email.sender_name }}</strong> &lt;{{ email.sender_email }}&gt;</p>
+    <time datetime="{{ email.received_at }}">{{ email.received_at[:10] }} {{ email.received_at[11:16] }}</time>
+  </header>
+
+  <div class="assistant-actions assistant-summary">
+    <form data-assistant="summary" method="post" action="{{ url_for('assistant.summarize_email', email_id=email.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="assistant-button" type="submit">Summarize</button></form>
+    <p class="assistant-status" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="message-body">
+    {% for item in thread %}
+    <details class="thread-message"{% if loop.last or thread|length == 1 %} open{% endif %}>
+      <summary><strong>{{ item.sender_name }}</strong><span>{{ item.received_at[:10] }} {{ item.received_at[11:16] }}</span></summary>
+      <div><p>{{ item.body or item.snippet }}</p></div>
+    </details>
+    {% endfor %}
+  </div>
+
+  <footer>
+    <form method="post" action="{{ url_for('mailbox.email_action', email_id=email.id, action='pin') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="star{% if email.is_pinned %} pinned{% endif %}" type="submit" title="{{ 'Unpin' if email.is_pinned else 'Pin' }}" aria-label="{{ 'Unpin' if email.is_pinned else 'Pin' }}">{{ "★" if email.is_pinned else "☆" }}</button></form>
+    <form method="post" action="{{ url_for('mailbox.email_action', email_id=email.id, action='archive') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ "Move to inbox" if email.is_archived else "Archive" }}</button></form>
+    <form method="post" action="{{ url_for('mailbox.email_action', email_id=email.id, action='trash') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ "Move to inbox" if email.is_trashed else "Delete" }}</button></form>
+  </footer>
+</article>
+
+<section class="assistant-actions assistant-reply" aria-label="Reply assistant">
+  <form data-assistant="reply" method="post" action="{{ url_for('assistant.suggest_reply', email_id=email.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="assistant-button" type="submit">{{ "Regenerate reply" if results.reply else "Suggest reply" }}</button></form>
+  <p class="assistant-status" role="status" aria-live="polite"></p>
+</section>
+
+{% if results.summary %}
+<noscript><section id="summary"><h2>Summary</h2><p>{{ results.summary.content }}</p></section></noscript>
+{% endif %}
+
+<section id="reply"{% if not results.reply %} hidden{% endif %}>
+  <h2>Suggested reply</h2>
+  <label for="reply-text">Reply</label><br>
+  <textarea id="reply-text" rows="8" cols="72">{{ results.reply.content if results.reply else "" }}</textarea>
+</section>
+{% endblock %}

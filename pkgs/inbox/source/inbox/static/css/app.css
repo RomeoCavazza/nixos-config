@@ -1,0 +1,295 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: #202124;
+  background: white;
+  font: 14px Arial, sans-serif;
+  line-height: 1.4;
+}
+
+a { color: #202124; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1 { margin: 0 0 16px; font-size: 22px; }
+h2 { margin: 24px 0 12px; font-size: 18px; }
+h3 { font-size: 15px; }
+
+button,
+input,
+select,
+textarea { font: inherit; }
+
+button,
+input,
+select {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #b7b7b7;
+  border-radius: 2px;
+  background: white;
+}
+
+button { cursor: pointer; }
+button:hover { background: #f3f3f3; }
+button:active { background: #e8e8e8; }
+button:disabled { cursor: wait; color: #777; background: #f3f3f3; }
+
+textarea {
+  width: 100%;
+  max-width: 700px;
+  padding: 8px;
+  border: 1px solid #b7b7b7;
+}
+
+:focus-visible {
+  outline: 2px solid #202124;
+  outline-offset: 1px;
+}
+
+body > header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d9d9d9;
+  background: white;
+}
+
+body > header form[role="search"] {
+  width: 640px;
+  max-width: 60%;
+  display: flex;
+  gap: 6px;
+}
+
+body > header form[role="search"] label {
+  position: absolute;
+  left: -9999px;
+}
+
+body > header input[type="search"] {
+  width: 100%;
+  border-color: #b7b7b7;
+  background: white;
+}
+
+body > header input[type="search"]:focus {
+  border-color: #202124;
+  background: white;
+}
+
+body > header nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body > header nav form { margin: 0; }
+
+body > div {
+  min-height: calc(100vh - 64px);
+  display: flex;
+}
+
+aside {
+  width: 180px;
+  flex: none;
+  padding: 16px 12px;
+  border-right: 1px solid #d9d9d9;
+}
+
+aside ul {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+aside a {
+  display: block;
+  padding: 7px 8px;
+  color: #202124;
+}
+
+aside a[aria-current="page"] {
+  color: #0b57d0;
+  background: #e8f0fe;
+  font-weight: bold;
+}
+
+aside a:hover {
+  background: #f3f3f3;
+  text-decoration: none;
+}
+
+body > div > main {
+  min-width: 0;
+  flex: 1;
+}
+
+body > div > main > header {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+body > div > main > header h1,
+body > div > main > header p { margin: 0; }
+
+body > div > main > header form { margin: 0; }
+
+body > div > main > p { margin: 20px; }
+
+body > main {
+  width: 760px;
+  max-width: calc(100% - 32px);
+  margin: 28px auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+tbody tr { height: 52px; }
+.message-list tr { background: #f7f7f7; }
+.message-list tr.unread { background: white; font-weight: bold; }
+.message-list tr:hover { background: #eeeeee; }
+
+th { color: #666; font-weight: normal; }
+.message-list td:first-child { width: 42px; }
+.message-list td:nth-child(2) { width: 190px; }
+.message-list td:last-child { width: 145px; white-space: nowrap; color: #666; }
+
+.message-list td:first-child button {
+  min-height: auto;
+  padding: 2px 5px;
+  border: 0;
+  font-size: 18px;
+}
+
+.star { color: #666; }
+.star.pinned { color: #f4b400; }
+.thread-count { margin-left: 3px; color: #666; font-size: 12px; font-weight: normal; }
+
+td a { display: block; color: #202124; }
+table form { margin: 0; }
+
+form { margin: 10px 0; }
+
+article footer,
+.assistant-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+article footer form,
+.assistant-actions form { margin: 0; }
+
+section { margin-top: 28px; }
+
+.message > header {
+  padding: 20px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.message > header h1 { margin-bottom: 8px; }
+.message > header p { margin: 0 0 4px; }
+.message > header time { color: #666; }
+.message-body { min-height: 140px; padding: 0 20px 20px; }
+.message > footer { padding: 0 20px 20px; }
+
+.assistant-actions {
+  margin: 0;
+  padding: 12px 20px;
+  align-items: center;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.assistant-reply { border-top: 1px solid #d9d9d9; }
+.assistant-button { color: #0b57d0; border-color: #a8c7fa; font-weight: bold; }
+.assistant-button:hover { background: #eef3fc; }
+.assistant-status { margin: 0 0 0 6px; color: #666; }
+#reply { margin: 0; padding: 0 20px 20px; }
+
+.thread-message { border-bottom: 1px solid #d9d9d9; }
+.thread-message summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  cursor: pointer;
+  color: #3c4043;
+}
+.thread-message summary::before {
+  content: "▸";
+  width: 12px;
+  flex: none;
+  color: #666;
+}
+.thread-message[open] summary::before { content: "▾"; }
+.thread-message summary strong { margin-right: auto; }
+.thread-message summary:hover { background: #f7f7f7; }
+.thread-message summary span { color: #666; font-size: 12px; white-space: nowrap; }
+.thread-message > div { padding: 2px 0 18px; white-space: pre-wrap; }
+.thread-message > div p { margin: 0; }
+
+.priorities { margin: 0; padding: 0; list-style-position: inside; }
+.priorities li { padding: 16px 20px; border-bottom: 1px solid #d9d9d9; }
+.priorities h2 { display: inline; margin: 0; font-size: 16px; }
+.priorities h2 a { display: inline; }
+.priorities p { margin: 5px 0 0 22px; }
+
+#gmail,
+#import,
+#rules { margin: 0; padding: 20px; }
+#import,
+#rules { border-top: 1px solid #d9d9d9; }
+#gmail h2,
+#import h2,
+#rules h2 { margin-top: 0; }
+#gmail form { display: inline-block; margin-right: 6px; }
+#gmail p { margin: 6px 0; }
+
+.rule-form {
+  max-width: 420px;
+  display: grid;
+  gap: 10px;
+}
+
+.rule-form label { display: grid; gap: 4px; }
+.rule-form button { width: max-content; }
+
+.auth { width: 360px; margin-top: 60px; }
+.auth input { width: 100%; }
+
+p[role="alert"] {
+  margin: 0;
+  padding: 8px 16px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+@media (max-width: 700px) {
+  body > header { height: auto; align-items: stretch; flex-direction: column; }
+  body > header form[role="search"] { width: 100%; max-width: none; }
+  body > header nav { margin-left: 0; }
+  body > div { display: block; }
+  aside { width: auto; border-right: 0; border-bottom: 1px solid #d9d9d9; }
+  aside ul { display: flex; flex-wrap: wrap; margin-bottom: 6px; }
+  .message-list td:nth-child(2) { width: 110px; }
+  .message-list td:last-child { width: auto; white-space: normal; }
+}

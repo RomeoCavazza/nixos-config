@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ "Register" if mode == "register" else "Sign in" }} — Inbox{% endblock %}
+{% block body %}
+<main class="auth">
+  <h2>{{ "Create an account" if mode == "register" else "Sign in" }}</h2>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if mode == "register" %}
+    <p><label>Full name<br><input name="name" autocomplete="name" required></label></p>
+    {% endif %}
+    <p><label>Email<br><input type="email" name="email" autocomplete="email" required></label></p>
+    <p><label>Password<br><input type="password" name="password" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required></label></p>
+    <button type="submit">{{ "Register" if mode == "register" else "Sign in" }}</button>
+  </form>
+  {% if mode == "register" %}
+  <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a>.</p>
+  {% else %}
+  <p>New user? <a href="{{ url_for('auth.register') }}">Create an account</a>.</p>
+  {% endif %}
+</main>
+{% endblock %}

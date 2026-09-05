@@ -1,0 +1,25 @@
+{% extends "app.html" %}
+{% block title %}{{ view|capitalize }} — Inbox{% endblock %}
+{% block content %}
+<header>
+  <h1>{{ view|capitalize }}</h1>
+  {% if query %}<a href="{{ url_for('mailbox.dashboard', view=view) }}">Clear search</a>{% endif %}
+</header>
+
+{% if emails %}
+<table class="message-list" aria-label="Messages">
+  <tbody>
+    {% for email in emails %}
+    <tr{% if 'UNREAD' in email.label_ids.split() %} class="unread"{% endif %}>
+      <td><form method="post" action="{{ url_for('mailbox.email_action', email_id=email.id, action='pin') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="star{% if email.is_pinned %} pinned{% endif %}" type="submit" title="{{ 'Unpin' if email.is_pinned else 'Pin' }}" aria-label="{{ 'Unpin' if email.is_pinned else 'Pin' }} {{ email.subject }}">{{ "★" if email.is_pinned else "☆" }}</button></form></td>
+      <td>{{ email.sender_name }}</td>
+      <td><a href="{{ url_for('mailbox.email_detail', email_id=email.id) }}">{{ email.subject }}{% if email.thread_count > 1 %} <span class="thread-count">{{ email.thread_count }}</span>{% endif %}</a></td>
+      <td><time datetime="{{ email.received_at }}">{{ email.received_at[:10] }} {{ email.received_at[11:16] }}</time></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No messages here.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{"emails":[
+  {"id":"demo-1","from":"Maya Chen <maya@northstar.studio>","subject":"Action required: final design review today","date":"2026-07-19T09:42:00","snippet":"Could you approve the final dashboard before our 3 PM client call?","body":"Hi! The final dashboard is ready. Could you approve it before our 3 PM client call? I highlighted the three decisions that still need your input."},
+  {"id":"demo-2","from":"GitHub <noreply@github.com>","subject":"Security alert for your repository","date":"2026-07-19T08:18:00","snippet":"A dependency used by your repository has a known vulnerability.","body":"Dependabot found a security issue in one dependency. Review the advisory and update the lockfile."},
+  {"id":"demo-3","from":"Notion <team@makenotion.com>","subject":"Your workspace weekly digest","date":"2026-07-19T07:55:00","snippet":"Eight pages were updated and two new documents were shared."},
+  {"id":"demo-4","from":"SNCF Connect <confirmation@sncf-connect.com>","subject":"Your train booking to Lyon","date":"2026-07-18T18:30:00","snippet":"Your booking is confirmed. Departure is Monday at 08:46."},
+  {"id":"demo-5","from":"Stripe <receipts@stripe.com>","subject":"Payment receipt — Cloud hosting","date":"2026-07-18T16:12:00","snippet":"Your payment of €18.00 was successful."},
+  {"id":"demo-6","from":"Theo Martin <theo@example.com>","subject":"Project notes and next steps","date":"2026-07-18T14:05:00","snippet":"Here are the notes from our meeting and the deadline we agreed on."},
+  {"id":"demo-7","from":"Dense Discovery <newsletter@densediscovery.com>","subject":"Issue 342: calmer tools","date":"2026-07-18T10:20:00","snippet":"A weekly newsletter about design, technology and culture."},
+  {"id":"demo-8","from":"Bankin' <noreply@bankin.com>","subject":"Your monthly finance report","date":"2026-07-17T19:00:00","snippet":"Your spending report for June is now available."}
+]}

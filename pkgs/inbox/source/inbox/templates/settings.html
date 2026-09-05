@@ -1,0 +1,46 @@
+{% extends "app.html" %}
+{% block title %}Settings — Inbox{% endblock %}
+{% block content %}
+<header><h1>Settings</h1></header>
+
+<section id="gmail">
+  <h2>Gmail</h2>
+  {% if gmail_account %}
+  <p>{{ gmail_account.email }}</p>
+  {% if gmail_account.last_synced_at %}<p>Last sync: {{ gmail_account.last_synced_at }}</p>{% endif %}
+  <form method="post" action="{{ url_for('gmail.sync') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Sync</button></form>
+  <form method="post" action="{{ url_for('gmail.disconnect') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Disconnect</button></form>
+  {% else %}
+  <form method="post" action="{{ url_for('gmail.connect') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Connect Gmail</button></form>
+  {% endif %}
+</section>
+
+<section id="import">
+  <h2>Import mail</h2>
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('settings.import_json') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>JSON file <input type="file" name="file" accept="application/json,.json" required></label>
+    <button type="submit">Import</button>
+  </form>
+</section>
+
+<section id="rules">
+  <h2>Rules</h2>
+  {% if rules %}
+  <table>
+    <thead><tr><th>Field</th><th>Contains</th><th>Action</th><th></th></tr></thead>
+    <tbody>{% for rule in rules %}<tr><td>{{ rule.field }}</td><td>{{ rule.value }}</td><td>{{ rule.action }} {{ rule.action_value }}</td><td><form method="post" action="{{ url_for('settings.delete_rule', rule_id=rule.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Delete</button></form></td></tr>{% endfor %}</tbody>
+  </table>
+  {% endif %}
+
+  <h3>Add rule</h3>
+  <form class="rule-form" method="post" action="{{ url_for('settings.add_rule') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Field <select name="field"><option value="sender">Sender</option><option value="subject">Subject</option></select></label>
+    <label>Contains <input name="value" required></label>
+    <label>Action <select name="action"><option value="prioritize">Prioritize</option><option value="archive">Archive</option><option value="category">Categorize</option></select></label>
+    <label>Value <input name="action_value"></label>
+    <button type="submit">Add rule</button>
+  </form>
+</section>
+{% endblock %}

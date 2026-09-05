@@ -1,5 +1,6 @@
 {
   imports = [
+    ../modules/services/inbox-local.nix
     ../modules/services/backup.nix
     ../modules/services/gitlab.nix
     ../modules/services/gitlab-runner.nix

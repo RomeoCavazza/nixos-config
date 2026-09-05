@@ -1,0 +1,25 @@
+{% extends "app.html" %}
+{% block title %}Priorities — Inbox{% endblock %}
+{% block content %}
+<header>
+  <h1>Priorities</h1>
+  <form method="post" action="{{ url_for('assistant.analyze_priorities') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">{{ "Analyze again" if last_run else "Analyze inbox" }}</button></form>
+</header>
+
+{% if results %}
+<ol class="priorities">
+  {% for result in results %}
+  <li>
+    <h2><a href="{{ url_for('mailbox.email_detail', email_id=result.email_id) }}">{{ result.subject }}</a></h2>
+    <p>{{ result.sender_name }}</p>
+    <p>{{ result.content }}</p>
+    <p>Reason: {{ result.reason }}</p>
+  </li>
+  {% endfor %}
+</ol>
+{% elif last_run %}
+<p>No priority messages.</p>
+{% else %}
+<p>No priority analysis yet.</p>
+{% endif %}
+{% endblock %}

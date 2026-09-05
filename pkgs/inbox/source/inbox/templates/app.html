@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+<header>
+  <form method="get" action="{{ url_for('mailbox.dashboard') }}" role="search">
+    <input type="hidden" name="view" value="inbox">
+    <label for="mail-search">Search mail</label>
+    <input id="mail-search" name="q" type="search" value="{{ query|default('') }}" placeholder="Search mail">
+    <button type="submit">Search</button>
+  </form>
+
+  <nav aria-label="Account">
+    <span>{{ session.name }}</span>
+    <form method="post" action="{{ url_for('auth.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Sign out</button></form>
+  </nav>
+</header>
+
+<div>
+  <aside>
+    <nav aria-label="Mailboxes">
+      <ul>
+        <li><a href="{{ url_for('mailbox.dashboard', view='inbox') }}"{% if active_page == 'inbox' %} aria-current="page"{% endif %}>Inbox ({{ counts.inbox or 0 }})</a></li>
+        <li><a href="{{ url_for('assistant.priorities') }}"{% if active_page == 'priorities' %} aria-current="page"{% endif %}>Priorities</a></li>
+        <li><a href="{{ url_for('mailbox.dashboard', view='pinned') }}"{% if active_page == 'pinned' %} aria-current="page"{% endif %}>Pinned ({{ counts.pinned or 0 }})</a></li>
+        <li><a href="{{ url_for('mailbox.dashboard', view='archived') }}"{% if active_page == 'archived' %} aria-current="page"{% endif %}>Archived ({{ counts.archived or 0 }})</a></li>
+        <li><a href="{{ url_for('mailbox.dashboard', view='trash') }}"{% if active_page == 'trash' %} aria-current="page"{% endif %}>Trash ({{ counts.trash or 0 }})</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Application"><a href="{{ url_for('settings.settings_page') }}"{% if active_page == 'settings' %} aria-current="page"{% endif %}>Settings</a></nav>
+  </aside>
+
+  <main>{% block content %}{% endblock %}</main>
+</div>
+{% endblock %}
